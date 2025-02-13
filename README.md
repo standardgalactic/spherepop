@@ -60,7 +60,7 @@ Where mere mortals struggle to decipher endless lines of cryptic gibberish…
 
 [Close-up of a screen filled with impenetrable Lisp code. A horrified programmer gasps.]
 
-…One language dares to ask: What if programming… was agame?
+…One language dares to ask: What if programming… was a game?
 
 [Music swells. The screen erupts in a cascade of shimmering spheres, expanding and colliding in a hypnotic dance.]
 
