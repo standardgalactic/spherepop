@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spherepop Game</title>
+    <style>
+        .circle {
+            border: 2px solid black;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            margin: 10px auto;
+            padding: 5px;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        .outer {
+            width: 300px;
+            height: 300px;
+        }
+        .middle {
+            width: 200px;
+            height: 200px;
+        }
+        .inner {
+            width: 100px;
+            height: 100px;
+        }
+        .text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>Spherepop Prototype</h1>
+    <p>( How ( + ( - ( 1 ) ( 2 ) ) ( - ( 1 ) ( 2 ) ) play ) spherepop: ( (Find the ( innermost bubble ) ) and then pop as many ( + b u b b l e s ) ) as you can ( . ) ) )</p>
+
+    <p>Spherepop is a visual programming language where nested expressions are represented as nested circles. Clicking on a circle evaluates the inner expression and updates the display.</p>
+
+<h2>Basic Principle</h2>
+
+( ( ( a + b ) + c ) + d ) <br>
+<br>
+For the expression ((a + b) + c) + d, we will have a circle around a + b, a larger circle around (a + b) + c, and a larger circle around ((a + b) + c) + d.
+<br>
+<br>
+Clicking on a circle will pop it and evaluate the expression within.
+<br>
+ <img src="spherepop-01.jpg" alt="Spherepop Image 01" width="400">
+<br>
+
+Examples:
+<br>
+(((1 + 2) + 3) + 4) → (((3) + 3) + 4)→  (((6) + 4))→ (10)
+<br>
+<br>
+(((1 + 2) + (3 + 4)) + (5 + 6)) → (((3) + (7)) + (5 + 6)) → (((10)) + (11)) → ((21))→ (21)
+<br>
+<br>
+((6)÷(2(2+1)))→ ((6)÷(2(3)))→((6)÷(6))→ ((6/6))→((1/1))→((1))→(1)→ 1
+<br>
+    <h2>Example: (((1 + 2) + 3) + 4)</h2>
+    <div id="visualization-basic"></div>
+
+    <h2>More Complex Example: (((1 + 2) + (3 + 4)) + (5 + 6))</h2>
+    <div id="visualization-complex"></div>
+
+    <h2>Even Deeper Example: (((1 + 2) + (3 + (4 + 5))) + (6 + (7 + 8)))</h2>
+    <div id="visualization-deeper"></div>
+
+    <script>
+        // Function to evaluate mathematical expressions
+        function parseExpression(expression) {
+            try {
+                // Evaluate the expression using Function constructor
+                return Function('"use strict";return (' + expression + ')')();
+            } catch (e) {
+                return NaN;
+            }
+        }
+
+        // Function to evaluate and update the expression in the clicked circle
+        function evaluateExpression(event, element, expression) {
+            event.stopPropagation();
+            const result = parseExpression(expression);
+
+            if (!isNaN(result)) {
+                element.innerHTML = '<span class="text">' + result + '</span>';
+                element.style.border = '3px solid green';
+                element.onclick = null; // Disable further clicking
+            } else {
+                alert('Error: Invalid expression');
+            }
+        }
+
+        // Helper function to create a circle element
+        function createCircle(className, text, onclickFunc, expression) {
+            const circle = document.createElement('div');
+            circle.className = `circle ${className}`;
+            circle.onclick = onclickFunc;
+            if (expression) {
+                circle.setAttribute('data-expression', expression);
+            }
+            const span = document.createElement('span');
+            span.className = 'text';
+            span.innerText = text;
+            circle.appendChild(span);
+            return circle;
+        }
+
+        // Function to create nested circles for the given mathematical expression
+        function createNestedCircles(expression, className) {
+            const circle = createCircle(className, expression, (event) => evaluateExpression(event, event.currentTarget, expression), expression);
+
+            // Parse the expression to find inner expressions
+            const innerExpressions = expression.match(/\(([^()]+)\)/g);
+            if (innerExpressions) {
+                innerExpressions.forEach(innerExpression => {
+                    const innerCircle = createNestedCircles(innerExpression.replace(/[()]/g, ''), getNextClassName(className));
+                    circle.appendChild(innerCircle);
+                });
+            }
+
+            return circle;
+        }
+
+        // Function to determine the next class name for nested circles
+        function getNextClassName(currentClassName) {
+            switch (currentClassName) {
+                case 'outer':
+                    return 'middle';
+                case 'middle':
+                    return 'inner';
+                default:
+                    return 'inner';
+            }
+        }
+
+        // Function to convert user input expression to nested circles and visualize it
+        function convertAndVisualize() {
+            const expression = document.getElementById('expression-input').value;
+            const outputDiv = document.getElementById('converter-output');
+            outputDiv.innerHTML = '';
+
+            try {
+                const outerCircle = createNestedCircles(expression, 'outer');
+                outputDiv.appendChild(outerCircle);
+            } catch (error) {
+                alert('Error converting expression: ' + error.message);
+            }
+        }
+
+        // Initial example visualizations as nested circles
+        const basicExample = document.createElement('div');
+        basicExample.className = 'circle outer';
+        basicExample.onclick = (event) => evaluateExpression(event, basicExample, '(((1 + 2) + 3) + 4)');
+
+        const basicMiddle1 = document.createElement('div');
+        basicMiddle1.className = 'circle middle';
+        basicMiddle1.onclick = (event) => evaluateExpression(event, basicMiddle1, '((1 + 2) + 3)');
+
+        const basicInner1 = document.createElement('div');
+        basicInner1.className = 'circle inner';
+        basicInner1.onclick = (event) => evaluateExpression(event, basicInner1, '1 + 2');
+        basicInner1.innerHTML = '<span class="text">1 + 2</span>';
+
+        const basicInner2 = document.createElement('div');
+        basicInner2.className = 'circle inner';
+        basicInner2.onclick = (event) => evaluateExpression(event, basicInner2, '3');
+        basicInner2.innerHTML = '<span class="text">3</span>';
+
+        basicMiddle1.appendChild(basicInner1);
+        basicMiddle1.appendChild(basicInner2);
+
+        const basicMiddle2 = document.createElement('div');
+        basicMiddle2.className = 'circle middle';
+        basicMiddle2.onclick = (event) => evaluateExpression(event, basicMiddle2, '4');
+        basicMiddle2.innerHTML = '<span class="text">4</span>';
+
+        basicExample.appendChild(basicMiddle1);
+        basicExample.appendChild(basicMiddle2);
+        document.getElementById('visualization-basic').appendChild(basicExample);
+
+        const complexExample = document.createElement('div');
+        complexExample.className = 'circle outer';
+        complexExample.onclick = (event) => evaluateExpression(event, complexExample, '(((1 + 2) + (3 + 4)) + (5 + 6))');
+
+        const complexMiddle1 = document.createElement('div');
+        complexMiddle1.className = 'circle middle';
+        complexMiddle1.onclick = (event) => evaluateExpression(event, complexMiddle1, '((1 + 2) + (3 + 4))');
+
+        const complexInner1 = document.createElement('div');
+        complexInner1.className = 'circle inner';
+        complexInner1.onclick = (event) => evaluateExpression(event, complexInner1, '1 + 2');
+        complexInner1.innerHTML = '<span class="text">1 + 2</span>';
+
+        const complexInner2 = document.createElement('div');
+        complexInner2.className = 'circle inner';
+        complexInner2.onclick = (event) => evaluateExpression(event, complexInner2, '3 + 4');
+        complexInner2.innerHTML = '<span class="text">3 + 4</span>';
+
+        complexMiddle1.appendChild(complexInner1);
+        complexMiddle1.appendChild(complexInner2);
+
+        const complexMiddle2 = document.createElement('div');
+        complexMiddle2.className = 'circle middle';
+        complexMiddle2.onclick = (event) => evaluateExpression(event, complexMiddle2, '5 + 6');
+        complexMiddle2.innerHTML = '<span class="text">5 + 6</span>';
+
+        complexExample.appendChild(complexMiddle1);
+        complexExample.appendChild(complexMiddle2);
+        document.getElementById('visualization-complex').appendChild(complexExample);
+
+        // Even deeper example
+        const deeperExample = document.createElement('div');
+        deeperExample.className = 'circle outer';
+        deeperExample.onclick = (event) => evaluateExpression(event, deeperExample, '((((1 + 2) + (3 + (4 + 5))) + (6 + 7)) + (8 + 9))');
+
+        const deeperMiddle1 = document.createElement('div');
+        deeperMiddle1.className = 'circle middle';
+        deeperMiddle1.onclick = (event) => evaluateExpression(event, deeperMiddle1, '(((1 + 2) + (3 + (4 + 5))) + (6 + 7))');
+
+        const deeperInner1 = document.createElement('div');
+        deeperInner1.className = 'circle inner';
+        deeperInner1.onclick = (event) => evaluateExpression(event, deeperInner1, '(1 + 2)');
+        deeperInner1.innerHTML = '<span class="text">1 + 2</span>';
+
+        const deeperInner2 = document.createElement('div');
+        deeperInner2.className = 'circle inner';
+        deeperInner2.onclick = (event) => evaluateExpression(event, deeperInner2, '(3 + (4 + 5))');
+        const deeperInner2Middle = document.createElement('div');
+        deeperInner2Middle.className = 'circle middle';
+        deeperInner2Middle.onclick = (event) => evaluateExpression(event, deeperInner2Middle, '(4 + 5)');
+        deeperInner2Middle.innerHTML = '<span class="text">4 + 5</span>';
+        deeperInner2.appendChild(deeperInner2Middle);
+        deeperInner2.innerHTML = '<span class="text">3 + </span>';
+
+        const deeperMiddle2 = document.createElement('div');
+        deeperMiddle2.className = 'circle middle';
+        deeperMiddle2.onclick = (event) => evaluateExpression(event, deeperMiddle2, '(6 + 7)');
+        deeperMiddle2.innerHTML = '<span class="text">6 + 7</span>';
+
+        const deeperMiddle3 = document.createElement('div');
+        deeperMiddle3.className = 'circle middle';
+        deeperMiddle3.onclick = (event) => evaluateExpression(event, deeperMiddle3, '(8 + 9)');
+        deeperMiddle3.innerHTML = '<span class="text">8 + 9</span>';
+
+        deeperMiddle1.appendChild(deeperInner1);
+        deeperMiddle1.appendChild(deeperInner2);
+        deeperMiddle1.appendChild(deeperMiddle2);
+        deeperExample.appendChild(deeperMiddle1);
+        deeperExample.appendChild(deeperMiddle3);
+        document.getElementById('visualization-deeper').appendChild(deeperExample);
+    </script>
+
+        <img src="demonstration-00.jpg" alt="Demonstration" width="400">
+        <img src="demonstration-01.jpg" alt="Demonstration" width="400">
+        <img src="spherepop-example.jpg" alt="Spherepop Example" width="400">
+
+
+	<p>Additional Resources:</p>
+<br>
+
+<img src="calculator.jpg" alt="Spherepop in Action" width="400"><br>
+Spherepop in Action
+<!--
+        <img src="spherepop-02.jpg" alt="Spherepop Image 02" width="400">
+        <img src="spherepop-03.jpg" alt="Spherepop Image 03" width="400">
+        <img src="spherepop-04.jpg" alt="Spherepop Image 04" width="400">
+        <img src="spherepop-05.jpg" alt="Spherepop Image 05" width="400">
+        <img src="spherepop-06.jpg" alt="Spherepop Image 06" width="400">
+<br>
+<a href="https://www.youtube.com/watch?v=EFtYN0kVe98" target="_blank">Circles of Evaluation</a>
+-->
+</body>
+</html>
