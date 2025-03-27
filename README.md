@@ -5,6 +5,9 @@
 <!-- # Standard Galactic -->
 
 ## Spherepop Demo
+![](scope-intro.gif)
+![](stack-explode.gif)
+
 ![](demonstration-00.jpg)
 ![](demonstration.jpg)
 <!--
