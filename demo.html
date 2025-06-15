@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpherePop: Advanced Expression Engine</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .controls {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .input-section {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .input-section h3 {
+            color: white;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .expression-input {
+            width: 300px;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            background: rgba(255,255,255,0.9);
+            margin-bottom: 10px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            background: #4CAF50;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+        }
+
+        .examples {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .example-btn {
+            background: #FF6B6B;
+            font-size: 12px;
+            padding: 8px 15px;
+        }
+
+        .example-btn:hover {
+            background: #FF5252;
+        }
+
+        .workspace {
+            flex: 1;
+            width: 100%;
+            max-width: 1200px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+            position: relative;
+            min-height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .expression-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+        }
+
+        .sphere {
+            position: relative;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            user-select: none;
+            font-weight: 600;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+            border: 3px solid rgba(255,255,255,0.3);
+            backdrop-filter: blur(5px);
+        }
+
+        .sphere:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .sphere.number {
+            background: radial-gradient(circle at 30% 30%, #4ECDC4, #44A08D);
+            color: white;
+        }
+
+        .sphere.operator {
+            background: radial-gradient(circle at 30% 30%, #FF6B6B, #EE5A52);
+            color: white;
+        }
+
+        .sphere.expression {
+            background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.2), rgba(255,255,255,0.05));
+            color: white;
+            border: 3px solid rgba(255,255,255,0.4);
+        }
+
+        .sphere.function {
+            background: radial-gradient(circle at 30% 30%, #9B59B6, #8E44AD);
+            color: white;
+        }
+
+        .sphere.popping {
+            animation: pop 0.6s ease-out;
+        }
+
+        @keyframes pop {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.3); opacity: 0.8; }
+            100% { transform: scale(0); opacity: 0; }
+        }
+
+        .sphere.appearing {
+            animation: appear 0.6s ease-out;
+        }
+
+        @keyframes collapseChild {
+            0% { 
+                transform: scale(1); 
+                opacity: 1; 
+            }
+            50% { 
+                transform: scale(0.8); 
+                opacity: 0.6; 
+            }
+            100% { 
+                transform: scale(0); 
+                opacity: 0; 
+            }
+        }
+
+        @keyframes appear {
+            0% { transform: scale(0); opacity: 0; }
+            50% { transform: scale(1.2); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .empty-state {
+            text-align: center;
+            color: rgba(255,255,255,0.6);
+            font-size: 1.2em;
+        }
+
+        .history,
+        .variable-panel {
+            position: absolute;
+            background: rgba(0,0,0,0.3);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            transition: opacity 0.25s, visibility 0.25s;
+        }
+
+        .history {
+            top: 20px;
+            right: 20px;
+            max-width: 300px;
+        }
+
+        .history h4 {
+            margin-bottom: 10px;
+            color: #4ECDC4;
+            user-select: none;
+            cursor: pointer;
+        }
+
+        .history-item {
+            font-size: 0.9em;
+            margin-bottom: 5px;
+            opacity: 0.8;
+        }
+
+        .variable-panel {
+            top: 20px;
+            left: 20px;
+            user-select: none;
+        }
+
+        .variable-panel h4 {
+            margin-bottom: 10px;
+            color: #FF6B6B;
+            cursor: pointer;
+        }
+
+        .variable {
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .tooltip {
+            position: absolute;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.85em;
+            pointer-events: none;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            max-width: 220px;
+            word-break: break-word;
+        }
+
+        .tooltip.visible {
+            opacity: 1;
+        }
+
+        /* Collapsed panels */
+        .collapsed-panel {
+            opacity: 0.2;
+            pointer-events: auto;
+            cursor: pointer;
+            transition: opacity 0.25s, visibility 0.25s;
+        }
+        .collapsed-panel .panel-content {
+            display: none;
+        }
+        .collapsed-panel .panel-title::after {
+            content: " (show)";
+            font-size: 0.85em;
+            color: #fff;
+            margin-left: 4px;
+        }
+        .expanded-panel .panel-title::after {
+            content: " (hide)";
+            font-size: 0.85em;
+            color: #fff;
+            margin-left: 4px;
+        }
+        .expanded-panel {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .expanded-panel .panel-content {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+<!--
+You are welcome to modify this code to make SpherePop more useful or better suited to your particular use case and preferences.
+
+Chances are, you are already playing spherepop (if you can read this part in your head).
+
+||  Hidden secret ||
+
+Numbers have hidden unwritten spheres:
+
+1 is actually (((((((((((((1)))))))))))))
+with infinite (matching) parentheses around it.
+
+Luckily, we don't have to write them all.
+
+((((((((((((((((((((((((((((( Parenthesis matching is awesome! )))))))))))))))))))))))))))))
+
+-->
+
+    <div class="header">
+        <h1>SpherePop</h1>
+        <p>Interactive Expression Evaluation • Click bubbles to pop and evaluate</p>
+    </div>
+
+    <div class="controls">
+        <div class="input-section">
+            <h3>Create Expression</h3>
+            <input type="text" class="expression-input" placeholder="Enter expression: (2 + 3) * 4" id="expressionInput">
+            <button class="btn" onclick="createFromInput()">Create Bubbles</button>
+            <button class="btn" onclick="adjustBubbleSizes()" style="background: #9B59B6; margin-left: 10px;">Focus View</button>
+            <div class="examples">
+                <button class="example-btn" onclick="loadExample('((2 + 3) * (4 + 1))')">Basic</button>
+                <button class="example-btn" onclick="loadExample('(((1 + 2) + (3 + 4)) + (5 + 6))')">Cascade Demo</button>
+                <button class="example-btn" onclick="loadExample('((sin(PI/4) + cos(PI/4)) * sqrt(2))')">Trigonometry</button>
+                <button class="example-btn" onclick="loadExample('((x + y) * (x - y))')">Algebraic</button>
+                <button class="example-btn" onclick="loadExample('(((2 * 3) + (4 * 5)) * ((1 + 1) + (2 + 2)))')">Deep Nesting</button>
+                <button class="example-btn" onclick="loadExample('(((a + b) * (c + d)) + ((e + f) * (g + h)))')">Variables</button>
+                <button class="example-btn" onclick="loadExample('((sqrt(16) + pow(2, 3)) / (factorial(3) - 2))')">Functions</button>
+                <button class="example-btn" onclick="loadExample('(((cos(0) + sin(PI/2)) * E) + (log(E) * PI))')">Constants</button>
+                <button class="example-btn" onclick="loadExample('((((1 + 1) + (2 + 2)) + ((3 + 3) + (4 + 4))) + (((5 + 5) + (6 + 6)) + ((7 + 7) + (8 + 8))))')">Mega Cascade</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="workspace" id="workspace">
+        <div class="expression-container" id="expressionContainer">
+            <div class="empty-state">
+                Enter an expression above or click an example to begin
+            </div>
+        </div>
+    </div>
+
+    <!-- VARIABLE PANEL -->
+    <div class="variable-panel expanded-panel" id="variablePanel">
+        <div class="panel-title" onclick="togglePanel('variablePanel')"><h4>Variables</h4></div>
+        <div class="panel-content" id="variableList"></div>
+    </div>
+
+    <!-- HISTORY PANEL -->
+    <div class="history expanded-panel" id="historyPanel">
+        <div class="panel-title" onclick="togglePanel('historyPanel')"><h4>Evaluation History</h4></div>
+        <div class="panel-content" id="historyList"></div>
+    </div>
+
+    <div class="tooltip" id="tooltip"></div>
+
+    <script>
+        // Panel toggle logic
+        function togglePanel(panelId) {
+            var panel = document.getElementById(panelId);
+            if (panel.classList.contains('expanded-panel')) {
+                panel.classList.remove('expanded-panel');
+                panel.classList.add('collapsed-panel');
+            } else {
+                panel.classList.remove('collapsed-panel');
+                panel.classList.add('expanded-panel');
+            }
+        }
+
+        class SpherePop {
+            constructor() {
+                this.workspace = document.getElementById('workspace');
+                this.expressionContainer = document.getElementById('expressionContainer');
+                this.history = [];
+                this.variables = { 
+                    x: 5, 
+                    y: 3, 
+                    PI: Math.PI, 
+                    E: Math.E,
+                    a: 2, b: 4, c: 6, d: 8,
+                    e: 1, f: 3, g: 5, h: 7
+                };
+                this.functions = {
+                    sin: Math.sin,
+                    cos: Math.cos,
+                    tan: Math.tan,
+                    sqrt: Math.sqrt,
+                    log: Math.log,
+                    abs: Math.abs,
+                    factorial: (n) => n <= 1 ? 1 : n * this.functions.factorial(n - 1),
+                    pow: Math.pow
+                };
+                this.focusMode = false;
+                this.setupEventListeners();
+            }
+
+            setupEventListeners() {
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' && document.activeElement.classList.contains('expression-input')) {
+                        createFromInput();
+                    }
+                });
+
+                // Tooltip: hide on click anywhere
+                document.addEventListener('mousedown', () => {
+                    document.getElementById('tooltip').classList.remove('visible');
+                });
+                window.addEventListener('scroll', () => {
+                    document.getElementById('tooltip').classList.remove('visible');
+                });
+                window.addEventListener('resize', () => {
+                    document.getElementById('tooltip').classList.remove('visible');
+                });
+            }
+
+            parseExpression(expr) {
+                expr = expr.trim();
+                if (expr.startsWith('(') && expr.endsWith(')') && this.matchingParen(expr, 0) === expr.length - 1) {
+                    expr = expr.slice(1, -1);
+                }
+                if (this.isSimpleValue(expr)) {
+                    return {
+                        type: this.getValueType(expr),
+                        value: expr,
+                        children: []
+                    };
+                }
+                const mainOp = this.findMainOperator(expr);
+                if (mainOp) {
+                    const left = expr.slice(0, mainOp.index).trim();
+                    const right = expr.slice(mainOp.index + mainOp.op.length).trim();
+                    return {
+                        type: 'expression',
+                        value: mainOp.op,
+                        children: [
+                            this.parseExpression(left),
+                            this.parseExpression(right)
+                        ]
+                    };
+                }
+                return {
+                    type: this.getValueType(expr),
+                    value: expr,
+                    children: []
+                };
+            }
+
+            matchingParen(str, start) {
+                let count = 1;
+                for (let i = start + 1; i < str.length; i++) {
+                    if (str[i] === '(') count++;
+                    else if (str[i] === ')') count--;
+                    if (count === 0) return i;
+                }
+                return -1;
+            }
+
+            isSimpleValue(expr) {
+                return /^[a-zA-Z_][a-zA-Z0-9_]*(\([^)]*\))?$/.test(expr) || /^[0-9.]+$/.test(expr);
+            }
+
+            getValueType(expr) {
+                if (/^[0-9.]+$/.test(expr)) return 'number';
+                if (/^[a-zA-Z_][a-zA-Z0-9_]*\([^)]*\)$/.test(expr)) return 'function';
+                return 'variable';
+            }
+
+            findMainOperator(expr) {
+                const operators = ['+', '-', '*', '/', '^', '**'];
+                let parenDepth = 0;
+                let lastOp = null;
+                for (let i = expr.length - 1; i >= 0; i--) {
+                    const char = expr[i];
+                    if (char === ')') parenDepth++;
+                    else if (char === '(') parenDepth--;
+                    if (parenDepth === 0) {
+                        for (const op of operators) {
+                            if (expr.slice(i, i + op.length) === op) {
+                                lastOp = { op, index: i };
+                                break;
+                            }
+                        }
+                    }
+                }
+                return lastOp;
+            }
+
+            createSphere(node, size = 100) {
+                const sphere = document.createElement('div');
+                sphere.className = `sphere ${node.type} appearing`;
+                const minSize = 60;
+                const maxSize = 200;
+                const actualSize = Math.max(minSize, Math.min(maxSize, size));
+                sphere.style.width = `${actualSize}px`;
+                sphere.style.height = `${actualSize}px`;
+                sphere.style.fontSize = `${Math.max(12, actualSize / 8)}px`;
+
+                if (node.children.length === 0) {
+                    sphere.textContent = node.value;
+                    sphere.onclick = () => this.evaluateLeaf(sphere, node);
+                } else {
+                    sphere.onclick = () => this.evaluateExpression(sphere, node);
+                    const childSize = actualSize * 0.6;
+                    node.children.forEach((child, index) => {
+                        const childSphere = this.createSphere(child, childSize);
+                        childSphere.style.position = 'absolute';
+                        if (node.children.length === 2) {
+                            const angle = index === 0 ? -Math.PI/4 : Math.PI/4;
+                            const distance = actualSize * 0.3;
+                            childSphere.style.left = `${actualSize/2 + Math.cos(angle) * distance - childSize/2}px`;
+                            childSphere.style.top = `${actualSize/2 + Math.sin(angle) * distance - childSize/2}px`;
+                        }
+                        sphere.appendChild(childSphere);
+                    });
+                    const operator = document.createElement('div');
+                    operator.textContent = node.value;
+                    operator.style.position = 'absolute';
+                    operator.style.top = '10px';
+                    operator.style.left = '50%';
+                    operator.style.transform = 'translateX(-50%)';
+                    operator.style.fontSize = `${actualSize / 10}px`;
+                    operator.style.fontWeight = 'bold';
+                    operator.style.pointerEvents = 'none';
+                    sphere.appendChild(operator);
+                }
+
+                this.addHoverEffects(sphere, node);
+                return sphere;
+            }
+
+            addHoverEffects(sphere, node) {
+                const tooltip = document.getElementById('tooltip');
+                function smartPosition(e, tooltip) {
+                    let x = e.pageX + 10;
+                    let y = e.pageY - 30;
+                    const rect = tooltip.getBoundingClientRect();
+                    if (x + rect.width > window.innerWidth) x = window.innerWidth - rect.width - 10;
+                    if (y < 0) y = e.pageY + 20;
+                    tooltip.style.left = `${x}px`;
+                    tooltip.style.top = `${y}px`;
+                }
+                sphere.addEventListener('mouseenter', (e) => {
+                    const description = this.getNodeDescription(node);
+                    tooltip.textContent = description;
+                    tooltip.classList.add('visible');
+                    smartPosition(e, tooltip);
+                });
+                sphere.addEventListener('mouseleave', () => {
+                    tooltip.classList.remove('visible');
+                });
+                sphere.addEventListener('mousemove', (e) => {
+                    smartPosition(e, tooltip);
+                });
+            }
+
+            getNodeDescription(node) {
+                if (node.type === 'number') return `Number: ${node.value}`;
+                if (node.type === 'variable') return `Variable: ${node.value} = ${this.variables[node.value] || 'undefined'}`;
+                if (node.type === 'function') return `Function: ${node.value}`;
+                return `Expression: Click to evaluate ${node.value}`;
+            }
+
+            evaluateLeaf(sphere, node) {
+                const result = this.getValue(node.value);
+                this.animateEvaluation(sphere, result);
+            }
+
+            async evaluateExpression(sphere, node) {
+                const childSpheres = Array.from(sphere.children).filter(child => 
+                    child.classList.contains('sphere'));
+                let allChildrenEvaluated = true;
+                for (const childSphere of childSpheres) {
+                    if (!childSphere.classList.contains('number')) {
+                        allChildrenEvaluated = false;
+                        break;
+                    }
+                }
+                if (allChildrenEvaluated && childSpheres.length === 2) {
+                    const left = parseFloat(childSpheres[0].textContent);
+                    const right = parseFloat(childSpheres[1].textContent);
+                    const result = this.applyOperator(node.value, left, right);
+                    await this.animateChildrenCollapse(childSpheres);
+                    this.animateEvaluation(sphere, result);
+                } else {
+                    this.findAndPopDeepest(sphere);
+                }
+            }
+
+            findAndPopDeepest(rootSphere) {
+                const deepestUnevaluated = this.findDeepestUnevaluated(rootSphere);
+                if (deepestUnevaluated) {
+                    deepestUnevaluated.click();
+                }
+            }
+
+            findDeepestUnevaluated(sphere, depth = 0) {
+                if (!sphere.classList.contains('sphere')) return null;
+                if (sphere.classList.contains('number')) return null;
+                const childSpheres = Array.from(sphere.children).filter(child => 
+                    child.classList.contains('sphere'));
+                let deepest = null;
+                let maxDepth = depth;
+                for (const child of childSpheres) {
+                    const candidate = this.findDeepestUnevaluated(child, depth + 1);
+                    if (candidate && depth + 1 >= maxDepth) {
+                        deepest = candidate;
+                        maxDepth = depth + 1;
+                    }
+                }
+                if (!deepest) {
+                    const allChildrenNumbers = childSpheres.every(child => 
+                        child.classList.contains('number'));
+                    if (childSpheres.length === 0 || allChildrenNumbers) {
+                        return sphere;
+                    }
+                }
+                return deepest;
+            }
+
+            async animateChildrenCollapse(childSpheres) {
+                return new Promise(resolve => {
+                    let completed = 0;
+                    childSpheres.forEach((child, index) => {
+                        setTimeout(() => {
+                            child.style.animation = 'collapseChild 0.4s ease-in-out forwards';
+                            setTimeout(() => {
+                                completed++;
+                                if (completed === childSpheres.length) {
+                                    resolve();
+                                }
+                            }, 400);
+                        }, index * 100);
+                    });
+                });
+            }
+
+            evaluateNode(node) {
+                if (node.children.length === 0) {
+                    return this.getValue(node.value);
+                } else {
+                    const left = this.evaluateNode(node.children[0]);
+                    const right = this.evaluateNode(node.children[1]);
+                    return this.applyOperator(node.value, left, right);
+                }
+            }
+
+            getValue(value) {
+                if (/^[0-9.]+$/.test(value)) {
+                    return parseFloat(value);
+                }
+                if (value in this.variables) {
+                    return this.variables[value];
+                }
+                if (value.includes('(')) {
+                    const funcName = value.split('(')[0];
+                    const args = value.slice(funcName.length + 1, -1);
+                    if (this.functions[funcName]) {
+                        const argValue = args ? this.getValue(args) : 0;
+                        return this.functions[funcName](argValue);
+                    }
+                }
+                return 0;
+            }
+
+            applyOperator(op, left, right) {
+                switch(op) {
+                    case '+': return left + right;
+                    case '-': return left - right;
+                    case '*': return left * right;
+                    case '/': return left / right;
+                    case '^':
+                    case '**': return Math.pow(left, right);
+                    default: return 0;
+                }
+            }
+
+            animateEvaluation(sphere, result) {
+                sphere.style.background = 'radial-gradient(circle at 50% 50%, #FFD700, #FFA500)';
+                sphere.style.transform = 'scale(1.1)';
+                setTimeout(() => {
+                    sphere.classList.add('popping');
+                    this.addToHistory(`${this.getExpressionText(sphere)} = ${result}`);
+                    setTimeout(() => {
+                        sphere.className = 'sphere number appearing';
+                        sphere.textContent = this.formatResult(result);
+                        sphere.onclick = null;
+                        sphere.innerHTML = sphere.textContent;
+                        sphere.style.background = '';
+                        sphere.style.transform = '';
+                        const newSphere = sphere.cloneNode(true);
+                        sphere.parentNode.replaceChild(newSphere, sphere);
+                    }, 600);
+                }, 200);
+            }
+
+            getExpressionText(sphere) {
+                const operator = sphere.querySelector('div');
+                if (operator && operator.textContent) {
+                    return `Expression (${operator.textContent})`;
+                }
+                return sphere.textContent || 'Expression';
+            }
+
+            formatResult(result) {
+                if (Number.isInteger(result)) {
+                    return result.toString();
+                }
+                return Math.abs(result) < 0.001 ? result.toExponential(2) : result.toFixed(3);
+            }
+
+            addToHistory(entry) {
+                this.history.unshift(entry);
+                if (this.history.length > 10) this.history.pop();
+                this.updateHistoryDisplay();
+            }
+
+            updateHistoryDisplay() {
+                const historyPanel = document.getElementById('historyPanel');
+                const historyList = document.getElementById('historyList');
+                historyList.innerHTML = this.history
+                    .map(entry => `<div class="history-item">${entry}</div>`)
+                    .join('');
+            }
+
+            updateVariableDisplay() {
+                const variablePanel = document.getElementById('variablePanel');
+                const variableList = document.getElementById('variableList');
+                variableList.innerHTML = Object.entries(this.variables)
+                    .map(([key, value]) => `<div class="variable">${key} = ${typeof value === 'number' ? value.toFixed(2) : value}</div>`)
+                    .join('');
+            }
+
+            createExpression(exprString) {
+                this.expressionContainer.innerHTML = '';
+                const ast = this.parseExpression(exprString);
+                const rootSphere = this.createSphere(ast, 150);
+                rootSphere.style.position = 'relative';
+                rootSphere.style.margin = 'auto';
+                this.expressionContainer.appendChild(rootSphere);
+                this.updateVariableDisplay();
+                this.updateHistoryDisplay();
+            }
+
+            adjustBubbleSizes() {
+                this.focusMode = !this.focusMode;
+                const allSpheres = this.expressionContainer.querySelectorAll('.sphere');
+                allSpheres.forEach(sphere => {
+                    const currentSize = parseInt(sphere.style.width) || 100;
+                    const isLarge = currentSize > 120;
+                    const isSmall = currentSize < 80;
+                    sphere.style.transition = 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
+                    if (this.focusMode) {
+                        if (isLarge) {
+                            const newSize = Math.min(250, currentSize * 1.4);
+                            sphere.style.width = `${newSize}px`;
+                            sphere.style.height = `${newSize}px`;
+                            sphere.style.fontSize = `${Math.max(14, newSize / 8)}px`;
+                        } else if (isSmall) {
+                            const newSize = Math.max(40, currentSize * 0.7);
+                            sphere.style.width = `${newSize}px`;
+                            sphere.style.height = `${newSize}px`;
+                            sphere.style.fontSize = `${Math.max(10, newSize / 6)}px`;
+                        }
+                        if (isLarge) {
+                            sphere.style.boxShadow = '0 0 30px rgba(255, 255, 255, 0.5)';
+                        }
+                    } else {
+                        this.resetSphereSize(sphere);
+                    }
+                });
+                const button = document.querySelector('button[onclick="adjustBubbleSizes()"]');
+                button.textContent = this.focusMode ? 'Reset View' : 'Focus View';
+            }
+
+            resetSphereSize(sphere) {
+                const depth = this.getSphereDepth(sphere);
+                const baseSize = 150 - (depth * 25);
+                const actualSize = Math.max(60, Math.min(200, baseSize));
+                sphere.style.width = `${actualSize}px`;
+                sphere.style.height = `${actualSize}px`;
+                sphere.style.fontSize = `${Math.max(12, actualSize / 8)}px`;
+                sphere.style.boxShadow = '';
+            }
+
+            getSphereDepth(sphere) {
+                let depth = 0;
+                let parent = sphere.parentElement;
+                while (parent && parent.classList.contains('sphere')) {
+                    depth++;
+                    parent = parent.parentElement;
+                }
+                return depth;
+            }
+        }
+
+        // Global instance
+        const spherePop = new SpherePop();
+
+        function createFromInput() {
+            const input = document.getElementById('expressionInput');
+            const expression = input.value.trim();
+            if (expression) {
+                spherePop.createExpression(expression);
+                input.value = '';
+            }
+        }
+
+        function loadExample(expression) {
+            document.getElementById('expressionInput').value = expression;
+            spherePop.createExpression(expression);
+        }
+
+        function adjustBubbleSizes() {
+            spherePop.adjustBubbleSizes();
+        }
+
+        // Initialize with a cascade demo
+        loadExample('(((1 + 2) + (3 + 4)) + (5 + 6))');
+    </script>
+</body>
+</html>

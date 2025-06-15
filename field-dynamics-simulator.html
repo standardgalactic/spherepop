@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RSVP Field Dynamics Simulator</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #0a0a0a, #1a0a2e);
+            color: #ffffff;
+            font-family: 'Courier New', monospace;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .field-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .field-canvas {
+            width: 100%;
+            height: 200px;
+            border: 2px solid #333;
+            border-radius: 10px;
+            background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.1), transparent);
+        }
+        
+        .field-label {
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .control-label {
+            font-size: 14px;
+            color: #ccc;
+        }
+        
+        .control-input {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid #555;
+            border-radius: 5px;
+            padding: 8px;
+            color: #fff;
+            font-family: inherit;
+        }
+        
+        .equations {
+            background: rgba(0,0,0,0.3);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            border-left: 4px solid #4ecdc4;
+        }
+        
+        .equation {
+            font-family: 'Times New Roman', serif;
+            font-size: 16px;
+            margin: 10px 0;
+            color: #e0e0e0;
+        }
+        
+        .field-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .stat-card {
+            background: rgba(255,255,255,0.08);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #4ecdc4;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #ccc;
+            margin-top: 5px;
+        }
+        
+        .play-button {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            border: none;
+            color: white;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            display: block;
+            margin: 20px auto;
+        }
+        
+        .play-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 25px rgba(255,107,107,0.3);
+        }
+        
+        .interpretation {
+            background: rgba(255,255,255,0.05);
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 30px;
+            border-left: 4px solid #ff6b6b;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>RSVP Field Dynamics Simulator</h1>
+            <p>Reality as a Scalar-Vector-Entropic Plenum</p>
+        </div>
+        
+        <div class="field-grid">
+            <div>
+                <div class="field-label">Φ (Scalar Potential)</div>
+                <canvas class="field-canvas" id="phi-canvas"></canvas>
+            </div>
+            <div>
+                <div class="field-label">𝒗 (Vector Flow)</div>
+                <canvas class="field-canvas" id="vector-canvas"></canvas>
+            </div>
+            <div>
+                <div class="field-label">𝑺 (Entropic Gradient)</div>
+                <canvas class="field-canvas" id="entropy-canvas"></canvas>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <div class="control-group">
+                <div class="control-label">Φ-𝒗 Coupling (α)</div>
+                <input type="range" id="phi-v-coupling" min="0" max="2" step="0.1" value="1" class="control-input">
+                <span id="phi-v-value">1.0</span>
+            </div>
+            
+            <div class="control-group">
+                <div class="control-label">𝒗-𝑺 Torsion (β)</div>
+                <input type="range" id="v-s-torsion" min="0" max="2" step="0.1" value="0.8" class="control-input">
+                <span id="v-s-value">0.8</span>
+            </div>
+            
+            <div class="control-group">
+                <div class="control-label">𝑺-Φ Damping (γ)</div>
+                <input type="range" id="s-phi-damping" min="0" max="2" step="0.1" value="0.5" class="control-input">
+                <span id="s-phi-value">0.5</span>
+            </div>
+            
+            <div class="control-group">
+                <div class="control-label">Resonance Frequency</div>
+                <input type="range" id="resonance" min="0.1" max="5" step="0.1" value="1.5" class="control-input">
+                <span id="resonance-value">1.5</span>
+            </div>
+        </div>
+        
+        <button class="play-button" onclick="toggleSimulation()">
+            <span id="play-text">▶ Activate RSVP Fields</span>
+        </button>
+        
+        <div class="equations">
+            <h3>RSVP Field Equations</h3>
+            <div class="equation">∂Φ/∂t = α∇·(𝒗𝑺) + γ∇²Φ</div>
+            <div class="equation">∂𝒗/∂t = β(Φ × ∇𝑺) - δ𝒗</div>
+            <div class="equation">∂𝑺/∂t = -α∇Φ·𝒗 + η∇²𝑺</div>
+            <p style="font-size: 14px; color: #ccc; margin-top: 15px;">
+                Where consciousness emerges as resonant instabilities in the (Φ,𝒗,𝑺) field manifold.
+            </p>
+        </div>
+        
+        <div class="field-stats">
+            <div class="stat-card">
+                <div class="stat-value" id="phi-energy">0.00</div>
+                <div class="stat-label">Φ Energy</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="vector-magnitude">0.00</div>
+                <div class="stat-label">|𝒗| Magnitude</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="entropy-rate">0.00</div>
+                <div class="stat-label">𝑺 Production</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="coupling-strength">0.00</div>
+                <div class="stat-label">Field Coupling</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="coherence">0.00</div>
+                <div class="stat-label">Resonance</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="complexity">0.00</div>
+                <div class="stat-label">Complexity</div>
+            </div>
+        </div>
+        
+        <div class="interpretation">
+            <h3>Field Interpretation</h3>
+            <div id="interpretation-text">
+                Adjust the coupling parameters to explore different regimes of the RSVP field dynamics. 
+                Strong Φ-𝒗 coupling creates consciousness-like resonant vortices, while high 𝑺-gradient 
+                damping represents memory consolidation and pattern formation.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Field simulation variables
+        let isRunning = false;
+        let animationId;
+        let time = 0;
+        
+        // Get canvas contexts
+        const phiCanvas = document.getElementById('phi-canvas');
+        const vectorCanvas = document.getElementById('vector-canvas');
+        const entropyCanvas = document.getElementById('entropy-canvas');
+        
+        const phiCtx = phiCanvas.getContext('2d');
+        const vectorCtx = vectorCanvas.getContext('2d');
+        const entropyCtx = entropyCanvas.getContext('2d');
+        
+        // Set canvas sizes
+        function resizeCanvases() {
+            [phiCanvas, vectorCanvas, entropyCanvas].forEach(canvas => {
+                canvas.width = canvas.offsetWidth;
+                canvas.height = canvas.offsetHeight;
+            });
+        }
+        
+        resizeCanvases();
+        window.addEventListener('resize', resizeCanvases);
+        
+        // Field grid dimensions
+        const gridSize = 32;
+        let phiField = new Array(gridSize * gridSize).fill(0);
+        let vectorFieldX = new Array(gridSize * gridSize).fill(0);
+        let vectorFieldY = new Array(gridSize * gridSize).fill(0);
+        let entropyField = new Array(gridSize * gridSize).fill(0);
+        
+        // Initialize fields with interesting patterns
+        function initializeFields() {
+            for (let i = 0; i < gridSize; i++) {
+                for (let j = 0; j < gridSize; j++) {
+                    const idx = i * gridSize + j;
+                    const x = (i - gridSize/2) / gridSize;
+                    const y = (j - gridSize/2) / gridSize;
+                    const r = Math.sqrt(x*x + y*y);
+                    
+                    // Φ field - Gaussian potential wells
+                    phiField[idx] = Math.exp(-r*r*8) * Math.cos(time * 0.1 + r * 4);
+                    
+                    // Vector field - spiral pattern
+                    vectorFieldX[idx] = -y * Math.exp(-r*r*4) * 0.5;
+                    vectorFieldY[idx] = x * Math.exp(-r*r*4) * 0.5;
+                    
+                    // Entropy field - noise with structure
+                    entropyField[idx] = 0.3 * Math.sin(x*6) * Math.cos(y*6) + 0.1 * Math.random();
+                }
+            }
+        }
+        
+        // Update field dynamics
+        function updateFields() {
+            const dt = 0.02;
+            const alpha = parseFloat(document.getElementById('phi-v-coupling').value);
+            const beta = parseFloat(document.getElementById('v-s-torsion').value);
+            const gamma = parseFloat(document.getElementById('s-phi-damping').value);
+            const omega = parseFloat(document.getElementById('resonance').value);
+            
+            const newPhiField = [...phiField];
+            const newVectorFieldX = [...vectorFieldX];
+            const newVectorFieldY = [...vectorFieldY];
+            const newEntropyField = [...entropyField];
+            
+            for (let i = 1; i < gridSize-1; i++) {
+                for (let j = 1; j < gridSize-1; j++) {
+                    const idx = i * gridSize + j;
+                    
+                    // Compute gradients and laplacians
+                    const phiGradX = (phiField[idx+1] - phiField[idx-1]) / 2;
+                    const phiGradY = (phiField[idx+gridSize] - phiField[idx-gridSize]) / 2;
+                    const phiLaplacian = phiField[idx+1] + phiField[idx-1] + 
+                                       phiField[idx+gridSize] + phiField[idx-gridSize] - 4*phiField[idx];
+                    
+                    const sGradX = (entropyField[idx+1] - entropyField[idx-1]) / 2;
+                    const sGradY = (entropyField[idx+gridSize] - entropyField[idx-gridSize]) / 2;
+                    const sLaplacian = entropyField[idx+1] + entropyField[idx-1] + 
+                                     entropyField[idx+gridSize] + entropyField[idx-gridSize] - 4*entropyField[idx];
+                    
+                    // RSVP field equations
+                    const vDotGradS = vectorFieldX[idx] * sGradX + vectorFieldY[idx] * sGradY;
+                    newPhiField[idx] += dt * (alpha * vDotGradS + gamma * phiLaplacian);
+                    
+                    const phiCrossSGradX = phiField[idx] * sGradY;
+                    const phiCrossSGradY = -phiField[idx] * sGradX;
+                    newVectorFieldX[idx] += dt * (beta * phiCrossSGradX - 0.1 * vectorFieldX[idx]);
+                    newVectorFieldY[idx] += dt * (beta * phiCrossSGradY - 0.1 * vectorFieldY[idx]);
+                    
+                    const gradPhiDotV = phiGradX * vectorFieldX[idx] + phiGradY * vectorFieldY[idx];
+                    newEntropyField[idx] += dt * (-alpha * gradPhiDotV + 0.1 * sLaplacian);
+                    
+                    // Add resonance
+                    newPhiField[idx] += dt * 0.1 * omega * Math.sin(time * omega);
+                }
+            }
+            
+            phiField = newPhiField;
+            vectorFieldX = newVectorFieldX;
+            vectorFieldY = newVectorFieldY;
+            entropyField = newEntropyField;
+        }
+        
+        // Render field visualizations
+        function renderFields() {
+            // Render Φ field
+            phiCtx.clearRect(0, 0, phiCanvas.width, phiCanvas.height);
+            const phiImageData = phiCtx.createImageData(phiCanvas.width, phiCanvas.height);
+            
+            for (let i = 0; i < phiCanvas.height; i++) {
+                for (let j = 0; j < phiCanvas.width; j++) {
+                    const gridI = Math.floor(i * gridSize / phiCanvas.height);
+                    const gridJ = Math.floor(j * gridSize / phiCanvas.width);
+                    const idx = gridI * gridSize + gridJ;
+                    
+                    const value = Math.max(0, Math.min(1, (phiField[idx] + 1) / 2));
+                    const pixelIdx = (i * phiCanvas.width + j) * 4;
+                    
+                    phiImageData.data[pixelIdx] = value * 100;
+                    phiImageData.data[pixelIdx + 1] = value * 200;
+                    phiImageData.data[pixelIdx + 2] = value * 255;
+                    phiImageData.data[pixelIdx + 3] = 255;
+                }
+            }
+            phiCtx.putImageData(phiImageData, 0, 0);
+            
+            // Render vector field
+            vectorCtx.clearRect(0, 0, vectorCanvas.width, vectorCanvas.height);
+            vectorCtx.strokeStyle = '#4ecdc4';
+            vectorCtx.lineWidth = 1;
+            
+            for (let i = 0; i < gridSize; i += 2) {
+                for (let j = 0; j < gridSize; j += 2) {
+                    const idx = i * gridSize + j;
+                    const x = (j / gridSize) * vectorCanvas.width;
+                    const y = (i / gridSize) * vectorCanvas.height;
+                    const dx = vectorFieldX[idx] * 20;
+                    const dy = vectorFieldY[idx] * 20;
+                    
+                    vectorCtx.beginPath();
+                    vectorCtx.moveTo(x, y);
+                    vectorCtx.lineTo(x + dx, y + dy);
+                    vectorCtx.stroke();
+                    
+                    // Arrow head
+                    const angle = Math.atan2(dy, dx);
+                    const arrowLength = 3;
+                    vectorCtx.beginPath();
+                    vectorCtx.moveTo(x + dx, y + dy);
+                    vectorCtx.lineTo(x + dx - arrowLength * Math.cos(angle - 0.5), 
+                                   y + dy - arrowLength * Math.sin(angle - 0.5));
+                    vectorCtx.moveTo(x + dx, y + dy);
+                    vectorCtx.lineTo(x + dx - arrowLength * Math.cos(angle + 0.5), 
+                                   y + dy - arrowLength * Math.sin(angle + 0.5));
+                    vectorCtx.stroke();
+                }
+            }
+            
+            // Render entropy field
+            entropyCtx.clearRect(0, 0, entropyCanvas.width, entropyCanvas.height);
+            const entropyImageData = entropyCtx.createImageData(entropyCanvas.width, entropyCanvas.height);
+            
+            for (let i = 0; i < entropyCanvas.height; i++) {
+                for (let j = 0; j < entropyCanvas.width; j++) {
+                    const gridI = Math.floor(i * gridSize / entropyCanvas.height);
+                    const gridJ = Math.floor(j * gridSize / entropyCanvas.width);
+                    const idx = gridI * gridSize + gridJ;
+                    
+                    const value = Math.max(0, Math.min(1, (entropyField[idx] + 1) / 2));
+                    const pixelIdx = (i * entropyCanvas.width + j) * 4;
+                    
+                    entropyImageData.data[pixelIdx] = value * 255;
+                    entropyImageData.data[pixelIdx + 1] = value * 100;
+                    entropyImageData.data[pixelIdx + 2] = value * 100;
+                    entropyImageData.data[pixelIdx + 3] = 255;
+                }
+            }
+            entropyCtx.putImageData(entropyImageData, 0, 0);
+        }
+        
+        // Update statistics
+        function updateStats() {
+            const phiEnergy = phiField.reduce((sum, val) => sum + val*val, 0) / phiField.length;
+            const vectorMagnitude = Math.sqrt(
+                (vectorFieldX.reduce((sum, val) => sum + val*val, 0) + 
+                 vectorFieldY.reduce((sum, val) => sum + val*val, 0)) / vectorFieldX.length
+            );
+            const entropyRate = entropyField.reduce((sum, val) => sum + Math.abs(val), 0) / entropyField.length;
+            
+            const alpha = parseFloat(document.getElementById('phi-v-coupling').value);
+            const beta = parseFloat(document.getElementById('v-s-torsion').value);
+            const gamma = parseFloat(document.getElementById('s-phi-damping').value);
+            
+            const couplingStrength = (alpha + beta + gamma) / 3;
+            const coherence = Math.exp(-Math.abs(phiEnergy - vectorMagnitude));
+            const complexity = Math.log(1 + entropyRate * vectorMagnitude);
+            
+            document.getElementById('phi-energy').textContent = phiEnergy.toFixed(2);
+            document.getElementById('vector-magnitude').textContent = vectorMagnitude.toFixed(2);
+            document.getElementById('entropy-rate').textContent = entropyRate.toFixed(2);
+            document.getElementById('coupling-strength').textContent = couplingStrength.toFixed(2);
+            document.getElementById('coherence').textContent = coherence.toFixed(2);
+            document.getElementById('complexity').textContent = complexity.toFixed(2);
+        }
+        
+        // Update interpretation
+        function updateInterpretation() {
+            const alpha = parseFloat(document.getElementById('phi-v-coupling').value);
+            const beta = parseFloat(document.getElementById('v-s-torsion').value);
+            const gamma = parseFloat(document.getElementById('s-phi-damping').value);
+            
+            let interpretation = "";
+            
+            if (alpha > 1.5 && beta > 1.2) {
+                interpretation = "High Φ-𝒗 coupling with strong torsion creates consciousness-like resonant vortices. This regime exhibits self-organizing criticality—the hallmark of conscious awareness emerging from field instabilities.";
+            } else if (gamma > 1.5) {
+                interpretation = "Dominant entropic damping creates stable attractor states. This represents memory consolidation and pattern crystallization—the substrate of persistent thought structures.";
+            } else if (beta > 1.5) {
+                interpretation = "High vector-entropy torsion generates turbulent flow patterns. This chaotic regime may correspond to creative ideation and free-associative thought processes.";
+            } else {
+                interpretation = "Balanced field dynamics show gentle wave propagation. This stable regime represents baseline consciousness—the quiet hum of awareness without intense cognitive activity.";
+            }
+            
+            document.getElementById('interpretation-text').textContent = interpretation;
+        }
+        
+        // Animation loop
+        function animate() {
+            if (!isRunning) return;
+            
+            time += 0.1;
+            updateFields();
+            renderFields();
+            updateStats();
+            updateInterpretation();
+            
+            animationId = requestAnimationFrame(animate);
+        }
+        
+        // Toggle simulation
+        function toggleSimulation() {
+            isRunning = !isRunning;
+            const playButton = document.getElementById('play-text');
+            
+            if (isRunning) {
+                playButton.textContent = '⏸ Pause RSVP Fields';
+                initializeFields();
+                animate();
+            } else {
+                playButton.textContent = '▶ Activate RSVP Fields';
+                cancelAnimationFrame(animationId);
+            }
+        }
+        
+        // Control event listeners
+        document.getElementById('phi-v-coupling').addEventListener('input', (e) => {
+            document.getElementById('phi-v-value').textContent = e.target.value;
+        });
+        
+        document.getElementById('v-s-torsion').addEventListener('input', (e) => {
+            document.getElementById('v-s-value').textContent = e.target.value;
+        });
+        
+        document.getElementById('s-phi-damping').addEventListener('input', (e) => {
+            document.getElementById('s-phi-value').textContent = e.target.value;
+        });
+        
+        document.getElementById('resonance').addEventListener('input', (e) => {
+            document.getElementById('resonance-value').textContent = e.target.value;
+        });
+        
+        // Initialize visualization
+        initializeFields();
+        renderFields();
+        updateStats();
+        updateInterpretation();
+    </script>
+</body>
+</html>
