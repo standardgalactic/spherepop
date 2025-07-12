@@ -8,6 +8,7 @@
 ![](scope-intro.gif)
 ![](stack-explode.gif)
 
+![](popscotch.jpg)
 ![](demonstration-00.jpg)
 ![](demonstration.jpg)
 <!--
@@ -84,6 +85,7 @@ From a programming languages perspective, SpherePop is motivated by the conceptu
 
 Each evaluation in SpherePop is thus not just a computational event, but a dramatization of the journey from local action to global consequence. The visual and interactive paradigm foregrounds both the process and the result, making the abstract traversal of syntax trees and reduction of expressions tangible, observable, and pedagogically potent.
 
+![](mind-in-motion.gif)
 ---
 
 ## Mathematical and Theoretical Foundations

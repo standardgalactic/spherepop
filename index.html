@@ -142,6 +142,8 @@
             margin: 10px;
             transition: transform 0.3s;
             max-width: 100%;
+            max-height: 220px;
+            object-fit: contain;
         }
         
         img.demo-image:hover {
@@ -190,9 +192,23 @@ Clicking on a circle will pop it and evaluate the expression within.
 
 
 <br>
- <img src="spherepop-01.jpg" alt="Spherepop Image 01" width="400">
+ <img src="popscotch.jpg" alt="Spherepop in the wild" width="400">
 <br>
 
+  <blockquote>
+    Some glyphs are synonyms. Parentheses, for example, enclose and separate, like boxes. There are many forms on our keyboards; (), [], {}. Parentheses are naturally interpreted as enclosures as they are arcs of circles facing each other and surrounding the set of things they enclose.<br><br>
+    Text turns out to be full of meaningful visual and spatial devices, like parentheses and indentation.<br><br>
+    Some glyphs (like some words) are polysemous. A circle can represent an enclosure, a general one, with an unspecified and irrelevant form. But by considering only the perimeter and not the inside, a circle can represent a cycle, a process that goes round and round with no end.<br><br>
+    <strong>Mind in Motion, by Barbara Tversky</strong>
+  </blockquote>
+
+<!-- Original source: barbara tversky Mind in Motion: How Action Shapes Thought CRT in 90 sec
+  by KENNETH UDUT
+  Publication date 2019-07-01 https://archive.org/details/youtube-rhrlqnBov3A -->
+  <img src="mind-in-motion.gif" alt="Mind in Motion" class="main-image">
+
+
+    <p>
         Click on spheres to evaluate the inner expressions and watch them pop!
     </p>
 
@@ -216,7 +232,7 @@ Clicking on a circle will pop it and evaluate the expression within.
         </div>
     </div>
 
-    <h2>How It Works</h2>
+   <h2>How It Works</h2>
     <div style="max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
         <p>1. <strong>Nested expressions become nested spheres</strong> - Each level of parentheses creates a new sphere layer</p>
         <p>2. <strong>Click to evaluate</strong> - When you click a sphere, it evaluates its contents and pops with a satisfying animation</p>
@@ -224,12 +240,15 @@ Clicking on a circle will pop it and evaluate the expression within.
         <p>4. <strong>Visual feedback</strong> - Popped spheres turn green and display their computed value</p>
     </div>
 
+
     <h2>Examples in Action</h2>
-    <div class="image-gallery">
-        <img src="spherepop-01.jpg" alt="Spherepop Example" class="demo-image">
-        <img src="demonstration-00.jpg" alt="Spherepop Demo" class="demo-image">
-        <img src="calculator.jpg" alt="Spherepop Calculator" class="demo-image">
-    </div>
+  <div class="image-gallery">
+    <img src="spherepop-01.jpg" alt="Spherepop Example" class="demo-image">
+    <img src="demonstration-00.jpg" alt="Spherepop Demo" class="demo-image">
+    <img src="calculator.jpg" alt="Spherepop Calculator" class="demo-image">
+  </div>
+
+
 
     <script>
         // Enhanced evaluation with animation
