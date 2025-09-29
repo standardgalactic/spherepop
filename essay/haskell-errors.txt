@@ -1,0 +1,176 @@
+GHCi, version 9.6.7: https://www.haskell.org/ghc/  :? for help
+ghci> :load spherepop.hs
+[1 of 1] Compiling Spherepop        ( spherepop.hs, interpreted )
+
+spherepop.hs:120:19: error: [GHC-83865]
+    • Couldn't match type ‘Dist’ with ‘Either String’
+      Expected: Either String (Dist Value)
+        Actual: Dist (Dist Value)
+    • In the second argument of ‘(<$>)’, namely
+        ‘bindD df (\ f -> bindD du (step f))’
+      In a stmt of a 'do' block:
+        normalize <$> bindD df (\ f -> bindD du (step f))
+      In the expression:
+        do df <- eval env t
+           du <- eval env u
+           let step (VLam x body clo) v = eval (M.insert x v clo) body
+               step nonFun _
+                 = Left $ "Tried to apply non-function value " ++ show nonFun
+           normalize <$> bindD df (\ f -> bindD du (step f))
+    |
+120 |     normalize <$> bindD df (\f -> bindD du (step f))
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+spherepop.hs:120:45: error: [GHC-83865]
+    • Couldn't match type: Either String (Dist Value)
+                     with: Dist (Dist Value)
+      Expected: Value -> Dist (Dist Value)
+        Actual: Value -> Either String (Dist Value)
+    • In the second argument of ‘bindD’, namely ‘(step f)’
+      In the expression: bindD du (step f)
+      In the second argument of ‘bindD’, namely
+        ‘(\ f -> bindD du (step f))’
+    |
+120 |     normalize <$> bindD df (\f -> bindD du (step f))
+    |                                             ^^^^^^
+
+spherepop.hs:125:19: error: [GHC-83865]
+    • Couldn't match type: Dist a2
+                     with: Dist Value -> Dist Value
+      Expected: Dist Value -> Dist Value -> Dist Value
+        Actual: Dist Value -> Dist a2
+    • Possible cause: ‘(<$>)’ is applied to too many arguments
+      In the first argument of ‘(<$>)’, namely ‘normalize <$> mix p’
+      In the first argument of ‘(<*>)’, namely
+        ‘normalize <$> mix p <$> eval env t’
+      In the expression:
+        normalize <$> mix p <$> eval env t <*> eval env u
+    |
+125 |   Choice p t u -> normalize <$> mix p <$> eval env t <*> eval env u
+    |                   ^^^^^^^^^^^^^^^^^^^
+
+spherepop.hs:125:33: error: [GHC-83865]
+    • Couldn't match type: Dist Value -> Dist Value
+                     with: Dist a2
+      Expected: Dist Value -> Dist a2
+        Actual: Dist Value -> Dist Value -> Dist Value
+    • Probable cause: ‘mix’ is applied to too few arguments
+      In the second argument of ‘(<$>)’, namely ‘mix p’
+      In the first argument of ‘(<$>)’, namely ‘normalize <$> mix p’
+      In the first argument of ‘(<*>)’, namely
+        ‘normalize <$> mix p <$> eval env t’
+    |
+125 |   Choice p t u -> normalize <$> mix p <$> eval env t <*> eval env u
+    |                                 ^^^^^
+
+spherepop.hs:131:19: error: [GHC-83865]
+    • Couldn't match type ‘Dist’ with ‘Either String’
+      Expected: Either String (Dist Value)
+        Actual: Dist (Dist Value)
+    • In the second argument of ‘(<$>)’, namely ‘bindD dt step’
+      In a stmt of a 'do' block: normalize <$> bindD dt step
+      In the expression:
+        do dt <- eval env t
+           let step v = ...
+           normalize <$> bindD dt step
+    |
+131 |     normalize <$> bindD dt step
+    |                   ^^^^^^^^^^^^^
+
+spherepop.hs:131:28: error: [GHC-83865]
+    • Couldn't match type: Either String (Dist Value)
+                     with: Dist (Dist Value)
+      Expected: Value -> Dist (Dist Value)
+        Actual: Value -> Either String (Dist Value)
+    • In the second argument of ‘bindD’, namely ‘step’
+      In the second argument of ‘(<$>)’, namely ‘bindD dt step’
+      In a stmt of a 'do' block: normalize <$> bindD dt step
+    |
+131 |     normalize <$> bindD dt step
+    |                            ^^^^
+
+spherepop.hs:140:19: error: [GHC-83865]
+    • Couldn't match type ‘Dist’ with ‘Either String’
+      Expected: Either String (Dist Value)
+        Actual: Dist (Dist Value)
+    • In the second argument of ‘(<$>)’, namely ‘bindD db branch’
+      In a stmt of a 'do' block: normalize <$> bindD db branch
+      In the expression:
+        do db <- eval env b
+           let branch v = ...
+           normalize <$> bindD db branch
+    |
+140 |     normalize <$> bindD db branch
+    |                   ^^^^^^^^^^^^^^^
+
+spherepop.hs:140:28: error: [GHC-83865]
+    • Couldn't match type: Either String (Dist Value)
+                     with: Dist (Dist Value)
+      Expected: Value -> Dist (Dist Value)
+        Actual: Value -> Either String (Dist Value)
+    • In the second argument of ‘bindD’, namely ‘branch’
+      In the second argument of ‘(<$>)’, namely ‘bindD db branch’
+      In a stmt of a 'do' block: normalize <$> bindD db branch
+    |
+140 |     normalize <$> bindD db branch
+    |                            ^^^^^^
+
+spherepop.hs:147:19: error: [GHC-83865]
+    • Couldn't match type ‘Dist’ with ‘Either String’
+      Expected: Either String (Dist Value)
+        Actual: Dist (Dist Value)
+    • In the second argument of ‘(<$>)’, namely
+        ‘bindD
+           da
+           (\ va
+              -> bindD db (\ vb -> either Left (pure . delta) (add2 va vb)))’
+      In a stmt of a 'do' block:
+        normalize
+          <$>
+            bindD
+              da
+              (\ va
+                 -> bindD db (\ vb -> either Left (pure . delta) (add2 va vb)))
+      In the expression:
+        do da <- eval env a
+           db <- eval env b
+           let add2 (VNat x) (VNat y) = Right (VNat (x + y))
+               add2 v w
+                 = Left $ "Add expects Nat+Nat, got " ++ show v ++ " and " ++ show w
+           normalize
+             <$>
+               bindD
+                 da
+                 (\ va
+                    -> bindD db (\ vb -> either Left (pure . delta) (add2 va vb)))
+    |
+147 |     normalize <$> bindD da (\va -> bindD db (\vb -> either Left (pure . delta) (add2 va vb)))
+    |                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+spherepop.hs:147:60: error: [GHC-83865]
+    • Couldn't match type: Either [Char] b0
+                     with: Dist (Dist Value)
+      Expected: [Char] -> Dist (Dist Value)
+        Actual: [Char] -> Either [Char] b0
+    • In the first argument of ‘either’, namely ‘Left’
+      In the expression: either Left (pure . delta) (add2 va vb)
+      In the second argument of ‘bindD’, namely
+        ‘(\ vb -> either Left (pure . delta) (add2 va vb))’
+    |
+147 |     normalize <$> bindD da (\va -> bindD db (\vb -> either Left (pure . delta) (add2 va vb)))
+    |                                                            ^^^^
+
+spherepop.hs:213:41: error: [GHC-83865]
+    • Couldn't match expected type: [Dist a0]
+                  with actual type: Either String (Dist Value)
+    • In the first argument of ‘(!!)’, namely ‘eval M.empty term’
+      In the first argument of ‘showDist’, namely
+        ‘(eval M.empty term !! 0)’
+      In the second argument of ‘($)’, namely
+        ‘showDist (eval M.empty term !! 0)’
+    |
+213 |     Right p  -> do putStrLn $ showDist (eval M.empty term !! 0)
+    |                                         ^^^^^^^^^^^^^^^^^
+Failed, no modules loaded.
+ghci>
+

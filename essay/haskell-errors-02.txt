@@ -1,0 +1,107 @@
+GHCi, version 9.6.7: https://www.haskell.org/ghc/  :? for help
+ghci> :load spherepop.hs
+[1 of 1] Compiling Spherepop        ( spherepop.hs, interpreted )
+
+spherepop.hs:120:37: error: [GHC-83865]
+    • Couldn't match type: Either String (Dist Value)
+                     with: Dist a
+      Expected: Value -> Dist a
+        Actual: Value -> Either String (Dist Value)
+    • In the second argument of ‘bindD’, namely ‘(step f)’
+      In the expression: bindD du (step f)
+      In the expression:
+        case bindD du (step f) of
+          Dist pairs -> Right (Dist pairs)
+          _ -> Left "Unexpected bindD result in Pop"
+    • Relevant bindings include
+        bindStep :: Value -> Either String (Dist a)
+          (bound at spherepop.hs:120:9)
+    |
+120 |     let bindStep f = case bindD du (step f) of
+    |                                     ^^^^^^
+
+spherepop.hs:123:19: error: [GHC-83865]
+    • Couldn't match type: Either String (Dist a0)
+                     with: Dist Value
+      Expected: Value -> Dist Value
+        Actual: Value -> Either String (Dist a0)
+    • In the second argument of ‘bindD’, namely ‘bindStep’
+      In the expression: bindD df bindStep
+      In a stmt of a 'do' block:
+        case bindD df bindStep of
+          Dist pairs -> Right (normalize (Dist pairs))
+          _ -> Left "Unexpected bindD result in Pop"
+    |
+123 |     case bindD df bindStep of
+    |                   ^^^^^^^^
+
+spherepop.hs:141:19: error: [GHC-83865]
+    • Couldn't match type: Either String (Dist Value)
+                     with: Dist Value
+      Expected: Value -> Dist Value
+        Actual: Value -> Either String (Dist Value)
+    • In the second argument of ‘bindD’, namely ‘step’
+      In the expression: bindD dt step
+      In a stmt of a 'do' block:
+        case bindD dt step of
+          Dist pairs -> Right (normalize (Dist pairs))
+          _ -> Left "Unexpected bindD result in Rotate"
+    |
+141 |     case bindD dt step of
+    |                   ^^^^
+
+spherepop.hs:152:19: error: [GHC-83865]
+    • Couldn't match type: Either String (Dist Value)
+                     with: Dist Value
+      Expected: Value -> Dist Value
+        Actual: Value -> Either String (Dist Value)
+    • In the second argument of ‘bindD’, namely ‘branch’
+      In the expression: bindD db branch
+      In a stmt of a 'do' block:
+        case bindD db branch of
+          Dist pairs -> Right (normalize (Dist pairs))
+          _ -> Left "Unexpected bindD result in If"
+    |
+152 |     case bindD db branch of
+    |                   ^^^^^^
+
+spherepop.hs:161:49: error: [GHC-83865]
+    • Couldn't match expected type: Dist a2
+                  with actual type: Either [Char] (Dist Value)
+    • In the expression: add2 va vb
+      In the second argument of ‘bindD’, namely ‘(\ vb -> add2 va vb)’
+      In the expression: bindD db (\ vb -> add2 va vb)
+    |
+161 |     case bindD da (\va -> case bindD db (\vb -> add2 va vb) of
+    |                                                 ^^^^^^^^^^
+
+spherepop.hs:162:43: error: [GHC-83865]
+    • Couldn't match expected type: Dist Value
+                  with actual type: Either a1 (Dist a2)
+    • In the expression: Right (Dist pairs)
+      In a case alternative: Dist pairs -> Right (Dist pairs)
+      In the expression:
+        case bindD db (\ vb -> add2 va vb) of
+          Dist pairs -> Right (Dist pairs)
+          _ -> Left "Unexpected bindD result in Add"
+    • Relevant bindings include
+        pairs :: [(Double, a2)] (bound at spherepop.hs:162:34)
+    |
+162 |                             Dist pairs -> Right (Dist pairs)
+    |                                           ^^^^^^^^^^^^^^^^^^
+
+spherepop.hs:163:34: error: [GHC-83865]
+    • Couldn't match expected type: Dist Value
+                  with actual type: Either String b0
+    • In the expression: Left "Unexpected bindD result in Add"
+      In a case alternative: _ -> Left "Unexpected bindD result in Add"
+      In the expression:
+        case bindD db (\ vb -> add2 va vb) of
+          Dist pairs -> Right (Dist pairs)
+          _ -> Left "Unexpected bindD result in Add"
+    |
+163 |                             _ -> Left "Unexpected bindD result in Add") of
+    |                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Failed, no modules loaded.
+ghci>
+

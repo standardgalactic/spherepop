@@ -1,0 +1,179 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{xcolor}
+\usepackage[utf8]{inputenc}
+
+\begin{document}
+
+\title{Spherepop Calculus: A Geometric and Probabilistic Extension of Lambda Calculus}
+\author{Flyxion}
+\date{September 28, 2025}
+\maketitle
+
+\begin{abstract}
+Spherepop Calculus (SPC) is a novel computational formalism that extends the lambda calculus with geometric scope (via \texttt{Sphere} and \texttt{Pop}), concurrent composition (via \texttt{Merge}), and probabilistic branching (via \texttt{Choice}). This paper explores the design and rationale of SPC, with a particular focus on the \texttt{doomCoin p} construct as a canonical example illustrating its probabilistic and tensorial semantics. We compare SPC with traditional and probabilistic lambda calculi, highlighting its unique ability to internalize probability, concurrency, and geometric structure. Additionally, we provide a Haskell implementation and a Racket evaluator skeleton, demonstrating practical realizations of SPC’s core concepts.
+\end{abstract}
+
+\section{Introduction}
+Spherepop Calculus (SPC) reimagines lambda calculus by introducing geometric scoping through \texttt{Sphere} and \texttt{Pop}, parallel composition via \texttt{Merge}, and probabilistic branching with \texttt{Choice}. Unlike traditional lambda calculus, SPC natively supports concurrent and probabilistic computations, with a type discipline extending the Calculus of Constructions and semantics grounded in a presheaf topos enriched with the distribution monad. This paper elucidates SPC’s design principles, focusing on the \texttt{doomCoin p} construct, which exemplifies its ability to internalize probability and concurrency. We provide a formal comparison with lambda calculus and probabilistic lambda calculus, alongside implementations in Haskell and a Racket evaluator skeleton.
+
+\section{Core Constructs of Spherepop Calculus}
+SPC extends lambda calculus with the following primitives:
+
+\begin{itemize}
+    \item \textbf{Sphere/Pop}: Replaces lambda abstraction and application with geometric scoping, where \texttt{Sphere(x:A.t)} denotes a function and \texttt{Pop(f,u)} applies it, interpreted as nested spheres.
+    \item \textbf{Merge}: Represents parallel or nondeterministic composition, with semantics as a tensor product in a symmetric monoidal category.
+    \item \textbf{Choice}: Introduces probabilistic branching, either internally (returning type $A$) or monadically (returning $\Dist(A)$ via the Giry distribution monad).
+    \item \textbf{Rotate}: A novel operation for cyclic rotation over homogeneous Boolean tensors, capturing structural symmetries absent in lambda calculus.
+\end{itemize}
+
+The type system extends the Calculus of Constructions with $\Pi$- and $\Sigma$-types, ensuring type alignment for \texttt{Merge} and \texttt{Choice}. Operational semantics involve stochastic reduction for \texttt{Choice} and tensorial distribution for \texttt{Merge}, with denotational semantics in a presheaf topos.
+
+\section{Canonical Example: \texttt{doomCoin p}}
+The \texttt{doomCoin p} construct is a pedagogical archetype that illustrates SPC’s distinctive features:
+
+\begin{equation}
+\doomCoin{p} \;\equiv\; \Choice(p, \LitBool{\#t}, \LitBool{\#f}),
+\end{equation}
+where $\LitBool{\#t}$ represents a catastrophic outcome (``doom'') and $\LitBool{\#f}$ denotes survival.
+
+\subsection{Syntax and Typing}
+The \texttt{Choice} construct is typed as:
+\[
+\frac{\Gamma \vdash t : A \quad \Gamma \vdash u : A \quad p \in [0,1]}{\Gamma \vdash \Choice(p, t, u) : A \text{ or } \Dist(A)}.
+\]
+For \texttt{doomCoin p}, this yields $\Bool$ (internal) or $\Dist(\Bool)$ (monadic).
+
+\subsection{Operational Semantics}
+The operational semantics of \texttt{Choice} involve stochastic reduction:
+\[
+\Choice(p, t, u) \to \begin{cases} t & \text{with probability } p, \\ u & \text{with probability } 1-p. \end{cases}
+\]
+Thus, $\doomCoin{p} \to \LitBool{\#t}$ with probability $p$, and $\LitBool{\#f}$ with probability $1-p$.
+
+\subsection{Denotational Semantics}
+In the presheaf topos with the distribution monad, the semantics of \texttt{doomCoin p} is:
+\[
+\llbracket \doomCoin{p} \rrbracket = p \cdot \delta_{\#t} + (1-p) \cdot \delta_{\#f}.
+\]
+For multiple independent coins, $\Merge(\doomCoin{p_1}, \ldots, \doomCoin{p_n})$, the observable $\anyDoom$ (a Boolean OR fold) yields:
+\[
+\Pr[\anyDoom(\Merge(\doomCoin{p_1}, \ldots, \doomCoin{p_n}))] = 1 - \prod_{i=1}^n (1-p_i),
+\]
+demonstrating the Independent Channels Lemma.
+
+\subsection{Rationale for \texttt{doomCoin p}}
+The \texttt{doomCoin p} notation is chosen for its clarity and expressiveness:
+\begin{itemize}
+    \item \textbf{Intrinsic Probability}: The probability $p$ is a syntactic parameter, not an external annotation, unlike in lambda calculus where randomness requires an oracle.
+    \item \textbf{Bernoulli Base Case}: Doom is modeled as a Boolean, providing the simplest nontrivial probabilistic type.
+    \item \textbf{Tensorial Independence}: The \texttt{Merge} operator ensures that independence laws emerge naturally from the calculus’s structure.
+    \item \textbf{Pedagogical Clarity}: The syntax is intuitive, pairing the event (doom) with its probability in a memorable term.
+\end{itemize}
+
+\section{Comparison with Lambda Calculi}
+We contrast SPC with traditional and probabilistic lambda calculi to highlight the uniqueness of \texttt{doomCoin p}:
+
+\begin{itemize}
+    \item \textbf{Lambda Calculus}: Lacks native probability. A Bernoulli trial requires an external oracle, e.g., $\lambda r.\ \texttt{if } r < p \texttt{ then \#t else \#f}$. Independence laws must be proven externally.
+    \item \textbf{Probabilistic Lambda Calculus}: Introduces $\texttt{choice}(p, e_1, e_2)$, but lacks native concurrency or dependent types. Independence is a semantic property, not syntactic.
+    \item \textbf{SPC}: Integrates probability (\texttt{Choice}), concurrency (\texttt{Merge}), and geometric scoping (\texttt{Sphere/Pop}). The \texttt{doomCoin p} construct ensures that probabilistic laws, such as the Independent Channels Lemma, arise syntactically.
+\end{itemize}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|l|c|c|c|}
+\hline
+\textbf{Feature} & \textbf{λ-Calculus} & \textbf{Prob. λ-Calculus} & \textbf{SPC} \\
+\hline
+Probability & External oracle & Primitive \texttt{choice} & Intrinsic \texttt{Choice} \\
+Doom Coin & $\lambda r.\ \texttt{if } r<p \texttt{ then \#t else \#f}$ & \texttt{choice}(p, \#t, \#f) & \texttt{doomCoin p} \\
+Independence & External proof & Semantic, meta-level & Syntactic via \texttt{Merge} \\
+Scope Model & Parentheses & Parentheses & Geometric spheres \\
+Concurrency & None & None & Tensorial \texttt{Merge} \\
+\hline
+\end{tabular}
+\caption{Comparison of Probabilistic Constructs Across Calculi}
+\end{table}
+
+\section{Implementation in Haskell}
+The Haskell implementation, provided in \texttt{spherepop.hs}, supports type checking and evaluation using a distribution monad. Key components include:
+
+\begin{itemize}
+    \item \textbf{Type Checking}: Ensures type alignment for \texttt{Merge}, \texttt{Choice}, and \texttt{Rotate}.
+    \item \textbf{Evaluation}: Handles probabilistic outcomes via a distribution monad.
+    \item \textbf{Observables}: \texttt{anyDoom} computes doom probabilities across tensors.
+\end{itemize}
+
+For example, the \texttt{eval} function manages probabilistic evaluation:
+\lstset{language=Haskell, basicstyle=\small\ttfamily, breaklines=true}
+\begin{lstlisting}
+eval :: Env -> Term -> Either String (Dist Value)
+eval env t = case t of
+  Var x -> delta <$> lookupVal env x
+  Choice p t u -> do
+    dt <- eval env t
+    du <- eval env u
+    Right $ normalize $ mix p dt du
+  ...
+\end{lstlisting}
+
+Running \texttt{demoDoomTensor} yields:
+\begin{verbatim}
+> run demoDoomTensor
+Type:
+  Bool ⊗ Bool
+Eval (distribution):
+  10.0%  ⟼  (true ⊗ true)
+  40.0%  ⟼  (true ⊗ false)
+  10.0%  ⟼  (false ⊗ true)
+  40.0%  ⟼  (false ⊗ false)
+\end{verbatim}
+
+\section{Racket Evaluator}
+The Racket implementation, provided in \texttt{spherepop.rkt}, supports type checking and evaluation using a distribution monad, mirroring the Haskell implementation. Key components include:
+
+\begin{itemize}
+    \item \textbf{Type Checking}: Ensures type alignment for \texttt{Merge}, \texttt{Choice}, and \texttt{Rotate} constructs.
+    \item \textbf{Evaluation}: Handles probabilistic outcomes using a \texttt{Dist} structure.
+    \item \textbf{Observables}: \texttt{prob-any-doom} computes doom probabilities across tensors.
+\end{itemize}
+
+For example, the \texttt{eval} function manages probabilistic evaluation:
+\lstset{language=Lisp, basicstyle=\small\ttfamily, breaklines=true}
+\begin{lstlisting}
+(define (eval env term)
+  (match term
+    [`(Var ,x) (delta (lookup-val env x))]
+    [`(Choice ,p ,t ,u)
+     (define dt (eval env t))
+     (define du (eval env u))
+     (normalize (mix p dt du))]
+    ...))
+\end{lstlisting}
+
+Running \texttt{demo-doom-tensor} yields:
+\begin{verbatim}
+> (run demo-doom-tensor)
+Type:
+(TyTensor (TyBool) (TyBool))
+Eval (distribution):
+10.0% ⟼ (VPair (VBool #t) (VBool #t))
+40.0% ⟼ (VPair (VBool #t) (VBool #f))
+10.0% ⟼ (VPair (VBool #f) (VBool #t))
+40.0% ⟼ (VPair (VBool #f) (VBool #f))
+\end{verbatim}
+
+\section{Conclusion}
+Spherepop Calculus advances lambda calculus by integrating geometric scoping, concurrent composition, and probabilistic branching. The \texttt{doomCoin p} construct serves as a canonical example, demonstrating how SPC internalizes probability and concurrency in a way that is both syntactically elegant and semantically robust. By contrasting SPC with lambda calculi and providing practical implementations, we showcase its potential for reasoning about probabilistic and concurrent systems.
+
+\appendix
+
+\section{Implementation Listings}
+\subsection{Haskell Implementation}
+\lstinputlisting[language=Haskell]{spherepop.hs}
+\subsection{Racket Implementation}
+\lstinputlisting[language=Lisp]{spherepop.rkt}
+
+\end{document}

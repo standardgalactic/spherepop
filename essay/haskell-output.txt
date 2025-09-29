@@ -1,0 +1,39 @@
+GHCi, version 9.6.7: https://www.haskell.org/ghc/  :? for help
+ghci> :load spherepop.hs
+[1 of 2] Compiling Main             ( spherepop.hs, interpreted )
+Ok, one module loaded.
+ghci> run demoDoomTensor
+Type:
+Right (TyTensor TyBool TyBool)
+
+Eval (distribution):
+40.0% ⟼ VPair (VBool False) (VBool False)
+40.0% ⟼ VPair (VBool False) (VBool True)
+10.0% ⟼ VPair (VBool True) (VBool False)
+10.0% ⟼ VPair (VBool True) (VBool True)
+
+ghci> runAnyDoom
+anyDoom over Merge (Choice 0.2 (LitBool True) (LitBool False)) (Choice 0.5 (LitBool True) (LitBool False)):
+40.0% ⟼ VPair (VBool False) (VBool False)
+40.0% ⟼ VPair (VBool False) (VBool True)
+10.0% ⟼ VPair (VBool True) (VBool False)
+10.0% ⟼ VPair (VBool True) (VBool True)
+Pr(anyDoom) = 0.6
+Closed form  = 0.6
+ghci> runRotate
+Rotation k=1 over Bool tensor:
+12.0% ⟼ VPair (VBool False) (VPair (VBool False) (VBool False))
+12.0% ⟼ VPair (VBool False) (VPair (VBool False) (VBool True))
+3.0% ⟼ VPair (VBool False) (VPair (VBool True) (VBool False))
+3.0% ⟼ VPair (VBool False) (VPair (VBool True) (VBool True))
+28.0% ⟼ VPair (VBool True) (VPair (VBool False) (VBool False))
+28.0% ⟼ VPair (VBool True) (VPair (VBool False) (VBool True))
+7.0% ⟼ VPair (VBool True) (VPair (VBool True) (VBool False))
+7.0% ⟼ VPair (VBool True) (VPair (VBool True) (VBool True))
+
+ghci>  probAnyDoomTerm (Merge (doomCoin 0.1) (Merge (doomCoin 0.3) (doomCoin 0.4)))
+Right 0.6220000000000001
+ghci> run demoDoomTensor
+ghci>  probAnyDoomTerm (Merge (doomCoin 0.1) (Merge (doomCoin 0.3) (doomCoin 0.4)))
+[1]+  Stopped                 ghci
+147 bonobo@Memex:/mnt/c/Users/Mechachleopteryx/OneDrive/Documents/GitHub/spherepop/essay$ 

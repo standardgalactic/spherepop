@@ -1,0 +1,93 @@
+ghci
+GHCi, version 9.6.7: https://www.haskell.org/ghc/  :? for help
+ghci> :load spherepop.hs
+[1 of 1] Compiling Spherepop        ( spherepop.hs, interpreted )
+
+spherepop.hs:246:13: error: [GHC-39999]
+    • Could not deduce ‘Show a0’ arising from a use of ‘show’
+      from the context: Show a
+        bound by the type signature for:
+                   showDist :: forall a. Show a => Dist a -> String
+        at spherepop.hs:244:1-38
+      The type variable ‘a0’ is ambiguous
+      Potentially matching instances:
+        instance (Show a, Show b) => Show (Either a b)
+          -- Defined in ‘Data.Either’
+        instance (Show k, Show a) => Show (M.Map k a)
+          -- Defined in ‘Data.Map.Internal’
+        ...plus 31 others
+        ...plus 15 instances involving out-of-scope types
+        (use -fprint-potential-instances to see them all)
+    • In the first argument of ‘(++)’, namely
+        ‘show (round (1000 * w) / 10)’
+      In the expression: show (round (1000 * w) / 10) ++ "% ⟼ " ++ show a
+      In the first argument of ‘unlines’, namely
+        ‘[show (round (1000 * w) / 10) ++ "% ⟼ " ++ show a | (w, a) <- xs]’
+    |
+246 |   unlines [ show (round (1000*w)/10) ++ "% ⟼ " ++ show a | (w,a) <- xs ]
+    |             ^^^^
+
+spherepop.hs:246:19: error: [GHC-39999]
+    • Could not deduce ‘Integral a0’ arising from a use of ‘round’
+      from the context: Show a
+        bound by the type signature for:
+                   showDist :: forall a. Show a => Dist a -> String
+        at spherepop.hs:244:1-38
+      The type variable ‘a0’ is ambiguous
+      Potentially matching instances:
+        instance Integral Integer -- Defined in ‘GHC.Real’
+        instance Integral Int -- Defined in ‘GHC.Real’
+        ...plus one other
+        ...plus one instance involving out-of-scope types
+        (use -fprint-potential-instances to see them all)
+    • In the first argument of ‘(/)’, namely ‘round (1000 * w)’
+      In the first argument of ‘show’, namely ‘(round (1000 * w) / 10)’
+      In the first argument of ‘(++)’, namely
+        ‘show (round (1000 * w) / 10)’
+    |
+246 |   unlines [ show (round (1000*w)/10) ++ "% ⟼ " ++ show a | (w,a) <- xs ]
+    |                   ^^^^^
+
+spherepop.hs:246:33: error: [GHC-39999]
+    • Could not deduce ‘Fractional a0’ arising from a use of ‘/’
+      from the context: Show a
+        bound by the type signature for:
+                   showDist :: forall a. Show a => Dist a -> String
+        at spherepop.hs:244:1-38
+      The type variable ‘a0’ is ambiguous
+      Potentially matching instances:
+        instance Fractional Double -- Defined in ‘GHC.Float’
+        instance Fractional Float -- Defined in ‘GHC.Float’
+        ...plus one instance involving out-of-scope types
+        (use -fprint-potential-instances to see them all)
+    • In the first argument of ‘show’, namely ‘(round (1000 * w) / 10)’
+      In the first argument of ‘(++)’, namely
+        ‘show (round (1000 * w) / 10)’
+      In the expression: show (round (1000 * w) / 10) ++ "% ⟼ " ++ show a
+    |
+246 |   unlines [ show (round (1000*w)/10) ++ "% ⟼ " ++ show a | (w,a) <- xs ]
+    |                                 ^
+
+spherepop.hs:246:34: error: [GHC-39999]
+    • Could not deduce ‘Num a0’ arising from the literal ‘10’
+      from the context: Show a
+        bound by the type signature for:
+                   showDist :: forall a. Show a => Dist a -> String
+        at spherepop.hs:244:1-38
+      The type variable ‘a0’ is ambiguous
+      Potentially matching instances:
+        instance Num Integer -- Defined in ‘GHC.Num’
+        instance Num Double -- Defined in ‘GHC.Float’
+        ...plus three others
+        ...plus two instances involving out-of-scope types
+        (use -fprint-potential-instances to see them all)
+    • In the second argument of ‘(/)’, namely ‘10’
+      In the first argument of ‘show’, namely ‘(round (1000 * w) / 10)’
+      In the first argument of ‘(++)’, namely
+        ‘show (round (1000 * w) / 10)’
+    |
+246 |   unlines [ show (round (1000*w)/10) ++ "% ⟼ " ++ show a | (w,a) <- xs ]
+    |                                  ^^
+Failed, no modules loaded.
+ghci>
+

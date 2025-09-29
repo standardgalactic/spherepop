@@ -1,0 +1,33 @@
+racket main.rkt
+Running demo-doom-tensor:
+Type:
+#(struct:TyTensor #(struct:TyBool) #(struct:TyBool))
+
+Eval (distribution):
+40.0% ⟼ #(struct:VPair #(struct:VBool #f) #(struct:VBool #f))
+10.0% ⟼ #(struct:VPair #(struct:VBool #t) #(struct:VBool #f))
+40.0% ⟼ #(struct:VPair #(struct:VBool #f) #(struct:VBool #t))
+10.0% ⟼ #(struct:VPair #(struct:VBool #t) #(struct:VBool #t))
+
+Running run-any-doom:
+anyDoom over (Merge (Choice 0.2 (LitBool #t) (LitBool #f)) (Choice 0.5 (LitBool #t) (LitBool #f))):
+40.0% ⟼ #(struct:VPair #(struct:VBool #f) #(struct:VBool #f))
+10.0% ⟼ #(struct:VPair #(struct:VBool #t) #(struct:VBool #f))
+40.0% ⟼ #(struct:VPair #(struct:VBool #f) #(struct:VBool #t))
+10.0% ⟼ #(struct:VPair #(struct:VBool #t) #(struct:VBool #t))
+Pr(anyDoom) = 0.6
+
+Running rotate demo:
+Type:
+#(struct:TyTensor #(struct:TyBool) #(struct:TyTensor #(struct:TyBool) #(struct:TyBool)))
+
+Eval (distribution):
+7.0% ⟼ #(struct:VPair #(struct:VBool #t) #(struct:VPair #(struct:VBool #t) #(struct:VBool #t)))
+3.0% ⟼ #(struct:VPair #(struct:VBool #f) #(struct:VPair #(struct:VBool #t) #(struct:VBool #t)))
+12.0% ⟼ #(struct:VPair #(struct:VBool #f) #(struct:VPair #(struct:VBool #f) #(struct:VBool #f)))
+28.0% ⟼ #(struct:VPair #(struct:VBool #t) #(struct:VPair #(struct:VBool #f) #(struct:VBool #f)))
+3.0% ⟼ #(struct:VPair #(struct:VBool #f) #(struct:VPair #(struct:VBool #t) #(struct:VBool #f)))
+7.0% ⟼ #(struct:VPair #(struct:VBool #t) #(struct:VPair #(struct:VBool #t) #(struct:VBool #f)))
+28.0% ⟼ #(struct:VPair #(struct:VBool #t) #(struct:VPair #(struct:VBool #f) #(struct:VBool #t)))
+12.0% ⟼ #(struct:VPair #(struct:VBool #f) #(struct:VPair #(struct:VBool #f) #(struct:VBool #t)))
+
