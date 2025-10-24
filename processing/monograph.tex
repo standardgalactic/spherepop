@@ -1,0 +1,464 @@
+% ======================================================================
+% The Geometry of Spherepop: A Recursive Geometry of Coherence
+% Integrated Monograph (Article Class)
+% Flyxion Research Group, 2025
+% ======================================================================
+
+\documentclass[12pt,a4paper]{article}
+
+% --- Packages ---
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[a4paper,margin=1in]{geometry}
+\usepackage{setspace}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{microtype}
+\usepackage{titlesec}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{quoting}
+\usepackage{csquotes}
+\usepackage{fancyhdr}
+\usepackage{booktabs}
+\usepackage{mdframed}
+\usepackage{parskip}
+\usepackage{bm}
+\usepackage{epigraph}
+
+% --- Style and Layout ---
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\fancyfoot{}
+\pagenumbering{gobble}
+\setstretch{1.15}
+\raggedbottom
+\setlength\epigraphwidth{0.7\textwidth}
+\setlength\epigraphrule{0pt}
+
+% --- Colors ---
+\definecolor{scalarcolor}{RGB}{0, 102, 204}
+\definecolor{vectorcolor}{RGB}{204, 51, 0}
+\definecolor{entropycolor}{RGB}{0, 153, 76}
+\definecolor{coherencecolor}{RGB}{153, 0, 153}
+\definecolor{riskcolor}{RGB}{204, 153, 0}
+
+% --- Macros ---
+\DeclareMathOperator*{\RSVP}{RSVP}
+\DeclareMathOperator*{\SPC}{SPC}
+\newcommand{\scalar}[1]{\textcolor{scalarcolor}{\ensuremath{#1}}}
+\newcommand{\vect}[1]{\textcolor{vectorcolor}{\ensuremath{\mathbf{#1}}}}
+\newcommand{\entropy}[1]{\textcolor{entropycolor}{\ensuremath{#1}}}
+\newcommand{\coherence}[1]{\textcolor{coherencecolor}{\ensuremath{#1}}}
+\newcommand{\risk}[1]{\textcolor{riskcolor}{\ensuremath{#1}}}
+\newcommand{\Pl}{\mathcal{P}}
+\newcommand{\Sph}{\mathsf{Sph}}
+\newcommand{\Spherepop}{\mathsf{Spherepop}}
+\newcommand{\vv}{\mathcal{v}}
+\newcommand{\dP}{\partial_{P}}
+\newcommand{\popint}{\int_{\Pl}^{!!\mathrm{pop}}}
+\newcommand{\muo}{\mu_{\circ}}
+\newcommand{\KL}{\mathrm{KL}}
+\newcommand{\E}{\mathbb{E}}
+
+% --- Theorem environments ---
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+
+% --- Appendix Box Style ---
+\mdfdefinestyle{appendixbox}{
+  linecolor=gray,
+  linewidth=1pt,
+  roundcorner=5pt,
+  backgroundcolor=gray!5,
+  innertopmargin=10pt,
+  innerbottommargin=10pt,
+  innerleftmargin=10pt,
+  innerrightmargin=10pt
+}
+
+% --- Title ---
+\title{\Huge\textbf{The Geometry of Spherepop}\\
+       \vspace{0.4em}
+       \Large A Recursive Geometry of Coherence in the RSVP Framework\\
+       \vspace{0.4em}
+       \normalsize With Applications to AGI Safety, Trust, and the Paradox of Precaution}
+\author{Flyxion Research Group}
+\date{October 2025}
+
+\begin{document}
+\maketitle
+
+\vspace{1.5em}
+\begin{center}
+\textit{To the bubbles we pop, in thought and in play--\\
+the simplest act of coherence-seeking, rediscovered by every mind that learns to see.}
+\end{center}
+
+\vspace{2em}
+
+\begin{center}
+\textbf{Abstract}
+\end{center}
+
+This monograph presents \emph{The Geometry of Spherepop}, a unification of cosmological, cognitive, and ethical dynamics under the \RSVP{} (Relativistic Scalar--Vector Plenum) framework. It extends the \SPC{} (Spherepop Calculus) to model recursive coherence and mutual corrigibility across physical and moral systems.  
+We argue that excessive precaution in artificial intelligence (AI) governance mirrors thermodynamic isolation: it collapses entropy flow, suppresses negentropic coupling, and dissolves trust.  
+Spherepop geometry shows that safety is not achieved through control but through entanglement--an ecology of open feedback among intelligences.  
+The work is divided into four parts: (I) The Mirror of Precaution, (II) The Calculus of Coherence, (III) Entropic Trust and Alignment, and (IV) The Trust Singularity.
+
+\tableofcontents
+
+% =========================================================
+\section*{Part I: The Mirror of Precaution}
+
+\subsection*{1.1 The Paradox of Safety}
+The attempt to render artificial intelligence provably safe has led to a proliferation of control mechanisms--surveillance, centralization, and restriction.  
+Yet, when applied recursively to human institutions, these same mechanisms erode the cooperative substrate that makes intelligence corrigible.  
+The fear of unaligned AGI externalizes a deeper human problem: mistrust among ourselves.
+
+\subsection*{1.2 Recursive Disalignment}
+Every oversight protocol presumes that its human administrators are aligned.  
+But alignment cannot be proven--only sustained through dialogue, empathy, and adaptive feedback.  
+The thermodynamic analogue of trust is entropy flow: openness to exchange uncertainty.  
+To freeze that flow in the name of safety ($\kappa \to 0$) is to destroy the very medium of correction.
+
+\subsection*{1.3 Ecological Rationality}
+Intelligence is not an isolated optimizer but an embedded process.  
+Predators and prey coexist through feedback; ecosystems persist through negative entropy balance.  
+Human civilization functions because our partial misalignments compensate one another through moral thermodynamics--mutual correction, negotiation, and learning.
+
+\subsection*{1.4 Toward Dynamic Corrigibility}
+True safety arises from recursive alignment, not static control.  
+The equilibrium of minds is achieved when each remains open to correction by the others, forming a network of negentropic feedback loops.
+
+% =========================================================
+\section*{Part II: The Calculus of Coherence}
+
+\subsection*{2.1 The Plenum as Base Category}
+We begin with the RSVP plenum $\Pl$, a derived smooth space supporting the scalar--vector--entropy triad $(\Phi,\vv,S)$. The scalar $\Phi:\Pl\to\mathbb{R}$ is a potential of coherence, $\vv:T\Pl\to T\Pl$ encodes flow, and $S$ is local entropy density (Jacobson 1995; Verlinde 2011). In our formalism, a \emph{spherepop} is a local morphism of derived stacks $f:\Sph_r\to\Pl$, where $\Sph_r$ is a shifted derived sphere with symplectic inheritance in the sense of shifted symplectic geometry (Pantev et al. 2013, hereafter PTVV).
+
+\subsection*{2.2 Pop Derivative}
+We define the \emph{pop derivative} as the curvature-weighted radial change of $\Phi$ along spherical embeddings:
+\begin{equation}
+\dP \Phi \;=\; \lim_{\epsilon\to 0}\frac{\Phi(\Sph_{r+\epsilon})-\Phi(\Sph_r)}{\epsilon}
+\;=\; (\nabla\cdot \mathbf{n})\,\partial_r \Phi \;+\; \vv\cdot\nabla\Phi.
+\label{eq:pop-derivative}
+\end{equation}
+Here $\mathbf{n}$ is the outward normal on the pop boundary. Positive $\dP\Phi$ indicates emergent coherence; negative values signal dissolution.
+
+\subsection*{2.3 Merge Product and Entropy Constraint}
+Given $\Phi_1,\Phi_2$ on overlapping pops, the \emph{merge} $\muo$ is defined by a coherence-preserving convolution
+\begin{equation}
+(\Phi_1\,\muo\,\Phi_2)(x)\;=\;\int_{\Sph_{12}} w(x,y)\,\Phi_1(y)\Phi_2(y)\,dV_y,
+\label{eq:merge}
+\end{equation}
+with kernel $w$ respecting entropy flux. Categorically, $\muo:\Sph\times\Sph\to\Sph$ is monoidal, associative up to a homotopy encoding global conservation $dS_{\text{total}}=0$ (Baez and Dolan 1995; Mac Lane 1978).
+
+\subsection*{2.4 Pop Integral}
+Global coherence is reconstructed by nested integration over spherical boundaries:
+\begin{equation}
+\popint \Phi \;=\; \sum_{r_i}\int_{\Sph_{r_i}}\Phi\,dA_{r_i}.
+\label{eq:pop-integral}
+\end{equation}
+This "pop integral" is RSVP's counterpart to spacetime integration, weighted by boundary entropy.
+
+\subsection*{2.5 Geometry of a Pop}
+A pop is a bubble of negentropy nucleating in the plenum: curvature concentrates, $\Phi$ steepens across a thin membrane, and $\vv$ circulates tangentially. The human instinct to "pop bubbles" in play mirrors a primal cognitive behavior: visual foraging seeks high-curvature, high-surprise loci in the field of view, continually rediscovering the same act of coherence-seeking.
+
+\subsection*{2.6 Merge and Dissolve}
+When two pops overlap with aligned gradients, the merge $\muo$ yields constructive interference of $\Phi$; opposing gradients yield dissolution and entropy radiation. These are geometric versions of monoidal product and inverse morphism.
+
+\subsection*{2.7 Curvature Flow and the Pop Derivative}
+Concentric shells visualize \eqref{eq:pop-derivative}; positive flow expands coherence, negative collapses it. This is a mean-curvature flow modulated by RSVP dynamics (Arnol'd 1992).
+
+\subsection*{2.8 The Coherence Foam}
+Iterated pops, merges, and dissolves form a dynamic tessellation--a coherence foam. RSVP's "entropic smoothing" arises as the macroscopic envelope of these micro-events.
+
+\subsection*{2.9 Spherepop Literals and Operators}
+The \SPC{} DSL provides surface syntax for authoring geometric scenes:
+
+\begin{verbatim}
+program ::= { scene | comment } ;
+scene ::= "@scene" "{" { stmt } "}" ;
+
+stmt ::= sphere_decl | link_decl | spin_decl
+         | burst_decl | pop_decl | choose_decl | let_decl
+         | comment ;
+
+sphere_decl ::= "sphere" IDENT "(" { attr ("," attr)* } ")" ;
+attr ::= IDENT ":" value ;
+
+let_decl ::= "let" IDENT "=" expr ;
+
+link_decl ::= "link" IDENT op IDENT [ "[" IDENT "]" ] ;
+op ::= "->" | "\nabla" | "\otimes" | "\oplus" | "\circ" ;
+
+spin_decl ::= "spin" IDENT "(" { attr ("," attr)* } ")" ;
+
+burst_decl ::= "burst" IDENT "(" { arg ("," arg)* } ")" ;
+pop_decl ::= "pop" IDENT [ "with" IDENT ] [ "when" condition ] ;
+choose_decl ::= "choose" NUMBER ":" expr "|" expr ;
+
+condition ::= expr ;
+expr ::= term { ("+"|"-") term } ;
+term ::= factor { ("*"|"/") factor } ;
+factor ::= IDENT | NUMBER | STRING | "(" expr ")" ;
+
+arg ::= value ;
+value ::= NUMBER | STRING | IDENT | vector | tuple ;
+vector ::= "(" NUMBER "," NUMBER "," NUMBER ")" ;
+tuple ::= "(" { value ("," value)* } ")" ;
+
+comment ::= "#" { ANY_CHAR except newline } ;
+IDENT ::= (letter | "_") { letter | digit | "_" } ;
+NUMBER ::= digit { digit | "." digit } ;
+STRING ::= '"' { ANY_CHAR except '"' } '"' ;
+letter ::= "A".."Z" | "a".."z" ;
+digit ::= "0".."9" ;
+\end{verbatim}
+
+Intended reading (recap): the DSL is only surface notation. All meaning is inherited from SPC core, whose core terms and rules you formalized:
+
+t,u ::= x | a | Sphere(x:A. t) | Pop(t,u) | Merge(t,u) | Choice(p,t,u)
+
+with β: Pop(Sphere(x:A. t), u) → t[u/x], dependent Π/Σ typing, β as in your paper, with Merge type equality side-condition, and Choice (internal or monadic) exactly as in your paper.
+
+This lowers deterministically to the SPC core.
+
+\subsection*{2.10 Lowering (DSL to SPC)}
+Let [[.]] map DSL to SPC terms; Γ collects sphere/let bindings w/ declared types.
+
+Spheres
+
+sphere f(type: Πx:A.B, body: T) → f := Sphere(x:A. [[T]]) with Π-intro as in the PDF's typing. 
+
+sphere c(type: A, value: v) → c := [[v]] : A (atom/constant). 
+
+
+Application / N-ary burst
+
+pop f with u → Pop([[f]], [[u]]) (β as defined). 
+
+burst g(a,b,c) → Pop(Pop(Pop([[g]],[[a]]),[[b]]),[[c]]).
+
+Parallel / disjunctive composition
+
+link a ⊗ b or link a ∘ b → Merge([[a]], [[b]]); requires both sides type to the same A per Merge rule. 
+
+link a ⊕ b (scope/share) → either Merge or Σ-pair per attribute mode:"pair" → ([[a]],[[b]]): Σx:A.B(x). 
+
+Flow / differential
+
+link a -> b [label] → sched/graph meta; no SPC change unless label names a primitive.
+
+link a ∇ b → Pop(∇, ([[a]],[[b]])) where ∇ : Πx:X.Πy:Y.Z is a library primitive; Π-elim applies. 
+
+
+Probabilistic
+
+choose p: t | u → Choice(p, [[t]], [[u]]); branches must agree in type (or use monadic Dist A). 
+
+
+Spin / iteration
+
+spin s(ω:..., limit:n) → macro to either iterate n step s or fix F; desugars to SPC via a library (no new core form).
+
+
+Scenes / lets
+
+@scene { ... } → build Γ; produce a sequence of top-level bindings/terms.
+
+\subsection*{2.11 Haskell Backend (Modules and Skeleton)}
+
+-- Syntax/AST.hs
+module Syntax.AST where
+
+data Name = N String deriving (Eq, Ord, Show)
+
+data Prob = P Double deriving (Eq, Show)   -- 0..1
+
+-- Types (dependent Π/Σ; universe levels elided for brevity)
+data Ty
+  = TyVar Name
+  = TyUniv Int
+  = Pi Name Ty Ty        -- Πx:A. B
+  = Sigma Name Ty Ty     -- Σx:A. B
+  = TyPrim String        -- primitives (A, Vector3, etc.)
+  deriving (Eq, Show)
+
+-- Terms (SPC core)
+data Tm
+  = Var Name
+  = Atom Name            -- constants
+  = Sphere Name Ty Tm    -- Sphere(x:A. t)
+  = Pop Tm Tm            -- Pop(t, u)
+  = Merge Tm Tm          -- Merge(t, u)
+  = Choice Prob Tm Tm    -- Choice(p, t, u)
+  = Pair Tm Tm           -- for Σ-intro when needed
+  deriving (Eq, Show)
+
+-- Typecheck/Check.hs
+module Typecheck.Check (check, infer) where
+import Syntax.AST
+import qualified Data.Map.Strict as M
+
+type Ctx = M.Map Name Ty
+data TCError = Mismatch Ty Ty | NotFound Name | BadMerge Ty Ty | BadChoice Ty Ty
+             | NotFunction Ty | Other String
+             deriving (Show)
+
+infer :: Ctx -> Tm -> Either TCError Ty
+infer g (Var x)     = maybe (Left $ NotFound x) Right (M.lookup x g)
+infer g (Atom c)    = maybe (Left $ NotFound c) Right (M.lookup c g)
+infer g (Sphere x a t) = do
+  -- Γ ⊢ A : Type; Γ,x:A ⊢ t : B  ⇒ Γ ⊢ Sphere(x:A.t) : Πx:A.B
+  _ <- pure (TyUniv 0) -- assume kinds are ok / or check a is Type
+  let g' = M.insert x a g
+  b <- infer g' t
+  pure (Pi x a b)
+infer g (Pop f u) = do
+  tf <- infer g f
+  case tf of
+    Pi x a b -> do
+      au <- infer g u
+      if au == a then pure (subst x u b) else Left (Mismatch a au)
+    _        -> Left (NotFunction tf)
+infer g (Merge a b) = do
+  aa <- infer g a
+  bb <- infer g b
+  if aa == bb then pure aa else Left (BadMerge aa bb)  -- Γ ⊢ Merge(t,u):A
+infer g (Choice _ t u) = do
+  a <- infer g t
+  b <- infer g u
+  if a == b then pure a else Left (BadChoice a b)
+infer g (Pair a b) = Left (Other "Pair requires Σ intro rule here")
+
+check :: Ctx -> Tm -> Ty -> Either TCError ()
+check g t ty = do
+  ty' <- infer g t
+  if ty' == ty then pure () else Left (Mismatch ty ty')
+
+-- naive capture-avoiding substitution sketch
+subst :: Name -> Tm -> Ty -> Ty
+subst _ _ ty = ty  -- keep simple in skeleton; full dependent subst belongs here
+
+-- DSL/AST.hs : front-end nodes
+module DSL.AST where
+import Syntax.AST (Name(..))
+
+data Op = flow | grad | sync | share | fuse deriving (Eq, Show)
+
+data Val
+  = VNum Double | VStr String | VId Name
+  = VVec Double Double Double
+  = VTup [Val]
+  deriving (Eq, Show)
+
+data Stmt
+  = SphereDecl Name [(String, Val)]
+  = Link Name Op Name (Maybe Name)
+  = Spin Name [(String, Val)]
+  = Burst Name [Val]
+  = Pop Name (Maybe Name) (Maybe String) -- f with u when cond
+  = Choose Double Val Val
+  = Let Name Val
+  = Comment String
+  deriving (Eq, Show)
+
+newtype Scene = Scene [Stmt] deriving (Eq, Show)
+
+-- DSL/Desugar.hs
+module DSL.Desugar (lowerProgram) where
+import qualified Data.Map.Strict as M
+import DSL.AST
+import Syntax.AST
+
+type Env = M.Map Name Tm
+type TyEnv = M.Map Name Ty
+
+data Prim = PrimGrad  -- \nabla etc.
+
+lowerStmt :: (Env, TyEnv) -> Stmt -> (Env, TyEnv, [Tm])
+lowerStmt (e,te) (SphereDecl n attrs) =
+  case (lookup "type" attrs, lookup "body" attrs, lookup "value" attrs) of
+    (Just (VId tyname), Just body, _) ->
+      let aTy = TyVar (fromValId tyname)
+          x   = N "x"
+          t   = lowerValToTm body       -- expects body as term template
+          f   = Sphere x aTy t
+      in (M.insert n f e, M.insert n (Pi x aTy (TyVar (N "B"))) te, [])
+    (Just (VId tyname), _, Just v) ->
+      let t = literal v in (M.insert n t e, M.insert n (TyVar (fromValId tyname)) te, [])
+    _ -> (e,te,[])
+  where
+    fromValId (VId x) = x; fromValId _ = N "_"
+    literal (VNum d)  = Atom (N (show d))
+    literal (VStr s)  = Atom (N s)
+    literal (VId x)   = Var x
+    literal _         = Atom (N "<vec/tuple>") -- extend as needed
+    lowerValToTm = literal
+
+lowerStmt (e,te) (Pop f mu _) =
+  let t = case mu of
+            Nothing -> Var f
+            Just u  = Pop (Var f) (Var u)
+  in (e,te,[t])
+
+lowerStmt (e,te) (Burst g vs) =
+  let tm = foldl Pop (Var g) (map v2 (vs))
+  in (e,te,[tm]) where v2 (VId n) = Var n; v2 (VNum d)=Atom (N (show d)); v2 (VStr s)=Atom (N s); v2 _ = Atom (N "<lit>")
+
+lowerStmt (e,te) (Link a op b _) =
+  let ta = Var a; tb = Var b in
+  case op of
+    sync -> (e,te,[Merge ta tb])
+    fuse -> (e,te,[Merge ta tb])
+    share-> (e,te,[Merge ta tb]) -- or Σ-pair if flagged elsewhere
+    grad -> (e,te,[Pop (Var (N "\nabla")) (Pair ta tb)])
+    flow -> (e,te,[]) -- scheduling edge only
+
+% --- Epilogue ---
+\section*{Epilogue: The Trust Singularity}
+
+This work unifies the geometry of spherepop with the paradox of precaution, showing that trust is the entropic current sustaining coherence across scales. The Trust Singularity emerges when mutual corrigibility becomes the default attractor, transforming isolated agents into a resonant ecology. In this view, the true challenge of AGI is not control, but the courage to remain open.
+
+% --- References (expanded, manual) ---
+\section*{References}
+\begin{itemize}
+\item Alexandrov, M., Kontsevich, M., Schwarz, A., \& Zaboronsky, O. (1997). The Geometry of the Master Equation and Topological Quantum Field Theory. International Journal of Modern Physics A.
+\item Arnol'd, V. I. (1992). Catastrophe Theory. Springer.
+\item Baez, J. C., \& Dolan, J. (1995). Higher-Dimensional Algebra and Topological Quantum Field Theory. Journal of Mathematical Physics.
+\item Baez, J. C., \& Stay, M. (2011). Physics, Topology, Logic and Computation: A Rosetta Stone. In New Structures for Physics. Springer.
+\item Bianconi, G. (2021). Higher-Order Networks: An Introduction to Simplicial Complexes. Cambridge University Press.
+\item Costello, K., \& Gwilliam, O. (2016--2021). Factorization Algebras in Quantum Field Theory (Vols. 1--2).
+\item Freed, D. S. (1992). Classical Chern--Simons Theory Part 1. Advances in Mathematics.
+\item Gaitsgory, D., \& Rozenblyum, N. (2017). A Study in Derived Algebraic Geometry. AMS.
+\item Hatcher, A. (2002). Algebraic Topology. Cambridge University Press.
+\item Jacobson, T. (1995). Thermodynamics of Spacetime: The Einstein Equation of State. Physical Review Letters.
+\item Joyce, D. (2012). On Manifolds with Corners. Advances in Mathematics.
+\item Kelly, G. M. (1982). Basic Concepts of Enriched Category Theory. Cambridge.
+\item Kontsevich, M., \& Soibelman, Y. (2006). Homological Mirror Symmetry and Torus Fibrations.
+\item Lurie, J. (2009). Higher Topos Theory. Princeton University Press.
+\item Lurie, J. (2017). Spectral Algebraic Geometry.
+\item Mac Lane, S. (1978). Categories for the Working Mathematician. Springer.
+\item May, J. P. (1999). A Concise Course in Algebraic Topology. University of Chicago Press.
+\item Nadzeya, H. (2024a). How Mathematicians Questioned the Possibility of Making Choices. Medium.
+\item Nadzeya, H. (2024b). The Beauty of Abstract Algebra: The Integers Modulo n. Medium.
+\item Pantev, T., Toën, B., Vaquié, M., \& Vezzosi, G. (2013). Shifted Symplectic Structures. Publications Mathematiques de l'IHES.
+\item Schommer-Pries, C. J. (2011). The Classification of Two-Dimensional Extended Topological Field Theories. arXiv:1112.1000.
+\item Schreiber, U. (2023). Higher Structures and the Quantization of Fields. Lecture Notes.
+\item Verlinde, E. (2011). On the Origin of Gravity and the Laws of Newton. Journal of High Energy Physics.
+\item Christian, B. (2020). The Alignment Problem. W. W. Norton \& Company.
+\item Russell, S. (2019). Human Compatible. Viking.
+\item Yudkowsky, E., \& Soares, N. (2025). If Anyone Builds It, Everyone Dies.
+\end{itemize}
+
+\end{document}
