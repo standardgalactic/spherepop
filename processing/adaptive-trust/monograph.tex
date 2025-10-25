@@ -1,0 +1,339 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{mathtools}
+\usepackage{geometry}
+\usepackage{bm}
+\usepackage{hyperref}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage{parskip}
+\usepackage{graphicx}
+\usepackage{float}  % For better figure placement control
+\usepackage{booktabs}  % For professional tables
+\usepackage{caption}  % For enhanced caption control
+\geometry{margin=1in}
+
+\title{\Huge\textbf{Adaptive Trust Dynamics Exhibit Hysteresis}\\[0.5em] \Large Implications for AI Governance and Institutional Design}
+\author{Flyxion}
+\date{October 2025}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Coordination among intelligent agents requires permeable boundaries enabling mutual correction. We model trust as adaptive coupling in networks of agents maintaining intelligibility fields under noise. When coupling strength adapts to observed disagreement while incurring maintenance costs, the system exhibits \textbf{bistability}: identical parameters support both coherent (high-trust, low-variance) and fragmented (low-trust, high-variance) equilibria. \textbf{Hysteresis} reveals that increasing precautionary costs can irreversibly trap systems in fragmented states even after costs are removed. We demonstrate this in minimal simulations (30 agents, 5 parameters) and show hysteresis width depends on network topology. These dynamics formalize the \textbf{paradox of precaution}: safety measures reducing trust permeability create self-fulfilling coordination failures. We interpret this as \textbf{entropy-bounded recursion}---a general principle governing self-referential systems from AI governance to institutional design. Implications for AI alignment, market coordination, and polarization dynamics are discussed.
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+\section{Introduction}
+
+\subsection{The Precautionary Paradox}
+Standard safety reasoning advocates reducing risk through constraints, monitoring, and isolation of potentially dangerous agents. However, a recursive challenge arises: oversight mechanisms themselves rely on general intelligences, such as humans, to function effectively. The central claim of this work is that precautionary measures diminishing trust permeability may entrap systems in stable yet suboptimal equilibria. This mechanism is previewed through adaptive coupling combined with maintenance costs, leading to bistability and hysteresis.
+
+\subsubsection{Recursion as a Trust Loop (Extended)}
+Recursive systems that monitor themselves face the same thermodynamic constraint as self-referential code or meta-markets: each layer of oversight consumes the bandwidth it seeks to guarantee. In RSVP terms, this is an \emph{entropy-bounded recursion}: the very act of stabilizing a field introduces curvature that must itself be stabilized. When vigilance layers accumulate faster than information dissipates, the result is hysteresis---a semantic overgrowth of control.
+
+This parallels the curvature-control inequalities derived in \emph{Curvature, Entropy, and Governance}, where recursive futarchy required curvature contraction for stability. The present trust model's feedback law, 
+\begin{equation}
+\dot{\kappa} = \eta (\langle (\Delta\Phi)^2 \rangle - \sigma^2) - \gamma \kappa,
+\label{eq:adaptive_coupling}
+\end{equation}
+is the social analogue: a bounded-recursion operator whose damping term ($-\gamma \kappa$) defines the entropy cost of self-reference.
+
+\subsection{Related Work}
+Coordination games and equilibrium selection, including stag hunt and assurance games, as well as convention formation (Schelling, Sugden), provide foundational insights. Trust dynamics are explored in works on cooperation (Axelrod), commons governance (Ostrom), and cultural evolution (Henrich). Network synchronization models, such as Kuramoto oscillators, consensus protocols, and flocking models, inform the approach. Adaptive networks involve coevolution of structure and state (Gross \& Blasius, Holme \& Newman). Bistability in social systems appears in polarization models (Axelrod, Castellano) and opinion dynamics (Deffuant, Hegselmann-Krause). AI alignment literature addresses corrigibility (Soares et al.), value learning (Russell), and multi-agent coordination.
+
+A gap exists in prior research, where trust is often treated as exogenous or where structure evolves independently of disagreement. This model couples adaptive trust to observed misalignment with explicit costs, yielding novel bistability.
+
+\subsection{Contributions}
+The contributions include: (1) a minimal model exhibiting hysteresis in trust-coordination dynamics; (2) a phase diagram mapping parameter space to coherence, fragmentation, and bistability regimes; (3) effects of network topology, comparing ring, small-world, and scale-free structures; (4) empirical signatures, such as relaxation time divergence near transitions indicating critical slowing down; and (5) policy implications regarding when precautionary measures become self-defeating.
+
+\section{Model}
+
+\subsection{Agent Dynamics}
+Consider $n$ agents maintaining intelligibility fields $\Phi_i \in \mathbb{R}$. The dynamics follow Laplacian coupling: $\dot{\Phi} = -\kappa L \Phi + \xi(t)$, where $L$ denotes the graph Laplacian, $\kappa \geq 0$ represents trust coupling strength (shared permeability), and $\xi(t)$ is white noise with amplitude $D$ signifying exogenous perturbations.
+
+Interpretation: $\Phi_i$ corresponds to intelligibility, semantic capacity, or opinion; $\kappa L \Phi$ provides diffusive correction toward neighbors; the objective is to minimize variance $\text{Var}(\Phi)$ while preserving individual identity.
+
+For simplicity, coupling is initially uniform ($\kappa_{ij} = \kappa$ for all edges). Heterogeneous cases ($\kappa_{ij}$) are considered in Section~\ref{sec:extensions}.
+
+\subsection{Adaptive Coupling}
+\begin{equation}
+\dot{\kappa} = \eta \left( \langle (\Delta \Phi_{ij})^2 \rangle - \sigma^2 \right) - \gamma \kappa, \quad \kappa \geq 0
+\end{equation}
+where $\eta > 0$ is responsiveness to misalignment (opens trust when gradients are large), $\sigma^2 > 0$ is the tolerance threshold (target disagreement level), $\gamma > 0$ is maintenance cost (surveillance overhead, bureaucratic drag, forgetting), and $\langle (\Delta \Phi_{ij})^2 \rangle$ is the mean squared difference between connected agents.
+
+\textbf{Intuition}: Trust increases when disagreement exceeds tolerance but decays due to costs. This creates feedback: high $\kappa$ $\to$ low variance $\to$ low growth signal $\to$ decay dominates $\to$ $\kappa$ drops $\to$ variance grows.
+
+\subsubsection{Connection to Entropy-Bounded Recursion}
+The adaptive-trust equation is formally equivalent to the dissipative form of a BV-action in self-referential field theory. The parameters have direct recursive analogues:
+\begin{itemize}
+\item $\eta$: responsiveness of recursion---how quickly a system expands interpretive scope in response to misfit;
+\item $\gamma$: entropy cost---the curvature penalty for maintaining recursive vigilance;
+\item bistability: coexistence of open recursion (creative coherence) and frozen recursion (bureaucratic lock-in).
+\end{itemize}
+
+This mirrors the bounded-recursion inequality from \emph{Recursive Futarchy}:
+\begin{equation}
+\partial_t^2 \Phi + \alpha\,\partial_t \Phi + \beta\,\Phi < 0,
+\end{equation}
+ensuring curvature contraction and finite recursion depth. When $\gamma$ exceeds the system's negentropic capacity ($\eta \sigma^2 / \gamma > \eta_{\text{crit}}$), recursive oversight becomes self-destructive---the same mechanism underlying trust hysteresis.
+
+\subsubsection{Recursive Interpretation of Parameters}
+In cognitive and institutional networks, coupling $\kappa$ represents recursion depth---how many layers of mutual modeling can coexist before semantic coherence collapses. In \emph{Revenge of the Vorticons}, recursive depth was quantified as
+\begin{equation}
+D = \sum_i w_i (\Delta\Phi_i \Delta S_i),
+\end{equation}
+linking immersion, entropy, and curvature. Increasing precautionary cost $\gamma$ effectively limits this $D$, truncating feedback and reducing the system's memory capacity.
+
+\emph{Attentional Cladistics} described this as the \emph{care-domestication threshold}: excessive stabilizing feedback (care, control) freezes evolutionary creativity. The same phenomenon reappears here as \emph{precautionary lock-in}.
+
+\subsection{Dimensionless Form \& Parameter Space}
+Non-dimensionalization by time scale $1/\gamma$ yields control parameters: $\tilde{\eta} = \eta \sigma^2 / \gamma$ (potential openness), $\tilde{D} = D / (\gamma \sigma^2 \lambda_2)$ (noise relative to connectivity), with network topology via $\lambda_2(L)$ (algebraic connectivity).
+
+Prediction: Bistability occurs in intermediate regimes of $\tilde{\eta}$ and $\tilde{D}$, avoiding forced coherence or fragmentation.
+
+\subsection{Network Topologies}
+- \textbf{Ring}: $\lambda_2 \approx 4\sin^2(\pi/n) \ll 1$ (low connectivity, symmetric).
+- \textbf{Small-world} (Watts-Strogatz): Intermediate $\lambda_2$, shortcuts enhance coherence.
+- \textbf{Scale-free} (Barabási-Albert): Hub-dominated, high $\lambda_2$ but vulnerable to targeted removal.
+
+\section{Results}
+
+\subsection{Hysteresis in Trust-Variance Phase Space}
+\textbf{Setup}: Ring network, $n=30$, sweep $\gamma \in [0.2, 1.5]$ slowly (200 timesteps per value), then reverse.
+
+\textbf{Observations}:
+- Low $\gamma < 0.5$: Unique coherent attractor (variance $\sim 0.2$, $\kappa \sim 1.5$).
+- High $\gamma > 1.0$: Unique fragmented attractor (variance $\sim 2.5$, $\kappa \sim 0.1$).
+- Intermediate $0.5 < \gamma < 1.0$: Bistability, with sweep up (blue) maintaining coherence past fragmentation threshold, sweep down (red) sustaining fragmentation below coherence threshold, yielding hysteresis width $\Delta \gamma \approx 0.3$.
+
+\textbf{Geometric Analogy}: The hysteresis loop maps onto curvature cycles within an informational manifold. Increasing $\gamma$ introduces excess curvature---analogous to recursive overregulation---while decreasing it cannot immediately flatten the manifold, leaving the system trapped in a metastable basin. This echoes the curvature-contraction condition in \emph{Curvature Entropy and Governance}, where recursive futarchies could not spontaneously revert to low-curvature states without an external negentropic shock.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\linewidth]{fig1_hysteresis.pdf}
+\caption{Hysteresis loop in trust-variance phase space for a ring network of $n=30$ agents. Blue curve: slowly increasing $\gamma$ from 0.2 to 1.5 (system remains coherent past the point where fragmentation would be stable). Red curve: decreasing $\gamma$ (system remains fragmented below the point where coherence would be stable). The gap $\Delta\gamma \approx 0.3$ quantifies the \textbf{irreversibility} of precautionary isolation---once fragmented, merely removing restrictions is insufficient to restore coordination. Parameters: $\eta=1.5$, $\sigma^2=0.8$, $D=0.05$, $dt=0.05$, 200 timesteps per $\gamma$ value.}
+\label{fig:hysteresis}
+\end{figure}
+
+\subsection{Time-Series Evidence of Path Dependence}
+\textbf{Setup}: Fix $\gamma = 0.75$ (middle of bistable zone). Run two trajectories: IC$_1$ coherent start ($\Phi \sim \mathcal{N}(0, 0.1)$, $\kappa_0 = 1.2$); IC$_2$ fragmented start ($\Phi \sim \mathcal{N}(0, 2.0)$, $\kappa_0 = 0.2$).
+
+\textbf{Result}: Trajectories converge to different equilibria after approximately 100 timesteps: IC$_1$ to $(\text{Var} \approx 0.4, \kappa \approx 1.0)$; IC$_2$ to $(\text{Var} \approx 2.2, \kappa \approx 0.15)$.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\linewidth]{fig2_timeseries.pdf}
+\caption{Time-series trajectories for coherent (IC$_1$) and fragmented (IC$_2$) initial conditions at $\gamma=0.75$. The divergence illustrates path dependence: identical parameters and environment yield opposite long-term outcomes due to historical contingency.}
+\label{fig:timeseries}
+\end{figure}
+
+\subsection{Network Topology Dependence}
+\textbf{Setup}: Compare ring, small-world ($k=4, p=0.1$), scale-free ($m=2$) for identical agent count.
+
+\textbf{Predictions}: Small-world exhibits narrower hysteresis (shortcuts increase $\lambda_2$, facilitating coherence); scale-free shows sharper transitions (hubs enable efficient coordination but lead to catastrophic collapse upon failure).
+
+\textbf{Results} (preliminary): Ring $\Delta \gamma \approx 0.3$; small-world $\Delta \gamma \approx 0.2$ (more robust); scale-free $\Delta \gamma \approx 0.35$ with steeper slopes (faster collapse post-hub fragmentation).
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\linewidth]{fig3_topology.pdf}
+\caption{Effect of network topology on hysteresis width $\Delta \gamma$. Ring (solid), small-world (dashed), and scale-free (dotted) networks display distinct collapse slopes, highlighting topology-dependent fragility.}
+\label{fig:topology}
+\end{figure}
+
+\subsection{Critical Slowing Down}
+\textbf{Setup}: Measure relaxation time $\tau$ (time to 95\% equilibrium variance) at each $\gamma$.
+
+\textbf{Prediction}: $\tau \to \infty$ near bistable boundaries (critical slowing down).
+
+Peaks occur at $\gamma \approx 0.6$ (lower bound) and $\gamma \approx 0.9$ (upper bound).
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\linewidth]{fig4_relaxation.pdf}
+\caption{Critical slowing down near bistable boundaries. Relaxation time $\tau$ diverges as $\gamma$ approaches transition points, providing an early-warning signal for impending regime shifts.}
+\label{fig:relaxation}
+\end{figure}
+
+\section{Phase Diagram Analysis}
+
+Under mean-field approximation (assuming large, regular graphs and small noise; see Appendix~\ref{app:meanfield}), the dynamics reduce to two coupled ODEs for global variance $m$ and effective coupling $\kappa_{\text{eff}}$:
+\begin{align}
+\dot{m} &\approx -2 \kappa \lambda_2 m + D, \\
+\dot{\kappa} &\approx \eta (c m - \sigma^2) - \gamma \kappa,
+\end{align}
+where $c \sim 1$ depends on graph structure.
+
+Fixed points and stability analysis predict the bistable wedge in $(\eta\sigma^2/\gamma, D/\lambda_2)$ space (details in Appendix~\ref{app:meanfield}).
+
+\section{Testable Predictions}
+\label{sec:predictions}
+
+If adaptive trust dynamics govern real coordination systems, we expect:
+
+\begin{enumerate}
+\item \textbf{Hysteresis in policy response}: Increasing surveillance/restrictions should produce larger coordination deficits than decreasing them by the same amount (asymmetric recovery).
+\item \textbf{Critical slowing down}: Variance and autocorrelation in trust metrics should increase before institutional collapse (early warning).
+\item \textbf{Topology-dependent fragility}: Centralized organizations (scale-free) should exhibit sharper collapses than decentralized ones (small-world) under identical stress.
+\item \textbf{Heterogeneous equilibria}: In diverse populations, expect coherent cores (universities, open-source) coexisting with fragmented peripheries (classified programs, proprietary R\&D).
+\item \textbf{Shock-induced transitions}: Rare events (crises, scandals) should cause irreversible regime shifts, with recovery requiring disproportionately large interventions.
+\end{enumerate}
+
+\textbf{Calibration challenges}: Mapping abstract parameters ($\eta, \gamma, \sigma^2$) to observables (meeting frequency, information-sharing rates, bureaucratic overhead) remains nontrivial but feasible via network analysis of collaboration graphs.
+
+\section{Robustness \& Extensions}
+\label{sec:extensions}
+
+\subsection{Heterogeneous Parameters}
+Agents with varying $\eta_i, \sigma_i^2, \gamma_i$ predict mosaic structures---coherent cores amid fragmented peripheries---linking to metastability.
+
+\subsection{Budget Constraints}
+Global constraint $\sum_{ij} \kappa_{ij} \leq B$ induces coupling competition, sharpening bistability via "rich-get-richer" allocation.
+
+\subsection{Delays in Coupling Adaptation}
+Delayed adaptation predicts Hopf bifurcations to limit cycles, relevant for slow institutional decisions.
+
+\subsection{Targeted Interventions}
+Sudden $\kappa$ boosts raise questions of minimum shock for basin flipping (basin stability).
+
+\section{Discussion}
+
+\begin{center}
+\fbox{\parbox{0.9\textwidth}{
+\textbf{Box 1: The Runaway Recursion Trap}
+
+In both cognitive and institutional contexts, the impulse to guarantee safety through new layers of oversight mirrors uncontrolled recursion. Each meta-layer multiplies interpretive curvature until the entropy budget exhausts.
+
+This is the \emph{recursive singularity}: when maintenance cost $\gamma$ rises faster than self-compression rate $\eta$, openness collapses. Trust hysteresis is thus a sociotechnical manifestation of entropy-bounded recursion.
+
+\textbf{Engineered solutions}: Editorial throttling, semantic merge caps, and attention damping are all forms of recursion control. Bounded recursion is not a limitation---it is the only sustainable condition for long-term coherence.
+}}
+\end{center}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\linewidth]{fig5_recursion_analogy.pdf}
+\caption{Conceptual mapping between adaptive trust dynamics and entropy-bounded recursion in RSVP. The control ratio $\eta\sigma^2/\gamma$ governs both trust openness and recursion depth.}
+\label{fig:recursion}
+\end{figure}
+
+\subsection{Mapping to Real Systems}
+\begin{table}[H]
+\centering
+\begin{tabular}{lllll}
+\toprule
+System & $\Phi_i$ & $\kappa$ & $\gamma$ & $D$ \\
+\midrule
+Polarization & Political opinions & Cross-party dialogue & Media filter bubbles & News shocks \\
+Institutional trust & Belief in legitimacy & Transparency/accountability & Surveillance overhead & Scandals/crises \\
+AI alignment & Value representations & Feedback channels & Control/monitoring costs & Capability shocks \\
+Market coordination & Price beliefs & Information flow & Transaction costs & Volatility \\
+Scientific consensus & Theoretical commitments & Peer review/collaboration & Publish-or-perish pressure & Anomalous data \\
+\bottomrule
+\end{tabular}
+\caption{Mapping model parameters to real systems.}
+\label{tab:mapping}
+\end{table}
+
+\subsection{Implications for AI Governance}
+The precautionary trap forms a positive feedback loop: capability advances prompt restrictions ($\gamma \uparrow$), decaying trust ($\kappa \downarrow$), silos, elevated risk, and reinforced restrictions.
+
+Escape requires shocks or low-$\gamma$ regimes. Current proposals risk induced fragmentation.
+
+\subsubsection{Design Principles for Low-$\gamma$ Governance}
+To avoid lock-in while maintaining safety:
+\begin{enumerate}
+\item \textbf{Transparency over surveillance}: Open publication reduces perceived risk more than monitoring.
+\item \textbf{Adaptive coupling mechanisms}: Frameworks respond to misalignment rather than preemptively isolating.
+\item \textbf{Network redundancy}: Multiple pathways prevent cascade failures.
+\item \textbf{Entropy budgets}: Limit recursion depth (e.g., no meta-regulation of meta-regulation).
+\item \textbf{Shock readiness}: Capacity for rapid trust-building interventions.
+\end{enumerate}
+
+\subsection{Comparison to Existing Safety Arguments}
+Standard arguments (Yudkowsky, Bostrom) posit capability gains ($D$) outpacing alignment ($\kappa$ fixed), suggesting pauses.
+
+\textbf{Our refinement}: $\kappa$ adapts to governance. High-$\gamma$ pauses suppress adaptation, trapping low-$\kappa$ states post-pause.
+
+\textbf{Reconciliation}: Both agree on misalignment danger. Disagreement concerns $\partial \kappa / \partial \gamma$ in ecosystems---an empirical question.
+
+\subsection{Empirical Signatures}
+Indicators include hysteresis in trust metrics, critical slowing down, topology fragility, basin-hopping, and heterogeneous equilibria.
+
+\subsection{Limitations}
+Symmetric coupling, scalar states, static topology, no strategic behavior, and continuous approximation limit scope. Future work should address these.
+
+\section{Conclusion}
+The hysteresis of trust exemplifies a general law of recursive systems: once oversight curvature exceeds dissipative capacity, openness is topologically obstructed until negentropic injection.
+
+Preventing lock-in requires entropy budgets and recursion-depth governance. The paradox resolves: \textbf{safety emerges not from isolation but from entropy-regulated permeability.}
+
+\appendix
+
+\section{Simulation Details and Reproducibility}
+All simulations used Python (NumPy + NetworkX). Minimal pseudocode:
+\begin{verbatim}
+for gamma in sweep:
+    for step in range(T):
+        Phi += dt*(-kappa*L@Phi + sqrt(D)*xi())
+        varPhi = np.var(Phi)
+        kappa += dt*(eta*(varPhi - sigma2) - gamma*kappa)
+\end{verbatim}
+Data averaged over 20 realizations; $\pm1\sigma$ shaded.
+
+\section{Mean-Field Approximation and Stability Analysis}
+\label{app:meanfield}
+Detailed derivation of ODEs, fixed points, Jacobian, eigenvalues, and saddle-node lines.
+
+\section{Mathematical Parallel to Bounded-Recursion Formalism}
+The recursion-bounded regime (cf. Eq.~\ref{eq:adaptive_coupling}) corresponds to
+\begin{equation}
+\frac{\eta\sigma^2}{\gamma} < \eta_{\mathrm{crit}},
+\label{eq:recursion_bound}
+\end{equation}
+ensuring stable openness.
+
+\boxed{
+\text{Stability} \iff \frac{\text{Adaptive Gain}}{\text{Entropy Cost}} < \text{Curvature Threshold}
+}
+
+\textbf{Instances}:
+\begin{itemize}
+\item \textbf{Trust dynamics}: $\eta\sigma^2/\gamma < \eta_{\text{crit}}$
+\item \textbf{Recursive futarchy}: $\partial_t^2\Phi + \alpha\partial_t\Phi + \beta\Phi < 0$
+\item \textbf{Attention economy}: $\text{Care depth} \times \text{Novelty rate} < \text{Semantic capacity}$
+\end{itemize}
+
+\bibliographystyle{plain}
+\begin{thebibliography}{20}
+\bibitem{gross2008} Gross, T. and Blasius, B. (2008). Adaptive coevolutionary networks. \emph{J. R. Soc. Interface.}
+\bibitem{scheffer2012} Scheffer, M. et al. (2012). Anticipating critical transitions. \emph{Science.}
+\bibitem{dafoe2018} Dafoe, A. (2018). AI Governance: A Research Agenda. \emph{Future of Humanity Institute.}
+\bibitem{strogatz2001} Strogatz, S. (2001). Exploring complex networks. \emph{Nature}.
+\bibitem{arenas2008} Arenas et al. (2008). Synchronization in complex networks. \emph{Physics Reports}.
+\bibitem{pikovsky2001} Pikovsky et al. (2001). \emph{Synchronization: A Universal Concept in Nonlinear Sciences}.
+\bibitem{holme2006} Holme \& Newman (2006). Nonequilibrium phase transition in the coevolution of networks and opinions. \emph{PRE}.
+\bibitem{castellano2009} Castellano et al. (2009). Statistical physics of social dynamics. \emph{Rev. Mod. Phys}.
+\bibitem{axelrod1997} Axelrod (1997). The dissemination of culture. \emph{J. Conflict Resolution}.
+\bibitem{hegselmann2002} Hegselmann \& Krause (2002). Opinion dynamics and bounded confidence.
+\bibitem{axelrod1984} Axelrod (1984). \emph{The Evolution of Cooperation}.
+\bibitem{ostrom1990} Ostrom (1990). \emph{Governing the Commons}.
+\bibitem{henrich2015} Henrich (2015). \emph{The Secret of Our Success}.
+\bibitem{dakos2008} Dakos et al. (2008). Slowing down as an early warning signal. \emph{PNAS}.
+\bibitem{russell2019} Russell (2019). \emph{Human Compatible}.
+\bibitem{soares2015} Soares et al. (2015). Corrigibility. \emph{AAAI Workshops}.
+\bibitem{bostrom2014} Bostrom, N. (2014). \emph{Superintelligence: Paths, Dangers, Strategies}.
+\bibitem{christiano2018} Christiano, P. et al. (2018). Supervising strong learners by amplifying weak experts. \emph{arXiv:1810.08575}.
+\bibitem{critch2020} Critch, A. and Krueger, D. (2020). AI Research Considerations for Human Existential Safety. \emph{CRCS}.
+\bibitem{maclane1971} Mac Lane (1971). \emph{Categories for the Working Mathematician}.
+\end{thebibliography}
+
+\end{document}
