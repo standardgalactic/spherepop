@@ -1,0 +1,67 @@
+\documentclass[12pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{geometry}
+\usepackage{setspace}
+\usepackage{amsmath, amssymb, amsthm, mathtools}
+\usepackage{bm}
+\usepackage{hyperref}
+\geometry{margin=1in}
+\setstretch{1.15}
+
+\title{Computing with Spherepop:\\A Geometric Merge--Collapse Calculus}
+\author{Flyxion}
+\date{\today}
+
+\newtheorem{definition}{Definition}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{proposition}{Proposition}
+\newtheorem{corollary}{Corollary}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Spherepop is a geometric model of computation in which values are
+represented as spatial regions and computation proceeds through two
+primitive operations: merge, which unites regions, and collapse, which
+abstracts internal detail. Unlike symbolic models that manipulate
+syntactic expressions, Spherepop implements computation as spatial
+interaction and simplification. This article develops a formal core
+calculus, operational semantics, and reference implementations in
+Racket, Python, and Haskell. We analyse basic algebraic properties,
+sketch expressiveness results, and describe connections to neural
+computation.
+\end{abstract}
+
+\section{Introduction}
+
+[Shortened version for the bundle. You can paste the longer monograph
+we developed into this file if you prefer.]
+
+\section{Core Definitions}
+
+\begin{definition}[Region]
+Fix a base space $P$, typically $\mathbb{R}^n$. A \emph{region} is a
+connected, bounded subset $A \subseteq P$ together with a label and an
+optional payload.
+\end{definition}
+
+\begin{definition}[Collapse]
+A \emph{collapse operator} is a function
+$\mathsf{pop} : \mathcal{R} \to \mathcal{R}$ on the class of regions
+such that $\mathsf{pop}$ is idempotent and extensive on labels.
+\end{definition}
+
+\begin{definition}[Merge]
+Given regions $A,B$, the \emph{merge} operation is
+\[
+A \diamond B \;\;:=\;\; \mathsf{pop}(A \cup B).
+\]
+\end{definition}
+
+[...trimmed: expand with the full text you already have...]
+
+\end{document}

@@ -1,0 +1,43 @@
+\documentclass[11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{geometry}
+\usepackage{setspace}
+\usepackage{hyperref}
+\geometry{margin=1in}
+\setstretch{1.15}
+
+\title{Spherepop in Haskell:\\Core and Parallel Variants}
+\author{Flyxion}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section{Building}
+
+From the \texttt{haskell} directory:
+
+\begin{verbatim}
+stack build
+stack test
+\end{verbatim}
+
+\section{Core Usage}
+
+\begin{verbatim}
+import Spherepop.Core
+
+let r1 = Region "a" [1 :: Int]
+    r2 = Region "b" [2 :: Int]
+    out = merge defaultCollapse r1 r2
+\end{verbatim}
+
+\section{Parallel Evaluation}
+
+The module \texttt{Spherepop.Parallel} sketches a one-step parallel
+reduction strategy. It is intended as a starting point for more serious
+experiments with parallel, confluent evaluation.
+
+\end{document}

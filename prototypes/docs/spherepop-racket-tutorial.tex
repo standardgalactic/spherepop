@@ -1,0 +1,44 @@
+\documentclass[11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{geometry}
+\usepackage{setspace}
+\usepackage{hyperref}
+\geometry{margin=1in}
+\setstretch{1.15}
+
+\title{Spherepop in Racket:\\A Short Tutorial}
+\author{Flyxion}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section{Getting Started}
+
+Assuming the collection is available on your Racket path, you can
+require it as follows:
+
+\begin{verbatim}
+#lang racket
+(require spherepop-lib)
+\end{verbatim}
+
+This gives you access to the core \texttt{region} type, merge and
+collapse, and the tiny \texttt{sp} surface syntax.
+
+\section{First Examples}
+
+\begin{verbatim}
+(define s default-collapse-strategy)
+(define a (make-region "a" '(1)))
+(define b (make-region "b" '(2)))
+(define t (sp (a b)))
+(define r (eval-term s t))
+\end{verbatim}
+
+\section{Further Work}
+
+[Extend this document with more examples, invariants, and exercises.]
+\end{document}

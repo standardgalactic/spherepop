@@ -1,0 +1,27 @@
+name: spherepop
+version: 0.1.0
+github: "example/spherepop"
+license: Apache-2.0
+author: "Flyxion"
+maintainer: "nobody@example.com"
+extra-source-files:
+  - README.md
+
+library:
+  source-dirs: src
+  exposed-modules:
+    - Spherepop.Core
+    - Spherepop.Parallel
+  dependencies:
+    - base >= 4.14 && < 5
+    - containers
+    - mtl
+
+tests:
+  spherepop-test:
+    main: Spec.hs
+    source-dirs: test
+    dependencies:
+      - base
+      - spherepop
+      - hspec
