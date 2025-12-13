@@ -1,0 +1,218 @@
+\documentclass[11pt]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb}
+\usepackage{geometry}
+\usepackage{setspace}
+\usepackage{csquotes}
+\usepackage{hyperref}
+
+\geometry{margin=1in}
+\setstretch{1.15}
+
+\title{A Roadmap for Implementing Utilities in Spherepop Calculus}
+\author{Flyxion}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section{Purpose}
+
+This document presents a conservative, implementation-oriented roadmap for
+building user-facing utilities atop the Spherepop OS kernel.
+The focus is not on feature completeness but on preserving the core invariants:
+deterministic replay, total causal order, ABI stability, and strict separation
+between authoritative semantics and derived views.
+
+Utilities are treated as structured consumers and producers of events and views,
+not as stateful programs with implicit side effects.
+
+\section{Design Constraints}
+
+All utilities must satisfy the following constraints.
+
+\subsection{Authoritative Discipline}
+
+Utilities may not mutate kernel state directly.
+All authoritative changes must be expressed as proposed events submitted to the arbiter.
+Utilities may generate speculative overlays, but these overlays must remain explicitly non-authoritative.
+
+\subsection{Replay Compatibility}
+
+Utilities must not rely on hidden state, ambient context, or execution timing.
+Given the same event log prefix and the same utility invocation,
+the resulting proposals or views must be identical.
+
+\subsection{ABI Respect}
+
+Utilities interact with the kernel through stable ABI-defined event layouts.
+No utility may assume undocumented padding, ordering, or reinterpretation
+of event structures.
+
+\subsection{View Non-Interference}
+
+Utilities that produce views (diffs, JSON renderings, summaries) must not
+feed information back into kernel decisions.
+Views may be dropped or recomputed without semantic consequence.
+
+\section{Spherepop Calculus as the Utility Substrate}
+
+Spherepop calculus is not a scripting language layered on the OS;
+it is the algebra of authoritative operations supported by the kernel.
+
+The primitive calculus operations correspond directly to event types:
+
+\begin{itemize}
+  \item \texttt{POP}: introduce a semantic object handle
+  \item \texttt{MERGE}: induce equivalence between objects
+  \item \texttt{LINK}: create a typed relation
+  \item \texttt{UNLINK}: remove a typed relation
+  \item \texttt{COLLAPSE}: perform bulk equivalence
+  \item \texttt{SETMETA}: attach non-semantic metadata
+\end{itemize}
+
+Utilities operate by composing these primitives, never by bypassing them.
+
+\section{Utility Taxonomy}
+
+Utilities fall into three broad classes.
+
+\subsection{Proposal Generators}
+
+Proposal generators produce candidate event sequences but do not commit them.
+Examples include batch object creation, canonicalization tools,
+and semantic refactoring utilities.
+
+Such tools terminate by emitting a proposal stream, not by mutating state.
+
+\subsection{View Generators}
+
+View generators consume replayed state and emit derived representations:
+JSON graphs, diffs, textual summaries, or tabular listings.
+They are observational only.
+
+\subsection{Overlay Managers}
+
+Overlay managers manipulate speculative branches:
+creating overlays, rebasing them, or discarding them.
+They operate entirely outside the authoritative log.
+
+\section{Phase I: Minimal Utility Set}
+
+The first phase focuses on utilities that exercise the kernel without expanding it.
+
+\subsection{Connection and Replay}
+
+\begin{itemize}
+  \item \texttt{sp}: connect to an arbiter or log source
+  \item \texttt{sp-replay}: replay a log prefix into a local kernel instance
+\end{itemize}
+
+These tools establish the basic contract between utilities and replay.
+
+\subsection{Object and Relation Tools}
+
+\begin{itemize}
+  \item \texttt{sppop}: batch generation of \texttt{POP} events
+  \item \texttt{splink}: creation of \texttt{LINK} events
+  \item \texttt{spunlink}: removal of relations
+\end{itemize}
+
+These utilities must demonstrate representative normalization
+and replay determinism.
+
+\subsection{Diff and Snapshot Inspection}
+
+\begin{itemize}
+  \item \texttt{spdiff}: inspect derived diffs per event
+  \item \texttt{spsnap}: serialize full replayed state
+\end{itemize}
+
+These tools validate view–cause separation.
+
+\section{Phase II: Canonicalization and Refactoring}
+
+This phase introduces utilities that perform structured semantic rewrites.
+
+\subsection{Merge and Collapse}
+
+\begin{itemize}
+  \item \texttt{spmerge}: propose \texttt{MERGE} events
+  \item \texttt{spcollapse}: perform region-level equivalence
+\end{itemize}
+
+These tools must preserve confluence and replay equivalence.
+
+\subsection{Preview-Commit Workflow}
+
+Utilities should support a preview mode:
+\begin{enumerate}
+  \item generate a speculative overlay
+  \item replay and inspect the result
+  \item optionally submit the overlay as a proposal
+\end{enumerate}
+
+No utility may auto-commit by default.
+
+\section{Phase III: Semantic Query and Analysis}
+
+\subsection{Query as View}
+
+\begin{itemize}
+  \item \texttt{spgrep}: query relations and metadata
+  \item \texttt{sppath}: explore relation paths
+\end{itemize}
+
+Queries must be expressed as pure functions over replayed state.
+
+\subsection{Summarization}
+
+Summaries and compressions are admissible only as derived views.
+Any lossiness must be explicit and reversible via replay.
+
+\section{Phase IV: Composition and Pipelines}
+
+Utilities should be composable via standard streams.
+However, pipelines must preserve the distinction between:
+\begin{itemize}
+  \item authoritative proposals
+  \item non-authoritative views
+\end{itemize}
+
+For example, a pipeline may transform a view into a proposal,
+but the transformation must be explicit and inspectable.
+
+\section{Non-Goals}
+
+The following are explicitly out of scope:
+
+\begin{itemize}
+  \item implicit inference of semantics
+  \item automatic conflict resolution
+  \item hidden mutable caches
+  \item time-dependent behavior
+\end{itemize}
+
+Such features are incompatible with deterministic replay.
+
+\section{Relationship to GNU-Style Tooling}
+
+Spherepop utilities resemble GNU tools in composability and narrow scope,
+but differ fundamentally in that they operate over semantic time rather
+than mutable files.
+
+The closest analogy is not \texttt{sed} or \texttt{awk},
+but a controlled sequence of rewrite proposals applied to a canonical log.
+
+\section{Conclusion}
+
+The utility ecosystem of Spherepop OS should grow slowly and conservatively.
+Each tool must justify its existence by preserving the kernel invariants
+and by reducing, rather than increasing, semantic ambiguity.
+
+The success of Spherepop utilities is measured not by convenience,
+but by the degree to which they make time, causality, and meaning explicit.
+
+\end{document}

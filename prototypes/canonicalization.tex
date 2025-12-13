@@ -1,0 +1,193 @@
+\documentclass[11pt]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb}
+\usepackage{geometry}
+\usepackage{setspace}
+\usepackage{csquotes}
+\usepackage{hyperref}
+
+\geometry{margin=1in}
+\setstretch{1.15}
+
+\title{\texttt{spmerge}: A Canonicalization Utility for Spherepop OS}
+\author{Flyxion}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section{Purpose}
+
+\texttt{spmerge} is a user-facing utility that proposes semantic equivalence
+between objects in Spherepop OS by generating \texttt{MERGE} or \texttt{COLLAPSE}
+events.
+
+Its sole responsibility is to \emph{express equivalence explicitly}.
+It does not infer, guess, or commit semantics on behalf of the kernel.
+
+\section{Design Position}
+
+\texttt{spmerge} occupies a narrow position in the system:
+
+\begin{itemize}
+  \item It is not a kernel component.
+  \item It does not mutate authoritative state.
+  \item It does not perform semantic inference.
+  \item It operates entirely through event proposals.
+\end{itemize}
+
+The kernel remains the sole interpreter of equivalence.
+
+\section{Input Model}
+
+\texttt{spmerge} accepts a set of object identifiers
+$\{o_1, o_2, \dots, o_n\}$ supplied explicitly by the user.
+
+These identifiers must already exist in the replayed kernel state.
+No implicit creation of objects is permitted.
+
+\section{Operational Modes}
+
+\subsection{Pairwise Merge}
+
+In the simplest mode, \texttt{spmerge} proposes a single equivalence:
+
+\begin{quote}
+\texttt{MERGE(o\_a, o\_b)}
+\end{quote}
+
+This induces equivalence between two objects.
+Representative selection is deferred entirely to the kernel.
+
+\subsection{Batch Merge}
+
+For a set of objects $\{o_1, \dots, o_n\}$,
+\texttt{spmerge} generates a sequence of \texttt{MERGE} events
+forming a spanning tree over the set.
+
+The exact ordering of merges is deterministic and stable,
+but semantically irrelevant due to merge confluence.
+
+\subsection{Region Collapse}
+
+In region mode, \texttt{spmerge} proposes a single:
+
+\begin{quote}
+\texttt{COLLAPSE(S, o_r)}
+\end{quote}
+
+where $S$ is a finite set of objects and $o_r \in S$
+is the chosen representative.
+
+Region collapse is explicit and irreversible once committed.
+
+\section{Determinism Guarantees}
+
+Given:
+\begin{itemize}
+  \item a fixed event log prefix
+  \item a fixed invocation of \texttt{spmerge}
+\end{itemize}
+
+the utility must generate an identical proposal stream
+bit-for-bit.
+
+No randomness, timestamps, or environment-dependent behavior
+may influence output.
+
+\section{Replay Discipline}
+
+\texttt{spmerge} operates only on replayed kernel state.
+It does not consult external databases, caches, or metadata
+channels when deciding which events to propose.
+
+All decisions are traceable to:
+\begin{itemize}
+  \item user-supplied identifiers
+  \item the replayed equivalence relation
+\end{itemize}
+
+\section{Preview Workflow}
+
+By default, \texttt{spmerge} operates in preview mode:
+
+\begin{enumerate}
+  \item A speculative overlay is constructed.
+  \item Proposed merge events are applied to the overlay.
+  \item The resulting derived state is displayed.
+\end{enumerate}
+
+No authoritative events are committed unless the user
+explicitly submits the proposal.
+
+\section{View Generation}
+
+\texttt{spmerge} may emit derived views including:
+\begin{itemize}
+  \item before/after equivalence classes
+  \item rewritten relations
+  \item representative changes
+\end{itemize}
+
+These views are observational only and have no semantic force.
+
+\section{Error Conditions}
+
+\texttt{spmerge} must fail fast under the following conditions:
+\begin{itemize}
+  \item an object identifier does not exist
+  \item a proposed merge is redundant
+  \item the target set is empty
+\end{itemize}
+
+Silent no-ops are forbidden.
+
+\section{Explicit Non-Goals}
+
+\texttt{spmerge} does \emph{not}:
+\begin{itemize}
+  \item infer equivalence from structure
+  \item auto-merge based on heuristics
+  \item reorder or optimize the event log
+  \item collapse objects without explicit instruction
+\end{itemize}
+
+These behaviors are incompatible with semantic clarity.
+
+\section{Relationship to Kernel Invariants}
+
+Every invariant enforced by \texttt{spmerge} derives directly
+from kernel invariants:
+
+\begin{itemize}
+  \item equivalence is event-induced
+  \item merge confluence is guaranteed by the kernel
+  \item representative normalization is kernel-owned
+\end{itemize}
+
+\texttt{spmerge} merely expresses intent.
+
+\section{Future Extensions}
+
+Possible future extensions include:
+\begin{itemize}
+  \item interactive merge previews
+  \item structured justification annotations (as metadata)
+  \item batch refactoring workflows
+\end{itemize}
+
+All extensions must preserve replay determinism and
+non-interference.
+
+\section{Conclusion}
+
+\texttt{spmerge} is intentionally conservative.
+Its value lies not in automation, but in making semantic
+equivalence explicit, inspectable, and replayable.
+
+By refusing to infer meaning, \texttt{spmerge} preserves
+the integrity of Spherepop OS as a system of semantic time.
+
+\end{document}
