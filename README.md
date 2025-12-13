@@ -4,6 +4,28 @@
 
 <!-- # Standard Galactic -->
 
+The paper proposes Spherepop as an alternative foundational framework to set theory, based on operational mereology (theory of part-whole relations) instead of set membership. Key ideas:
+
+1. From sets to parts – Instead of a primitive membership relation ( \in ), Spherepop uses a time-indexed part-of relation ( \leq_t ) constructed from events.
+2. Event-sourced semantics – All objects and relations arise from replayable events (POP, MERGE, LINK, COLLAPSE). Existence is historical, not axiomatic.
+3. Temporal and constructive – Identity is based on event history, not extensional content. Objects only exist if introduced by events.
+4. Avoids set-theoretic problems – Russell’s paradox and similar impredicative issues cannot even be formulated because:
+   · No global membership relation
+   · No unrestricted comprehension
+   · No predicate-generated objects
+5. Computational efficiency – Replaces power sets (which imply exponential structure) with linear event logs. Complexity scales with actual use, not hypothetical possibilities.
+6. Relation to other foundations –
+   · Type theory: types become views, identity becomes explicit collapse events.
+   · Category theory: categories are derived from replayed graphs, not ontologically primitive.
+   · ZF set theory: each ZF axiom is either operationalized, replaced by events, or rendered unnecessary.
+7. Philosophical roots – Draws from mereology’s historical critique of set theory, but makes it operational, executable, and aligned with computational practice.
+
+---
+
+In short, Spherepop replaces set theory with a constructive, event-driven mereology where structure is built through auditable events, not assumed via axioms. This shift aims to better reflect how computational systems actually work—grounding foundations in process, history, and authority rather than in static, timeless sets.
+
+[Operational Mereology via Event-Sourced Semantics](https://standardgalactic.github.io/spherepop/Operational%20Mereology.pdf)
+
 ## Spherepop Demo
 ![](scope-intro.gif)
 ![](stack-explode.gif)
