@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Worked Replay Example — Spherepop OS</title>
+<link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+
+<header class="container">
+  <h1>Spherepop OS</h1>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="what.html">What</a>
+    <a href="principles.html">Principles</a>
+    <a href="kernel.html">Kernel</a>
+    <a href="kernel_abi.html">Kernel & ABI</a>
+    <a href="worked_replay.html">Worked Replay</a>
+    <a href="views.html">Views</a>
+    <a href="calculus.html">Calculus</a>
+    <a href="utilities.html">Utilities</a>
+    <a href="comparison.html">Comparison</a>
+    <a href="axioms.html">Axioms</a>
+    <a href="spec.html">Spec</a>
+  </nav>
+</header>
+
+<main class="container">
+
+<section class="hero">
+  <h2>Worked Replay Example</h2>
+  <p>
+    This page presents a concrete, end-to-end example of Spherepop OS
+    kernel replay. All state shown here is derived exclusively from
+    the authoritative event log.
+  </p>
+  <p>
+    No hidden state, inference, or side effects are involved.
+  </p>
+</section>
+
+<section class="prose">
+  <h2>Initial Conditions</h2>
+  <p>
+    We begin with an empty log and an empty kernel state:
+  </p>
+
+  <div class="codeblock">
+Event Log: ∅
+
+Kernel State σ₀:
+O = ∅
+U = ∅
+R = ∅
+M = ∅
+  </div>
+
+  <p>
+    The kernel has no notion of objects, relations, or equivalence
+    prior to replay.
+  </p>
+</section>
+
+<section class="prose">
+  <h2>Event Sequence</h2>
+  <p>
+    Consider the following authoritative event log prefix:
+  </p>
+
+  <div class="codeblock">
+EID 1: POP(o1)
+EID 2: POP(o2)
+EID 3: LINK(o1, o2, "parent")
+EID 4: POP(o3)
+EID 5: MERGE(o2, o3)
+  </div>
+
+  <p>
+    We now replay these events one by one.
+  </p>
+</section>
+
+<section class="prose">
+  <h2>Replay Step 1 — Object Creation</h2>
+
+  <div class="codeblock">
+Apply: POP(o1)
+
+σ₁:
+O = { o1 }
+U = { o1 → o1 }
+R = ∅
+M = ∅
+  </div>
+
+  <p>
+    A new object handle is introduced.
+    No relations or equivalences exist yet.
+  </p>
+</section>
+
+<section class="prose">
+  <h2>Replay Step 2 — Second Object</h2>
+
+  <div class="codeblock">
+Apply: POP(o2)
+
+σ₂:
+O = { o1, o2 }
+U = { o1 → o1, o2 → o2 }
+R = ∅
+M = ∅
+  </div>
+
+  <p>
+    Object creation is purely additive.
+    No semantic interpretation is applied.
+  </p>
+</section>
+
+<section class="prose">
+  <h2>Replay Step 3 — Relation Creation</h2>
+
+  <div class="codeblock">
+Apply: LINK(o1, o2, "parent")
+
+σ₃:
+O = { o1, o2 }
+U = { o1 → o1, o2 → o2 }
+R = { (o1, o2, "parent") }
+M = ∅
+  </div>
+
+  <p>
+    Relations are stored in representative-normalized form.
+    Since no equivalence exists yet, the original handles are used.
+  </p>
+</section>
+
+<section class="prose">
+  <h2>Replay Step 4 — Third Object</h2>
+
+  <div class="codeblock">
+Apply: POP(o3)
+
+σ₄:
+O = { o1, o2, o3 }
+U = { o1 → o1, o2 → o2, o3 → o3 }
+R = { (o1, o2, "parent") }
+M = ∅
+  </div>
+</section>
+
+<section class="prose">
+  <h2>Replay Step 5 — Equivalence Induction</h2>
+
+  <div class="codeblock">
+Apply: MERGE(o2, o3)
+
+Representative chosen: o2
+
+σ₅:
+O = { o1, o2, o3 }
+U = { o1 → o1, o2 → o2, o3 → o2 }
+R = { (o1, o2, "parent") }
+M = ∅
+  </div>
+
+  <p>
+    The MERGE event induces equivalence between o2 and o3.
+    The representative is o2.
+  </p>
+
+  <p>
+    All relations incident to o3 would be rewritten to o2.
+    In this example, no such relations exist.
+  </p>
+</section>
+
+<section class="prose">
+  <h2>Final Derived State</h2>
+
+  <div class="codeblock">
+σ₅ (final):
+
+Objects:
+  { o1, o2, o3 }
+
+Equivalence Classes:
+  [o1], [o2 ≡ o3]
+
+Relations:
+  (o1, o2, "parent")
+  </div>
+
+  <p>
+    Note that o3 remains an object handle but is no longer
+    a canonical representative.
+  </p>
+</section>
+
+<section class="prose">
+  <h2>Derived Views</h2>
+
+  <h3>Snapshot View</h3>
+  <p>
+    A snapshot serializes the entire derived state σ₅.
+    It introduces no new information.
+  </p>
+
+  <h3>Diff View</h3>
+  <p>
+    Each event produces a diff describing the derived change.
+    Diffs are non-authoritative and may be dropped or recomputed.
+  </p>
+
+  <h3>JSON View (Example)</h3>
+
+  <div class="codeblock">
+{
+  "objects": ["o1", "o2", "o3"],
+  "equivalence": {
+    "o2": ["o2", "o3"]
+  },
+  "relations": [
+    ["o1", "o2", "parent"]
+  ]
+}
+  </div>
+</section>
+
+<section class="prose">
+  <h2>Late Joiner Scenario</h2>
+  <p>
+    Consider a client that joins after EID 3.
+  </p>
+
+  <p>
+    The client receives:
+  </p>
+  <ul>
+    <li>a snapshot of σ₃</li>
+    <li>diffs for EID 4 and EID 5</li>
+  </ul>
+
+  <p>
+    Applying these yields σ₅, identical to full replay.
+    This is guaranteed by deterministic replay and view non-interference.
+  </p>
+</section>
+
+<section class="prose">
+  <h2>What This Example Demonstrates</h2>
+  <ul>
+    <li>Objects have no meaning apart from relations and events</li>
+    <li>Equivalence is explicit and event-induced</li>
+    <li>Replay order is authoritative</li>
+    <li>Derived views cannot affect semantics</li>
+    <li>Late joiners are safe by construction</li>
+  </ul>
+</section>
+
+<section class="prose">
+  <h2>Implementation Note</h2>
+  <p>
+    This example corresponds directly to the behavior exercised
+    by the mock kernel and replay drivers in the C implementation.
+    Any divergence between code behavior and this example
+    constitutes a kernel defect.
+  </p>
+</section>
+
+</main>
+
+<footer class="container">
+  Spherepop OS · Flyxion
+</footer>
+
+</body>
+</html>

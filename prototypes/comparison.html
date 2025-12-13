@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Comparative Analysis — Spherepop OS</title>
+<link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+
+<header class="container">
+  <h1>Spherepop OS</h1>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="what.html">What</a>
+    <a href="principles.html">Principles</a>
+    <a href="kernel.html">Kernel</a>
+    <a href="views.html">Views</a>
+    <a href="calculus.html">Calculus</a>
+    <a href="utilities.html">Utilities</a>
+    <a href="comparison.html">Comparison</a>
+    <a href="spec.html">Spec</a>
+  </nav>
+</header>
+
+<main class="container">
+
+<section class="hero">
+  <h2>Comparative Positioning</h2>
+  <p>
+    Spherepop OS is best understood not as a refinement of existing operating systems
+    or databases, but as a reorganization of where <em>authority</em>, <em>time</em>,
+    and <em>meaning</em> are allowed to live.
+  </p>
+</section>
+
+<section class="prose">
+  <h2>POSIX and Traditional Operating Systems</h2>
+
+  <p>
+    POSIX-style operating systems organize computation around
+    <b>mutable global state</b>:
+    files, processes, memory pages, and kernel-managed side effects.
+  </p>
+
+  <p>
+    Time in such systems is implicit and operational:
+    the current state is “what exists now,” and past states are not
+    reconstructible except through ad hoc logging.
+  </p>
+
+  <h3>Key properties</h3>
+  <ul>
+    <li>State mutation is primary</li>
+    <li>Concurrency is resolved operationally (locks, schedulers)</li>
+    <li>Introspection is partial and lossy</li>
+    <li>Reproducibility is external to the model</li>
+  </ul>
+
+  <h3>Spherepop OS contrast</h3>
+  <p>
+    Spherepop OS forbids hidden mutation.
+    All authoritative change is explicit, time-ordered, and replayable.
+    The kernel has no side effects and no privileged “now.”
+  </p>
+</section>
+
+<section class="prose">
+  <h2>CRDTs and Eventual Consistency Systems</h2>
+
+  <p>
+    CRDT-based systems abandon total order in favor of
+    <b>commutative convergence</b>.
+    Multiple replicas apply operations independently and
+    reconcile via algebraic properties.
+  </p>
+
+  <p>
+    This design is well-suited for high-availability systems,
+    but it weakens causal clarity and makes global reasoning difficult.
+  </p>
+
+  <h3>Key properties</h3>
+  <ul>
+    <li>No single authoritative timeline</li>
+    <li>Convergence without total order</li>
+    <li>Causality is partial and replica-relative</li>
+    <li>Semantic conflicts are absorbed, not inspected</li>
+  </ul>
+
+  <h3>Spherepop OS contrast</h3>
+  <p>
+    Spherepop OS chooses the opposite tradeoff:
+    a single authoritative log with a total causal order.
+    Concurrency exists only at the level of observers and speculation,
+    never at the level of committed semantics.
+  </p>
+
+  <p>
+    This makes causality explicit, inspectable, and mathematically rigid.
+  </p>
+</section>
+
+<section class="prose">
+  <h2>Git and Version Control Systems</h2>
+
+  <p>
+    Git models history explicitly, but only at the granularity of
+    <b>commits over file trees</b>.
+    Between commits, state is mutable and untracked.
+  </p>
+
+  <p>
+    Branching and merging are first-class,
+    but replay semantics are informal and tool-dependent.
+  </p>
+
+  <h3>Key properties</h3>
+  <ul>
+    <li>History is explicit but coarse-grained</li>
+    <li>Merges are semantic guesses, not canonical rewrites</li>
+    <li>Time exists only at commit boundaries</li>
+    <li>Runtime state is outside the model</li>
+  </ul>
+
+  <h3>Spherepop OS contrast</h3>
+  <p>
+    Spherepop OS generalizes version control to
+    <b>all semantic operations</b>.
+    Every rewrite is time-indexed; equivalence is canonicalized
+    by construction; speculation is continuous, not commit-based.
+  </p>
+
+  <p>
+    In this sense, Spherepop OS can be seen as
+    “version control for meaning rather than files.”
+  </p>
+</section>
+
+<section class="prose">
+  <h2>Event Sourcing (Conventional)</h2>
+
+  <p>
+    Event-sourced architectures record changes as logs,
+    but typically treat the log as an implementation detail.
+    Derived state is often allowed to drift or be partially authoritative.
+  </p>
+
+  <h3>Spherepop OS distinction</h3>
+  <p>
+    In Spherepop OS, the log is not an optimization or audit trail.
+    It <em>is</em> the system.
+    No cache, index, or view is permitted to outrank replay.
+  </p>
+</section>
+
+<section class="prose">
+  <h2>Summary Table (Conceptual)</h2>
+
+  <ul>
+    <li><b>POSIX</b>: mutable state first, time implicit</li>
+    <li><b>CRDT</b>: convergence first, causality weakened</li>
+    <li><b>Git</b>: history explicit, runtime excluded</li>
+    <li><b>Event sourcing</b>: log secondary</li>
+    <li><b>Spherepop OS</b>: log primary, time explicit, semantics canonical</li>
+  </ul>
+</section>
+
+<section class="prose">
+  <h2>Why Spherepop OS exists</h2>
+  <p>
+    Spherepop OS is designed for environments where:
+  </p>
+  <ul>
+    <li>time must be inspectable</li>
+    <li>collaboration must be deterministic</li>
+    <li>speculation must be safe</li>
+    <li>geometry must not smuggle semantics</li>
+  </ul>
+
+  <p>
+    It is not a drop-in replacement for existing systems,
+    but a substrate for semantic computation under explicit time.
+  </p>
+</section>
+
+</main>
+
+<footer class="container">
+  Spherepop OS · Flyxion
+</footer>
+
+</body>
+</html>

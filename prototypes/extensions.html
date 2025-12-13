@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Extension Axioms — Spherepop OS</title>
+<link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+
+<header class="container">
+  <h1>Spherepop OS</h1>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="what.html">What</a>
+    <a href="principles.html">Principles</a>
+    <a href="kernel.html">Kernel</a>
+    <a href="views.html">Views</a>
+    <a href="calculus.html">Calculus</a>
+    <a href="utilities.html">Utilities</a>
+    <a href="comparison.html">Comparison</a>
+    <a href="axioms.html">Axioms</a>
+    <a href="extensions.html">Extensions</a>
+    <a href="spec.html">Spec</a>
+  </nav>
+</header>
+
+<main class="container">
+
+<section class="hero">
+  <h2>Extension Axioms</h2>
+  <p>
+    This page records conservative extensions to the core axioms of Spherepop OS.
+    Each extension preserves determinism, replayability, and semantic primacy.
+  </p>
+  <p>
+    No extension is required for the core system to remain well-defined.
+  </p>
+</section>
+
+<section class="prose">
+  <h2>Principle of Conservative Extension</h2>
+
+  <h3>Axiom X0 (Conservativity)</h3>
+  <p>
+    Any extension to Spherepop OS must preserve all core axioms.
+    In particular, no extension may introduce hidden state, causal ambiguity,
+    or alternative sources of authority.
+  </p>
+
+  <p>
+    Extensions may add structure, not power.
+  </p>
+</section>
+
+<section class="prose">
+  <h2>Distributed Arbitration</h2>
+
+  <h3>Axiom D1 (Logical Single Sequencer)</h3>
+  <p>
+    Even in a distributed deployment, there exists a logical single sequencer
+    whose output defines the authoritative total order of events.
+  </p>
+
+  <p>
+    Physical implementation may be replicated or fault-tolerant, but the
+    observable log order must be indistinguishable from a single source.
+  </p>
+
+  <h3>Theorem D1.1</h3>
+  <p>
+    Distributed arbitration is observationally equivalent to a single arbiter
+    provided that the emitted event sequence is totally ordered and immutable.
+  </p>
+
+  <h3>Corollary D1.2</h3>
+  <p>
+    Consensus protocols may be used internally without altering kernel semantics.
+  </p>
+</section>
+
+<section class="prose">
+  <h2>Entropy-Aware Scheduling</h2>
+
+  <h3>Axiom EΣ1 (Entropy as Metadata)</h3>
+  <p>
+    Measures of entropy, cost, or uncertainty may be attached to events or objects
+    as metadata, provided they do not influence kernel transitions.
+  </p>
+
+  <h3>Axiom EΣ2 (Advisory Influence Only)</h3>
+  <p>
+    Entropy annotations may guide scheduling, visualization, or prioritization,
+    but may not alter the meaning or order of committed events.
+  </p>
+
+  <h3>Theorem EΣ2.1</h3>
+  <p>
+    Entropy-aware scheduling preserves deterministic replay so long as entropy
+    values are treated as non-causal annotations.
+  </p>
+</section>
+
+<section class="prose">
+  <h2>Typed Semantic Relations</h2>
+
+  <h3>Axiom TΣ1 (Type Enrichment)</h3>
+  <p>
+    Relation types may be extended with richer internal structure
+    (e.g. arity, constraints, annotations), provided normalization
+    remains representative-based.
+  </p>
+
+  <h3>Axiom TΣ2 (Type Erasure for Replay)</h3>
+  <p>
+    The kernel must admit a type-erased interpretation sufficient
+    to replay all events deterministically.
+  </p>
+
+  <h3>Theorem TΣ2.1</h3>
+  <p>
+    Type enrichment does not affect replay equivalence if erasure
+    preserves event identity and order.
+  </p>
+</section>
+
+<section class="prose">
+  <h2>Higher-Order Events</h2>
+
+  <h3>Axiom H1 (Events About Events)</h3>
+  <p>
+    Events may reference other events (e.g. annotations, justification,
+    provenance) provided such references do not alter prior semantics.
+  </p>
+
+  <h3>Axiom H2 (Non-Retroactivity)</h3>
+  <p>
+    No event may retroactively modify the semantic effect of a
+    previously committed event.
+  </p>
+
+  <h3>Theorem H2.1</h3>
+  <p>
+    Provenance, explanation, and commentary layers may be added
+    without violating determinism.
+  </p>
+</section>
+
+<section class="prose">
+  <h2>Semantic Compression and Summarization</h2>
+
+  <h3>Axiom C1 (Derived Summaries)</h3>
+  <p>
+    Summaries, compressions, or abstractions of event history
+    are admissible only as derived views.
+  </p>
+
+  <h3>Axiom C2 (Loss Transparency)</h3>
+  <p>
+    Any lossy summary must declare its loss model explicitly
+    and remain traceable to the authoritative log.
+  </p>
+
+  <h3>Theorem C2.1</h3>
+  <p>
+    Semantic compression does not compromise correctness if
+    the authoritative log remains available for inspection.
+  </p>
+</section>
+
+<section class="prose">
+  <h2>Interoperation with External Systems</h2>
+
+  <h3>Axiom I1 (Boundary Explicitness)</h3>
+  <p>
+    Any interaction with external systems must cross an explicit
+    boundary that converts side effects into proposed events.
+  </p>
+
+  <h3>Axiom I2 (No Hidden Authority)</h3>
+  <p>
+    External systems may not be treated as authoritative sources
+    of semantic truth.
+  </p>
+
+  <h3>Theorem I2.1</h3>
+  <p>
+    Side-effectful environments may be safely interfaced with
+    Spherepop OS by treating effects as observations or proposals.
+  </p>
+</section>
+
+<section class="prose">
+  <h2>Summary of Extension Discipline</h2>
+  <p>
+    Spherepop OS grows by accretion, not mutation.
+    Extensions add structure while preserving the invariants
+    that make deterministic collaboration possible.
+  </p>
+
+  <p>
+    Any system that violates these extension axioms
+    is no longer a Spherepop system.
+  </p>
+</section>
+
+</main>
+
+<footer class="container">
+  Spherepop OS · Flyxion
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Kernel & ABI Invariants — Spherepop OS</title>
+<link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+
+<header class="container">
+  <h1>Spherepop OS</h1>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="what.html">What</a>
+    <a href="principles.html">Principles</a>
+    <a href="kernel.html">Kernel</a>
+    <a href="kernel_abi.html">Kernel & ABI</a>
+    <a href="views.html">Views</a>
+    <a href="calculus.html">Calculus</a>
+    <a href="utilities.html">Utilities</a>
+    <a href="comparison.html">Comparison</a>
+    <a href="axioms.html">Axioms</a>
+    <a href="spec.html">Spec</a>
+  </nav>
+</header>
+
+<main class="container">
+
+<section class="hero">
+  <h2>Kernel & ABI Invariants</h2>
+  <p>
+    This page specifies the non-negotiable invariants of the Spherepop OS kernel
+    and its Application Binary Interface (ABI).
+  </p>
+  <p>
+    These invariants are binding. Any implementation that violates them
+    is not a Spherepop kernel.
+  </p>
+</section>
+
+<section class="prose">
+  <h2>Scope</h2>
+  <p>
+    This document concerns the behavior and constraints of:
+  </p>
+  <ul>
+    <li>the authoritative event log representation</li>
+    <li>event binary layout and ABI stability</li>
+    <li>kernel replay semantics</li>
+    <li>diff and view derivation paths</li>
+  </ul>
+  <p>
+    It does <em>not</em> specify user interfaces, transport mechanisms,
+    storage backends, or visualization formats beyond their interaction
+    with the kernel.
+  </p>
+</section>
+
+<section class="prose">
+  <h2>Authoritative Event Log</h2>
+
+  <h3>Invariant L1 (Append-Only)</h3>
+  <p>
+    The authoritative event log is append-only.
+    No committed event may be modified, removed, or reordered.
+  </p>
+
+  <h3>Invariant L2 (Total Order)</h3>
+  <p>
+    Each event has a unique position in a total order.
+    Kernel replay semantics depend exclusively on this order.
+  </p>
+
+  <h3>Invariant L3 (Sufficiency)</h3>
+  <p>
+    The event log alone is sufficient to reconstruct all authoritative
+    semantic state via replay.
+    No additional mutable state may be required.
+  </p>
+</section>
+
+<section class="prose">
+  <h2>Event Layout and ABI Stability</h2>
+
+  <h3>Invariant A1 (Stable Binary Layout)</h3>
+  <p>
+    Event binary layouts, as defined in <code>spherepop_event_layout.h</code>,
+    are part of the public ABI.
+  </p>
+
+  <p>
+    Once an event field is defined, it may not be reordered or removed.
+    New fields may be appended in a backward-compatible manner.
+  </p>
+
+  <h3>Invariant A2 (Explicit Versioning)</h3>
+  <p>
+    Any evolution of event layout must be explicitly versioned and
+    replay-compatible.
+    Older logs must remain replayable without semantic reinterpretation.
+  </p>
+
+  <h3>Invariant A3 (No Implicit Semantics)</h3>
+  <p>
+    Event fields carry only the semantics explicitly assigned to them.
+    The kernel must not infer or synthesize meaning from uninitialized
+    or out-of-band data.
+  </p>
+</section>
+
+<section class="prose">
+  <h2>Kernel Replay Semantics</h2>
+
+  <h3>Invariant K1 (Deterministic Transition)</h3>
+  <p>
+    Kernel state transitions are deterministic functions of
+    (prior state, next event).
+  </p>
+
+  <p>
+    Given identical inputs, replay must produce identical outputs
+    bit-for-bit for derived semantic state.
+  </p>
+
+  <h3>Invariant K2 (No Hidden State)</h3>
+  <p>
+    The kernel maintains no hidden mutable state outside that derivable
+    from replay.
+    All caches, indices, and accelerators must be reconstructible
+    from the log.
+  </p>
+
+  <h3>Invariant K3 (Replay Purity)</h3>
+  <p>
+    Kernel replay performs no external side effects.
+    I/O, logging, allocation strategies, and diagnostics must not
+    influence semantic outcomes.
+  </p>
+</section>
+
+<section class="prose">
+  <h2>Equivalence and Canonicalization</h2>
+
+  <h3>Invariant E1 (Event-Induced Equivalence Only)</h3>
+  <p>
+    Object equivalence may only be induced by explicit events
+    (e.g. MERGE, COLLAPSE).
+    The kernel must never infer equivalence implicitly.
+  </p>
+
+  <h3>Invariant E2 (Representative Normalization)</h3>
+  <p>
+    Relations are stored and interpreted in representative-normalized form.
+    Union–find or equivalent mechanisms must converge deterministically.
+  </p>
+
+  <h3>Invariant E3 (Confluence)</h3>
+  <p>
+    The final equivalence classes produced by replay are independent
+    of merge order.
+  </p>
+</section>
+
+<section class="prose">
+  <h2>Metadata and Non-Semantic Channels</h2>
+
+  <h3>Invariant M1 (Metadata Non-Interference)</h3>
+  <p>
+    Metadata updates (e.g. layout hints, annotations) must not
+    alter authoritative semantic state.
+  </p>
+
+  <h3>Invariant M2 (Semantic Firewall)</h3>
+  <p>
+    No code path may read metadata values in order to influence
+    kernel decisions about objects, relations, or equivalence.
+  </p>
+</section>
+
+<section class="prose">
+  <h2>Diffs, Views, and Observation</h2>
+
+  <h3>Invariant V1 (Derived Only)</h3>
+  <p>
+    Diffs, JSON renderings, snapshots, and other views are derived
+    artifacts and are never authoritative.
+  </p>
+
+  <h3>Invariant V2 (Transport Irrelevance)</h3>
+  <p>
+    Dropped, reordered, or recomputed diffs must not affect correctness.
+    Replay is the sole source of truth.
+  </p>
+
+  <h3>Invariant V3 (Late-Join Safety)</h3>
+  <p>
+    A client that joins late and reconstructs state from a snapshot
+    plus subsequent diffs must observe the same semantics as a client
+    that replayed from genesis.
+  </p>
+</section>
+
+<section class="prose">
+  <h2>Mock Kernels and Test Harnesses</h2>
+
+  <h3>Invariant T1 (Mock Fidelity)</h3>
+  <p>
+    Mock kernels and replay drivers must implement the same semantic
+    transition rules as the production kernel.
+  </p>
+
+  <h3>Invariant T2 (Test Authority)</h3>
+  <p>
+    Any divergence between mock and production behavior constitutes
+    a kernel defect, not a test limitation.
+  </p>
+</section>
+
+<section class="prose">
+  <h2>Non-Goals (Explicit Refusals)</h2>
+  <ul>
+    <li>The kernel does not infer intent or meaning</li>
+    <li>The kernel does not reorder events for optimization</li>
+    <li>The kernel does not interpret geometry or layout</li>
+    <li>The kernel does not auto-resolve semantic conflicts</li>
+    <li>The kernel does not hide nondeterminism</li>
+  </ul>
+</section>
+
+<section class="prose">
+  <h2>Summary</h2>
+  <p>
+    The Spherepop OS kernel is intentionally narrow.
+    Its power comes from what it refuses to do.
+  </p>
+  <p>
+    ABI stability, replay determinism, and semantic clarity
+    are prioritized over flexibility.
+  </p>
+</section>
+
+</main>
+
+<footer class="container">
+  Spherepop OS · Flyxion
+</footer>
+
+</body>
+</html>

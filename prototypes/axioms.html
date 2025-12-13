@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Axioms and Theorems — Spherepop OS</title>
+<link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+
+<header class="container">
+  <h1>Spherepop OS</h1>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="what.html">What</a>
+    <a href="principles.html">Principles</a>
+    <a href="kernel.html">Kernel</a>
+    <a href="views.html">Views</a>
+    <a href="calculus.html">Calculus</a>
+    <a href="utilities.html">Utilities</a>
+    <a href="comparison.html">Comparison</a>
+    <a href="axioms.html">Axioms</a>
+    <a href="spec.html">Spec</a>
+  </nav>
+</header>
+
+<main class="container">
+
+<section class="hero">
+  <h2>Axioms and Theorems</h2>
+  <p>
+    Spherepop OS is defined by a small number of axioms.
+    All system properties follow as theorems or corollaries.
+  </p>
+  <p>
+    This page states the core axioms explicitly and records the
+    principal results they entail.
+  </p>
+</section>
+
+<section class="prose">
+  <h2>Ontology</h2>
+
+  <h3>Axiom O1 (Semantic Objects)</h3>
+  <p>
+    A semantic object is an abstract handle with no intrinsic meaning.
+    Objects acquire meaning only through relations, equivalence, and
+    the event history that produced them.
+  </p>
+
+  <h3>Axiom O2 (Relational Primacy)</h3>
+  <p>
+    All semantic structure arises from typed relations between objects
+    and from equivalence relations induced by events.
+  </p>
+
+  <h3>Corollary O2.1</h3>
+  <p>
+    There exists no authoritative object table independent of replay.
+    Objects exist only as derived consequences of the event log.
+  </p>
+</section>
+
+<section class="prose">
+  <h2>Authority and Time</h2>
+
+  <h3>Axiom T1 (Append-Only Authority)</h3>
+  <p>
+    All authoritative semantic state transitions are recorded as events
+    in a single append-only log.
+    No other mechanism may introduce or modify authoritative state.
+  </p>
+
+  <h3>Axiom T2 (Total Causal Order)</h3>
+  <p>
+    Every event in the log is assigned a unique position in a total order.
+    This order is global and unambiguous.
+  </p>
+
+  <h3>Theorem T2.1 (Well-Defined Time)</h3>
+  <p>
+    Semantic time in Spherepop OS is isomorphic to log prefix order.
+    There is no notion of “current state” independent of a prefix.
+  </p>
+
+  <h3>Corollary T2.2</h3>
+  <p>
+    Two observers referring to the same log prefix necessarily refer
+    to the same semantic state, regardless of transport or representation.
+  </p>
+</section>
+
+<section class="prose">
+  <h2>Kernel Semantics</h2>
+
+  <h3>Axiom K1 (Deterministic Kernel)</h3>
+  <p>
+    The kernel is a deterministic transition system.
+    For any derived state σ and event e, there exists at most one σ′
+    such that σ —e→ σ′.
+  </p>
+
+  <h3>Axiom K2 (No Hidden State)</h3>
+  <p>
+    The kernel maintains no hidden or mutable state beyond that
+    derivable from replay of the event log.
+  </p>
+
+  <h3>Theorem K2.1 (Deterministic Replay)</h3>
+  <p>
+    Given an initial empty state and a log prefix ℓ,
+    replay yields a unique derived state σℓ.
+  </p>
+
+  <h3>Corollary K2.2</h3>
+  <p>
+    Any cache, index, or materialized view may be discarded and
+    reconstructed without semantic loss.
+  </p>
+</section>
+
+<section class="prose">
+  <h2>Equivalence and Canonicalization</h2>
+
+  <h3>Axiom E1 (Event-Induced Equivalence)</h3>
+  <p>
+    Equivalence between objects is induced exclusively by MERGE
+    or COLLAPSE events.
+  </p>
+
+  <h3>Axiom E2 (Representative Normalization)</h3>
+  <p>
+    All relations are stored and interpreted in representative-normalized
+    form with respect to the induced equivalence relation.
+  </p>
+
+  <h3>Theorem E2.1 (Merge Confluence)</h3>
+  <p>
+    The final equivalence relation induced by a set of MERGE events
+    is independent of their order.
+  </p>
+
+  <h3>Corollary E2.2</h3>
+  <p>
+    Canonical representatives are stable under replay and transport.
+  </p>
+</section>
+
+<section class="prose">
+  <h2>Views and Non-Interference</h2>
+
+  <h3>Axiom V1 (View–Cause Separation)</h3>
+  <p>
+    Views are derived representations of kernel state and may not
+    introduce or modify authoritative events.
+  </p>
+
+  <h3>Axiom V2 (Non-Interference)</h3>
+  <p>
+    Dropping, reordering, or recomputing views does not affect
+    authoritative semantics.
+  </p>
+
+  <h3>Theorem V2.1 (Snapshot Purity)</h3>
+  <p>
+    A snapshot introduces no information not already present
+    in the log prefix it represents.
+  </p>
+
+  <h3>Theorem V2.2 (Replay Equivalence)</h3>
+  <p>
+    Incremental observation via diffs is semantically equivalent
+    to full replay from the log prefix.
+  </p>
+</section>
+
+<section class="prose">
+  <h2>Functorial Semantics</h2>
+
+  <h3>Axiom F1 (Prefix Category)</h3>
+  <p>
+    Log prefixes form a category whose objects are prefix lengths
+    and whose morphisms are prefix extensions.
+  </p>
+
+  <h3>Axiom F2 (State Semantics Functor)</h3>
+  <p>
+    Replay defines a functor from the prefix category into the
+    category of kernel states.
+  </p>
+
+  <h3>Theorem F2.1 (Functoriality of Replay)</h3>
+  <p>
+    Replay respects identity and composition.
+    Sequential event application corresponds to morphism composition.
+  </p>
+
+  <h3>Theorem F2.2 (Functorial Views)</h3>
+  <p>
+    Any admissible view factors functorially through replay.
+    View updates therefore respect causal order by construction.
+  </p>
+</section>
+
+<section class="prose">
+  <h2>Speculation</h2>
+
+  <h3>Axiom S1 (Speculative Isolation)</h3>
+  <p>
+    Speculative events exist only in local overlay logs and have
+    no effect on authoritative state unless explicitly committed.
+  </p>
+
+  <h3>Theorem S1.1</h3>
+  <p>
+    Speculation cannot corrupt or destabilize the authoritative timeline.
+  </p>
+
+  <h3>Corollary S1.2</h3>
+  <p>
+    Exploratory reasoning and counterfactual analysis are safe operations.
+  </p>
+</section>
+
+<section class="prose">
+  <h2>Geometry and Metadata</h2>
+
+  <h3>Axiom G1 (Geometry as Metadata)</h3>
+  <p>
+    Layout, position, and visualization hints are metadata and
+    are not interpreted as semantic constraints.
+  </p>
+
+  <h3>Theorem G1.1 (Gauge Freedom)</h3>
+  <p>
+    Two views differing only in geometric metadata are semantically
+    equivalent.
+  </p>
+</section>
+
+<section class="prose">
+  <h2>Summary</h2>
+  <p>
+    Spherepop OS is not defined by features but by invariants.
+    Its axioms enforce determinism, causal clarity, and semantic stability.
+    Everything else—tools, interfaces, utilities—is a derived consequence.
+  </p>
+</section>
+
+</main>
+
+<footer class="container">
+  Spherepop OS · Flyxion
+</footer>
+
+</body>
+</html>
