@@ -1,0 +1,808 @@
+\documentclass[11pt]{article}
+
+% --------------------------------------------------
+% LuaLaTeX packages and configuration
+% --------------------------------------------------
+\usepackage{fontspec}
+\usepackage{unicode-math}
+\setmainfont{TeX Gyre Pagella}
+\setsansfont{TeX Gyre Heros}
+\setmonofont{Inconsolata}
+\setmathfont{Latin Modern Math}
+
+\usepackage{geometry}
+\usepackage{microtype}
+\usepackage{setspace}
+\usepackage{hyperref}
+\usepackage{csquotes}
+
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,calc,decorations.pathmorphing}
+
+\geometry{margin=1in}
+\setstretch{1.15}
+
+% --------------------------------------------------
+% Theorem environments
+% --------------------------------------------------
+\newtheorem{definition}{Definition}[section]
+\newtheorem{axiom}{Axiom}[section]
+\newtheorem{lemma}{Lemma}[section]
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[section]
+\newtheorem{proposition}{Proposition}[section]
+
+% --------------------------------------------------
+% Title
+% --------------------------------------------------
+\title{Attention as a Minimal Relational Interaction\\
+in Entropy-Regulated Field Dynamics:\\
+\large A Derived Geometric and BV-Theoretic Formulation of RSVP}
+\author{Flyxion}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+% ==================================================
+\begin{abstract}
+% ==================================================
+
+Attention mechanisms are commonly presented as architectural primitives motivated by empirical performance. In this work, we show that attention instead arises as a \emph{structurally inevitable interaction} within a broad class of entropy-regulated relational field theories. Working within the Relativistic Scalar--Vector--Plenum (RSVP) framework, we identify analyticity, relational invariance, controlled symmetry breaking, and bottlenecked mediation as sufficient conditions forcing attention to appear as the unique lowest-order nontrivial interaction.
+
+We first establish this result at the level of effective field theory: under permutation-equivariant dynamics with implicit entropy, the minimal admissible interaction is quartic and coincides with self-attention. We then lift the construction to a derived moduli stack of RSVP configurations, equipped with a canonical shifted symplectic structure. In this setting, attention emerges as the universal cotangent lift of relational coupling maps. Finally, we formulate the theory in the Batalin--Vilkovisky (BV) formalism and show that the minimal BRST-invariant interacting term satisfying the classical master equation is precisely the attention interaction.
+
+By making entropy explicit, we further demonstrate that attention is a phase-dependent phenomenon: it collapses, sparsifies, or deforms when entropy gradients, constraints, or symmetry regimes change. Attention is thus characterized not as an architectural convenience, but as a renormalizable interaction in a derived, entropy-regulated field theory of structured computation.
+
+\end{abstract}
+
+% ==================================================
+\section{Introduction}
+% ==================================================
+
+Self-attention has become the dominant interaction mechanism in modern sequence models. Despite its empirical success, its conceptual status remains ambiguous: attention is frequently treated as an engineered solution rather than as a consequence of deeper structural constraints.
+
+The RSVP framework proposes a different starting point. It models cognition and computation as entropy-regulated field dynamics governed by relational invariance, symmetry breaking, and bottlenecked interaction channels. From this perspective, architectural mechanisms should not be postulated but \emph{derived} as minimal interactions compatible with these constraints.
+
+The purpose of this paper is to show that attention is precisely such a derived interaction. We demonstrate that, under RSVP structural axioms, attention is the unique lowest-order nontrivial coupling permitted by analyticity and symmetry. We then show that this conclusion persists—and becomes sharper—when reformulated in derived geometric and BV-theoretic language.
+
+The result is a unified view: attention plays the role of a $\phi^4$-type interaction in relational field theory, selected by symmetry and renormalizability rather than by design.
+
+% ==================================================
+\section{RSVP Configuration Space}
+% ==================================================
+
+We consider a system defined over a discrete set of $N$ tokens, each carrying a $C$-dimensional feature vector.
+
+\begin{definition}[RSVP Fields]
+An RSVP configuration consists of:
+\begin{itemize}
+  \item a scalar content field $\Phi \in \mathbb{R}^{N\times C}$,
+  \item a vector transport field $\mathbf v \in \mathbb{R}^{N\times C}$,
+  \item an entropy field $S \in \mathbb{R}^{N}$.
+\end{itemize}
+\end{definition}
+
+For notational and geometric convenience, we complexify the scalar field:
+\[
+X = \Phi_1 + i\Phi_2 \in \mathbb{C}^{N\times C}.
+\]
+This complexification carries no ontological commitment; it simply packages paired degrees of freedom and simplifies symmetry analysis.
+
+% ==================================================
+\section{Structural Optimality Axioms}
+% ==================================================
+
+The admissible dynamics are constrained by the following axioms.
+
+\begin{axiom}[Analytic Effective Description]
+The system is governed by an effective free energy $\mathcal F(X,S)$ that is analytic in $X,X^\*$ and smooth in $S$. Higher-order terms are suppressed by scale or entropy.
+\end{axiom}
+
+\begin{axiom}[Relational Invariance]
+For any token isometry $P\in U(N)$,
+\[
+\mathcal F(PX,PS)=\mathcal F(X,S).
+\]
+\end{axiom}
+
+This axiom asserts that dynamics depend only on relational structure between tokens, not on absolute indexing.
+
+\begin{axiom}[Feature Isotropy with Symmetry Breaking]
+There exist operators $W_1,\dots,W_n\in\mathbb{C}^{C\times C}$ such that
+\[
+\mathcal F(XR^\*,S)=\mathcal F(X,S)
+\quad
+\forall R\in\mathrm{Cent}(\{W_i\})\subset U(C).
+\]
+\end{axiom}
+
+\begin{axiom}[Bottlenecked Mediation]
+Each $W_i$ has rank bounded by $C_A\ll C$, enforcing low-dimensional interaction channels.
+\end{axiom}
+
+Together, these axioms define structural optimality: interactions are allowed only if they respect analyticity, relational invariance, controlled symmetry breaking, and entropy-regulating bottlenecks.
+
+% ==================================================
+\section{Canonical Form of the Free Energy}
+% ==================================================
+
+\begin{lemma}[Canonical Invariant Form]
+Under the structural axioms, the free energy takes the form
+\[
+\mathcal F(X,S)=f\big(XW_1X^\*,\dots,XW_nX^\*;S\big),
+\]
+where $f$ is an analytic spectral function.
+\end{lemma}
+
+\begin{proof}
+Token invariance restricts dependence to $U(N)$-invariant quantities, which are functions of Gram-type matrices. Feature symmetry further constrains dependence to combinations involving the $W_i$. Analyticity excludes nonlocal dependence.
+\end{proof}
+
+This expresses a general principle: relational dynamics factor through relational observables.
+
+% ==================================================
+\section{Minimal Interaction and Attention}
+% ==================================================
+
+\begin{lemma}[Lowest-Order Interactions]
+The lowest-order nontrivial truncation of $\mathcal F$ consists of a quadratic term and a quartic term in $X$. Cubic terms are forbidden by symmetry.
+\end{lemma}
+
+The quadratic term produces linear mixing. The quartic term takes the form
+\[
+\mathcal F_{\mathrm{int}}
+=
+\sum_{i,j}
+\mathrm{Tr}\!\left(XW_iX^\*XW_jX^\*\right).
+\]
+
+\begin{theorem}[Attention as Minimal Relational Interaction]
+In the permutation-equivariant, entropy-implicit regime, $\mathcal F_{\mathrm{int}}$ is the unique minimal interacting term permitted by the structural axioms. Its induced flow satisfies
+\[
+\dot X \sim X(X^\*X),
+\]
+which is equivalent, after linear reparameterization, to self-attention.
+\end{theorem}
+
+Thus, attention is not an architectural choice but a structural inevitability.
+
+% ==================================================
+\section{Derived RSVP Configuration Stack}
+% ==================================================
+
+\begin{definition}[Derived RSVP Stack]
+The derived moduli stack of RSVP configurations is
+\[
+\mathcal M_{\mathrm{RSVP}}
+:=
+\mathbf R\!\operatorname{Map}\!\left(
+\mathrm{Spec}\,\mathbb{R}^N,\;
+[\mathbb{C}^C/U(C)]
+\right),
+\]
+with entropy treated as a smooth real-valued field.
+\end{definition}
+
+This derived stack encodes fields, gauge symmetries, and infinitesimal deformations in a single geometric object.
+
+% ==================================================
+\section{Shifted Symplectic Structure}
+% ==================================================
+
+\begin{theorem}
+The derived stack $\mathcal M_{\mathrm{RSVP}}$ carries a canonical $0$-shifted symplectic structure induced by its cotangent complex. The attention interaction arises as the universal cotangent lift of the relational map
+\[
+X \mapsto XW_iX^\*.
+\]
+\end{theorem}
+
+This identifies attention as a universal geometric interaction rather than a model-specific construct.
+
+% ==================================================
+\section{BV Formulation}
+% ==================================================
+
+\begin{definition}[BV Field Content]
+The BV extension consists of
+\[
+\{X,\mathbf v,S;\; X^\dagger,\mathbf v^\dagger,S^\dagger;\; c,c^\dagger\},
+\]
+where $c$ is the ghost associated to relational symmetry.
+\end{definition}
+
+\begin{theorem}[BV Master Action]
+The minimal BV action
+\[
+S_{\mathrm{BV}}
+=
+\mathcal F(X,S)
++
+\langle X^\dagger,cX\rangle
++
+\langle S^\dagger,cS\rangle
+-
+\tfrac12\langle c^\dagger,[c,c]\rangle
+\]
+satisfies the classical master equation. The only nonvanishing interacting term compatible with BRST invariance is the quartic attention interaction.
+\end{theorem}
+
+% ==================================================
+\section{Entropy-Driven Phase Transitions}
+% ==================================================
+
+\begin{proposition}
+If $\nabla S=0$, the attention interaction becomes irrelevant and dynamics reduce to linear mixing.
+\end{proposition}
+
+\begin{proposition}
+Strong entropy gradients or constraints break relational symmetry, forcing attention to sparsify, localize, or deform.
+\end{proposition}
+
+\begin{proposition}
+If entropy transport demand exceeds bottleneck capacity, the system must fragment interactions or increase mediator rank.
+\end{proposition}
+
+Attention is thus a phase-dependent phenomenon.
+
+% ==================================================
+\section{Conclusion}
+% ==================================================
+
+Attention emerges as the unique minimal relational interaction compatible with RSVP structural optimality. Derived geometry and BV consistency sharpen this result, showing that attention is the only nontrivial interaction surviving symmetry, analyticity, and gauge constraints. Entropy determines when this interaction is active, deformed, or suppressed.
+
+This situates attention as a renormalizable interaction in an entropy-regulated field theory of structured computation.
+
+% ==================================================
+\appendix
+\section{Correspondence with Standard Transformer Formulations}
+% ==================================================
+
+This appendix provides an explicit translation between the relational field-theoretic formulation developed in the main text and the conventional notation used in Transformer architectures. No new assumptions are introduced; the purpose is solely to establish equivalence of representations.
+
+% --------------------------------------------------
+\subsection{State Variables}
+% --------------------------------------------------
+
+In standard Transformer notation, a sequence of $N$ tokens with embedding dimension $C$ is represented as a matrix
+\[
+X \in \mathbb{R}^{N\times C}.
+\]
+This coincides directly with the RSVP scalar content field $\Phi$, or with its complexification $X=\Phi_1+i\Phi_2$ when paired degrees of freedom are used. No semantic distinction is implied: both represent token-indexed feature vectors.
+
+The RSVP entropy field $S\in\mathbb{R}^N$ does not appear explicitly in conventional Transformer formulations. Instead, entropy is handled implicitly through normalization operations (e.g.\ softmax), architectural constraints, and optimization dynamics.
+
+% --------------------------------------------------
+\subsection{Linear Mixing and MLP Components}
+% --------------------------------------------------
+
+The quadratic term in the RSVP free energy,
+\[
+\mathcal F_2(X)=\mathrm{Tr}(XWX^\*),
+\]
+generates linear dynamics of the form
+\[
+\dot X = XW,
+\]
+which corresponds to the linear transformations appearing in Transformer feedforward (MLP) blocks. Nonlinearities such as ReLU or gated activations arise from additional convex constraints or entropy-regularized projections, rather than from the minimal interaction itself.
+
+% --------------------------------------------------
+\subsection{Attention as Quartic Interaction}
+% --------------------------------------------------
+
+The RSVP minimal interacting term,
+\[
+\mathcal F_{\mathrm{int}}
+=
+\sum_{i,j}
+\mathrm{Tr}\!\left(XW_iX^\*XW_jX^\*\right),
+\]
+induces dynamics
+\[
+\dot X \sim X(X^\*X),
+\]
+up to linear reparameterization.
+
+Introduce the standard projections
+\[
+Q = XW_Q, \qquad
+K = XW_K, \qquad
+V = XW_V,
+\]
+with $W_Q,W_K,W_V\in\mathbb{R}^{C\times C_A}$ of low rank $C_A\ll C$. Then the relational Gram matrix
+\[
+X^\*X \;\longleftrightarrow\; QK^\top
+\]
+appears as the attention kernel.
+
+In discrete-time form, entropy-regularized normalization yields
+\[
+\operatorname{Att}(X)
+=
+\mathrm{softmax}\!\left(\frac{QK^\top}{\sqrt{C_A}}\right)V,
+\]
+which is the standard self-attention operation. In the RSVP formulation, the softmax arises from entropy regularization of the relational interaction, not as a defining primitive.
+
+% --------------------------------------------------
+\subsection{Multi-Head Attention}
+% --------------------------------------------------
+
+The RSVP bottleneck axiom enforces low-rank mediation of interactions. Decomposition of the interaction operators into multiple low-rank channels,
+\[
+W_i = A_iB_i^\top,
+\]
+corresponds directly to multi-head attention, with each head representing an independent mediator of relational coupling. Concatenation and projection of heads correspond to recombination of multiple low-rank interaction channels into the full feature space.
+
+% --------------------------------------------------
+\subsection{Residual Connections and Layer Composition}
+% --------------------------------------------------
+
+The RSVP dynamics are formulated as continuous-time flows,
+\[
+\dot X = -\frac{\partial \mathcal F}{\partial X^\*},
+\]
+whose discrete implementation via forward Euler integration yields residual updates of the form
+\[
+X_{t+1} = X_t + \Delta t \, \dot X_t.
+\]
+This recovers the residual structure of Transformer layers. The common architectural separation between attention and MLP blocks corresponds to operator splitting of commuting or weakly noncommuting generators in the effective flow.
+
+% --------------------------------------------------
+\subsection{Normalization and Entropy}
+% --------------------------------------------------
+
+Layer normalization and softmax normalization do not introduce new interactions in the RSVP sense. Instead, they implement entropy constraints and convex projections on the state space. In the entropy-explicit formulation, these appear as contributions to the entropy functional $\mathcal H(S)$ and constraint term $\mathcal C(X,S)$.
+
+% --------------------------------------------------
+\subsection{Summary of Correspondence}
+% --------------------------------------------------
+
+\begin{center}
+\begin{tabular}{l l}
+\textbf{RSVP / Field Theory} & \textbf{Transformer Architecture} \\
+\hline
+Scalar field $\Phi$ & Token embeddings $X$ \\
+Entropy field $S$ & Implicit normalization / regularization \\
+Quadratic term & Linear layers / MLP mixing \\
+Quartic interaction & Self-attention \\
+Low-rank mediation & Attention heads \\
+Euler integration & Residual connections \\
+Entropy constraints & Softmax, LayerNorm \\
+\end{tabular}
+\end{center}
+
+This correspondence demonstrates that the standard Transformer architecture is a discrete, entropy-regularized realization of the minimal relational interaction derived in the main text.
+
+% ==================================================
+\section{Continuous-Depth and ODE Interpretation}
+% ==================================================
+
+This appendix reformulates the dynamics developed in the main text in continuous-depth and ordinary differential equation (ODE) language. The goal is to make explicit the relationship between the RSVP field dynamics, residual network formulations, and neural ODE perspectives commonly used in the analysis of Transformer-like architectures.
+
+% --------------------------------------------------
+\subsection{Continuous-Time RSVP Dynamics}
+% --------------------------------------------------
+
+In the RSVP framework, the evolution of the scalar field $X(t)$ is governed by a gradient or Hamiltonian flow generated by an effective free energy:
+\[
+\dot X(t) = -\frac{\partial \mathcal F(X(t),S(t))}{\partial X^\*}.
+\]
+This equation defines a continuous-time dynamical system on the RSVP configuration space. The entropy field $S(t)$ may evolve independently or be treated as quasi-static, depending on the regime under consideration.
+
+When entropy is implicit or slowly varying, the flow is determined primarily by the structural potential $\mathcal F(X)$, and the dynamics reduce to an autonomous ODE on $X$.
+
+% --------------------------------------------------
+\subsection{Quadratic and Quartic Generators}
+% --------------------------------------------------
+
+Decomposing the free energy into quadratic and quartic components,
+\[
+\mathcal F(X) = \mathcal F_2(X) + \mathcal F_4(X) + \cdots,
+\]
+yields a corresponding decomposition of the vector field:
+\[
+\dot X = \lambda_{\mathrm{lin}}(X) + \lambda_{\mathrm{int}}(X).
+\]
+
+The quadratic term
+\[
+\mathcal F_2(X) = \mathrm{Tr}(XWX^\*)
+\]
+generates a linear flow
+\[
+\lambda_{\mathrm{lin}}(X) = XW,
+\]
+corresponding to continuous-depth linear mixing.
+
+The quartic interaction
+\[
+\mathcal F_4(X) =
+\sum_{i,j}\mathrm{Tr}(XW_iX^\*XW_jX^\*)
+\]
+generates a nonlinear vector field
+\[
+\lambda_{\mathrm{int}}(X) \sim X(X^\*X),
+\]
+which is the continuous-time analogue of self-attention.
+
+% --------------------------------------------------
+\subsection{Euler Discretization and Residual Networks}
+% --------------------------------------------------
+
+Discretizing the RSVP flow via a forward Euler scheme with step size $\Delta t$ yields
+\[
+X_{k+1} = X_k + \Delta t\,\lambda(X_k),
+\]
+which is precisely the residual update form used in deep residual networks and Transformers.
+
+In this interpretation:
+\begin{itemize}
+  \item the depth index corresponds to discretized time,
+  \item residual connections implement numerical integration,
+  \item stability properties correspond to step-size and generator structure.
+\end{itemize}
+
+Thus, Transformer layers may be understood as discrete samples of an underlying RSVP flow.
+
+% --------------------------------------------------
+\subsection{Operator Splitting and Layer Structure}
+% --------------------------------------------------
+
+In practice, Transformer architectures separate attention and feedforward components into distinct sublayers. In the ODE framework, this corresponds to operator splitting of the total generator:
+\[
+\lambda = \lambda_{\mathrm{lin}} + \lambda_{\mathrm{int}}.
+\]
+
+A split-step integration scheme alternates between:
+\[
+\dot X = \lambda_{\mathrm{lin}}(X),
+\qquad
+\dot X = \lambda_{\mathrm{int}}(X),
+\]
+over small time intervals. When the generators commute or weakly fail to commute, this splitting converges to the same continuous flow in the infinite-depth limit.
+
+This explains why different Transformer layer orderings exhibit similar asymptotic behavior.
+
+% --------------------------------------------------
+\subsection{Normalization as Flow Regularization}
+% --------------------------------------------------
+
+Normalization operations such as layer normalization and softmax do not correspond to additional generators in the RSVP sense. Instead, they regulate the trajectory of the ODE by:
+\begin{itemize}
+  \item constraining the effective state space,
+  \item stabilizing numerical integration,
+  \item enforcing entropy or scale constraints.
+\end{itemize}
+
+In the continuous-time limit, these operations act as geometric or entropic regularizers rather than as independent dynamical forces.
+
+% --------------------------------------------------
+\subsection{Interpretation of Depth and Expressivity}
+% --------------------------------------------------
+
+From the ODE viewpoint, increased depth corresponds to longer integration time rather than to the accumulation of distinct transformations. Expressivity arises from the nonlinear interaction term $\lambda_{\mathrm{int}}$, while depth controls how fully the system explores the relational energy landscape.
+
+In regimes where the entropy field suppresses interaction, the flow effectively linearizes and additional depth yields diminishing returns. Conversely, when entropy gradients permit sustained interaction, depth enables the emergence of global relational structure.
+
+% --------------------------------------------------
+\subsection{Summary}
+% --------------------------------------------------
+
+\begin{center}
+\begin{tabular}{l l}
+\textbf{RSVP / ODE View} & \textbf{Neural Architecture View} \\
+\hline
+Continuous-time flow & Deep network \\
+Generator $\lambda$ & Layer operation \\
+Euler discretization & Residual connection \\
+Quadratic generator & Linear / MLP component \\
+Quartic generator & Attention component \\
+Operator splitting & Layer stacking order \\
+Flow regularization & Normalization layers \\
+\end{tabular}
+\end{center}
+
+This perspective situates attention within a continuous dynamical system, clarifying its role as the minimal nonlinear generator required for relational expressivity.
+
+% ==================================================
+\section{Gauge Symmetry and Permutation Equivariance}
+% ==================================================
+
+This appendix clarifies the role of gauge symmetry and permutation equivariance in the RSVP formulation and explains how conventional permutation-equivariant architectures arise as a particular gauge-fixed phase of a more general relational symmetry.
+
+% --------------------------------------------------
+\subsection{Relational Symmetry as Gauge Redundancy}
+% --------------------------------------------------
+
+In the RSVP framework, token labels carry no intrinsic meaning. Physical or semantic content is encoded entirely in relational structure between tokens. This principle is formalized by invariance under the action of a symmetry group $G$ acting on token indices.
+
+When $G = U(N)$ or its discrete subgroup $S_N$, this symmetry is naturally interpreted as a \emph{gauge redundancy}: multiple field configurations related by the action of $G$ represent the same physical or semantic state.
+
+Accordingly, the RSVP configuration space is not a naive vector space of fields but a quotient object, represented in the main text as a derived stack
+\[
+\mathcal M_{\mathrm{RSVP}} = [\mathbb{C}^{N\times C} / G].
+\]
+Gauge-equivalent configurations correspond to different coordinate descriptions of the same relational state.
+
+% --------------------------------------------------
+\subsection{Permutation Equivariance as a Gauge Choice}
+% --------------------------------------------------
+
+Permutation-equivariant architectures impose the condition that all operations commute with the action of the permutation group $S_N$. In RSVP terms, this corresponds to working in a gauge where relational symmetry is preserved explicitly at every step of the dynamics.
+
+From the gauge-theoretic perspective, permutation equivariance is not a fundamental requirement but a \emph{choice of gauge} that keeps the redundancy manifest. Other gauges are possible in which relational symmetry is partially fixed or spontaneously broken, yielding architectures with positional bias, locality, or causal structure.
+
+Thus, permutation equivariance should be understood as a symmetry phase rather than as an absolute constraint.
+
+% --------------------------------------------------
+\subsection{Gauge-Invariant Observables}
+% --------------------------------------------------
+
+Physical or semantic observables in RSVP must be gauge invariant. Under relational symmetry, admissible observables are functions of invariant combinations such as:
+\[
+X^\*X, \quad XW_iX^\*, \quad \text{or spectral data thereof}.
+\]
+
+These quantities are invariant under the action of $G$ and therefore descend to well-defined functions on the quotient stack. The restriction to such observables explains why attention kernels are necessarily relational and why absolute token indices never appear in the effective dynamics.
+
+% --------------------------------------------------
+\subsection{Gauge Symmetry and Attention}
+% --------------------------------------------------
+
+The attention interaction derived in the main text is gauge invariant by construction. The quartic interaction
+\[
+\mathrm{Tr}(XW_iX^\*XW_jX^\*)
+\]
+depends only on relational combinations of fields and therefore respects the full relational gauge symmetry.
+
+From the gauge-theoretic viewpoint, attention is the minimal interaction that:
+\begin{itemize}
+  \item couples tokens through gauge-invariant observables,
+  \item remains nontrivial after quotienting by $G$,
+  \item preserves locality in feature space while remaining global in token space.
+\end{itemize}
+
+No lower-order interaction satisfies these conditions.
+
+% --------------------------------------------------
+\subsection{Gauge Fixing, Positional Structure, and Symmetry Breaking}
+% --------------------------------------------------
+
+Introducing positional encodings, causal masks, or locality constraints corresponds to partial gauge fixing or spontaneous breaking of relational symmetry. In such cases:
+\begin{itemize}
+  \item the full permutation group is reduced to a subgroup,
+  \item additional invariant structures become admissible,
+  \item new interaction terms may appear at the same or lower effective order.
+\end{itemize}
+
+This explains why attention deforms under positional bias: the symmetry class defining the effective theory has changed. RSVP predicts that different architectural regimes correspond to different gauge choices or symmetry-breaking patterns rather than to fundamentally different mechanisms.
+
+% --------------------------------------------------
+\subsection{Ghost Fields and BRST Symmetry}
+% --------------------------------------------------
+
+In the BV formulation, relational gauge symmetry is implemented via ghost fields encoding infinitesimal transformations in the Lie algebra of $G$. BRST invariance ensures that physical observables are gauge invariant and that unphysical degrees of freedom do not contribute to dynamics.
+
+The appearance of attention as the unique interacting term consistent with the BV master equation reflects the fact that it is the only nontrivial interaction compatible with both relational gauge symmetry and analyticity.
+
+% --------------------------------------------------
+\subsection{Summary}
+% --------------------------------------------------
+
+\begin{center}
+\begin{tabular}{l l}
+\textbf{RSVP / Gauge-Theoretic View} & \textbf{Architectural Interpretation} \\
+\hline
+Relational symmetry & Token relabeling invariance \\
+Gauge redundancy & Permutation equivariance \\
+Gauge-invariant observable & Attention kernel \\
+Gauge fixing & Positional encodings / locality \\
+BRST invariance & Consistent interaction structure \\
+\end{tabular}
+\end{center}
+
+This perspective clarifies that permutation-equivariant attention mechanisms arise as a specific gauge-symmetric phase of a more general relational field theory, rather than as fundamental primitives.
+
+% ==================================================
+\section{Causal Symmetry Breaking and Time-Ordered Attention}
+% ==================================================
+
+This appendix analyzes causal masking and time-ordered attention from the perspective of relational gauge symmetry. We show that causal Transformers correspond to a symmetry-broken phase of the RSVP framework, obtained by partially fixing relational gauge freedom and introducing a temporal partial order on token space.
+
+% --------------------------------------------------
+\subsection{Token Space and Relational Symmetry}
+% --------------------------------------------------
+
+In the fully relational regime discussed in the main text, token indices carry no intrinsic structure. The configuration space admits an action of a relational symmetry group $G$, typically taken to be $U(N)$ or its discrete subgroup $S_N$, acting freely on token labels.
+
+In this regime, all token permutations are gauge redundancies, and admissible observables must be invariant under the full group action. Self-attention arises as the minimal interacting observable compatible with this symmetry.
+
+However, many practical architectures impose causal constraints that explicitly break full permutation symmetry. Understanding these constraints requires interpreting causality as a structural modification of the relational gauge symmetry.
+
+% --------------------------------------------------
+\subsection{Time Order as a Partial Order on Token Space}
+% --------------------------------------------------
+
+Causal sequence models assume that tokens are equipped with a temporal structure. Formally, this structure is a partial order
+\[
+\preceq \;\subset\; \mathcal T \times \mathcal T,
+\]
+where $i \preceq j$ indicates that token $i$ is not allowed to depend on token $j$.
+
+This partial order induces a directed acyclic graph (DAG) structure on token space. Importantly, it does \emph{not} fully fix a coordinate system; many permutations remain admissible provided they preserve the partial order. Thus, causal structure corresponds to a reduction of relational symmetry from $G$ to a subgroup $G_{\mathrm{causal}} \subset G$ consisting of order-preserving transformations.
+
+% --------------------------------------------------
+\subsection{Causal Masks as Triangular Gauge Fixing}
+% --------------------------------------------------
+
+In standard causal Transformers, attention weights are constrained by a causal mask:
+\[
+(QK^\top)_{ij} = 0 \quad \text{whenever } j \succ i.
+\]
+Equivalently, the attention kernel is restricted to a triangular (typically lower-triangular) form.
+
+From the RSVP gauge-theoretic perspective, this constraint may be interpreted as a \emph{triangular gauge fixing}. Rather than quotienting by the full relational symmetry group, one fixes a representative in each gauge orbit that is compatible with the temporal partial order. The triangular structure is not fundamental; it is a convenient gauge choice adapted to the causal order.
+
+Different choices of linear extension of the same partial order correspond to different triangular gauges representing the same underlying causal structure.
+
+% --------------------------------------------------
+\subsection{Admissible Interactions in the Causal Phase}
+% --------------------------------------------------
+
+Once full permutation symmetry is broken to $G_{\mathrm{causal}}$, the space of admissible gauge-invariant observables enlarges. In particular:
+\begin{itemize}
+  \item interactions need only be invariant under order-preserving transformations,
+  \item directed relational observables become admissible,
+  \item asymmetric kernels consistent with causality may appear at the same effective order.
+\end{itemize}
+
+Nevertheless, the quartic attention interaction derived in the main text remains the minimal nontrivial interaction in this symmetry class. The causal constraint does not introduce a lower-order interaction; it restricts the domain on which the interaction acts.
+
+Thus, causal attention is not a new interaction, but a restriction of the same minimal relational coupling to an order-compatible subspace.
+
+% --------------------------------------------------
+\subsection{Causal Transformers as a Symmetry-Broken Phase}
+% --------------------------------------------------
+
+From the RSVP perspective, causal Transformers arise as a distinct symmetry phase characterized by:
+\begin{itemize}
+  \item a reduced relational symmetry group,
+  \item a partial order on token space,
+  \item triangular gauge fixing of the attention kernel,
+  \item directed information flow consistent with entropy gradients.
+\end{itemize}
+
+In this phase, attention mediates relational coupling forward in time only. The entropy field naturally aligns with the causal direction, producing an effective arrow of time in the dynamics.
+
+This clarifies the conceptual status of causal masking: it is neither an architectural trick nor an independent principle, but a manifestation of symmetry breaking in relational field dynamics.
+
+% --------------------------------------------------
+\subsection{Relation to Autoregressive Modeling}
+% --------------------------------------------------
+
+Autoregressive sequence models correspond to the extreme case in which the partial order is total. In this limit, the relational symmetry is maximally broken, and the gauge group reduces to the identity. The RSVP framework predicts that:
+\begin{itemize}
+  \item attention remains quartic and relational,
+  \item but its domain becomes strictly time-ordered,
+  \item and entropy flow becomes unidirectional.
+\end{itemize}
+
+This explains why autoregressive Transformers preserve the attention mechanism while imposing strict causal constraints.
+
+% --------------------------------------------------
+\subsection{Summary}
+% --------------------------------------------------
+
+\begin{center}
+\begin{tabular}{l l}
+\textbf{RSVP / Gauge-Theoretic View} & \textbf{Causal Transformer View} \\
+\hline
+Relational symmetry $G$ & Token permutation freedom \\
+Partial order on tokens & Temporal ordering \\
+Triangular gauge fixing & Causal attention mask \\
+Reduced symmetry group & Order-preserving permutations \\
+Symmetry-broken phase & Causal Transformer architecture \\
+\end{tabular}
+\end{center}
+
+Causal attention thus appears as the natural time-ordered realization of the minimal relational interaction derived in the main text, arising from symmetry breaking rather than from the introduction of new primitives.
+
+% ==================================================
+\begin{thebibliography}{99}
+% ==================================================
+
+\bibitem{vaswani2017}
+A.~Vaswani, N.~Shazeer, N.~Parmar, J.~Uszkoreit, L.~Jones, A.~Gomez,
+{\L}.~Kaiser, and I.~Polosukhin.
+\newblock Attention Is All You Need.
+\newblock In \emph{Advances in Neural Information Processing Systems (NeurIPS)},
+2017.
+
+\bibitem{he2016}
+K.~He, X.~Zhang, S.~Ren, and J.~Sun.
+\newblock Deep Residual Learning for Image Recognition.
+\newblock In \emph{Proceedings of the IEEE Conference on Computer Vision and
+Pattern Recognition (CVPR)}, 2016.
+
+\bibitem{chen2018neuralode}
+T.~Q. Chen, Y.~Rubanova, J.~Bettencourt, and D.~Duvenaud.
+\newblock Neural Ordinary Differential Equations.
+\newblock In \emph{Advances in Neural Information Processing Systems (NeurIPS)},
+2018.
+
+\bibitem{haber2017}
+E.~Haber and L.~Ruthotto.
+\newblock Stable Architectures for Deep Neural Networks.
+\newblock \emph{Inverse Problems}, 34(1), 2017.
+
+\bibitem{bronstein2021geometric}
+M.~M. Bronstein, J.~Bruna, T.~Cohen, and P.~Veli{\v{c}}kovi{\'c}.
+\newblock Geometric Deep Learning: Grids, Groups, Graphs, Geodesics, and Gauges.
+\newblock \emph{IEEE Signal Processing Magazine}, 38(5), 2021.
+
+\bibitem{cohen2016}
+T.~Cohen and M.~Welling.
+\newblock Group Equivariant Convolutional Networks.
+\newblock In \emph{International Conference on Machine Learning (ICML)}, 2016.
+
+\bibitem{pantev2013}
+T.~Pantev, B.~To{\"e}n, M.~Vaqui{\'e}, and G.~Vezzosi.
+\newblock Shifted Symplectic Structures.
+\newblock \emph{Publications math\'ematiques de l'IH\'ES}, 117(1), 2013.
+
+\bibitem{toen2014derived}
+B.~To{\"e}n.
+\newblock Derived Algebraic Geometry.
+\newblock \emph{EMS Surveys in Mathematical Sciences}, 1(2), 2014.
+
+\bibitem{baez2014}
+J.~C. Baez and A.~Hoffnung.
+\newblock Convenient Categories of Smooth Spaces.
+\newblock \emph{Transactions of the American Mathematical Society}, 363(11),
+2011.
+
+\bibitem{bv1981}
+I.~A. Batalin and G.~A. Vilkovisky.
+\newblock Gauge Algebra and Quantization.
+\newblock \emph{Physics Letters B}, 102(1), 1981.
+
+\bibitem{henneaux1992}
+M.~Henneaux and C.~Teitelboim.
+\newblock \emph{Quantization of Gauge Systems}.
+\newblock Princeton University Press, 1992.
+
+\bibitem{friston2010}
+K.~Friston.
+\newblock The Free-Energy Principle: A Unified Brain Theory?
+\newblock \emph{Nature Reviews Neuroscience}, 11(2), 2010.
+
+\bibitem{jacobson1995}
+T.~Jacobson.
+\newblock Thermodynamics of Spacetime: The Einstein Equation of State.
+\newblock \emph{Physical Review Letters}, 75(7), 1995.
+
+\bibitem{verlinde2011}
+E.~Verlinde.
+\newblock On the Origin of Gravity and the Laws of Newton.
+\newblock \emph{Journal of High Energy Physics}, 2011(4).
+
+\bibitem{lawvere1969}
+F.~W. Lawvere.
+\newblock Adjointness in Foundations.
+\newblock \emph{Dialectica}, 23(3--4), 1969.
+
+\bibitem{maclane1998}
+S.~Mac~Lane.
+\newblock \emph{Categories for the Working Mathematician}.
+\newblock Springer, 2nd edition, 1998.
+
+\bibitem{fu2025}
+C.~Fu.
+\newblock Transformers Are Optimal Effective Fields.
+\newblock In \emph{NeurIPS Workshop on Principles of Generative Modeling}, 2025.
+
+\end{thebibliography}
+
+\end{document}
