@@ -1,260 +1,113 @@
 # Spherepop
 
-( 6 / 2 ( 2 + 1 ) )
+**Spherepop is an event-driven, visual and formal framework for building meaning, computation, and structure through irreversible actions.**
 
-<!-- # Standard Galactic -->
+Instead of starting from *sets, states, or representations*, Spherepop starts from **events**: things that happen once, change what is possible next, and leave an auditable history behind.
 
-The paper proposes Spherepop as an alternative foundational framework to set theory, based on operational mereology (theory of part-whole relations) instead of set membership. Key ideas:
+At its core, Spherepop replaces static foundations with a **constructive, history-based mereology** (part–whole relations built over time).
 
-1. From sets to parts – Instead of a primitive membership relation ( \in ), Spherepop uses a time-indexed part-of relation ( \leq_t ) constructed from events.
-2. Event-sourced semantics – All objects and relations arise from replayable events (POP, MERGE, LINK, COLLAPSE). Existence is historical, not axiomatic.
-3. Temporal and constructive – Identity is based on event history, not extensional content. Objects only exist if introduced by events.
-4. Avoids set-theoretic problems – Russell’s paradox and similar impredicative issues cannot even be formulated because:
-   · No global membership relation
-   · No unrestricted comprehension
-   · No predicate-generated objects
-5. Computational efficiency – Replaces power sets (which imply exponential structure) with linear event logs. Complexity scales with actual use, not hypothetical possibilities.
-6. Relation to other foundations –
-   · Type theory: types become views, identity becomes explicit collapse events.
-   · Category theory: categories are derived from replayed graphs, not ontologically primitive.
-   · ZF set theory: each ZF axiom is either operationalized, replaced by events, or rendered unnecessary.
-7. Philosophical roots – Draws from mereology’s historical critique of set theory, but makes it operational, executable, and aligned with computational practice.
+![](scope-intro.gif)
 
 ---
 
-In short, Spherepop replaces set theory with a constructive, event-driven mereology where structure is built through auditable events, not assumed via axioms. This shift aims to better reflect how computational systems actually work—grounding foundations in process, history, and authority rather than in static, timeless sets.
+## What Spherepop Is
 
-[Operational Mereology via Event-Sourced Semantics](https://standardgalactic.github.io/spherepop/Operational%20Mereology.pdf)
+Spherepop is simultaneously:
 
-## Spherepop Demo
-![](scope-intro.gif)
+- a **formal calculus** for event-sourced structure,
+- a **visual programming model** based on nested scopes (“bubbles”),
+- and a **foundational alternative** to set-theoretic thinking.
+
+Meaning, identity, and computation arise from *what has been done*, not from timeless axioms.
+
 ![](stack-explode.gif)
 
-![](popscotch.jpg)
-![](demonstration-00.jpg)
-![](demonstration.jpg)
-<!--
-![](demonstration-01.jpg)
-![](demonstration-02.jpg)
-![](demonstration-03.jpg)
--->
+---
 
-<!--
-![Cluster Analysis](facebook-brain-Dec-2012.jpg)
-![Wordcloud](facebook-wordcloud-Nov-2015.jpg)
-![Wordcloud](facebook-wordcloud-Aug-2017.jpg)
-![Wordcloud](facebook-wordcloud-Feb-2019.jpg)
--->
-![](spherepop-example-dark-mode.png)
+## Core Ideas (Short Version)
 
-![](banner.png)
+### 1. Events before objects
+Nothing exists by assumption. Objects, relations, and identities exist **only if introduced by events**.
 
-# SpherePop: Visual and Categorical Perspectives on Interactive Expression Evaluation
+### 2. Part–whole instead of membership
+Spherepop replaces set membership (`∈`) with a **time-indexed part-of relation**, built incrementally from events.
 
-## Overview and Examples
+### 3. Event-sourced semantics
+All structure arises from a replayable log of irreversible operations:
 
-SpherePop is an interactive visual language and interpreter in which algebraic or logical expressions are instantiated as nested topological circles ("bubbles"). Each circle corresponds to a syntactic or semantic scope. The act of “popping” a bubble constitutes the explicit evaluation and reduction of the local subexpression it encloses. The user initiates evaluation by interacting directly with the visual representation; computation is neither implicit nor automated, but proceeds by explicit traversal of the expression’s abstract syntax tree (AST).
+- **Pop** — eliminate an option by resolving it  
+- **Refuse** — exclude an option by commitment  
+- **Bind** — impose dependency without elimination  
+- **Collapse** — identify distinctions to simplify history  
+- **Meld** — synthesize parallel histories into one future  
 
-### Example 1: Arithmetic Reduction
+Existence is historical, not axiomatic.
 
-Consider the arithmetic expression:
+### 4. Identity is historical
+Two things are the same if they have the same event history.  
+There is no notion of identity independent of construction.
 
-    (((1 + 2) + 3) + 4)
+### 5. No classical paradoxes
+Russell-style paradoxes cannot arise because Spherepop has:
 
-In SpherePop, this expression is visualized as a series of concentric or nested circles, each representing a level of nesting in the expression. The evaluation proceeds as follows, with each step corresponding to the popping (explicit evaluation) of the innermost available bubble:
+- no global membership relation,
+- no unrestricted comprehension,
+- no predicate-generated objects.
 
-1. **Initial state:** (((1 + 2) + 3) + 4)
-2. **First pop:** (1 + 2) → 3, so the expression becomes ((3 + 3) + 4)
-3. **Second pop:** (3 + 3) → 6, so the expression becomes (6 + 4)
-4. **Third pop:** (6 + 4) → 10, so the expression becomes 10 (fully reduced).
+If something exists, you can point to the event that made it.
 
-### Example 2: Multiple Independent Subexpressions
-
-    (((1 + 2) + (3 + 4)) + (5 + 6))
-
-Evaluation proceeds by finding and popping the innermost bubbles:
-
-1. **Initial state:** (((1 + 2) + (3 + 4)) + (5 + 6))
-2. **Innermost pops:** (1 + 2) → 3, (3 + 4) → 7, (5 + 6) → 11
-3. **Next pop:** (3 + 7) → 10
-4. **Final pop:** (10 + 11) → 21
-
-### Example 3: Variable and Function Application
-
-    ((sqrt(16) + pow(2, 3)) / (factorial(3) - 2))
-
-Evaluation:
-
-1. sqrt(16) → 4, pow(2, 3) → 8, factorial(3) → 6
-2. (4 + 8) → 12, (6 - 2) → 4
-3. (12 / 4) → 3
-
-### Example 4: Symbolic and Algebraic Manipulation
-
-    ((a + b) * (c + d)) + ((e + f) * (g + h))
-
-Variables are visually shown in the interface; the user may assign values and pop bubbles to observe the unfolding computation.
+### 6. Scales with reality, not hypotheticals
+Spherepop replaces power sets and hypothetical infinity with **linear event logs**.  
+Complexity grows with *what actually happens*, not with what could have happened.
 
 ---
 
-## Design Inspiration
+## Spherepop as a Visual Language
 
-The conception of SpherePop arises from a confluence of intuitive, cultural, and computational motifs. At its most immediate, the interface is inspired by the universal, tactile satisfaction of blowing and popping bubbles—a physical act that is accessible, direct, and inherently joyful. This metaphor is not merely decorative; it is structurally foundational, mapping the notion of “popping” directly onto the process of explicit scope reduction and evaluation within an expression.
+Spherepop also exists as an **interactive visual system**.
 
-Cinematically, SpherePop draws upon the motif of the chain reaction at the core of destructive events, most notably the detonation of a reactor core as depicted in both the destruction of the Death Star in *Star Wars* and the pivotal level mechanics of the video game *Descent*. In these narratives, the protagonist must penetrate to the innermost locus of a complex structure, initiate a catalytic process, and witness its effects propagate outward—a direct analogue to the traversal and evaluation of nested scopes within a computational expression.
+- Expressions are drawn as **nested bubbles** (scopes).
+- Each bubble represents a local context or subexpression.
+- **Popping a bubble** explicitly evaluates that scope.
+- Computation proceeds by deliberate traversal, not automation.
 
-From a programming languages perspective, SpherePop is motivated by the conceptual clarity of scope resolution: the act of descending into nested environments or contexts to resolve meaning or trigger computation, which is a central idea in both functional programming (e.g., S-expressions, lambda calculus) and shell scripting (e.g., nested bash shells, subshells, and process substitution).
-
-Each evaluation in SpherePop is thus not just a computational event, but a dramatization of the journey from local action to global consequence. The visual and interactive paradigm foregrounds both the process and the result, making the abstract traversal of syntax trees and reduction of expressions tangible, observable, and pedagogically potent.
-
-![](mind-in-motion.gif)
----
-
-## Mathematical and Theoretical Foundations
-
-### 1. Abstract Syntax and Topological Representation
-
-SpherePop maps the AST of an expression onto a topological arrangement of nested circles. Each circle (or "bubble") is a visual metaphor for a syntactic scope or subexpression. This direct mapping provides an immediate visual intuition for the concept of scope, nesting, and reduction order.
-
-#### 1.1. Category-Theoretic Interpretation
-
-Each bubble can be regarded as an object in a category of expressions, with morphisms corresponding to evaluation steps. The reduction of a subexpression is a morphism from the object (unevaluated) to its value (evaluated), and the whole computation can be viewed as a composition of such morphisms traversing the AST from leaves to root.
-
-#### 1.2. Sheaf-Theoretic Analogy
-
-Analogous to stalks in a sheaf, each bubble contains local data (the subexpression). Popping a bubble corresponds to taking a section over a local neighborhood and gluing the result into the parent context, reflecting the local-to-global principles central to modern mathematics.
-
-### 2. Operational Semantics
-
-#### 2.1. Explicit, User-Guided Evaluation
-
-Unlike conventional interpreters that apply reduction strategies automatically (e.g., eager, lazy, or normal order evaluation), SpherePop enforces explicit, user-driven computation. The user must select which bubble to pop, making the evaluation order transparent and controllable.
-
-#### 2.2. Depth-First, Local-to-Global Reduction
-
-Evaluation proceeds in a depth-first manner: the system enforces that only the innermost, fully reduced bubbles can be popped. This corresponds to a post-order traversal of the expression tree and is formally analogous to the evaluation of S-expressions in Lisp, or normal-order reduction in lambda calculus.
-
-### 3. Visualization of Scope and Type
-
-Scope boundaries are visually enforced by the concentric or nested arrangement of bubbles. The type system—currently visualized by color or annotation—can be extended to represent richer type theories, with each bubble’s style encoding its syntactic or semantic role (number, operation, variable, function, etc.).
-
-### 4. Extensibility and Higher Structures
-
-#### 4.1. Functional Abstractions
-
-The framework admits natural extension to higher-order functions, recursion (fixed-point combinators), and user-defined abstractions. Function bubbles can encapsulate reusable computational structures, and their evaluation can be visualized as unfolding or inlining within the bubble diagram.
-
-#### 4.2. Functorial Actions and Endofunctors
-
-One may formalize evaluation strategies as functorial actions on the category of expressions, where each evaluation morphism is an endofunctor mapping expressions to their reduced forms.
-
-#### 4.3. Sheafification and Gluing
-
-Further abstraction may allow for the explicit modeling of sheafification: gluing together local reductions into a coherent global evaluation, exploring the role of locality and context in computation.
-
-### 5. Pedagogical and Research Applications
-
-SpherePop provides a concrete instantiation of abstract computational principles, making it a potent tool for teaching:
-
-- Order of operations and evaluation strategies
-- Abstract syntax trees and scope management
-- Local-to-global reasoning in mathematics and computation
-- Foundations of category theory and sheaf theory
-- Visual programming and interactive computation
+This makes scope, order of evaluation, and dependency *visible*.
 
 ---
 
-## Future Directions
+## Why This Matters
 
-- **Function Definition and Higher-Order Computation:** Visual creation and evaluation of reusable function bubbles.
-- **3D Visualization:** Mapping expressions to higher-dimensional topologies (e.g., true spheres in 3D space) for richer encodings of scope and dependency.
-- **Type-Theoretic Visualization:** Integration of advanced type systems and dependent types, with visual cues for type inference and checking.
-- **Dual Textual/Visual Interface:** Bidirectional mapping between textual expressions (Lisp-like or algebraic syntax) and visual bubble structures.
-- **Functorial and Sheaf-Theoretic Research:** Formalization of evaluation as functorial transformations and explicit gluing of local evaluations.
+Spherepop is motivated by a simple observation:
+
+> Real systems—cognitive, computational, social—are not defined by states.  
+> They are defined by **irreversible history**.
+
+By making commitment, exclusion, synthesis, and abstraction explicit, Spherepop provides:
+
+- a clearer model of computation,
+- a more faithful account of agency,
+- and a foundation aligned with how real systems evolve.
 
 ---
 
-## Conclusion
+## Learn More
 
-SpherePop is not merely a visual programming interface; it is a formal exploration of the intersection between computation, topology, and category theory. By making computation explicit, visual, and interactive, it offers new pedagogical opportunities and opens avenues for research into the foundations of computation as manifested in mathematical structure.
+- [Operational Mereology via Event-Sourced Semantics](https://standardgalactic.github.io/spherepop/Operational%20Mereology.pdf)
 
-<!--
-![](sga-sample.png)
-![](sga-sample-02.png)
+- [The Joy of Spherepop](https://standardgalactic.github.io/spherepop/Joy-of-Spherepop.pdf)
 
-![](rebase.jpg)
+- **Demos and visuals:**  
+  See the animations and screenshots in this repository for interactive examples of nested scopes, popping, and collapse.
 
-Try the [Galactic Translator](https://standardgalactic.github.io/sga-converter.html)
+---
 
-And [Typing Tutor](https://standardgalactic.github.io/typing-tutor)
+## Status
 
-![](galactic-typing-tutor.png)
+Spherepop is an active research and design project exploring:
 
-Play [Chrobatos](https://standardgalactic.github.io/chrobatos.html)
+- formal foundations,
+- visual programming,
+- semantic merging and abstraction,
+- and new models of generative computation.
 
-![](chrobatos-preview.png)
-
-And [Color Radio](https://standardgalactic.github.io/color-radio.html)
-
-Coming soon:
-
-[Centerfuge](https://standardgalactic.github.io/Centerfuge)
-
-![](calculator.jpg)
-Spherepop in Action
-
-SPHEREPOP: THE PROGRAMMING LANGUAGE THAT BROKE REALITY (AND YOUR BRAIN)
-
-[Opening shot: A dark void, punctuated by glowing, pulsating bubbles. A low, ominous synth hum fills the air.]
-
-NARRATOR (gravelly, dramatic):
-In a world where programming has always been confined to the cruel, unyielding walls of text…
-
-[Flash of a frustrated programmer smashing a keyboard. Cut to green terminal code scrolling violently.]
-
-Where mere mortals struggle to decipher endless lines of cryptic gibberish…
-
-[Close-up of a screen filled with impenetrable Lisp code. A horrified programmer gasps.]
-
-…One language dares to ask: What if programming… was a game?
-
-[Music swells. The screen erupts in a cascade of shimmering spheres, expanding and colliding in a hypnotic dance.]
-
-NARRATOR:
-Introducing… SPHEREPOP.
-
-[Cut to a man in a lab coat, eyes wild with the kind of unhinged genius usually reserved for doomsday prophets.]
-
-SCIENTIST (yelling over flashing lights):
-"We thought we could contain it… But the bubbles! They keep GROWING!"
-
-[Montage: A programmer frantically popping spheres, numbers flashing, logic bending, reality warping.]
-
-NARRATOR:
-It’s not just a language. It’s an experience.
-
-No brackets. No semicolons. Just… spheres. Infinite, undulating spheres, holding the secrets of the universe.
-
-[A man collapses, sobbing, as a perfectly nested sphere structure unfolds before his eyes.]
-
-"My god… it’s… beautiful."
-
-[Cut to a shadowy government agent slamming a folder onto a table labeled "CLASSIFIED: SPHEREPOP INCIDENT"]
-
-AGENT:
-"If this technology gets out… civilization may never write for (int i = 0; i < n; i++) again."
-
-[Chaotic flashes: A hacker cackling as he bypasses a firewall with a single bubble pop. A university professor throwing a textbook out the window. A game developer whispering, “We were fools.”]
-
-NARRATOR:
-This summer… prepare for the paradigm shift NO ONE WAS READY FOR.
-
-Spherepop: Because programming should be incomprehensible AND look pretty while doing it.
-
-[Title card explodes onto the screen. The tagline glows underneath:]
-"POP THE CODE. SHAPE THE FUTURE."
-
-[Final shot: A lone sphere, floating in the void. A single finger reaches out… and pops it. Cut to black.]
-
-COMING SOON. OR NEVER. WHO KNOWS?
--->
+It is intentionally experimental, conceptual, and executable.

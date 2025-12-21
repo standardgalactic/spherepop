@@ -1,0 +1,1302 @@
+\documentclass[11pt]{article}
+
+% -----------------------------
+% Engine & typography
+% -----------------------------
+\usepackage{fontspec}
+\usepackage{microtype}
+\usepackage{geometry}
+\geometry{letterpaper, margin=1in}
+
+% -----------------------------
+% Math
+% -----------------------------
+\usepackage{amsmath, amssymb, amsthm}
+
+% -----------------------------
+% Citations (author--year)
+% -----------------------------
+\usepackage{natbib}
+\bibliographystyle{plainnat}
+
+% -----------------------------
+% Hyperlinks
+% -----------------------------
+\usepackage[hidelinks]{hyperref}
+
+% -----------------------------
+% Document metadata
+% -----------------------------
+\title{The Joy of Spherepop:\\
+\large An Event--History Calculus for a Finite World}
+\author{Flyxion}
+\date{December 2025}
+
+\begin{document} 
+\maketitle
+
+\begin{abstract}
+We introduce \emph{Spherepop}, an event--history calculus in which meaning, agency, and generation arise from irreversible commitment rather than state, representation, or prediction. In Spherepop, worlds are constructed through primitive operators that exclude, bind, and identify possibilities, producing authoritative histories that constrain future action. We formalize these processes using categorical structure, a discrete Lagrangian accounting of optionality, and sheaf--theoretic gluing conditions that govern the emergence of global coherence from local semantic scopes.
+
+Building on these foundations, we show how parallel histories may be synthesized through a policy--guided \emph{meld} operation, and how higher--order generative programs can operate over semantic policies to realize artifacts with minimal irreversible cost. This generative process admits a geometric interpretation as tangent--constrained flow on a semantic manifold, where guidance corresponds to local chart selection and coherence is enforced through overlap compatibility rather than surface prediction.
+
+Spherepop provides a unified framework for understanding cognition, authorship, and generation as instances of world construction under finitude. By treating refusal, abstraction, and synthesis as first--class operations, it offers an alternative to state--based and purely predictive paradigms, grounding intelligence in the disciplined expenditure of possibility.
+\end{abstract}
+
+\section{Introduction}
+
+Contemporary accounts of computation, cognition, and generation are dominated by state-based and predictive formalisms. Systems are modeled as mappings from inputs to outputs, from states to successor states, or from distributions to samples. Within this paradigm, meaning is treated as something that can be represented, optimized, or inferred, while history is reduced to a transient record that may be overwritten, reset, or ignored without consequence.
+
+Despite their technical success, such formalisms struggle to account for a familiar aspect of real-world agency: the fact that actions matter because they are irreversible. Choices close doors. Commitments constrain futures. Explanations, once accepted, shape what can be coherently said next. These features are not peripheral; they are constitutive of what it means to inhabit a world rather than merely traverse a state space.
+
+This paper proposes an alternative starting point. Instead of asking how a system updates its state, we ask how a system constructs a history. Instead of treating meaning as a property of representations, we treat it as an accumulation of commitment. From this perspective, intelligence is not primarily a matter of prediction or optimization, but of managing irreversibility: deciding which possibilities to exclude, which dependencies to enforce, and which distinctions to collapse.
+
+To formalize this view, we introduce \emph{Spherepop}, an event--history calculus in which irreversible operators act directly on spaces of possibility. The basic primitives—exclusion, refusal, binding, and collapse—do not compute outputs from inputs. They transform option--spaces, progressively restricting the futures that remain accessible. A world, in this framework, is not a snapshot but a trajectory: the result of a sequence of irreversible events whose effects cannot be undone without cost.
+
+The development proceeds in stages. We begin by articulating the axiom of irreversibility and defining histories as composed morphisms that prune and structure possibility. We then introduce a mechanical accounting of commitment, in which the cost of world construction is made explicit through a discrete action. This is followed by a categorical and sheaf--theoretic treatment of abstraction and synthesis, culminating in the \emph{meld} operation, which formalizes the convergence of parallel histories under policy-guided identification.
+
+Building on these foundations, we show how higher--order generative processes may be defined that operate over semantic policies rather than surface representations, and how such processes admit a geometric interpretation as tangent--constrained flow on a semantic manifold. Throughout, we emphasize that coherence arises not from averaging or prediction, but from the enforcement of overlap compatibility: only what can be glued without contradiction may be treated as globally meaningful.
+
+The aim of the paper is not to propose a new algorithm or architecture, but to clarify an ontology. By treating refusal, abstraction, and synthesis as first--class operations, Spherepop provides a framework for understanding cognition, authorship, and generation as instances of world construction under finitude. The sections that follow develop this framework formally, beginning with the axiom that makes it possible at all: irreversibility.
+
+\section{The Axiom of Irreversibility}
+
+In the prevailing computational paradigm, the world is treated as a state to be updated. Meaning is assumed to reside in configurations, representations, or parameter values, and time is treated as an external index rather than a constitutive element. This orientation reflects a deeper metaphysical commitment: that what matters about a system can be fully captured by its present condition.
+
+Spherepop rejects this assumption. In Spherepop, the world is not a state but a \emph{history}. Meaning arises not from instantaneous configuration, but from the irreversible sequence of events through which a system has passed. This shift aligns computation with existential temporality rather than representational snapshotting, grounding worldhood in facticity rather than description \citep{heidegger_being_time,whitehead_process}.
+
+Formally, a Spherepop world is constructed as a compositional history
+\begin{equation}
+H = e_n \circ \dots \circ e_1 : X_0 \to X_n,
+\end{equation}
+where each $e_i$ is an irreversible event acting on an option--space. These events do not merely transform a state; they permanently constrain the space of admissible futures. Once an option has been excluded or bound, it does not reappear.
+
+Irreversibility is not treated here as an implementation artifact or a thermodynamic afterthought. It is a semantic axiom. This position is supported both physically and computationally: any system that performs non-trivial computation in the presence of finite resources must dissipate information and lose degrees of freedom \citep{landauer_irreversibility,bennett_logical_reversibility}. Spherepop elevates this necessity to a first-class principle.
+
+This commitment distinguishes Spherepop from cybernetic and control-theoretic approaches that treat adaptation as continuous regulation over an invariant space of possibilities. Instead, Spherepop emphasizes that viable systems survive by progressively reducing variety, not by indefinitely managing it \citep{ashby_variety}.
+
+The affective core of this axiom is what the calculus names the \emph{pop}. To pop is to exclude decisively. It is the moment at which indeterminacy gives way to actuality, not through optimization, but through commitment. Joy, in this sense, is not the accumulation of options, but the relief of their resolution.
+
+\section{The Morphology of Choice}
+
+If Spherepop is grounded in irreversibility, it follows that choice cannot be treated as a neutral selection among symmetric alternatives. Choice is not a function applied to a menu of options; it is a morphological operation that reshapes the space of what can occur next. To choose is to alter the topology of the future.
+
+This orientation departs from decision-theoretic and optimization-based models in which options persist indefinitely and decisions merely select trajectories through a fixed space. In Spherepop, the space itself is transformed by every act of choice. Possibility is not conserved.
+
+The calculus identifies four generating morphisms that together constitute the kernel of agency: pop, refuse, bind, and collapse. These operators are not heuristics or annotations; they are primitive transformations of option--spaces.
+
+The most basic operation is the \emph{pop}. A pop irreversibly excludes a specific option from the admissible future. In classical logic, exclusion is treated as negation, an absence or failure. In Spherepop, exclusion is positive and constructive. To pop is to actualize one future by eliminating others. This treatment resonates with the Aristotelian distinction between potentiality and actuality, in which actuality is not additive but exclusive \citep{aristotle_metaphysics}.
+
+The \emph{refuse} operator shares the same geometric effect as pop. Both restrict the option--space by exclusion. However, refusal is distinguished by its accounting semantics. Whereas a pop records mere elimination, refusal records deliberate non-selection. This distinction does not alter the underlying morphism, but it matters for ethical and normative interpretation. The separation mirrors resource-sensitive logics in which the same structural operation may carry different contextual meanings depending on how it is discharged \citep{girard_linear_logic}.
+
+The \emph{bind} operator introduces dependency without elimination. Binding imposes an ordering or precedence constraint between options, restricting how futures may unfold without yet removing them. This operation captures a form of commitment that is weaker than exclusion but stronger than neutrality. Binding corresponds to the introduction of structure rather than reduction of space. From a type-theoretic perspective, binding resembles the imposition of constraints that restrict admissible compositions without collapsing values \citep{pierce_types}.
+
+The final operator, \emph{collapse}, differs qualitatively from the others. Whereas pop, refuse, and bind operate locally on the structure of futures, collapse operates globally by identifying distinctions. Collapse does not merely restrict what may happen; it alters how past distinctions are represented going forward. In doing so, it reduces descriptive complexity while preserving causal consequence.
+
+Taken together, these four operators define a morphology of choice rather than a logic of decision. They act not on propositions, but on spaces of possibility. Their effects accumulate irreversibly, and their order matters. A history constructed with these operators is therefore not reducible to a set of decisions or a policy; it is a structured artifact whose meaning is inseparable from the sequence of constraints that produced it.
+
+This morphology replaces the question “Which option is best?” with a different one: “Which distinctions are worth keeping?” Choice becomes an act of sculpting the future, not navigating it. The calculus thereby reframes agency as the disciplined elimination and organization of possibility, rather than its indefinite preservation.
+
+\section{The Mechanics of Commitment}
+
+If Spherepop describes how worlds are constructed through irreversible events, it must also account for the cost of that construction. Commitment is not free. Every exclusion, binding, or abstraction reduces future freedom and thereby incurs an irreversible expense. To make this precise, Spherepop adopts a discrete action-based formulation inspired by, but not reducible to, physical mechanics.
+
+We take the configuration variable of the system to be \emph{optionality}, denoted $\Omega$. Optionality measures the remaining degrees of freedom available to a world. It is a monotone quantity: as a history accumulates, optionality can only decrease. This framing treats freedom not as an abstract ideal to be maximized, but as a consumable resource whose expenditure produces structure, an approach consonant with thermodynamic interpretations of information and constraint \citep{landauer_irreversibility,bennett_logical_reversibility}.
+
+Each irreversible event $e_t$ induces a local cost. We define a discrete Lagrangian
+\begin{equation}
+\mathcal{L}_t = \Delta \Omega_t + \lambda\,\Delta C_t,
+\end{equation}
+where $\Delta \Omega_t$ is the reduction in optionality induced by the event and $\Delta C_t$ records auxiliary accounting costs, such as ethical or normative distinctions. The parameter $\lambda$ modulates the relative influence of accounting cost without altering the underlying geometry of constraint.
+
+The action of a history $\gamma = (e_1, \dots, e_n)$ is defined as the sum of its local costs:
+\begin{equation}
+\mathcal{S}[\gamma] = \sum_{t=1}^{n} \mathcal{L}_t.
+\end{equation}
+This action is monotone increasing for all operators except collapse. A history that avoids commitment accrues little action, but also constructs little worldhood. Action, in this sense, measures lived consequence rather than efficiency.
+
+To interpret commitment dynamically, we introduce the conjugate quantity
+\begin{equation}
+\pi_t = -\frac{\partial \mathcal{L}_t}{\partial \Omega},
+\end{equation}
+which we call \emph{commitment}. Commitment records the marginal cost of further loss of optionality. As options are eliminated, commitment increases. This mirrors the physical intuition that constraint accumulates as degrees of freedom are consumed, a correspondence that underlies several modern reinterpretations of dynamics in informational and gravitational terms \citep{jacobson_thermodynamics,verlinde_gravity}.
+
+From the Lagrangian, we define a discrete Hamiltonian
+\begin{equation}
+\mathcal{H}_t = \pi_t\,\Omega_t - \mathcal{L}_t,
+\end{equation}
+which represents the system’s remaining freedom. Unlike classical Hamiltonians, $\mathcal{H}$ is not conserved. It decays as commitment accumulates. A system with large $\mathcal{H}$ remains flexible but unbound; a system with vanishing $\mathcal{H}$ is fully committed to a particular world.
+
+This formulation inverts the logic of optimization. Spherepop does not seek to minimize action or maximize reward. Instead, it records the irreversible cost of becoming something definite. A meaningful history is not one that preserves freedom indefinitely, but one that spends it deliberately.
+
+In this light, commitment is not a defect or a constraint to be avoided. It is the very substance of agency. To commit is to make the future narrower but more real. The mechanics of Spherepop formalize this intuition without appeal to goals, utilities, or equilibria, grounding meaning in the disciplined expenditure of possibility.
+
+\section{Renormalization through Collapse}
+
+Among the operators of the Spherepop calculus, collapse occupies a unique position. Whereas pop, refuse, and bind monotonically increase constraint and accumulate action, collapse performs a controlled reduction of descriptive complexity. It is the only operation that may decrease the accumulated action of a history without violating irreversibility.
+
+Formally, collapse acts by identifying distinctions that no longer matter for future action. Given a collapse policy $q$ inducing an equivalence relation $\sim_q$ on an option--space $X$, the collapse operator produces the quotient
+\[
+X \longmapsto X / {\sim_q}.
+\]
+This operation preserves causal consequence while discarding representational excess. Two futures that differ only along dimensions irrelevant to downstream commitments are treated as the same.
+
+The mathematical structure underlying collapse is that of a universal quotient. Any morphism out of $X$ that is insensitive to distinctions finer than $\sim_q$ factors uniquely through the quotient space. This universal property ensures that collapse is not an arbitrary forgetting, but a principled abstraction, grounded in well-established categorical constructions \citep{grothendieck_sga1,maclane_moerdijk_sheaves}.
+
+In the mechanical formulation, collapse is the only operator permitted to reduce accumulated action. If $q$ has kernel $\ker q$, we define the effect of collapse on the action as
+\begin{equation}
+\mathcal{S} \longmapsto \mathcal{S} - \log|\ker q|.
+\end{equation}
+This reduction reflects the identification of degrees of freedom that no longer contribute to future choice. Importantly, collapse does not undo past commitments. It compresses them. The historical cost remains encoded in the quotient structure even as explicit distinctions are removed.
+
+This behavior parallels renormalization procedures in physics and compression arguments in computation, where fine-grained distinctions are integrated out to yield effective descriptions at coarser scales. In both cases, explanatory power is preserved precisely by discarding detail that no longer exerts causal influence \citep{bennett_logical_reversibility}.
+
+Collapse therefore resolves a central tension in any irreversible system: how to accumulate depth without accumulating paralysis. Without collapse, commitment would lead to an explosion of historical detail, rendering action increasingly intractable. With collapse, histories remain actionable by periodically reifying their consequences into simpler forms.
+
+Crucially, collapse is optional and contextual. The choice of collapse policy determines which distinctions are retained and which are identified. Different policies yield different abstractions over the same underlying history. This flexibility allows Spherepop to support multiple views and levels of description without compromising the authority of the kernel history.
+
+From a phenomenological perspective, collapse corresponds to the experience of “moving on.” It is the moment at which past deliberations cease to matter as deliberations and persist only as constraints. The system does not forget what it has done; it forgets how it got there.
+
+By formalizing collapse as quotienting rather than erasure, Spherepop reconciles abstraction with responsibility. The past is never rewritten, but it may be carried forward in compressed form. Renormalization thus becomes not an escape from history, but a condition of its continued relevance.
+
+\section{Psychocinema and the Limits of Retroactive Meaning}
+
+A useful contrast to Spherepop’s forward-only semantics can be found in psychoanalytic and cinematic theories of meaning, where significance is often understood as retroactively constituted. In these frameworks, events acquire meaning not at the moment they occur, but through later reinterpretation. The past is continuously re-read in light of subsequent developments.
+
+In Lacanian psychoanalysis, meaning is structured around lack, absence, and deferred signification. The subject does not simply act and then remember; rather, action is retrospectively woven into a symbolic narrative that confers coherence after the fact \citep{lacan_four_fundamental}. Similarly, in cinematic theory, especially as articulated through the time-image, the temporal order of events is subordinated to interpretive montage. Meaning emerges through cuts, juxtapositions, and delays rather than through irreversible causal accumulation \citep{deleuze_cinema2}.
+
+Helen Rollins’ \emph{Psychocinema} provides a contemporary synthesis of these ideas, emphasizing how filmic structures model psychic life by allowing later scenes to reframe earlier ones. In this account, the past remains plastic, open to reinterpretation as new symbolic structures emerge \citep{rollins_psychocinema_2024}. The subject’s history is not fixed, but continuously renegotiated.
+
+Spherepop departs sharply from this orientation. In Spherepop, meaning is not retroactively assigned but contemporaneously incurred. Events matter because they permanently constrain the future, not because they can later be re-narrated. The calculus does not deny interpretation, but it strictly separates interpretation from authority. Views may reinterpret history; the kernel may not.
+
+This distinction has important consequences. In retroactive frameworks, ambiguity is often productive because it preserves interpretive openness. In Spherepop, ambiguity persists only until commitment resolves it. The system values clarity over suspense, constraint over deferral. Where psychocinema finds richness in the reworking of the past, Spherepop locates meaning in the irrevocability of having acted.
+
+The contrast is not a rejection of psychoanalytic or cinematic insight, but a clarification of scope. Spherepop does not aim to model interpretive subjectivity or narrative experience. It aims to model worldhood: the condition of being bound by one’s past. From this perspective, retroactive reinterpretation appears not as depth, but as a refusal to pay the cost of commitment.
+
+This difference also clarifies the ethical dimension of the calculus. A system that can endlessly reinterpret its past without consequence is insulated from responsibility. By contrast, a system that treats history as fixed but compressible must live with the consequences of its choices, even as it abstracts away unnecessary detail.
+
+Spherepop therefore replaces the cinematic cut with the irreversible pop. Meaning is not edited into existence after the fact; it is constructed, one exclusion at a time. The past does not wait to be understood. It acts.
+
+\section{From Calculus to Visualization: Nested Scopes as Spatial Form}
+
+One advantage of Spherepop over purely interpretive or narrative frameworks is that its primitives admit a direct spatial realization. Because the calculus is formulated in terms of nested option--spaces, monotone restriction, and quotienting, it can be rendered visually without loss of semantic fidelity. Visualization, in this context, is not an external metaphor but a faithful projection of the underlying structure.
+
+At the core of Spherepop lies the option--space $X$: the set of admissible futures consistent with a given history. Each irreversible event transforms this space by restriction, structuring, or identification. These transformations are naturally represented as spatial operations: carving out regions, introducing internal orderings, or merging boundaries. What matters is not metric accuracy, but topological inclusion.
+
+This observation motivates a visual language based on nested regions. In two dimensions, option--spaces may be depicted as enclosed areas or bubbles; in three dimensions, as volumes or spheres. Deeper nesting corresponds to stronger commitment. Earlier, less constrained futures surround later, more definite ones. The visual grammar thus mirrors the temporal grammar of the calculus.
+
+Such spatial reasoning is not a heuristic shortcut but a legitimate mode of mathematical understanding. Geometric intuition has long played a foundational role in making abstract structures intelligible, particularly when topology rather than algebra carries the explanatory burden \citep{needham_visual_complex,needham_geometry_imaginary}. Spherepop belongs to this tradition. Its core relations are inclusion, adjacency, and identification, all of which are more naturally apprehended spatially than symbolically.
+
+The bind operator admits a particularly clear spatial interpretation. Binding introduces dependency without elimination. Visually, this may be rendered as internal structure within a region rather than shrinkage of the region itself. In two dimensions, this may appear as layered zones or directional partitions; in three dimensions, as oriented subvolumes or channels. The key point is that binding reshapes the internal geometry of possibility without reducing its extent.
+
+Refusal and pop, by contrast, reduce the admissible region. Refused regions may be visually marked as sealed rather than erased, preserving interpretability while enforcing exclusion. This distinction allows the visual language to represent ethical structure explicitly, showing not only what is unavailable, but what has been deliberately set aside.
+
+Collapse corresponds to boundary identification. When distinctions are collapsed, formerly separate regions merge into a single region. The resulting space is simpler, but not less meaningful. Visual collapse makes abstraction perceptible: complexity decreases while navigability improves. Importantly, collapse alters representation without altering the authoritative history that produced it.
+
+This spatialization also clarifies the separation between kernel and view. The kernel history is the authoritative sequence of transformations. A visualization is a view: a projection that emphasizes certain structural features while suppressing others. Multiple visualizations may coexist, each corresponding to a different collapse policy or scope selection, without threatening semantic integrity.
+
+By enabling direct manipulation of nested scopes, a Spherepop visual language supports reasoning through interaction rather than interpretation. Users may enact pops, binds, refusals, and collapses by spatial gestures, with each gesture corresponding to a well-defined operation in the calculus. Visualization thus becomes an interface to commitment rather than a report about it.
+
+In this way, Spherepop closes the gap between formal calculus and lived experience. Worlds are not only described; they are inhabited. Nested scopes make visible the cost of choice and the relief of resolution. To see one’s commitments as spatial depth is to grasp, quite literally, how much of the future has already been spent.
+
+\section{Cognitive Agents as Log--Bound Processes}
+
+With the semantic, mechanical, and visual foundations in place, we can now state a positive account of agency within Spherepop. An agent, in this framework, is not a function from observations to actions, nor a policy over states, but a process whose identity is constituted by an accumulating, authoritative history. Cognition is the internal construction of that history; action is its external projection.
+
+\subsection{Agents as Historical Processes}
+
+Formally, a Spherepop agent is a process that emits a sequence of events
+\[
+\gamma = (e_1, e_2, \dots, e_n)
+\]
+into an authoritative log. The agent’s identity is not given by a parameter vector or internal configuration at time $t$, but by the prefix of the log to which it is bound. Two agents that share the same history are indistinguishable in the strong semantic sense, regardless of their internal representations.
+
+This definition departs from representational and functionalist accounts of mind, which treat internal state as primary and history as derivative. Instead, it aligns agency with construction lineage: what an agent is depends on what it has irreversibly done \citep{whitehead_process,rosen_life_itself}.
+
+\subsection{Internal Cognition as Event Simulation}
+
+Internal cognition within a Spherepop agent consists of proposing candidate events against an internal option--space. These proposals may be explored, evaluated, or rejected, but they do not alter the authoritative history until committed. Cognition is therefore structurally separated from action.
+
+Each accepted internal event transforms the agent’s internal memory state:
+\[
+M_{t+1} = e_t(M_t),
+\]
+where $M_t$ is itself an option--space enriched with bindings and exclusions. Because these transformations are irreversible at the semantic level, internal cognition accumulates commitment even before external action is taken.
+
+This account resonates with classical distinctions between computational levels, in which internal processing constrains future behavior without being directly observable, while rejecting the assumption that such processing must be representational \citep{marr_vision}.
+
+\subsection{Memory as Causal Substrate}
+
+In Spherepop, memory is not a store of representations but a record of constraints. What an agent remembers is what it has ruled out, what it has bound together, and what distinctions it has collapsed. This memory is causally upstream of all future reasoning.
+
+As a consequence, explanation is not a post hoc narrative imposed on behavior, but a projection of the causal history that produced it. To explain an action is to point to the sequence of events that made alternative actions unavailable. Interpretability thus arises from access to history, not from transparency of internal representations.
+
+This view places Spherepop in tension with purely instrumental accounts of intelligence, which treat behavior as sufficient for attribution of agency \citep{dennett_intentional}. In Spherepop, behavior without history is hollow.
+
+\subsection{Action as Joint Commitment}
+
+When an agent acts in the world, it performs a joint commitment: an internal event and an external event are bound together. Internally, the agent prunes and binds its own option--space; externally, the world’s option--space is likewise constrained. Action is therefore not output, but synchronization between histories.
+
+An agent that cannot bind its internal commitments to external consequences remains a simulator. Conversely, an agent whose external actions do not feed back into internal history lacks learning. Genuine agency requires both directions of constraint.
+
+\subsection{Refusal and Stability of Agency}
+
+Refusal plays a central role in maintaining agent coherence over long horizons. By refusing classes of actions or interpretations, an agent creates protected regions within its option--space. These refusals stabilize identity by preventing oscillation between incompatible commitments.
+
+Because refusal increases commitment without forcing positive selection, it allows agents to remain open where openness is valuable, while remaining closed where closure is necessary. This mechanism replaces brittle optimization with resilient worldhood, echoing cybernetic insights about the management of variety through constraint rather than control \citep{ashby_variety}.
+
+\subsection{Collapse and Concept Formation}
+
+As an agent accumulates history, internal memory inevitably grows complex. Collapse provides the mechanism by which this complexity is managed. By identifying internal distinctions that no longer affect future action, the agent forms concepts: equivalence classes over past experience.
+
+Concept formation, in this view, is not inductive generalization over data points, but historical compression. Concepts are the residue of many commitments collapsed into a single handle. This explains both their stability and their context-sensitivity.
+
+\subsection{Visualizing Agent Cognition}
+
+The nested-scope visualization introduced earlier admits a direct cognitive interpretation. An agent’s internal world may be rendered as a hierarchy of nested regions, with deeper regions corresponding to more committed beliefs or plans. Refused regions appear sealed; bound regions appear structured; collapsed regions appear merged.
+
+Such a visualization is not merely illustrative. It provides an externalization of the agent’s internal causal structure, allowing both the agent and observers to reason spatially about commitment, freedom, and abstraction.
+
+\subsection{Worldhood and Responsibility}
+
+Because Spherepop agents are log-bound, they are accountable to their own histories. Actions have consequences not only in the world, but in the agent’s future self. This temporal coupling grounds responsibility. To act is to bind oneself.
+
+Worldhood, in this framework, is not the possession of a model of the world, but the condition of being constrained by one’s past. An agent without irreversible history may appear intelligent, but it remains uninhabited.
+
+\subsection{Summary}
+
+Spherepop redefines agency as the capacity to construct and inhabit a history. By treating cognition as event simulation, memory as accumulated constraint, and action as joint commitment, it offers a unified account of intelligence grounded in irreversibility. Agents are not optimizers over states, but authors of worlds—one exclusion at a time.
+
+\section{The Agent as Endofunctor and Parser}
+
+The account of agency developed so far may be further compressed and clarified by recasting the Spherepop agent in categorical terms. At an abstract level, an agent may be understood as an endofunctor on a category of option--spaces. This perspective unifies the notions of history, cognition, and action under a single structural description.
+
+Let $\mathcal{O}$ denote the category whose objects are option--spaces and whose morphisms are monotone, irreversible transformations. A Spherepop agent induces an endofunctor
+\[
+\mathsf{A} : \mathcal{O} \to \mathcal{O},
+\]
+mapping a world $X$ to a more committed world $\mathsf{A}(X)$ by the application of a history. Identity histories act trivially, and concatenation of histories corresponds to composition, ensuring functorial coherence \citep{maclane_categories,awodey_category}.
+
+Crucially, this endofunctor is not an equivalence. It preserves inclusion but not reversibility. Information is lost, options are excluded, and distinctions are identified. This asymmetry encodes the arrow of time directly into the agent’s semantics, rather than treating it as an external parameter.
+
+From an internal perspective, the agent functions as a parser. Incoming structure—whether perceptual, symbolic, or social—is not stored as representation, but parsed into constraint. To parse is to decide which distinctions to preserve and which to eliminate. Successful parsing results not in a data structure, but in a transformed option--space in which the input no longer requires reconsideration.
+
+This notion of parsing generalizes familiar ideas from programming language theory. Whereas classical parsers transform strings into syntax trees, a Spherepop parser transforms events into commitments. The output is not a representation of the input, but a restriction on future behavior. This shift aligns parsing with semantic effect rather than syntactic recognition \citep{meijer_category_effects}.
+
+The endofunctorial view clarifies agent identity. Two agents are identical if they induce the same transformation on worlds. Internal representations, memory layouts, or implementation details are irrelevant at this level of description. Identity follows from historical effect, not internal state.
+
+This perspective also explains why Spherepop agents resist cloning or resetting. Copying an agent without copying its history yields a different endofunctor. Conversely, replaying the same history reconstructs the same agent, regardless of substrate. Agency is therefore substrate-independent but history-dependent.
+
+Finally, the endofunctorial framing highlights the compositional nature of agency. Agents may be composed by composing their induced functors, provided their histories are compatible. This opens a path toward multi-agent structures without collapsing individual histories into a single global state.
+
+\subsection{Summary}
+
+To view a Spherepop agent as an endofunctor is to emphasize that agency consists in world-transformation rather than state-transition. Parsing becomes commitment, understanding becomes exclusion, and identity becomes inseparable from history. The categorical compression offered here does not add new machinery; it reveals the structure already implicit in the calculus.
+
+\section{Sheaf--Theoretic Interpretations of Worldhood}
+
+The stratified architecture of Spherepop admits a natural interpretation in sheaf--theoretic terms. This perspective provides a unified language for reasoning about locality, global coherence, abstraction, and collapse, while remaining faithful to the calculus’s commitment to irreversibility.
+
+An option--space $X$ may be regarded as admitting multiple local scopes, each corresponding to a partial view of the future constrained by a subset of commitments. These scopes form a cover of $X$. Over each scope, one may define local assignments of structure: partial histories, bindings, visualizations, or interpretations. Such assignments correspond to sections.
+
+In general, these local sections need not agree. Ambiguity, conflict, and unresolved possibility correspond to the failure of local data to glue into a single global section. At this stage, the structure resembles a presheaf rather than a sheaf. Local coherence does not yet imply global coherence.
+
+Commitment resolves this tension. When an agent enforces compatibility conditions—through pop, bind, or refusal—local sections are constrained so that they may glue. The sheaf condition, which requires that compatible local sections determine a unique global section, thus corresponds to the achievement of worldhood: a state in which local possibilities have been resolved into a coherent whole \citep{maclane_moerdijk_sheaves}.
+
+Collapse admits a particularly direct sheaf-theoretic interpretation. Given a presheaf whose local sections fail to glue, collapse identifies distinctions that obstruct global coherence. This process corresponds to sheafification: the minimal modification of a presheaf that enforces the sheaf condition by quotienting incompatible distinctions \citep{grothendieck_sga1}.
+
+From this perspective, abstraction is not loss of meaning but enforcement of consistency. Collapse does not discard local information arbitrarily; it identifies differences that no longer exert causal influence on future action. The resulting global section is simpler, but it remains faithful to the commitments that produced it.
+
+Views arise naturally within this framework. A view is a section over a particular cover, chosen for interpretive or practical convenience. Different views may emphasize different localities or resolutions, and they need not glue globally. Because views are non-authoritative, their failure to glue does not threaten the integrity of the kernel history.
+
+This interpretation clarifies the relationship between plurality and unity in Spherepop. Plurality persists wherever commitment has been withheld. Unity emerges not through consensus or averaging, but through irreversible acts that enforce compatibility. Worldhood is therefore not an assumption but an achievement.
+
+Sheaf theory also sharpens the ethical dimension of the calculus. To refuse to collapse is to preserve local diversity at the expense of global coherence. To collapse is to accept unity at the cost of distinction. Both are legitimate acts, but both have consequences. The calculus makes these trade-offs explicit.
+
+\subsection{Summary}
+
+Sheaf theory provides a precise language for expressing the emergence of worldhood in Spherepop. Local scopes correspond to optionality, gluing corresponds to commitment, and collapse corresponds to abstraction through identification. By grounding these processes in established mathematical structures, Spherepop renders worldhood formally tractable without reducing it to representation or prediction.
+
+\section{Conclusion: Joy in a Finite World}
+
+This paper has argued for a reorientation of how computation, cognition, and agency are understood. Rather than treating the world as a state to be updated or a distribution to be sampled, Spherepop treats the world as a history to be constructed. Meaning arises not from representation or prediction, but from irreversible commitment.
+
+Beginning with the axiom of irreversibility, we showed that worldhood depends on the permanent exclusion, ordering, and abstraction of possibilities. Choice was reframed as a morphological operation on option--spaces rather than a selection among static alternatives. Commitment emerged as a measurable quantity, formalized through a discrete Lagrangian and Hamiltonian that record the cost and residue of becoming definite.
+
+Collapse resolved the central tension of irreversible systems: how to accumulate depth without accumulating paralysis. By formalizing abstraction as quotienting rather than erasure, Spherepop reconciles responsibility with compression. The past is never rewritten, but it may be carried forward in simpler form.
+
+Contrasting Spherepop with psychoanalytic and cinematic accounts of retroactive meaning clarified the stakes of this approach. Where interpretive frameworks emphasize the plasticity of the past, Spherepop insists on its fixity. Interpretation remains possible, but it is strictly separated from authority. Meaning is not edited into existence after the fact; it is incurred at the moment of commitment.
+
+The introduction of a spatial visual language revealed that Spherepop’s abstractions are not merely symbolic. Nested scopes render commitment perceptible, allowing agents to reason about depth, freedom, and exclusion directly. Visualization thus becomes an interface to world-construction rather than a report on internal state.
+
+By modeling agents as log--bound processes, and further compressing this view into an endofunctorial and sheaf--theoretic framework, we showed that agency is best understood as world-transformation rather than state-transition. Cognition becomes event simulation, memory becomes accumulated constraint, and understanding becomes exclusion. Worldhood emerges when local possibilities are irreversibly glued into a coherent whole.
+
+The ethical implication of this framework is straightforward but demanding. A system that can endlessly defer commitment, reinterpret its past, or reset its history may appear flexible, but it remains uninhabited. Responsibility arises only where history binds the future. Freedom is not the preservation of possibility, but the disciplined expenditure of it.
+
+The joy of Spherepop lies precisely here. In a universe of infinite options, nothing matters. It is only by popping futures, refusing paths, binding promises, and collapsing detail that a world becomes livable. Joy is not found in maximal openness, but in the relief of resolution—the moment when possibility condenses into reality, and a finite path forward appears.
+
+Spherepop does not offer an optimization algorithm or a universal architecture. It offers a language for living in worlds that remember what they have ruled out. In doing so, it provides a formal foundation for agency in a finite world.
+
+\section{The \texttt{meld} Operator: Convergent Synthesis of Histories}
+
+The Spherepop calculus, as developed thus far, accounts for the irreversible construction of worlds through exclusion, ordering, and abstraction. The operators \emph{pop}, \emph{refuse}, \emph{bind}, and \emph{collapse} suffice to describe how a single history is shaped over time. However, they do not yet account for a common phenomenon in real cognitive and creative practice: the convergence of multiple parallel histories into a single authoritative continuation.
+
+We introduce \emph{meld} as a primitive operator to capture this act of synthesis.
+
+\subsection{Motivation}
+
+In many domains—writing, design, reasoning, planning—agents construct multiple partial histories in parallel. These histories share an initial prefix but diverge in structure, emphasis, or interpretation. Eventually, the agent commits to a single continuation, not by eliminating one history outright, but by synthesizing elements of several into a new, unified future.
+
+This operation is not reducible to selection. It is neither a pop, which excludes an option, nor a collapse, which abstracts distinctions away. Meld constructs a new history whose commitments are drawn from multiple antecedents while simultaneously discarding alternatives that cannot coexist.
+
+\subsection{Formal Characterization}
+
+Let
+\[
+H_1, H_2 : X_0 \to X_1, X_2
+\]
+be two histories with a common prefix $X_0$. A meld operation produces a new history
+\[
+\operatorname{meld}_{\pi}(H_1, H_2) = H_3 : X_0 \to X_3,
+\]
+where $\pi$ is a preference policy that governs which commitments survive.
+
+The resulting history $H_3$ is not equal to either $H_1$ or $H_2$. It is a new irreversible construction whose future proceeds independently. Importantly, $H_1$ and $H_2$ remain intact as historical artifacts, but they are no longer authoritative.
+
+\subsection{Geometry of Meld}
+
+Geometrically, meld acts as a constrained quotient over histories. Commitments that are compatible under the policy $\pi$ are preserved; incompatible commitments are excluded. Unlike collapse, which identifies distinctions within a single history, meld identifies and resolves distinctions \emph{between} histories.
+
+The option--space after meld is therefore not the union of futures, but a restricted space containing only those futures consistent with the synthesized commitments. Meld increases commitment without necessarily shrinking optionality in the same way as pop, since it may preserve breadth while enforcing coherence.
+
+\subsection{Accounting Semantics}
+
+Meld incurs action. Synthesizing histories requires paying the cost of resolving incompatibilities and discarding unrealized alternatives. This cost reflects the irreversibility of authorship: once a synthesis is committed, the agent cannot later claim both antecedent futures without contradiction.
+
+Unlike pop, which incurs cost by exclusion, meld incurs cost by \emph{resolution}. The action increase corresponds to the elimination of ambiguity between histories rather than within them.
+
+\subsection{Interaction with Collapse}
+
+Meld and collapse are closely related. Collapse abstracts distinctions that no longer matter within a history; meld resolves distinctions that cannot coexist across histories. In practice, meld may be implemented as a collapse over the disjoint union of histories under a preference-induced equivalence relation.
+
+However, premature meld risks flattening valuable diversity. For this reason, meld should be delayed until sufficient structure has accumulated to justify synthesis. This mirrors good practice in writing and reasoning: premature unification leads to vagueness; delayed synthesis yields clarity.
+
+\subsection{Examples}
+
+A canonical example is the synthesis of two drafts of a document. One draft emphasizes conceptual clarity; the other emphasizes formal rigor. Meld produces a third draft that integrates both, discarding redundant explanations and incompatible phrasings. The result is not a compromise but a commitment to a new articulation.
+
+\subsection{Summary}
+
+The \texttt{meld} operator extends Spherepop to account for convergent synthesis. It formalizes the irreversible act of unifying parallel histories into a single future. By treating synthesis as a first-class operation, Spherepop captures a core aspect of real-world agency that lies beyond mere selection or abstraction.
+
+\section{Semantic Merge Policies and Structured Synthesis}
+
+The introduction of the \texttt{meld} operator establishes synthesis as a primitive act, but it does not specify how synthesis should proceed. In practice, agents require principled ways to resolve conflicts between parallel histories without reducing synthesis to arbitrary choice. This motivates the introduction of \emph{semantic merge policies}: explicit structures that govern how commitments are selected, preserved, or discarded during meld.
+
+\subsection{Motivation}
+
+Traditional merge tools operate over surface representations such as lines of text or token sequences. These representations conflate semantic intent with syntactic form, forcing agents to reason about meaning through accidental structure. As a result, merging becomes brittle and error-prone precisely where meaning is most at stake.
+
+Spherepop rejects this approach. Merging should operate over semantic roles, commitments, and constraints, not over their textual encodings. A semantic merge policy provides a declarative description of how meaning is to be preserved during synthesis.
+
+\subsection{Policy Objects}
+
+A merge policy $\pi$ is a structured object composed of predicates over semantic features. These features may include rhetorical role (definition, motivation, synthesis), epistemic status (assumption, claim, consequence), or pragmatic weight (clarity, rigor, emphasis).
+
+Policies do not assign numeric utilities. Instead, they express partial orders and constraints. For example, a policy may specify that formally justified claims dominate stylistic preferences, or that metaphors are preserved unless they conflict with precision.
+
+\subsection{Merge Actions}
+
+Given two candidate structures, a merge policy may authorize several actions. A policy may prefer one structure over another, splice compatible substructures, rewrite conflicting elements, or defer commitment by preserving both alternatives as unresolved.
+
+Importantly, deferral is itself an explicit outcome. Rather than forcing premature resolution, a policy may mark regions of the merged history as protected, preventing collapse until further context is available.
+
+\subsection{Constraint Propagation}
+
+Accepting a commitment in one location propagates constraints throughout the structure. Choosing a particular definition may invalidate downstream explanations; selecting a framing may require rephrasing later sections. A semantic merge policy must therefore account for nonlocal dependencies.
+
+This propagation is not an error condition but a feature. It ensures that synthesis produces globally coherent histories rather than patchworks of locally optimal decisions.
+
+\subsection{Failure and Review}
+
+Not all conflicts admit immediate resolution. When no policy-authorized action yields a coherent outcome, the merge process may fail explicitly. Such failures are valuable: they indicate genuine conceptual tension rather than tooling limitations.
+
+By making unresolved conflicts explicit, Spherepop supports deliberate review rather than silent degradation. Human judgment remains central, but it is guided by structure rather than obscured by noise.
+
+\subsection{Examples}
+
+In document synthesis, a policy might specify that citation-integrated explanations dominate uncited ones, except where clarity suffers. In reasoning, a policy might preserve competing hypotheses until sufficient evidence accumulates. In design, a policy might privilege structural coherence over local optimization.
+
+\subsection{Summary}
+
+Semantic merge policies separate the question of \emph{what} is synthesized from the question of \emph{how}. By making synthesis rule-governed and inspectable, Spherepop enables convergence without collapse into arbitrariness. Merge becomes an act of structured commitment rather than textual reconciliation.
+
+\section{Writing as Event--History}
+
+The development of Spherepop in this paper has mirrored its own theoretical commitments. The process by which the text was constructed—through parallel drafts, iterative refinement, and irreversible synthesis—provides a concrete instance of the calculus at work. Writing, in this light, is not the manipulation of symbols but the construction of a history.
+
+\subsection{Drafts as Parallel Histories}
+
+Each draft of a document constitutes a distinct history. Even when two drafts share a common outline or vocabulary, they differ in the commitments they encode: which explanations are foregrounded, which distinctions are emphasized, and which paths of argument are excluded. These differences are not superficial. They shape the future evolution of the text.
+
+From the perspective of Spherepop, drafts are not approximations of a final state. They are worlds in their own right, each with its own option--space and trajectory. To write is therefore to inhabit multiple possible futures simultaneously.
+
+\subsection{Revision as Irreversible Action}
+
+Revision is often described as editing or refinement, but these metaphors obscure its irreversible nature. To accept a sentence, discard an explanation, or reorganize a section is to permanently alter the future of the document. Even when changes are reverted, the act of reversion is itself a new event, not a return to an earlier state.
+
+Spherepop captures this structure directly. Each revision is an event that constrains what can coherently follow. The accumulation of such events constitutes authorship.
+
+\subsection{Parsing and Refinement}
+
+The act of writing proceeds through repeated passes over an evolving structure. An outline establishes expectations; successive passes test local coherence against global intent. Sentences are evaluated not in isolation, but in terms of the roles they play within the whole.
+
+This process resembles parsing more than generation. The writer repeatedly interprets the emerging text against an implicit grammar of meaning, resolving ambiguities and enforcing consistency. Each successful resolution reduces optionality while increasing commitment.
+
+\subsection{Synthesis and Meld}
+
+When multiple drafts are compared, the writer does not simply select one and discard the other. Instead, synthesis occurs. Elements are drawn from each history, incompatibilities are resolved, and a new authoritative continuation is constructed.
+
+This act corresponds precisely to the \texttt{meld} operator. Meld does not preserve both histories; it produces a third. The cost of this synthesis is the loss of unrealized alternatives, paid willingly in exchange for coherence.
+
+\subsection{Tooling and Ontology}
+
+Conventional writing tools treat text as a sequence of characters. Merging is performed at the level of lines or tokens, forcing semantic judgment to be applied indirectly and laboriously. The writer must constantly translate between meaning and surface representation.
+
+Spherepop suggests a different ontology. If writing is understood as event--history, then tooling should operate over commitments, roles, and abstractions rather than raw text. Merges should be semantic; collapses should be intentional; refusals should be explicit.
+
+\subsection{Implications}
+
+Understanding writing as event--history clarifies why authorship feels costly, why clarity requires exclusion, and why finality is both necessary and difficult. A document becomes meaningful not because it contains many possibilities, but because it has ruled most of them out.
+
+This perspective also illuminates collaboration. Shared authorship is not the averaging of contributions but the negotiated construction of a common history. Disagreements are not errors to be eliminated, but divergences that must eventually be resolved through commitment.
+
+\subsection{Summary}
+
+Writing is a paradigmatic Spherepop process. It is the disciplined reduction of possibility in service of meaning. By recognizing this, Spherepop does not merely describe cognition or computation; it reflects the lived practice of thought itself. The joy of writing, like the joy of agency, lies not in infinite revision, but in the moment when one commits to what has been said and moves forward.
+
+\section{Generative Spherepop Programs and Minimal Commitment Paths}
+
+The abstractions introduced thus far—meld, semantic merge policies, and event--historical parsing—permit a further step: the formalization of a generative Spherepop program. Such a program does not operate at the level of sentences or symbols, but at the level of commitments and policies. Its task is not to generate text directly, but to construct a history whose realized view corresponds to a target semantic object, such as a document, argument, or design.
+
+\subsection{Programs as Higher--Order Histories}
+
+A generative Spherepop program may be understood as a higher--order history: a sequence of policy selections and synthesis decisions that guide the construction of a lower--level artifact. Rather than emitting concrete events immediately, the program selects policies that constrain how future melds, collapses, and commitments may occur.
+
+Formally, such a program operates over a space of policies $\Pi$, producing a sequence
+\[
+\pi_1, \pi_2, \dots, \pi_n
+\]
+whose cumulative effect determines the evolution of the underlying history. The concrete document emerges as a projection of this higher--order history under a chosen view.
+
+\subsection{Semantic Equivalence and Target Objects}
+
+Crucially, the program’s goal is not to reproduce a particular textual surface, but to realize a semantic equivalence class. Two documents are equivalent if they induce the same commitments, constraints, and affordances for future reasoning, even if they differ syntactically.
+
+This reframing allows generation to be defined in terms of semantic reachability. A target document corresponds to a region in the space of possible histories. Any history that enters this region is an acceptable realization.
+
+\subsection{Minimal Commitment Paths}
+
+Among the many histories that may realize a given semantic object, some incur unnecessary cost. They introduce redundant commitments, premature collapses, or avoidable rewrites. A generative Spherepop program therefore seeks a \emph{minimal commitment path}: a history that reaches the target region while expending the least irreversible action.
+
+Minimality here does not mean brevity of text or speed of generation. It means minimizing the number of concrete irreversible events required to settle the necessary distinctions. Intuitively, the program prefers to defer commitment until it is required, while avoiding backtracking that would necessitate additional collapse.
+
+This notion parallels shortest--path reasoning, but in a space where distance is measured by accumulated action rather than steps or tokens.
+
+\subsection{Policy Selection as Control}
+
+Policy selection functions as the control layer of the generative process. At each stage, the program chooses which merge policies to activate, which distinctions to protect, and which abstractions to allow. These choices determine which futures remain reachable and which are excluded.
+
+Because policies operate over semantic structure rather than surface form, the program can navigate large spaces of possible realizations efficiently. Many syntactically distinct but semantically equivalent paths collapse into a single policy--guided trajectory.
+
+\subsection{Relation to Parsing and Authorship}
+
+This generative view reveals a symmetry between writing and generation. In manual authorship, the human repeatedly parses and refines an emerging artifact, selecting policies implicitly. In a generative Spherepop program, these policy selections are made explicit and formalized.
+
+The resulting artifact is not authored sentence by sentence, but constructed through a sequence of commitments at increasing levels of abstraction. Concrete phrasing appears only when required to realize the committed structure.
+
+\subsection{Implications}
+
+By lifting generation to the level of policy selection and commitment management, Spherepop avoids the combinatorial explosion associated with surface--level generation. It also avoids the brittleness of purely predictive systems, which lack authoritative histories and therefore cannot reason about cost.
+
+Such programs do not replace human judgment. Instead, they externalize and formalize the structure of judgment itself. The generative process becomes inspectable, replayable, and revisable at the level where meaning is decided.
+
+\subsection{Summary}
+
+The introduction of generative Spherepop programs completes the conceptual arc of the calculus. From irreversible events, to synthesis of histories, to semantic policies, and finally to higher--order control over commitment, Spherepop provides a framework in which meaningful artifacts can be constructed deliberately and efficiently. Generation becomes not the production of symbols, but the disciplined navigation of possibility toward a settled world.
+
+\section{Semantic Manifolds and Guided Generative Flow}
+
+The generative architecture described in the previous sections admits a geometric interpretation. Rather than viewing generation as the emission of symbols, we may understand it as motion along a low-dimensional semantic manifold embedded in a high-dimensional ambient space. In this view, generation is the controlled traversal of meaning, constrained to directions that preserve semantic coherence.
+
+\subsection{Semantic State Space}
+
+Let $\mathcal{M} \subset \mathbb{R}^N$ denote the semantic manifold: the space of all realizable meanings compatible with a given language, domain, or practice. Points on $\mathcal{M}$ correspond not to strings, but to structured semantic states. Concrete documents arise only after projection into a representational view.
+
+At each point $x \in \mathcal{M}$, the tangent space $T_x\mathcal{M}$ represents meaningful directions of variation: refinements, elaborations, or continuations that preserve coherence. Directions orthogonal to $T_x\mathcal{M}$ correspond to noise—variations that do not correspond to lawful semantic change.
+
+\subsection{Guidance as Tangent Restriction}
+
+A generative Spherepop program operates by selecting update directions that lie entirely within the tangent bundle $T\mathcal{M}$. Each policy choice restricts the admissible future directions, shaping the trajectory of generation without committing prematurely to surface form.
+
+Formally, a generative step at semantic state $x_t$ takes the form
+\[
+x_{t+1} = x_t + \Delta x_t, \quad \text{with } \Delta x_t \in T_{x_t}\mathcal{M}.
+\]
+The exclusion of normal components is not an optimization heuristic but a structural necessity: motion in normal directions introduces distinctions that cannot be integrated into a coherent semantic history.
+
+\subsection{Local Coordination and Context Selection}
+
+Generation proceeds through repeated selection of local semantic coordinates. At each step, the system implicitly chooses a local chart on $\mathcal{M}$—a perspective under which certain distinctions are salient and others suppressed. Different charts overlap, and consistency across overlaps is enforced by gluing constraints.
+
+This process is naturally parallel: multiple local perspectives may be evaluated simultaneously, with their contributions weighted according to relevance. The result is a smooth update that respects both local detail and global coherence.
+
+\subsection{Boundary Conditions as Prompts}
+
+Initial conditions and constraints act as boundary conditions on the semantic flow. Rather than specifying outputs, they restrict the region of $\mathcal{M}$ that the trajectory may enter. The generative process then finds a path through this region that minimizes unnecessary commitment while satisfying the imposed constraints.
+
+In this sense, a prompt does not cause generation; it shapes the manifold on which generation unfolds.
+
+\subsection{Equivalence to Guided Attention}
+
+The resulting architecture is equivalent to a guided attention mechanism, understood geometrically rather than statistically. Attention corresponds to allocating differential weight to overlapping local charts, thereby biasing the direction of tangent flow. What appears as selective focus is, at the semantic level, controlled curvature of the generative trajectory.
+
+Crucially, this mechanism does not require explicit enumeration of possibilities. The manifold structure ensures that only coherent continuations are reachable.
+
+\subsection{Relation to Minimal Commitment}
+
+Because all updates remain tangent to $\mathcal{M}$, the system naturally follows minimal commitment paths. Semantic structure emerges before surface realization, and collapse to concrete form occurs only when required. This explains how complex artifacts can be generated with relatively few irreversible steps.
+
+\begin{proposition}[Tangent-Flow Equivalence and Gluing Condition]
+\label{prop:tangent_gluing}
+Let $\mathcal{M}\subset \mathbb{R}^N$ be a semantic manifold and let $x_0\in\mathcal{M}$ be an initial semantic state. Fix a family of local charts $\{(U_i,\varphi_i)\}_{i\in I}$ with $U_i\subset \mathcal{M}$ open and $\varphi_i:U_i\to \mathbb{R}^d$ a diffeomorphism onto its image. Suppose a generative Spherepop controller selects, at each step $t$, a finite subfamily of active charts $A_t\subset I$ with $x_t\in \bigcap_{i\in A_t}U_i$ and produces local update proposals
+\[
+\delta_{t,i}\in T_{x_t}\mathcal{M}\qquad(i\in A_t),
+\]
+which are aggregated into a single update $\Delta x_t\in T_{x_t}\mathcal{M}$.
+
+Assume the following \emph{compatibility on overlaps}: for all $i,j\in A_t$,
+\begin{equation}
+\label{eq:overlap_compat}
+d(\varphi_j\circ \varphi_i^{-1})_{\varphi_i(x_t)}\Big(d\varphi_i(\delta_{t,i})\Big)
+=
+d\varphi_j(\delta_{t,j})
+\quad\text{whenever }x_t\in U_i\cap U_j.
+\end{equation}
+Then:
+
+\smallskip
+\noindent (i) There exists a unique tangent vector $\Delta x_t\in T_{x_t}\mathcal{M}$ such that for every active chart $i\in A_t$,
+\[
+d\varphi_i(\Delta x_t)=d\varphi_i(\delta_{t,i}),
+\]
+and hence the aggregated update is \emph{chart-invariant}.
+
+\smallskip
+\noindent (ii) The resulting evolution
+\[
+x_{t+1}=x_t+\Delta x_t
+\quad\text{with}\quad
+\Delta x_t\in T_{x_t}\mathcal{M}
+\]
+is equivalent to a guided local-chart mechanism: the controller’s action is completely determined by (a) choosing an active cover near $x_t$ and (b) choosing compatible local tangent proposals, with no dependence on ambient-space components normal to $\mathcal{M}$.
+
+\smallskip
+\noindent (iii) Any deviation from \eqref{eq:overlap_compat} forces a nontrivial cocycle obstruction on overlaps, which either (a) produces chart-dependent updates (loss of invariance) or (b) must be resolved by an explicit identification/quotient operation (a collapse), after which compatibility is restored in the quotient semantics.
+\end{proposition}
+
+\begin{proof}[Proof sketch]
+For (i), observe that each $\delta_{t,i}$ determines a germ of a vector field in the coordinate chart $\varphi_i$. Condition \eqref{eq:overlap_compat} states that these germs agree under the Jacobian of the transition map on overlaps. By standard manifold theory, compatible coordinate representations define a unique tangent vector $\Delta x_t$ at $x_t$. Uniqueness follows because if two tangent vectors have identical pushforwards under $d\varphi_i$ on a chart containing $x_t$, they coincide.
+
+For (ii), note that the construction uses only tangent data and transition maps between charts; no normal component is ever specified or required. Thus the generative mechanism is equivalent to a procedure that repeatedly selects local coordinate perspectives and glues their compatible infinitesimal proposals into a single semantic update.
+
+For (iii), if \eqref{eq:overlap_compat} fails, then the local proposals disagree on overlaps after transporting across transition maps. This disagreement defines an obstruction cocycle (a failure-to-glue datum). Resolving the obstruction requires either privileging one chart (chart dependence) or quotienting/identifying the inconsistent distinctions so that the induced proposals become compatible—exactly the role of collapse as a semantic identification step.
+\end{proof}
+
+\subsection{Sheaf-Theoretic Chart Gluing as Commitment}
+
+The proposition above can be stated sheaf-theoretically, which clarifies why ``multi-perspective'' generation remains coherent only when overlap constraints are enforced.
+
+Let $X$ be a space of \emph{scopes} (contexts, subproblems, or local semantic regions), and let $\mathcal{U}=\{U_i\}$ be an open cover corresponding to active semantic charts. Define a presheaf $\mathscr{T}$ that assigns to each open set $U\subseteq X$ the set (or module) of admissible local update proposals over $U$:
+\[
+\mathscr{T}(U) := \{\text{local tangent proposals valid on }U\}.
+\]
+Restriction maps $\rho_{UV}:\mathscr{T}(U)\to\mathscr{T}(V)$ for $V\subseteq U$ represent forgetting information as one moves to a smaller scope.
+
+A family of local proposals $\{\delta_i\in \mathscr{T}(U_i)\}$ is \emph{compatible} if on each overlap $U_i\cap U_j$,
+\[
+\rho_{U_i,U_i\cap U_j}(\delta_i)=\rho_{U_j,U_i\cap U_j}(\delta_j).
+\]
+This is the sheaf-theoretic analogue of \eqref{eq:overlap_compat}: it states that the different local ``chart views'' agree wherever they both apply.
+
+If $\mathscr{T}$ is a sheaf (or is replaced by its sheafification), then any compatible family $\{\delta_i\}$ uniquely determines a global section $\Delta\in \mathscr{T}(X)$ such that $\rho_{XU_i}(\Delta)=\delta_i$ for all $i$. Interpreting:
+
+\begin{itemize}
+\item Local sections $\delta_i$ are the candidate infinitesimal semantic moves proposed under each active perspective.
+\item Compatibility on overlaps is the commitment constraint: local reasoning must agree where scopes intersect.
+\item The global section $\Delta$ is the glued semantic update (the chart-invariant $\Delta x_t$).
+\end{itemize}
+
+When compatibility fails, the family $\{\delta_i\}$ is merely a presheaf section that cannot be glued. In Spherepop terms, this is an explicit locus of unresolved divergence between parallel semantic histories. The act of \emph{collapse} corresponds to enforcing gluing by identifying distinctions that generate the obstruction, i.e., passing to a quotient in which the incompatible overlap data becomes compatible. Categorically, this is analogous to sheafification: replacing a presheaf by the closest sheaf that admits gluing of the intended local data.
+
+Thus, the same mechanism that enables multi-perspective generation also formalizes why semantic merges must be policy-governed: a merge policy specifies which obstructions are to be resolved by identification (collapse), which are to be deferred (protected regions), and which are to be decided by preference (meld). In all cases, the underlying requirement is the sheaf condition: coherent global motion is possible if and only if local semantic proposals glue on overlaps.
+
+\begin{corollary}[Meld as Policy--Induced Sheafification and Gluing]
+\label{cor:meld_sheafification}
+Let $\mathscr{T}$ be the presheaf of local semantic proposals (or local history fragments) over a cover $\mathcal{U}=\{U_i\}$, and let $\{\delta_i\in\mathscr{T}(U_i)\}$ be a family of local sections that fails to glue due to overlap obstructions. Fix a merge policy $\pi$ that selects an identification relation $\sim_\pi$ on the obstruction data (equivalently, specifies which distinctions on overlaps are to be treated as inessential for the target semantic object). Then there exists a canonical quotient/sheafification step
+\[
+\mathscr{T}\;\Longrightarrow\;\mathscr{T}^{\pi}
+\]
+such that the images of the local sections $\{\delta_i\}$ become compatible in $\mathscr{T}^{\pi}$ and therefore glue uniquely to a global section
+\[
+\Delta^{\pi}\in \mathscr{T}^{\pi}(X).
+\]
+Moreover, the Spherepop operation $\operatorname{meld}_{\pi}$ is precisely the event that commits to this policy-induced identification and takes the resulting glued global section as authoritative continuation.
+
+In particular, \emph{meld} decomposes into two conceptually distinct steps:
+\[
+\operatorname{meld}_{\pi}
+\;\equiv\;
+\underbrace{\operatorname{collapse}_{\pi}}_{\text{identify overlap obstructions}}
+\;\circ\;
+\underbrace{\operatorname{glue}}_{\text{unique global synthesis}}.
+\]
+\end{corollary}
+
+\begin{proof}[Proof sketch]
+The policy $\pi$ determines which overlap distinctions are to be identified, yielding a quotient of the presheaf data in which the former incompatibilities on $U_i\cap U_j$ are eliminated. This produces a sheaf-like object (or the relevant sheafification) $\mathscr{T}^{\pi}$ in which the compatibility condition holds. By the sheaf gluing axiom, the compatible family then determines a unique global section. Declaring this global section authoritative is exactly the act of meld: an irreversible commitment to the policy-induced identifications together with the unified continuation they enable.
+\end{proof}
+
+\begin{remark}[Protected Regions, Deferred Commitment, and Non-Forced Gluing]
+\label{rem:protected_regions}
+The corollary describes meld as ``collapse then glue,'' but this decomposition should not be read as requiring immediate global synthesis. In practice, a merge policy $\pi$ may designate \emph{protected regions} of the cover---subcollections of overlaps on which identifications are disallowed or deferred. Formally, this corresponds to choosing a subcover $\mathcal{U}'\subseteq \mathcal{U}$ on which compatibility is enforced, while leaving the family of local sections merely presheaf-compatible (or even incompatible) on $\mathcal{U}\setminus\mathcal{U}'$.
+
+In Spherepop terms, protected regions implement deliberate non-collapse: the history records that certain distinctions remain live, and therefore global gluing is only performed relative to the constrained domain where overlap agreement has been paid for. This yields a partial global section on $\bigcup \mathcal{U}'$ rather than a total section on $X$.
+
+Such partial gluing is not a defect; it is the formal expression of withheld commitment. It preserves optionality by preventing premature identification, while still allowing coherent synthesis where the policy permits it.
+\end{remark}
+
+\begin{proposition}[Minimal Commitment via Maximal Safe Gluing]
+\label{prop:minimal_safe_gluing}
+Fix a target semantic equivalence class $[D]$ and consider the set $\Gamma([D])$ of histories whose induced view realizes $[D]$. For any cover $\mathcal{U}$ and local proposal family $\{\delta_i\}$, let $\mathcal{U}'\subseteq \mathcal{U}$ range over subcovers on which the family can be made compatible by a policy $\pi$ without violating protected-region constraints. Among all such $(\pi,\mathcal{U}')$ that reach $[D]$, those that maximize the glued domain $\bigcup\mathcal{U}'$ while minimizing policy-induced identification (i.e.\ minimizing $|\ker \pi|$ in the induced quotient) yield histories with minimal irreversible action among the reachable realizations.
+
+Equivalently, minimal commitment paths are characterized by:
+\[
+\text{glue as much as possible, collapse only as necessary, and defer the rest.}
+\]
+\end{proposition}
+
+\begin{proof}[Proof sketch]
+Gluing increases coherence without necessarily increasing irreversible identification, whereas collapse (policy-induced identification) reduces degrees of freedom and therefore contributes directly to action cost. Maximizing safe gluing increases global consistency at minimal cost; minimizing identifications ensures that only distinctions obstructing reachability of $[D]$ are quotient-removed. Any alternative that collapses more than necessary incurs strictly greater action while reaching the same semantic class.
+\end{proof}
+
+\begin{remark}[Operational Reading for Document Construction]
+\label{rem:doc_construction}
+In the document setting, take $X$ to be the space of section-scopes and let $U_i$ range over rhetorical or structural regions (definitions, pivots, proofs, contrasts). Local sections $\delta_i$ are candidate realizations of these regions under different drafts or passes. Overlaps correspond to shared commitments (terminology, assumptions, notation, narrative voice). A policy $\pi$ specifies which discrepancies are treated as inessential (collapse), which are adjudicated by preference (meld choice), and which are protected (deferred).
+
+The result is a principled account of why line-based merges are fragile: they operate on the encoding rather than the overlap structure. A semantic merge operates on the overlaps directly, enforcing gluing where possible and recording explicit non-gluing where not.
+\end{remark}
+
+\begin{theorem}[Equivalence of Guided Attention and Minimal Commitment Flow]
+\label{thm:guided_attention_equivalence}
+Let $\mathcal{M}$ be a semantic manifold equipped with a cover by local charts $\{U_i\}$ and associated presheaf of local proposals $\mathscr{T}$. Consider a generative process that, at each step, selects a finite family of local proposals $\{\delta_i\in\mathscr{T}(U_i)\}$ together with weights $\{\alpha_i\}_{i\in A}$ satisfying $\alpha_i\ge 0$ and $\sum_{i\in A}\alpha_i=1$.
+
+Assume the process enforces overlap compatibility either directly or via policy-induced collapse, so that the weighted family admits a glued global section $\Delta\in\mathscr{T}^{\pi}(X)$. Then the induced update
+\[
+\Delta = \operatorname{glue}\!\left(\sum_{i\in A}\alpha_i\,\delta_i\right)
+\]
+defines a tangent-constrained semantic flow that realizes a minimal commitment step toward any reachable target semantic class $[D]$.
+
+Conversely, any minimal commitment path toward $[D]$ can be represented as such a weighted local-gluing process for some choice of charts, weights, and policy $\pi$.
+\end{theorem}
+
+\begin{proof}[Proof sketch]
+Weights $\alpha_i$ encode relative relevance of overlapping local perspectives. Because compatibility is enforced on overlaps, the weighted sum remains within the glued tangent space and thus corresponds to a lawful semantic update. Any alternative update that introduces incompatible normal components either fails to glue or requires additional collapse, increasing irreversible action. Hence the glued weighted update is minimal among all updates reaching the same semantic region. Conversely, any minimal update may be decomposed locally by choosing charts whose tangent directions span the update and assigning weights accordingly.
+\end{proof}
+
+\begin{remark}[Interpretation as Focused Semantic Flow]
+\label{rem:focused_flow}
+The weights $\alpha_i$ should not be interpreted as probabilities or utilities. They measure local relevance within overlapping scopes. Increasing $\alpha_i$ sharpens the contribution of the corresponding local chart, effectively narrowing the semantic focus. Decreasing it broadens the contribution, preserving optionality. Focus is thus realized as curvature in semantic flow rather than selection among discrete alternatives.
+\end{remark}
+
+\begin{corollary}[Noise Avoidance as Structural Invariance]
+\label{cor:noise_avoidance}
+Under the hypotheses of Theorem~\ref{thm:guided_attention_equivalence}, any generative step that respects overlap gluing and tangent restriction is invariant under perturbations orthogonal to $\mathcal{M}$. Such perturbations neither alter the glued section nor affect reachability of the target semantic class. Consequently, semantic noise is structurally excluded rather than statistically suppressed.
+\end{corollary}
+
+\begin{remark}[Implications for Generative Control]
+\label{rem:generative_control}
+The theorem clarifies why policy-guided semantic generation scales without combinatorial explosion. Control is exerted by shaping which local charts participate and how strongly, not by enumerating futures. This places the burden of intelligence on maintaining coherent overlap structure, rather than on predicting surface realizations.
+\end{remark}
+
+\subsection{Summary}
+
+Viewed geometrically, the generative Spherepop program realizes meaning as motion along a semantic manifold under tangent-constrained dynamics. Guidance, attention, and prompting are unified as mechanisms for shaping this motion without introducing noise. The result is a generative process that is stable, interpretable, and intrinsically aligned with semantic structure, avoiding the pathologies that arise when generation attempts to model the ambient space rather than the manifold itself.
+
+\section{Synthesis: World Construction as Structured Semantic Flow}
+
+We are now in a position to compress the entire development into a single structural insight. What Spherepop formalizes across events, histories, policies, and generative flow is one and the same phenomenon viewed at different resolutions: \emph{world construction as the disciplined restriction and gluing of meaning under irreversibility}.
+
+At the lowest level, events act on option--spaces by exclusion, binding, and identification. At the level of histories, these events accumulate into authoritative trajectories that constrain the future. At the level of synthesis, meld resolves divergence between parallel histories by committing to policy-governed identifications. At the generative level, policies themselves become the objects of selection, guiding the construction of artifacts with minimal irreversible cost. Finally, at the geometric level, all of this appears as tangent-constrained motion on a semantic manifold, with coherence enforced by sheaf-theoretic gluing.
+
+Each layer preserves the same invariant: \emph{only what can be glued without contradiction may be treated as globally meaningful}. Noise, ambiguity, and contradiction are not eliminated by prediction or averaging, but by refusing to move in directions that cannot be integrated into a coherent history.
+
+This synthesis clarifies several points that often remain obscure when treated separately.
+
+First, generation and interpretation are not opposites. Both are instances of semantic flow constrained by overlap compatibility. Interpretation corresponds to selecting views over an existing history; generation corresponds to extending that history. In both cases, meaning arises from what is made irreversible.
+
+Second, focus is not selection among discrete alternatives, but curvature in semantic space. Weighting local charts alters the direction of flow without enumerating futures. This explains how complex artifacts may be produced without combinatorial explosion: the manifold structure collapses vast spaces of surface variation into a small number of lawful directions.
+
+Third, abstraction is not loss but consolidation. Collapse and policy-induced identification do not destroy meaning; they enforce the conditions under which meaning can persist globally. The cost paid is not informational impoverishment, but the relinquishing of distinctions that cannot be jointly upheld.
+
+Fourth, authorship and agency coincide. To author is to commit. To commit is to bind one’s future. A system that never commits may appear flexible, but it cannot construct a world. Spherepop therefore locates intelligence not in expressiveness or capacity, but in the ability to manage irreversibility.
+
+Seen as a whole, Spherepop offers neither a replacement for existing symbolic systems nor an optimization framework. It offers an ontology. Worlds are not computed; they are \emph{settled}. Meaning is not predicted; it is \emph{paid for}. Coherence is not imposed after the fact; it is earned through gluing.
+
+The joy of Spherepop lies in recognizing that finitude is not a limitation to be engineered away, but the very condition under which anything can matter. To pop is to choose. To meld is to resolve. To collapse is to move on. And to glue is to discover that what remains, though smaller, is finally whole.
+
+\appendix
+\section{Core Syntax and Surface Language}
+\label{app:syntax}
+
+This appendix presents the surface language of Spherepop in detail. The design of the syntax is intentionally austere. Its primary purpose is not expressivity in the conventional programming-language sense, but semantic discipline: the syntax enforces irreversibility, historical ordering, and explicit commitment.
+
+\subsection{Design Principles}
+
+The Spherepop surface language is governed by four principles.
+
+First, \emph{programs are histories}. There is no notion of a mutable store, no control flow that branches execution, and no mechanism for revision. Execution proceeds strictly left to right.
+
+Second, \emph{all semantic effects are explicit}. Any change to the admissible future space must appear as an event in the program text. There are no implicit updates or background inference steps.
+
+Third, \emph{irreversibility is syntactic}. The language contains no construct corresponding to undo, rollback, reassignment, or negation of prior events. Once an event appears, its effect is permanent at the semantic level.
+
+Fourth, \emph{authority is centralized}. The surface language describes what is proposed to become authoritative history. Speculation, explanation, visualization, and annotation are deliberately excluded.
+
+\subsection{Lexical Elements}
+
+The language assumes a countable set of identifiers, written as alphanumeric strings beginning with a letter. Identifiers may denote options, objects, scopes, or policies, depending on context. The syntax itself does not distinguish these categories; their interpretation is semantic.
+
+Whitespace is insignificant except as a separator. Statements are terminated by line breaks or semicolons. Comments, if present, are non-semantic and ignored by the interpreter.
+
+\subsection{Grammar}
+
+The following Backus--Naur Form specifies the core grammar.
+
+\begin{verbatim}
+<program> ::= <statement>*
+
+<statement> ::= <event>
+              | <declaration>
+
+<event> ::= "pop" <target>
+          | "refuse" <target>
+          | "bind" <target> "<" <target>
+          | "collapse" <policy>
+
+<declaration> ::= "let" <name> "=" <expression>
+
+<target> ::= <name>
+           | <path>
+
+<path> ::= <name> ("." <name>)*
+
+<policy> ::= <name>
+
+<name> ::= identifier
+\end{verbatim}
+
+The grammar is deliberately flat. There are no blocks, no conditionals, and no loops. Grouping constructs, if added in extensions of the language, must expand to linear histories before semantic interpretation.
+
+\subsection{Events}
+
+Each event corresponds to a primitive irreversible operation in the calculus.
+
+A \texttt{pop} statement excludes the named target from the future option-space. If the target is already excluded, the event is idempotent.
+
+A \texttt{refuse} statement performs the same geometric exclusion as \texttt{pop}, but is distinguished at the accounting level. The syntax preserves this distinction explicitly so that ethical or normative interpretations may refer to it later.
+
+A \texttt{bind} statement introduces a precedence constraint between two targets. The syntax enforces directionality; binding is not symmetric.
+
+A \texttt{collapse} statement applies a named collapse policy. The policy determines which distinctions are identified. Policies are opaque at the syntax level; their meaning is defined semantically.
+
+\subsection{Declarations}
+
+Declarations introduce names that may be used by subsequent events. Declarations do not alter the option-space directly and therefore do not constitute events. Their role is purely referential.
+
+Because declarations do not induce semantic effects, they may be safely erased after name resolution. This separation reinforces the principle that only events shape history.
+
+\subsection{Syntactic Irreversibility}
+
+A crucial property of the syntax is that no well-formed program can express the negation of a prior event. There is no construct corresponding to “un-pop,” “unbind,” or “un-collapse.”
+
+This property ensures that irreversibility is enforced before semantics are considered. Even a malicious or ill-typed program cannot express rollback. Any recovery from error must therefore proceed through explicit collapse, not through revision.
+
+\subsection{Determinism and Replay}
+
+Because the syntax admits only linear histories, the interpretation of a program is deterministic given an initial option-space. Replaying the same program always yields the same semantic result. This property underwrites auditability and reproducibility.
+
+\subsection{Minimality}
+
+The surface language is not intended to be convenient for general-purpose programming. Instead, it serves as a minimal kernel upon which higher-level languages, visual interfaces, and interactive systems may be built. Any such extension must compile down to the core syntax without introducing new semantic effects.
+
+\subsection{Summary}
+
+The Spherepop surface language enforces, at the syntactic level, the core philosophical commitments of the calculus. By eliminating mutation, rollback, and implicit control flow, it ensures that programs describe histories rather than computations. The resulting austerity is not a limitation, but a guarantee: anything expressible in the language is, by construction, an irreversible act.
+
+\section{Abstract Syntax and Denotational Semantics}
+\label{app:ast}
+
+This appendix formalizes the abstract syntax and denotational semantics of Spherepop. Whereas Appendix~\ref{app:syntax} fixed the surface language, the present appendix specifies the semantic objects manipulated by the calculus and the precise meaning of programs as transformations of option--spaces.
+
+\subsection{Abstract Syntax as Linear Structure}
+
+A Spherepop program is represented abstractly as a finite, ordered sequence of nodes:
+\[
+\mathsf{AST} = [n_1, n_2, \dots, n_k].
+\]
+Each node corresponds to either an event or a declaration. The ordering of nodes is semantically significant. There is no notion of tree reduction, rewriting, or normalization that may reorder nodes without proof of independence.
+
+This linearity is essential. Unlike expression trees in functional languages, the AST of Spherepop is a record of temporal succession. Its structure reflects time rather than computation.
+
+\subsection{Event Nodes}
+
+Event nodes take one of the following forms:
+\[
+\mathsf{Pop}(t),\quad
+\mathsf{Refuse}(t),\quad
+\mathsf{Bind}(a,b),\quad
+\mathsf{Collapse}(q),
+\]
+where $t,a,b$ are targets and $q$ is a collapse policy identifier.
+
+These nodes are atomic. There is no compound event form. Any higher-level construct must desugar into a sequence of these primitives before semantic interpretation.
+
+\subsection{Declaration Nodes}
+
+Declaration nodes bind identifiers to expressions. Formally, they are represented as
+\[
+\mathsf{Let}(x,e),
+\]
+where $x$ is a name and $e$ is an expression evaluated in a purely referential environment.
+
+Declarations do not correspond to morphisms in the option--space category. They are erased prior to denotational interpretation, after name resolution has been performed. This ensures that declarations cannot influence semantic state.
+
+\subsection{The Semantic Category}
+
+Let $\mathcal{O}$ be the category whose objects are option--spaces and whose morphisms are monotone transformations that restrict, bind, or quotient admissible futures.
+
+Morphisms in $\mathcal{O}$ satisfy:
+\begin{itemize}
+\item monotonicity with respect to inclusion,
+\item closure under composition,
+\item identity morphisms for each object.
+\end{itemize}
+
+Importantly, $\mathcal{O}$ is not a groupoid. Most morphisms are not invertible. This asymmetry encodes irreversibility at the categorical level.
+
+\subsection{Interpretation of Nodes}
+
+Each event node denotes a morphism in $\mathcal{O}$:
+\[
+\llbracket \mathsf{Pop}(t) \rrbracket
+=
+\llbracket \mathsf{Refuse}(t) \rrbracket
+: X \to X|_{\neg t},
+\]
+\[
+\llbracket \mathsf{Bind}(a,b) \rrbracket
+: X \to X[a \prec b],
+\]
+\[
+\llbracket \mathsf{Collapse}(q) \rrbracket
+: X \to X/{\sim_q}.
+\]
+
+The interpretation of declarations is the identity morphism, as declarations do not alter the option--space.
+
+\subsection{Compositional Semantics}
+
+The denotational semantics of a program is given by composition. Let $X_0$ be the initial option--space. The meaning of an AST is:
+\[
+\llbracket [n_1,\dots,n_k] \rrbracket
+=
+\llbracket n_k \rrbracket \circ \cdots \circ \llbracket n_1 \rrbracket.
+\]
+
+This definition reflects the left-to-right execution order of the surface language. No evaluation strategy other than sequential composition is permitted.
+
+\subsection{Historical Sensitivity}
+
+Two ASTs that differ only by reordering nodes are generally not equivalent. Semantic equivalence requires that the corresponding morphisms in $\mathcal{O}$ be equal, which holds only under strong independence conditions. This property ensures that histories cannot be arbitrarily reshaped without semantic consequence.
+
+\subsection{Idempotence and Independence}
+
+Certain event nodes are idempotent:
+\[
+\mathsf{Pop}(t) \circ \mathsf{Pop}(t)
+=
+\mathsf{Pop}(t).
+\]
+Similarly for \texttt{Refuse}. Independence conditions may allow commuting of nodes, but such transformations must be justified semantically. There is no syntactic rule permitting reordering.
+
+\subsection{Determinism}
+
+Because the semantics is purely functional at the level of morphisms, interpretation is deterministic. Given an initial option--space and a fixed AST, the resulting option--space is uniquely determined.
+
+\subsection{Summary}
+
+The abstract syntax and denotational semantics of Spherepop enforce the core commitments of the calculus: linear time, irreversibility, and historical meaning. Programs are histories, nodes are commitments, and semantics is composition. This structure underwrites auditability, replay, and the deep coupling between meaning and past action that defines Spherepop.
+
+\section{Lagrangian and Hamiltonian Mechanics of Commitment}
+\label{app:lagrangian}
+
+This appendix provides a detailed account of the discrete Lagrangian and Hamiltonian structures used throughout the paper. The purpose is not to import physical dynamics wholesale, but to demonstrate that Spherepop admits a principled action-based formulation in which commitment, freedom, and abstraction are mathematically coherent.
+
+\subsection{Configuration Variable: Optionality}
+
+Let $X$ denote an option--space. We associate to $X$ a scalar quantity
+\[
+\Omega(X) \in \mathbb{R}_{\ge 0},
+\]
+called its \emph{optionality}. Intuitively, $\Omega$ measures the degrees of freedom remaining in the future. This quantity need not be cardinality; it may be any monotone measure satisfying:
+\[
+X' \subseteq X \;\Rightarrow\; \Omega(X') \le \Omega(X).
+\]
+
+Optionality is therefore an order-preserving observable on $\mathcal{O}$.
+
+\subsection{Local Lagrangian}
+
+Each event $e_t : X_{t-1} \to X_t$ induces a local cost
+\[
+\mathcal{L}_t
+=
+\Delta \Omega_t
++
+\lambda\,\Delta C_t,
+\]
+where
+\[
+\Delta \Omega_t = \Omega(X_{t-1}) - \Omega(X_t),
+\]
+and $\Delta C_t$ is an auxiliary cost term recording ethical, normative, or thermodynamic accounting. The constant $\lambda$ controls the relative weighting of accounting cost versus geometric constraint.
+
+The Lagrangian is local in time and depends only on the immediate transformation induced by the event. This locality is essential for compositionality.
+
+\subsection{Action of a History}
+
+Given a history
+\[
+\gamma = (e_1, e_2, \dots, e_n),
+\]
+its action is defined as the sum of local costs:
+\[
+\mathcal{S}[\gamma]
+=
+\sum_{t=1}^n \mathcal{L}_t.
+\]
+
+Because each $\mathcal{L}_t$ is non-negative for pop, refuse, and bind operations, the action is monotone increasing along histories. This monotonicity encodes irreversibility: action, once accumulated, cannot decrease except through collapse.
+
+\subsection{Commitment as Conjugate Momentum}
+
+We define the conjugate quantity to optionality as
+\[
+\pi_t
+=
+-\frac{\partial \mathcal{L}_t}{\partial \Omega}.
+\]
+
+This quantity is interpreted as \emph{commitment}. Commitment measures the sensitivity of action to further reductions in optionality. Intuitively, it captures how costly it has become to lose additional freedom.
+
+Although the derivative is formal rather than analytic, it serves as a bookkeeping device that aligns with the discrete nature of the system. Pops and refusals increase commitment; collapse dissipates it.
+
+\subsection{Hamiltonian: Remaining Freedom}
+
+The Hamiltonian is defined via a discrete Legendre transform:
+\[
+\mathcal{H}_t
+=
+\pi_t\,\Omega(X_t)
+-
+\mathcal{L}_t.
+\]
+
+The Hamiltonian measures remaining maneuverability: the capacity of the system to accommodate further commitments without collapse. A system with large $\mathcal{H}$ retains flexibility; a system with $\mathcal{H} \approx 0$ is fully world-bound.
+
+This interpretation reverses the usual optimization perspective. Freedom is not something to be maximized indefinitely, but something to be spent in the construction of meaning.
+
+\subsection{Collapse and Action Reduction}
+
+Collapse is the only operator permitted to reduce accumulated action. For a collapse policy $q$ inducing equivalence relation $\sim_q$, we define:
+\[
+\mathcal{S}
+\longmapsto
+\mathcal{S} - \log |\ker q|.
+\]
+
+This reduction corresponds to identifying degrees of freedom that no longer contribute to future choice. Importantly, collapse does not erase past action; it compresses it. The historical cost remains encoded in the quotient structure.
+
+\subsection{Discrete Equations of Motion}
+
+While Spherepop does not posit physical time evolution, it admits discrete update relations:
+\[
+X_{t+1} = e_{t+1}(X_t),
+\]
+\[
+\pi_{t+1} - \pi_t = -\Delta\Omega_{t+1}.
+\]
+
+These relations express that commitment increases precisely when optionality decreases. No conservation law is postulated; dissipation through collapse is essential.
+
+\subsection{Distinction from Optimization}
+
+It is important to emphasize that the Lagrangian in Spherepop is not an objective function to be minimized. There is no principle of least action. Instead, the action records the irreversible cost of constructing a world.
+
+Meaningful histories are those with non-zero, non-trivial action. A system that minimizes action by avoiding commitment remains vacuous.
+
+\subsection{Summary}
+
+The Lagrangian and Hamiltonian structures of Spherepop provide a compact, principled way to quantify commitment and freedom without importing extraneous physical assumptions. By grounding action in irreversible loss of optionality and allowing collapse as controlled renormalization, the mechanics align precisely with the philosophical thesis of the calculus: that worldhood arises through the disciplined expenditure of freedom.
+
+\section{Categorical and Sheaf--Theoretic Glossary}
+\label{app:glossary}
+
+This appendix collects and clarifies the categorical and sheaf--theoretic concepts employed throughout the paper. The intent is not to introduce new formal machinery, but to stabilize terminology and make explicit how familiar mathematical structures are being used in a non-standard semantic context.
+
+\subsection{Option--Space}
+
+An \emph{option--space} is an abstract object representing the set of admissible futures consistent with a given history. Option--spaces are partially ordered by inclusion: if $X' \subseteq X$, then $X'$ represents a more committed world than $X$.
+
+Option--spaces are not required to be sets in the naive sense; they may be structured spaces encoding dependencies, bindings, and equivalence relations. What matters is that they admit monotone restriction and quotienting.
+
+\subsection{Monotone Morphism}
+
+A morphism $f : X \to Y$ between option--spaces is \emph{monotone} if it preserves commitment:
+\[
+X' \subseteq X \;\Rightarrow\; f(X') \subseteq f(X).
+\]
+Monotonicity formalizes irreversibility. Morphisms may reduce optionality or identify distinctions, but they may not introduce new admissible futures.
+
+Pop, refuse, bind, and collapse all denote monotone morphisms.
+
+\subsection{History}
+
+A \emph{history} is a finite composition of monotone morphisms:
+\[
+H = e_n \circ \cdots \circ e_1.
+\]
+Histories are the primary semantic objects of Spherepop. Two histories are considered equivalent only if their composite morphisms are equal in $\mathcal{O}$. There is no notion of observational equivalence that ignores history.
+
+\subsection{Collapse and Quotient}
+
+Collapse is a quotient operation on option--spaces. Given an equivalence relation $\sim_q$, collapse identifies elements related by $\sim_q$ to form the quotient $X/{\sim_q}$.
+
+The defining property of collapse is universal: any morphism out of $X$ that is insensitive to distinctions beyond $\sim_q$ factors uniquely through the quotient. This property ensures that collapse is principled abstraction rather than ad hoc erasure.
+
+\subsection{Endofunctor}
+
+An \emph{endofunctor} on $\mathcal{O}$ is a functor
+\[
+\mathsf{F} : \mathcal{O} \to \mathcal{O}.
+\]
+In Spherepop, agents may be characterized as endofunctors that map worlds to more committed worlds by applying histories. These functors are generally not invertible and do not preserve equivalence.
+
+Viewing agents as endofunctors emphasizes that agency is world-transforming rather than state-transitioning.
+
+\subsection{Parser}
+
+A \emph{parser}, in the Spherepop sense, is a mechanism that maps incoming structure to constraint. Parsing does not produce a representation of the input; it produces a transformed option--space in which the input no longer needs to be reconsidered.
+
+This interpretation generalizes syntactic parsing to cognitive parsing: understanding is exclusion.
+
+\subsection{Sheaf}
+
+A \emph{sheaf} assigns data to open regions (scopes) of a space in such a way that compatible local data may be uniquely glued into global data.
+
+In Spherepop, option--spaces admit covers by local scopes. Assignments of partial histories or interpretations to these scopes may be treated as sections. The sheaf condition corresponds to successful commitment: local ambiguities have been resolved in a way that yields a coherent global world.
+
+\subsection{Presheaf and Sheafification}
+
+Before commitment, local sections may fail to glue. Such structures correspond to presheaves rather than sheaves. Collapse may be interpreted as a form of sheafification: distinctions that obstruct gluing are identified, yielding a globally coherent structure.
+
+This interpretation aligns collapse with abstraction and concept formation.
+
+\subsection{View}
+
+A \emph{view} is a non-authoritative projection of kernel state. Views may discard information, reorder structure, or introduce visual metaphors. Formally, a view is a functor out of kernel state that is not invertible and has no causal influence.
+
+Views support understanding without authority.
+
+\subsection{Accounting Functor}
+
+The accounting functor
+\[
+\mathcal{A} : \mathcal{O} \to \mathcal{C}
+\]
+maps option--space morphisms to cost or commitment values. This functor records ethical or normative distinctions, such as the difference between pop and refuse, without altering kernel semantics.
+
+\subsection{Worldhood}
+
+\emph{Worldhood} denotes the condition of being constrained by one’s own history. A system exhibits worldhood if its future behavior is shaped by irreversible past commitments rather than by transient state or external prompting.
+
+In Spherepop, worldhood is not an emergent property; it is a structural consequence of irreversibility.
+
+\subsection{Summary}
+
+The categorical and sheaf--theoretic concepts employed in Spherepop are not ornamental. They provide a precise language for expressing locality, irreversibility, abstraction, and agency in a unified framework. By grounding ethical and cognitive claims in well-understood mathematical structures, Spherepop aims to make worldhood a formally tractable notion.
+
+\begin{thebibliography}{99}
+
+\bibitem{aristotle_metaphysics}
+Aristotle.
+\textit{Metaphysics}.
+Translated by W. D. Ross.
+Oxford University Press, 1924.
+
+\bibitem{heidegger_being_time}
+Martin Heidegger.
+\textit{Being and Time}.
+Translated by John Macquarrie and Edward Robinson.
+Harper \& Row, 1962.
+
+\bibitem{heidegger_technology}
+Martin Heidegger.
+The Question Concerning Technology.
+In \textit{The Question Concerning Technology and Other Essays}.
+Translated by William Lovitt.
+Harper \& Row, 1977.
+
+\bibitem{whitehead_process}
+Alfred North Whitehead.
+\textit{Process and Reality}.
+Free Press, 1978.
+
+\bibitem{lawvere_adjoints}
+F. William Lawvere.
+Adjointness in Foundations.
+\textit{Dialectica}, 23(3–4):281–296, 1969.
+
+\bibitem{maclane_categories}
+Saunders Mac Lane.
+\textit{Categories for the Working Mathematician}.
+Springer, 2nd edition, 1998.
+
+\bibitem{awodey_category}
+Steve Awodey.
+\textit{Category Theory}.
+Oxford University Press, 2nd edition, 2010.
+
+\bibitem{grothendieck_sga1}
+Alexander Grothendieck.
+\textit{Séminaire de Géométrie Algébrique du Bois Marie (SGA 1)}.
+Springer, 1971.
+
+\bibitem{maclane_moerdijk_sheaves}
+Saunders Mac Lane and Ieke Moerdijk.
+\textit{Sheaves in Geometry and Logic}.
+Springer, 1992.
+
+\bibitem{needham_visual_complex}
+Tristan Needham.
+\textit{Visual Complex Analysis}.
+Oxford University Press, 1997.
+
+\bibitem{needham_geometry_imaginary}
+Tristan Needham.
+\textit{Visual Differential Geometry and Forms}.
+Princeton University Press, 2021.
+
+\bibitem{meijer_category_effects}
+Erik Meijer.
+Category Theory for Programmers.
+\textit{Communications of the ACM}, 61(12):58–64, 2018.
+
+\bibitem{meijer_folds}
+Erik Meijer, Maarten Fokkinga, and Ross Paterson.
+Functional Programming with Bananas, Lenses, Envelopes and Barbed Wire.
+In \textit{FPCA ’91 Proceedings}.
+Springer, 1991.
+
+\bibitem{jacobson_thermodynamics}
+Ted Jacobson.
+Thermodynamics of Spacetime: The Einstein Equation of State.
+\textit{Physical Review Letters}, 75(7):1260–1263, 1995.
+
+\bibitem{verlinde_gravity}
+Erik Verlinde.
+On the Origin of Gravity and the Laws of Newton.
+\textit{Journal of High Energy Physics}, 2011(4):29, 2011.
+
+\bibitem{friston_fep}
+Karl Friston.
+The Free-Energy Principle: A Unified Brain Theory?
+\textit{Nature Reviews Neuroscience}, 11(2):127–138, 2010.
+
+\bibitem{landauer_irreversibility}
+Rolf Landauer.
+Irreversibility and Heat Generation in the Computing Process.
+\textit{IBM Journal of Research and Development}, 5(3):183–191, 1961.
+
+\bibitem{bennett_logical_reversibility}
+Charles H. Bennett.
+Logical Reversibility of Computation.
+\textit{IBM Journal of Research and Development}, 17(6):525–532, 1973.
+
+\bibitem{ashby_variety}
+W. Ross Ashby.
+\textit{An Introduction to Cybernetics}.
+Chapman \& Hall, 1956.
+
+\bibitem{marr_vision}
+David Marr.
+\textit{Vision}.
+W. H. Freeman, 1982.
+
+\bibitem{rosen_life_itself}
+Robert Rosen.
+\textit{Life Itself}.
+Columbia University Press, 1991.
+
+\bibitem{lacan_four_fundamental}
+Jacques Lacan.
+\textit{The Four Fundamental Concepts of Psychoanalysis}.
+Translated by Alan Sheridan.
+W. W. Norton, 1978.
+
+\bibitem{deleuze_cinema2}
+Gilles Deleuze.
+\textit{Cinema 2: The Time-Image}.
+University of Minnesota Press, 1989.
+
+\bibitem{rollins_psychocinema_2024}
+Helen Rollins.
+\textit{Psychocinema}.
+Polity Press,
+Cambridge,
+2024.
+
+\bibitem{turing_computable}
+Alan M. Turing.
+On Computable Numbers, with an Application to the Entscheidungsproblem.
+\textit{Proceedings of the London Mathematical Society}, 42(2):230–265, 1936.
+
+\bibitem{girard_linear_logic}
+Jean-Yves Girard.
+Linear Logic.
+\textit{Theoretical Computer Science}, 50(1):1–101, 1987.
+
+\bibitem{pierce_types}
+Benjamin C. Pierce.
+\textit{Types and Programming Languages}.
+MIT Press, 2002.
+
+\bibitem{dennett_intentional}
+Daniel C. Dennett.
+\textit{The Intentional Stance}.
+MIT Press, 1987.
+
+\end{thebibliography}
+
+\end{document} 
