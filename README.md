@@ -92,9 +92,13 @@ By making commitment, exclusion, synthesis, and abstraction explicit, Spherepop 
 
 ## Learn More
 
+- [The History of Spherepop](https://standardgalactic.github.io/spherepop/The%20History%20of%20Spherepop.pdf)
+
 - [Operational Mereology via Event-Sourced Semantics](https://standardgalactic.github.io/spherepop/Operational%20Mereology.pdf)
 
 - [The Joy of Spherepop](https://standardgalactic.github.io/spherepop/Joy-of-Spherepop.pdf)
+
+- [The Architecture of Meaning](architecture-of-meaning/README.md)
 
 - **Demos and visuals:**  
   See the animations and screenshots in this repository for interactive examples of nested scopes, popping, and collapse.
