@@ -103,6 +103,10 @@ By making commitment, exclusion, synthesis, and abstraction explicit, Spherepop 
 - **Demos and visuals:**  
   See the animations and screenshots in this repository for interactive examples of nested scopes, popping, and collapse.
 
+## See also
+
+[Circles of Evaluation](https://youtu.be/QXvExdthXkg) 
+
 ---
 
 ## Status
