@@ -100,6 +100,8 @@ By making commitment, exclusion, synthesis, and abstraction explicit, Spherepop 
 
 - [The Architecture of Meaning](architecture-of-meaning/README.md)
 
+- [Platform Dynamics](analysis/README.md)
+
 - **Demos and visuals:**  
   See the animations and screenshots in this repository for interactive examples of nested scopes, popping, and collapse.
 
