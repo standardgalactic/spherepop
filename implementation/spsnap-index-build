@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+repo="${SP_REPO_ROOT:-.}"
+ctx="base"
+overlay=""
+
+usage() {
+  echo "Usage: spsnap-index-build [--overlay NAME]"
+}
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --overlay) overlay="${2:?}"; ctx="overlay:$overlay"; shift 2;;
+    -h|--help) usage; exit 0;;
+    *) echo "Unknown arg: $1" >&2; usage; exit 2;;
+  esac
+done
+
+base="$repo/.sp/log.tsv"
+idx="$repo/.sp/snap-index.tsv"
+
+[[ -f "$base" ]] || { echo "Missing base log.tsv" >&2; exit 1; }
+
+tmp="$(mktemp)"
+trap 'rm -f "$tmp"' EXIT
+
+# Collect EIDs
+if [[ "$ctx" == "base" ]]; then
+  awk -F'\t' '{print $1}' "$base" | sort -n | uniq > "$tmp"
+else
+  cat "$base" > "$tmp.all"
+  SP_REPO_ROOT="$repo" sp-overlay-resolve "$overlay" >> "$tmp.all"
+  sort -n -k1,1 "$tmp.all" | awk -F'\t' '{print $1}' | uniq > "$tmp"
+fi
+
+# Build index lines
+while read -r eid; do
+  h="$(SP_REPO_ROOT="$repo" spsnap-hash ${overlay:+--overlay "$overlay"} --eid "$eid")"
+  printf "%s\t%s\t%s\n" "$ctx" "$eid" "$h"
+done < "$tmp" >> "$idx"
+
+# Canonicalize index
+LC_ALL=C sort -u "$idx" -o "$idx"
+echo "Indexed snapshots for $ctx"
+

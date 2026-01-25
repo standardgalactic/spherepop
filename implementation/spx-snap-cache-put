@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+repo="${SP_REPO_ROOT:-.}"
+overlay=""
+eid=""
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --overlay) overlay="${2:?}"; shift 2;;
+    --eid) eid="${2:?}"; shift 2;;
+    *) echo "Usage: spx-snap-cache-put [--overlay NAME] [--eid N]" >&2; exit 2;;
+  esac
+done
+
+cdir="$repo/.sp/_cache/snaps"
+mkdir -p "$cdir"
+
+h="$(SP_REPO_ROOT="$repo" spx-snap-hash ${overlay:+--overlay "$overlay"} ${eid:+--eid "$eid"})"
+out="$cdir/$h.tsv"
+
+if [[ ! -f "$out" ]]; then
+  spsnap ${overlay:+--overlay "$overlay"} ${eid:+--eid "$eid"} --format tsv --out "$out"
+fi
+
+echo "$h"
+

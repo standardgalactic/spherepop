@@ -1,0 +1,12 @@
+# build index once
+spsnap-index-build
+spsnap-index-build --overlay t
+
+# cache snapshots
+spsnap-cache-put
+spsnap-cache-put --overlay t
+
+# diff purely by hash
+spdiff-hash base 3 7
+spdiff-hash overlay:t 7 12
+

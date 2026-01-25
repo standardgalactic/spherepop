@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+a="${1:?a required}"; b="${2:?b required}"
+shift 2 || true
+
+repo="${SP_REPO_ROOT:-.}"
+eid="$(SP_REPO_ROOT="$repo" sp-emit MERGE "a=$a" "b=$b" "$@")"
+echo "MERGE $a ~= $b (eid=$eid)"
+

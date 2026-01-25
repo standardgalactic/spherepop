@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Usage: sp-emit TYPE arg1=... arg2=... (args are recorded as a single canonical string)
+type="${1:?TYPE required}"; shift || true
+
+repo="${SP_REPO_ROOT:-.}"
+log="$repo/.sp/log.tsv"
+eid_file="$repo/.sp/next_eid"
+
+[[ -f "$log" && -f "$eid_file" ]] || { echo "Not a Spherepop repo. Run sp-init." >&2; exit 1; }
+
+eid="$(cat "$eid_file")"
+next_eid=$((eid + 1))
+printf '%s' "$next_eid" > "$eid_file"
+
+# canonicalize args: sort key=value pairs lexicographically, join with ';'
+args_sorted="$(printf "%s\n" "$@" | LC_ALL=C sort | paste -sd';' -)"
+
+# timestamp is non-authoritative metadata (views can use it; kernel semantics shouldn't)
+ts="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+
+# TSV: EID \t TS \t TYPE \t ARGS
+printf "%s\t%s\t%s\t%s\n" "$eid" "$ts" "$type" "$args_sorted" >> "$log"
+
+echo "$eid"
+

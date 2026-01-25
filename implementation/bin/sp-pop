@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+repo="${SP_REPO_ROOT:-.}"
+oid_file="$repo/.sp/next_oid"
+[[ -f "$oid_file" ]] || { echo "Run sp-init first." >&2; exit 1; }
+
+oid="$(cat "$oid_file")"
+next_oid=$((oid + 1))
+printf '%s' "$next_oid" > "$oid_file"
+
+# object handle is deterministic from counter in this bootstrap
+obj="o$oid"
+
+eid="$(SP_REPO_ROOT="$repo" sp-emit POP "obj=$obj" "${@:-}")"
+echo "POP $obj (eid=$eid)"
+

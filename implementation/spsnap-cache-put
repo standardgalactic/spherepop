@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+repo="${SP_REPO_ROOT:-.}"
+overlay=""
+eid=""
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --overlay) overlay="${2:?}"; shift 2;;
+    --eid) eid="${2:?}"; shift 2;;
+    *) echo "Unknown arg: $1" >&2; exit 2;;
+  esac
+done
+
+dir="$repo/.sp/snaps"
+mkdir -p "$dir"
+
+h="$(SP_REPO_ROOT="$repo" spsnap-hash ${overlay:+--overlay "$overlay"} ${eid:+--eid "$eid"})"
+
+tsv="$dir/$h.tsv"
+ndj="$dir/$h.ndjson"
+
+if [[ ! -f "$tsv" ]]; then
+  SP_REPO_ROOT="$repo" spsnap ${overlay:+--overlay "$overlay"} ${eid:+--eid "$eid"} --format tsv --out "$tsv"
+fi
+if [[ ! -f "$ndj" ]]; then
+  SP_REPO_ROOT="$repo" spsnap ${overlay:+--overlay "$overlay"} ${eid:+--eid "$eid"} --format ndjson --out "$ndj"
+fi
+
+echo "$h"
+

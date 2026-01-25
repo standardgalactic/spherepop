@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+repo="${SP_REPO_ROOT:-.}"
+overlay="${1:?overlay required}"
+pfile="$repo/.sp/overlays/$overlay.parent"
+ofile="$repo/.sp/overlays/$overlay.tsv"
+[[ -f "$ofile" ]] || { echo "No such overlay: $overlay" >&2; exit 1; }
+
+if [[ $# -eq 1 ]]; then
+  [[ -f "$pfile" ]] && cat "$pfile" || echo ""
+  exit 0
+fi
+
+parent="${2:-}"
+if [[ -z "$parent" ]]; then
+  rm -f "$pfile"
+  echo "Cleared parent: $overlay"
+  exit 0
+fi
+
+[[ -f "$repo/.sp/overlays/$parent.tsv" ]] || { echo "No such parent overlay: $parent" >&2; exit 1; }
+
+# prevent trivial cycles: overlay cannot parent itself
+[[ "$parent" == "$overlay" ]] && { echo "Cycle: overlay cannot parent itself." >&2; exit 1; }
+
+echo "$parent" > "$pfile"
+echo "Set parent: $overlay -> $parent"
+

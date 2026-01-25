@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+repo="${SP_REPO_ROOT:-.}"
+ctx="${1:?context (base | overlay:NAME)}"
+from="${2:?from-eid}"
+to="${3:?to-eid}"
+
+h1="$(SP_REPO_ROOT="$repo" spx-snap-index-get "$ctx" "$from")"
+h2="$(SP_REPO_ROOT="$repo" spx-snap-index-get "$ctx" "$to")"
+
+[[ -n "$h1" && -n "$h2" ]] || { echo "Missing hashes; build index & cache first." >&2; exit 1; }
+
+a="$repo/.sp/_cache/snaps/$h1.tsv"
+b="$repo/.sp/_cache/snaps/$h2.tsv"
+[[ -f "$a" && -f "$b" ]] || { echo "Missing cached snapshots; run spx-snap-cache-put." >&2; exit 1; }
+
+# Canonical TSV diff: additions/removals
+echo "== ctx=$ctx from=$from($h1) to=$to($h2) =="
+echo "-- add --"
+comm -13 <(LC_ALL=C sort "$a") <(LC_ALL=C sort "$b") || true
+echo "-- del --"
+comm -23 <(LC_ALL=C sort "$a") <(LC_ALL=C sort "$b") || true
+

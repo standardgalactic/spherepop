@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+overlay="${1:?overlay required}"
+repo="${SP_REPO_ROOT:-.}"
+ofile="$repo/.sp/overlays/$overlay.tsv"
+
+[[ -f "$ofile" ]] || { echo "No such overlay." >&2; exit 1; }
+column -t -s $'\t' "$ofile"
+

@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+repo="${SP_REPO_ROOT:-.}"
+overlay=""
+eid=""
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --overlay) overlay="${2:?}"; shift 2;;
+    --eid) eid="${2:?}"; shift 2;;
+    *) echo "Usage: spx-snap-hash [--overlay NAME] [--eid N]" >&2; exit 2;;
+  esac
+done
+
+tmp="$(mktemp)"
+trap 'rm -f "$tmp"' EXIT
+
+spsnap ${overlay:+--overlay "$overlay"} ${eid:+--eid "$eid"} --format tsv > "$tmp"
+sha256sum "$tmp" | awk '{print $1}'
+

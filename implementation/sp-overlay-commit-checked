@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+overlay="${1:?overlay required}"
+repo="${SP_REPO_ROOT:-.}"
+
+SP_REPO_ROOT="$repo" sp-policy-check "$overlay" >/dev/null
+
+# if policy-check exits non-zero, we never get here
+SP_REPO_ROOT="$repo" sp-overlay-commit "$overlay"
+

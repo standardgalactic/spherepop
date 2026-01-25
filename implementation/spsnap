@@ -1,0 +1,132 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+repo="${SP_REPO_ROOT:-.}"
+base="$repo/.sp/log.tsv"
+
+overlay=""
+eid=""
+
+usage() {
+  cat <<'EOF'
+Usage:
+  spsnap [--overlay NAME] [--eid N]
+
+Emits NDJSON snapshot derived from replay.
+- Snapshots are derived views (never written to the authoritative log).
+- --eid produces a seek-to-EID snapshot (replay prefix).
+EOF
+}
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --overlay) overlay="${2:?}"; shift 2;;
+    --eid) eid="${2:?}"; shift 2;;
+    -h|--help) usage; exit 0;;
+    *) echo "Unknown arg: $1" >&2; usage; exit 2;;
+  esac
+done
+
+[[ -f "$base" ]] || { echo "Missing $base (run sp-init)" >&2; exit 1; }
+
+tmp="$(mktemp)"
+trap 'rm -f "$tmp"' EXIT
+
+# Build event stream: base + optional overlay-chain, then sort by EID.
+cat "$base" > "$tmp"
+if [[ -n "$overlay" ]]; then
+  [[ -f "$repo/.sp/overlays/$overlay.tsv" ]] || { echo "No such overlay: $overlay" >&2; exit 1; }
+  SP_REPO_ROOT="$repo" sp-overlay-resolve "$overlay" >> "$tmp"
+fi
+
+# Optional seek-to-eid: keep only events with EID <= eid
+if [[ -n "$eid" ]]; then
+  awk -F'\t' -v N="$eid" '$1+0 <= N+0 {print}' "$tmp" > "$tmp.f"
+  mv "$tmp.f" "$tmp"
+fi
+
+# Replay + emit canonical NDJSON snapshot:
+# header, then objects, meta, links (all representative-normalized)
+sort -n -k1,1 "$tmp" | awk -F'\t' '
+function split_args(s,    n,i,pair,k,v) {
+  n = split(s, pairs, ";")
+  for (i=1; i<=n; i++) {
+    if (pairs[i] == "") continue
+    split(pairs[i], pair, "=")
+    k = pair[1]; v = pair[2]
+    args[k] = v
+  }
+}
+
+function find(x,    p) {
+  if (!(x in parent)) parent[x] = x
+  p = parent[x]
+  if (p == x) return x
+  parent[x] = find(p)
+  return parent[x]
+}
+
+function unite(a,b,    ra,rb) {
+  ra = find(a); rb = find(b)
+  if (ra != rb) parent[rb] = ra
+}
+
+BEGIN {
+  max_eid = 0
+}
+
+{
+  delete args
+  eid=$1; ts=$2; typ=$3; argstr=$4
+  if (eid+0 > max_eid) max_eid = eid+0
+  split_args(argstr)
+
+  if (typ == "POP") {
+    o = args["obj"]
+    if (o != "") objs[o]=1
+  } else if (typ == "MERGE") {
+    a=args["a"]; b=args["b"]
+    if (a != "" && b != "") unite(a,b)
+  } else if (typ == "SETMETA") {
+    o=args["obj"]; kv=args["kv"]
+    if (o != "" && kv != "") meta_raw[o] = (meta_raw[o] ? meta_raw[o] ";" kv : kv)
+  } else if (typ == "LINK") {
+    f=args["from"]; t=args["to"]; ty=args["type"]
+    if (f!="" && t!="" && ty!="") links[++L] = f "\t" ty "\t" t
+  }
+}
+
+END {
+  # Header
+  printf("{\"kind\":\"header\",\"max_eid\":%d}\n", max_eid)
+
+  # Objects (rep normalized)
+  for (o in objs) {
+    r=find(o)
+    obj_rep[r]=1
+  }
+
+  # Meta: normalize onto reps (merge may change rep)
+  for (o in meta_raw) {
+    r=find(o)
+    # accumulate meta onto representative
+    if (meta_rep[r] == "") meta_rep[r] = meta_raw[o]
+    else meta_rep[r] = meta_rep[r] ";" meta_raw[o]
+  }
+
+  # Emit objects sorted by rep (we will sort externally by printing stable keys)
+  for (r in obj_rep) {
+    m = (r in meta_rep ? meta_rep[r] : "")
+    # Note: meta is non-causal in your kernel spec; here we just report it as view data.
+    printf("{\"kind\":\"object\",\"id\":\"%s\",\"meta\":\"%s\"}\n", r, m)
+  }
+
+  # Emit links rep-normalized
+  for (i=1; i<=L; i++) {
+    split(links[i], x, "\t")
+    f=find(x[1]); ty=x[2]; t=find(x[3])
+    printf("{\"kind\":\"link\",\"from\":\"%s\",\"type\":\"%s\",\"to\":\"%s\"}\n", f, ty, t)
+  }
+}
+' | LC_ALL=C sort
+

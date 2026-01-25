@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+parent="${1:?parent overlay required}"
+child="${2:?child overlay name required}"
+
+repo="${SP_REPO_ROOT:-.}"
+[[ -f "$repo/.sp/overlays/$parent.tsv" ]] || { echo "No such parent overlay: $parent" >&2; exit 1; }
+
+SP_REPO_ROOT="$repo" sp-overlay-new "$child"
+SP_REPO_ROOT="$repo" sp-overlay-parent "$child" "$parent" >/dev/null
+echo "Forked overlay: $child (parent=$parent)"
+

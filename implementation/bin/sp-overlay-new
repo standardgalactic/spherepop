@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+name="${1:?overlay name required}"
+repo="${SP_REPO_ROOT:-.}"
+odir="$repo/.sp/overlays"
+ofile="$odir/$name.tsv"
+
+mkdir -p "$odir"
+[[ -f "$ofile" ]] && { echo "Overlay already exists: $name" >&2; exit 1; }
+
+: > "$ofile"
+echo "Created overlay: $name"
+

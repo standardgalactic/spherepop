@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+repo="${SP_REPO_ROOT:-.}"
+ctx="${1:?context required (base | overlay:NAME)}"
+eid="${2:?eid required}"
+
+idx="$repo/.sp/_cache/snap-index.tsv"
+[[ -f "$idx" ]] || { echo "No index. Run spx-snap-index-build first." >&2; exit 1; }
+
+awk -F'\t' -v C="$ctx" -v E="$eid" '$1==C && $2==E {print $3; exit}' "$idx"
+

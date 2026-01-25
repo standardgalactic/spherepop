@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+leaf="${1:?overlay required}"
+repo="${SP_REPO_ROOT:-.}"
+
+# parent-first order
+chain="$(SP_REPO_ROOT="$repo" sp-overlay-chain "$leaf" | tac)"
+
+for ov in $chain; do
+  # policy check each overlay *as it is*, or if you prefer, check resolved leaf only.
+  SP_REPO_ROOT="$repo" sp-policy-check "$ov" >/dev/null
+done
+
+for ov in $chain; do
+  SP_REPO_ROOT="$repo" sp-overlay-commit "$ov"
+done
+

@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+repo="${SP_REPO_ROOT:-.}"
+leaf="${1:?overlay required}"
+
+# concatenate all overlays in the chain (parent-first), then sort by EID
+tmp="$(mktemp)"
+trap 'rm -f "$tmp"' EXIT
+
+SP_REPO_ROOT="$repo" sp-overlay-chain "$leaf" | tac | while read -r ov; do
+  cat "$repo/.sp/overlays/$ov.tsv" >> "$tmp"
+done
+
+# Output is an event stream (TSV) suitable to replay
+sort -n -k1,1 "$tmp"
+

@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+overlay="${1:?overlay required}"
+repo="${SP_REPO_ROOT:-.}"
+oid_file="$repo/.sp/next_oid"
+
+[[ -f "$oid_file" ]] || { echo "Run sp-init first." >&2; exit 1; }
+
+oid="$(cat "$oid_file")"
+next_oid=$((oid + 1))
+printf '%s' "$next_oid" > "$oid_file"
+
+obj="o$oid"
+
+eid="$(SP_REPO_ROOT="$repo" sp-emit-overlay "$overlay" POP "obj=$obj")"
+echo "POP $obj (overlay=$overlay eid=$eid)"
+

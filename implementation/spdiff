@@ -1,0 +1,121 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+repo="${SP_REPO_ROOT:-.}"
+base="$repo/.sp/log.tsv"
+
+overlay=""
+from=""
+to=""
+
+usage() {
+  cat <<'EOF'
+Usage:
+  spdiff [--overlay NAME] [--from EID] [--to EID]
+
+Emits NDJSON diffs per event (derived view).
+Implementation strategy: snapshot(EID-1) vs snapshot(EID) and compute adds/removes.
+EOF
+}
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --overlay) overlay="${2:?}"; shift 2;;
+    --from) from="${2:?}"; shift 2;;
+    --to) to="${2:?}"; shift 2;;
+    -h|--help) usage; exit 0;;
+    *) echo "Unknown arg: $1" >&2; usage; exit 2;;
+  esac
+done
+
+[[ -f "$base" ]] || { echo "Missing $base (run sp-init)" >&2; exit 1; }
+
+tmp="$(mktemp)"
+trap 'rm -f "$tmp" "$tmp".*' EXIT
+
+# Build event stream (base + optional overlay chain), sorted.
+cat "$base" > "$tmp"
+if [[ -n "$overlay" ]]; then
+  [[ -f "$repo/.sp/overlays/$overlay.tsv" ]] || { echo "No such overlay: $overlay" >&2; exit 1; }
+  SP_REPO_ROOT="$repo" sp-overlay-resolve "$overlay" >> "$tmp"
+fi
+sort -n -k1,1 "$tmp" > "$tmp.sorted"
+
+# Extract EIDs in range
+awk -F'\t' '{print $1}' "$tmp.sorted" | sort -n | uniq > "$tmp.eids"
+
+# Default from/to to stream min/max
+min_eid="$(head -n1 "$tmp.eids" || true)"
+max_eid="$(tail -n1 "$tmp.eids" || true)"
+[[ -n "${min_eid:-}" && -n "${max_eid:-}" ]] || exit 0
+
+from="${from:-$min_eid}"
+to="${to:-$max_eid}"
+
+# Snapshot-to-lines helper: normalize NDJSON snapshot into stable line keys
+snap_lines() {
+  local eid="$1"
+  # We keep only object/link lines (header omitted)
+  SP_REPO_ROOT="$repo" spsnap ${overlay:+--overlay "$overlay"} --eid "$eid" \
+    | awk '
+      BEGIN{FS=""; OFS=""}
+      /"kind":"object"/ {print "OBJ\t" $0}
+      /"kind":"link"/   {print "LNK\t" $0}
+    ' \
+    | LC_ALL=C sort
+}
+
+# Diff two sorted line sets
+diff_sets() {
+  local prev="$1" cur="$2" eid="$3"
+  # additions: in cur not in prev
+  comm -13 "$prev" "$cur" > "$tmp.add"
+  # removals: in prev not in cur
+  comm -23 "$prev" "$cur" > "$tmp.del"
+
+  # Emit one NDJSON diff packet (compact)
+  {
+    echo "{\"kind\":\"diff\",\"eid\":$eid,\"add\":"
+    jq -Rs 'split("\n")[:-1]' < "$tmp.add"
+    echo ",\"del\":"
+    jq -Rs 'split("\n")[:-1]' < "$tmp.del"
+    echo "}"
+  } | tr -d '\n'
+  echo
+}
+
+# Need jq; if absent, we degrade gracefully to raw text arrays
+have_jq=1
+command -v jq >/dev/null 2>&1 || have_jq=0
+
+if [[ "$have_jq" -ne 1 ]]; then
+  echo "spdiff: jq not found; emitting raw add/del blocks instead of JSON arrays." >&2
+fi
+
+# Iterate EIDs (from..to), but only those present in stream
+prev_file="$tmp.prev"
+cur_file="$tmp.cur"
+
+# initialize prev at (from-1) if possible, else empty
+prev_eid=$((from - 1))
+if grep -qx "$prev_eid" "$tmp.eids"; then
+  snap_lines "$prev_eid" > "$prev_file"
+else
+  : > "$prev_file"
+fi
+
+# loop through actual EIDs in [from,to]
+awk -v A="$from" -v B="$to" '$1>=A && $1<=B {print}' "$tmp.eids" | while read -r eid; do
+  snap_lines "$eid" > "$cur_file"
+
+  if [[ "$have_jq" -eq 1 ]]; then
+    diff_sets "$prev_file" "$cur_file" "$eid"
+  else
+    echo "== diff eid=$eid =="
+    echo "-- add --"; comm -13 "$prev_file" "$cur_file" || true
+    echo "-- del --"; comm -23 "$prev_file" "$cur_file" || true
+  fi
+
+  mv "$cur_file" "$prev_file"
+done
+

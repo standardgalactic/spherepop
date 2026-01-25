@@ -1,0 +1,79 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+repo="${SP_REPO_ROOT:-.}"
+log="$repo/.sp/log.tsv"
+[[ -f "$log" ]] || { echo "Run sp-init first." >&2; exit 1; }
+
+awk -F'\t' '
+function split_args(s,    n,i,pair,k,v) {
+  n = split(s, pairs, ";")
+  for (i=1; i<=n; i++) {
+    if (pairs[i] == "") continue
+    split(pairs[i], pair, "=")
+    k = pair[1]; v = pair[2]
+    args[k] = v
+  }
+}
+
+function find(x,    p) {
+  if (!(x in parent)) parent[x] = x
+  p = parent[x]
+  if (p == x) return x
+  parent[x] = find(p)
+  return parent[x]
+}
+
+function unite(a,b,    ra,rb) {
+  ra = find(a); rb = find(b)
+  if (ra != rb) parent[rb] = ra
+}
+
+BEGIN {
+  print "== Replay: derived state =="
+}
+
+{
+  # clear args map
+  delete args
+
+  eid=$1; ts=$2; typ=$3; argstr=$4
+  split_args(argstr)
+
+  if (typ == "POP") {
+    o = args["obj"]
+    if (o != "") objs[o]=1
+  } else if (typ == "LINK") {
+    f=args["from"]; t=args["to"]; ty=args["type"]
+    links[++L] = f "\t" ty "\t" t
+  } else if (typ == "MERGE") {
+    a=args["a"]; b=args["b"]
+    if (a != "" && b != "") unite(a,b)
+  } else if (typ == "SETMETA") {
+    o=args["obj"]; kv=args["kv"]
+    if (o != "" && kv != "") meta[o] = (meta[o] ? meta[o] ";" kv : kv)
+  }
+}
+
+END {
+  print ""
+  print "-- Objects --"
+  for (o in objs) {
+    rep = find(o)
+    printf "%s\trep=%s\tmeta=%s\n", o, rep, (o in meta ? meta[o] : "")
+  }
+
+  print ""
+  print "-- Links (raw) --"
+  for (i=1; i<=L; i++) print links[i]
+
+  print ""
+  print "-- Links (canonical reps) --"
+  for (i=1; i<=L; i++) {
+    split(links[i], x, "\t")
+    f=x[1]; ty=x[2]; t=x[3]
+    printf "%s\t%s\t%s\n", find(f), ty, find(t)
+  }
+}
+' "$log"
+

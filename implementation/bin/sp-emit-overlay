@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+overlay="${1:?overlay required}"
+type="${2:?TYPE required}"
+shift 2 || true
+
+repo="${SP_REPO_ROOT:-.}"
+odir="$repo/.sp/overlays"
+ofile="$odir/$overlay.tsv"
+eid_file="$repo/.sp/next_eid"
+
+[[ -f "$ofile" ]] || { echo "No such overlay: $overlay" >&2; exit 1; }
+[[ -f "$eid_file" ]] || { echo "Run sp-init first." >&2; exit 1; }
+
+eid="$(cat "$eid_file")"
+next_eid=$((eid + 1))
+printf '%s' "$next_eid" > "$eid_file"
+
+args_sorted="$(printf "%s\n" "$@" | LC_ALL=C sort | paste -sd';' -)"
+ts="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+
+printf "%s\t%s\t%s\t%s\n" "$eid" "$ts" "$type" "$args_sorted" >> "$ofile"
+
+echo "$eid"
+

@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+repo="${SP_REPO_ROOT:-.}"
+base="$repo/.sp/log.tsv"
+overlay=""
+ctx="base"
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --overlay) overlay="${2:?}"; ctx="overlay:$overlay"; shift 2;;
+    *) echo "Usage: spx-snap-index-build [--overlay NAME]" >&2; exit 2;;
+  esac
+done
+
+[[ -f "$base" ]] || { echo "Missing .sp/log.tsv (run sp-init)" >&2; exit 1; }
+
+kdir="$repo/.sp/_cache"
+idx="$kdir/snap-index.tsv"
+mkdir -p "$kdir"
+
+tmp="$(mktemp)"
+trap 'rm -f "$tmp" "$tmp".*' EXIT
+
+# Get EIDs present in the chosen context by snapshotting headers:
+# simplest approach: read EIDs from base log, plus overlay stream if provided.
+if [[ "$ctx" == "base" ]]; then
+  awk -F'\t' '{print $1}' "$base" | sort -n | uniq > "$tmp.eids"
+else
+  # Build a combined stream into tmp.all but do not save it anywhere permanent.
+  cat "$base" > "$tmp.all"
+  sp-overlay-resolve "$overlay" >> "$tmp.all"
+  sort -n -k1,1 "$tmp.all" | awk -F'\t' '{print $1}' | uniq > "$tmp.eids"
+fi
+
+# Append index rows (dedup at end)
+while read -r eid; do
+  h="$(SP_REPO_ROOT="$repo" spx-snap-cache-put ${overlay:+--overlay "$overlay"} --eid "$eid")"
+  printf "%s\t%s\t%s\n" "$ctx" "$eid" "$h"
+done < "$tmp.eids" >> "$idx"
+
+LC_ALL=C sort -u "$idx" -o "$idx"
+echo "Indexed $ctx into $idx"
+

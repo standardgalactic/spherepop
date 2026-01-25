@@ -1,0 +1,16 @@
+sp-init
+sp-overlay-new t
+a=$(sp-pop-overlay t | awk '{print $2}')
+b=$(sp-pop-overlay t | awk '{print $2}')
+sp-link-overlay t "$a" "$b" relates
+
+# hash the speculative snapshot
+spsnap-hash --overlay t
+
+# cache it (returns hash)
+h=$(spsnap-cache-put --overlay t)
+
+# retrieve it
+spsnap-cache-get "$h" tsv | head
+spsnap-cache-get "$h" ndjson | head
+

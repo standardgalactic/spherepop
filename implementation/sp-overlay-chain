@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+repo="${SP_REPO_ROOT:-.}"
+overlay="${1:?overlay required}"
+
+cur="$overlay"
+seen=""
+
+while [[ -n "$cur" ]]; do
+  # cycle guard (cheap)
+  if echo " $seen " | grep -q " $cur "; then
+    echo "Cycle detected in parents at: $cur" >&2
+    exit 2
+  fi
+  seen="$seen $cur"
+
+  echo "$cur"
+  cur="$(SP_REPO_ROOT="$repo" sp-overlay-parent "$cur")"
+done
+

@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+obj="${1:?obj required}"
+kv="${2:?key=value required}"
+
+repo="${SP_REPO_ROOT:-.}"
+eid="$(SP_REPO_ROOT="$repo" sp-emit SETMETA "obj=$obj" "kv=$kv")"
+echo "SETMETA $obj {$kv} (eid=$eid)"
+

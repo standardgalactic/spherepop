@@ -1,0 +1,21 @@
+sp-init
+printf '%s\n' \
+  'SP_POLICY_MAX_EVENTS=50' \
+  'SP_POLICY_MAX_COLLAPSE_EVENTS=0' \
+  'SP_POLICY_DENY_LINK_TYPES="owns_root setuid chmod chown mount bind"' \
+  'SP_POLICY_DENY_EVENT_TYPES="COLLAPSE"' \
+  > .sp/policy.env
+
+sp-overlay-new test
+a=$(sp-pop-overlay test | awk '{print $2}')
+b=$(sp-pop-overlay test | awk '{print $2}')
+sp-link-overlay test "$a" "$b" relates
+
+sp-overlay-stats test
+sp-replay-overlay test
+
+sp-overlay-commit-checked test   # fails if policy says no
+
+sp-log-seal
+sp-log-verify
+

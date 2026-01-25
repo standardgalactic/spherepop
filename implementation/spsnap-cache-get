@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+hash="${1:?hash required}"
+fmt="${2:-ndjson}"
+
+repo="${SP_REPO_ROOT:-.}"
+dir="$repo/.sp/snaps"
+
+[[ "$fmt" == "ndjson" || "$fmt" == "tsv" ]] || { echo "fmt must be ndjson|tsv" >&2; exit 2; }
+
+file="$dir/$hash.$fmt"
+[[ -f "$file" ]] || { echo "No cached snapshot: $file" >&2; exit 1; }
+
+cat "$file"
+

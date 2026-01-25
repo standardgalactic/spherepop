@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+from="${1:?from required}"; to="${2:?to required}"; ltype="${3:?link-type required}"
+shift 3 || true
+
+repo="${SP_REPO_ROOT:-.}"
+eid="$(SP_REPO_ROOT="$repo" sp-emit LINK "from=$from" "to=$to" "type=$ltype" "$@")"
+echo "LINK $from -[$ltype]-> $to (eid=$eid)"
+

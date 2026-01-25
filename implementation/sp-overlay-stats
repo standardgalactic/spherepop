@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+overlay="${1:?overlay required}"
+repo="${SP_REPO_ROOT:-.}"
+ofile="$repo/.sp/overlays/$overlay.tsv"
+[[ -f "$ofile" ]] || { echo "No such overlay: $overlay" >&2; exit 1; }
+
+awk -F'\t' '
+{
+  typ=$3
+  total++
+  cnt[typ]++
+  # count LINK types (in argstr)
+  if (typ=="LINK") {
+    arg=$4
+    n=split(arg, pairs, ";")
+    for(i=1;i<=n;i++){
+      split(pairs[i], kv, "=")
+      if(kv[1]=="type") linktype[kv[2]]++
+    }
+  }
+}
+END{
+  print "events_total=" total
+  for (t in cnt) print "events_" t "=" cnt[t]
+  for (lt in linktype) print "linktype_" lt "=" linktype[lt]
+}
+' "$ofile" | LC_ALL=C sort
+

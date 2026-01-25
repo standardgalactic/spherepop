@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+root="${1:-.}"
+mkdir -p "$root/.sp"
+: > "$root/.sp/log.tsv"
+
+# monotone counters (local bootstrap stand-ins for "arbiter EID" and object handles)
+echo 1 > "$root/.sp/next_eid"
+echo 1 > "$root/.sp/next_oid"
+
+cat <<'EOF'
+Initialized .sp/
+- .sp/log.tsv (append-only authority)
+- .sp/next_eid, .sp/next_oid (bootstrap counters)
+EOF
+

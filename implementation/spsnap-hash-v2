@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ctx="${1:?context (base | overlay:NAME)}"
+from="${2:?from-eid}"
+to="${3:?to-eid}"
+
+repo="${SP_REPO_ROOT:-.}"
+
+get_hash() {
+  SP_REPO_ROOT="$repo" spsnap-index-get "$ctx" "$1"
+}
+
+h1="$(get_hash "$from")"
+h2="$(get_hash "$to")"
+
+[[ -n "$h1" && -n "$h2" ]] || { echo "Missing snapshot hash; build index first." >&2; exit 1; }
+
+tmp="$(mktemp)"
+trap 'rm -f "$tmp".*' EXIT
+
+SP_REPO_ROOT="$repo" spsnap-cache-get "$h1" tsv > "$tmp.a"
+SP_REPO_ROOT="$repo" spsnap-cache-get "$h2" tsv > "$tmp.b"
+
+# Diff canonical TSV snapshots
+comm -3 "$tmp.a" "$tmp.b" | awk '
+  /^[[:space:]]/ { print "{\"kind\":\"add\",\"line\":\"" substr($0,2) "\"}" }
+  /^[^[:space:]]/ { print "{\"kind\":\"del\",\"line\":\"" $0 "\"}" }
+'
+

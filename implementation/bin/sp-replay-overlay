@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+overlay="${1:?overlay required}"
+repo="${SP_REPO_ROOT:-.}"
+base="$repo/.sp/log.tsv"
+ofile="$repo/.sp/overlays/$overlay.tsv"
+
+[[ -f "$base" && -f "$ofile" ]] || { echo "Missing log or overlay." >&2; exit 1; }
+
+# concatenate base + overlay, preserving order by EID
+sort -n -k1,1 "$base" "$ofile" | SP_REPO_ROOT="$repo" sp-replay
+

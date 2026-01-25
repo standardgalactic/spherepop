@@ -1,0 +1,53 @@
+# Suggest Usage:
+
+sp-init
+a=$(sp-pop | awk '{print $2}')
+b=$(sp-pop | awk '{print $2}')
+sp-link "$a" "$b" cites
+sp-setmeta "$a" title=hello
+sp-merge "$a" "$b"
+sp-replay
+
+# Expected Output:
+
+Initialized .sp/
+- .sp/log.tsv (append-only authority)
+- .sp/next_eid, .sp/next_oid (bootstrap counters)
+
+LINK o1 -[cites]-> o2 (eid=3)
+
+SETMETA o1 {title=hello} (eid=4)
+
+MERGE o1 ~= o2 (eid=5)
+
+== Replay: derived state ==
+
+-- Objects --                                                                                 o1      rep=o1  meta=title
+o2      rep=o1  meta=
+
+-- Links (raw) --        o1      cites  o2                                                                            
+-- Links (canonical reps) --           o1      cites   o1
+
+# Test Overlays
+
+sp-init
+
+sp-overlay-new test
+
+a=$(sp-pop-overlay test | awk '{print $2}')
+b=$(sp-pop-overlay test | awk '{print $2}')
+sp-link-overlay test "$a" "$b" relates
+
+echo "== speculative =="
+sp-replay-overlay test
+
+echo "== still base only =="
+sp-replay
+
+sp-overlay-commit test
+
+echo "== after commit =="
+sp-replay
+
+
+

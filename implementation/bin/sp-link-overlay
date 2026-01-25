@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+overlay="${1:?overlay required}"
+from="${2:?from}"
+to="${3:?to}"
+ltype="${4:?type}"
+
+repo="${SP_REPO_ROOT:-.}"
+eid="$(SP_REPO_ROOT="$repo" sp-emit-overlay "$overlay" LINK "from=$from" "to=$to" "type=$ltype")"
+echo "LINK $from -[$ltype]-> $to (overlay=$overlay eid=$eid)"
+

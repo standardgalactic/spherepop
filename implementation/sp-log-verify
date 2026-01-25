@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+repo="${SP_REPO_ROOT:-.}"
+log="$repo/.sp/log.tsv"
+seal="$repo/.sp/seal.sha256"
+
+[[ -f "$log" && -f "$seal" ]] || { echo "Missing log.tsv or seal.sha256" >&2; exit 1; }
+
+prev="GENESIS"
+ok=1
+
+while IFS=$'\t' read -r eid expected; do
+  line="$(awk -F'\t' -v id="$eid" '$1==id{print; exit}' "$log")"
+  if [[ -z "$line" ]]; then
+    echo "VERIFY FAIL: missing EID $eid in log" >&2
+    ok=0
+    continue
+  fi
+  got="$(printf "%s\n%s" "$prev" "$line" | sha256sum | awk '{print $1}')"
+  if [[ "$got" != "$expected" ]]; then
+    echo "VERIFY FAIL: EID $eid hash mismatch" >&2
+    ok=0
+  fi
+  prev="$expected"
+done < "$seal"
+
+if [[ "$ok" -eq 1 ]]; then
+  echo "Verify OK."
+else
+  exit 2
+fi
+

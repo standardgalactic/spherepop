@@ -1,0 +1,138 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+repo="${SP_REPO_ROOT:-.}"
+base="$repo/.sp/log.tsv"
+
+overlay=""
+eid=""
+format="ndjson"
+out=""
+
+usage() {
+  cat <<'EOF'
+Usage:
+  spsnap [--overlay NAME] [--eid N] [--format ndjson|tsv] [--out PATH]
+
+Emits a derived snapshot from replay.
+- Authoritative state remains only in .sp/log.tsv.
+- Snapshot is a view (safe to cache/transport).
+EOF
+}
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --overlay) overlay="${2:?}"; shift 2;;
+    --eid) eid="${2:?}"; shift 2;;
+    --format) format="${2:?}"; shift 2;;
+    --out) out="${2:?}"; shift 2;;
+    -h|--help) usage; exit 0;;
+    *) echo "Unknown arg: $1" >&2; usage; exit 2;;
+  esac
+done
+
+[[ -f "$base" ]] || { echo "Missing $base (run sp-init)" >&2; exit 1; }
+[[ "$format" == "ndjson" || "$format" == "tsv" ]] || { echo "Bad --format: $format" >&2; exit 2; }
+
+tmp="$(mktemp)"
+trap 'rm -f "$tmp" "$tmp".*' EXIT
+
+cat "$base" > "$tmp"
+if [[ -n "$overlay" ]]; then
+  [[ -f "$repo/.sp/overlays/$overlay.tsv" ]] || { echo "No such overlay: $overlay" >&2; exit 1; }
+  SP_REPO_ROOT="$repo" sp-overlay-resolve "$overlay" >> "$tmp"
+fi
+
+if [[ -n "$eid" ]]; then
+  awk -F'\t' -v N="$eid" '$1+0 <= N+0 {print}' "$tmp" > "$tmp.f"
+  mv "$tmp.f" "$tmp"
+fi
+
+emit() {
+  sort -n -k1,1 "$tmp" | awk -F'\t' -v FMT="$format" '
+  function split_args(s,    n,i,pair,k,v) {
+    n = split(s, pairs, ";")
+    for (i=1; i<=n; i++) {
+      if (pairs[i] == "") continue
+      split(pairs[i], pair, "=")
+      k = pair[1]; v = pair[2]
+      args[k] = v
+    }
+  }
+
+  function find(x,    p) {
+    if (!(x in parent)) parent[x] = x
+    p = parent[x]
+    if (p == x) return x
+    parent[x] = find(p)
+    return parent[x]
+  }
+
+  function unite(a,b,    ra,rb) {
+    ra = find(a); rb = find(b)
+    if (ra != rb) parent[rb] = ra
+  }
+
+  BEGIN { max_eid = 0 }
+
+  {
+    delete args
+    eid=$1; ts=$2; typ=$3; argstr=$4
+    if (eid+0 > max_eid) max_eid = eid+0
+    split_args(argstr)
+
+    if (typ == "POP") {
+      o = args["obj"]; if (o != "") objs[o]=1
+    } else if (typ == "MERGE") {
+      a=args["a"]; b=args["b"]; if (a!="" && b!="") unite(a,b)
+    } else if (typ == "SETMETA") {
+      o=args["obj"]; kv=args["kv"]; if (o!="" && kv!="") meta_raw[o] = (meta_raw[o] ? meta_raw[o] ";" kv : kv)
+    } else if (typ == "LINK") {
+      f=args["from"]; t=args["to"]; ty=args["type"]
+      if (f!="" && t!="" && ty!="") links[++L] = f "\t" ty "\t" t
+    }
+  }
+
+  END {
+    # reps
+    for (o in objs) obj_rep[find(o)] = 1
+
+    # meta normalized to reps
+    for (o in meta_raw) {
+      r=find(o)
+      meta_rep[r] = (meta_rep[r] ? meta_rep[r] ";" meta_raw[o] : meta_raw[o])
+    }
+
+    if (FMT=="ndjson") {
+      printf("{\"kind\":\"header\",\"max_eid\":%d}\n", max_eid)
+      for (r in obj_rep) {
+        m = (r in meta_rep ? meta_rep[r] : "")
+        printf("{\"kind\":\"object\",\"id\":\"%s\",\"meta\":\"%s\"}\n", r, m)
+      }
+      for (i=1; i<=L; i++) {
+        split(links[i], x, "\t")
+        f=find(x[1]); ty=x[2]; t=find(x[3])
+        printf("{\"kind\":\"link\",\"from\":\"%s\",\"type\":\"%s\",\"to\":\"%s\"}\n", f, ty, t)
+      }
+    } else {
+      # TSV canonical lines (great for hashing/diff)
+      printf("H\tmax_eid\t%d\n", max_eid)
+      for (r in obj_rep) {
+        m = (r in meta_rep ? meta_rep[r] : "")
+        printf("O\t%s\t%s\n", r, m)
+      }
+      for (i=1; i<=L; i++) {
+        split(links[i], x, "\t")
+        f=find(x[1]); ty=x[2]; t=find(x[3])
+        printf("L\t%s\t%s\t%s\n", f, ty, t)
+      }
+    }
+  }' | LC_ALL=C sort
+}
+
+if [[ -n "$out" ]]; then
+  emit > "$out"
+else
+  emit
+fi
+

@@ -1,0 +1,65 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+overlay="${1:?overlay required}"
+repo="${SP_REPO_ROOT:-.}"
+
+policy="$repo/.sp/policy.env"
+ofile="$repo/.sp/overlays/$overlay.tsv"
+
+[[ -f "$ofile" ]] || { echo "No such overlay: $overlay" >&2; exit 1; }
+[[ -f "$policy" ]] || { echo "Missing policy: .sp/policy.env" >&2; exit 1; }
+
+# shellcheck disable=SC1090
+source "$policy"
+
+stats="$(SP_REPO_ROOT="$repo" sp-overlay-stats "$overlay")"
+
+getv() { echo "$stats" | awk -F= -v k="$1" '$1==k{print $2}'; }
+
+total="$(getv events_total)"; total="${total:-0}"
+collapse="$(getv events_COLLAPSE)"; collapse="${collapse:-0}"
+
+fail=0
+
+if [[ "$total" -gt "${SP_POLICY_MAX_EVENTS:-999999}" ]]; then
+  echo "POLICY FAIL: too many events ($total > $SP_POLICY_MAX_EVENTS)" >&2
+  fail=1
+fi
+
+if [[ "$collapse" -gt "${SP_POLICY_MAX_COLLAPSE_EVENTS:-999999}" ]]; then
+  echo "POLICY FAIL: too many COLLAPSE events ($collapse > $SP_POLICY_MAX_COLLAPSE_EVENTS)" >&2
+  fail=1
+fi
+
+# deny event types
+deny_types="${SP_POLICY_DENY_EVENT_TYPES:-}"
+if [[ -n "$deny_types" ]]; then
+  for t in $deny_types; do
+    c="$(getv "events_$t")"; c="${c:-0}"
+    if [[ "$c" -gt 0 ]]; then
+      echo "POLICY FAIL: event type denied: $t (count=$c)" >&2
+      fail=1
+    fi
+  done
+fi
+
+# deny LINK subtypes
+deny_link="${SP_POLICY_DENY_LINK_TYPES:-}"
+if [[ -n "$deny_link" ]]; then
+  for lt in $deny_link; do
+    c="$(getv "linktype_$lt")"; c="${c:-0}"
+    if [[ "$c" -gt 0 ]]; then
+      echo "POLICY FAIL: LINK type denied: $lt (count=$c)" >&2
+      fail=1
+    fi
+  done
+fi
+
+if [[ "$fail" -ne 0 ]]; then
+  echo "Overlay rejected by policy." >&2
+  exit 2
+fi
+
+echo "Policy OK."
+

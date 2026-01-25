@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+repo="${SP_REPO_ROOT:-.}"
+log="$repo/.sp/log.tsv"
+seal="$repo/.sp/seal.sha256"
+
+[[ -f "$log" ]] || { echo "Missing log.tsv" >&2; exit 1; }
+
+prev="GENESIS"
+tmp="$(mktemp)"
+trap 'rm -f "$tmp"' EXIT
+
+# Each line’s hash depends on prev-hash + line bytes.
+# Output: eid \t hash
+while IFS= read -r line; do
+  eid="$(printf "%s" "$line" | awk -F'\t' '{print $1}')"
+  h="$(printf "%s\n%s" "$prev" "$line" | sha256sum | awk '{print $1}')"
+  printf "%s\t%s\n" "$eid" "$h" >> "$tmp"
+  prev="$h"
+done < "$log"
+
+mv "$tmp" "$seal"
+echo "Sealed: $seal"
+
