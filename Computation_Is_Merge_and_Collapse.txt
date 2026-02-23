@@ -1,0 +1,542 @@
+Welcome back to the Deep Dive. You know, usually when we sit down to do one of these,
+we're looking at a pretty specific tool. Right. Something tangible.
+Exactly like we're breaking down a new JavaScript framework or a piece of hardware or maybe a shift
+in the market. It's usually very, I mean, something you can practically touch.
+Code you can run right away.
+But today?
+Yeah.
+Today is different. Today feels less like we're reading a technical manual and more like we've
+stumbled across a lost scroll.
+That is actually a surprisingly accurate way to put it.
+Right. So for you listening, we're looking at a text titled The Calculus of Commitment,
+A Structural Theory of Computation. It's by an author writing under the pseudonym Flixtenum.
+And it is dated just a few days ago, February 22nd, 2026.
+Hot off the presses.
+And I have to be honest with you, when I first read that title, I thought we were going to be
+talking about database transactions, you know, like commit and rollback.
+Which is a totally reasonable assumption given the terminology. But Flixten is going for something
+much, much bigger here.
+Yeah. This isn't about databases at all. This text claims to be a pedagogical base layer.
+It's essentially an argument that we have been teaching computer science wrong for the last 70
+years.
+A massive claim.
+It really is.
+Yeah.
+It says that everything we think we know, syntax, variables, functions, loops, that's
+all just the crust, the surface level.
+Right. It's the user interface of math, basically.
+Yeah.
+But Flixion wants to show us the engine underneath all that.
+Exactly. The central thesis here is that computation is not really about manipulating symbols.
+We think it is because, you know, we type code, we move text around on a screen.
+We write out the letters. But this text argues that deep down, computation is actually the
+structural reorganization of two things, commitment and optionality.
+Commitment and optionality. It's a fascinating pairing. It sounds almost sociological, doesn't
+it?
+It does, yeah. Like a relationship advice column.
+Right. But in this context, it's physics.
+Yeah.
+The text is proposing that if you strip away the Python, strip away the C++, strip away
+even the ones and zeros, you find an algebraic backbone made of just two primitive moves,
+two atomic actions.
+Merge and collapse.
+Merge and collapse. That is it. The claim is that everything from the lambda calculus that
+Alonzo Church scribbled on a chalkboard in the 1930s, to the Unix pipes you use in your
+terminal, to the complex state management of a modern React app.
+All of it.
+All of it is just a complex layering of those two moves.
+It's a grand unified theory.
+Yeah.
+And I have to admit, I am usually pretty skeptical of those.
+Oh, absolutely.
+I mean, usually when someone claims to have found the one true theory of everything,
+it ends up being some academic word salad.
+Usually, yes.
+But as I read through this, there were these moments where I actually stopped and thought,
+wait a minute. That actually makes sense.
+It really does. It's remarkably cohesive once you get into it.
+Right.
+And it starts with a philosophical hook that we really need to wrap our heads around before
+we even get into the math.
+Okay, let's do it.
+The text opens with this phrase, structure precedes symbol.
+Structure precedes symbol.
+Okay.
+Let's push on that a bit.
+Yeah.
+Because when I learned to code, the symbol was the thing.
+What?
+I write x equals five.
+That symbol x is the variable.
+I write the word function.
+That word is the command.
+It feels very linguistic, very language-based.
+Precisely.
+We teach coding like we teach a language.
+We teach grammar, syntax, vocabulary.
+But Flixson is saying that is fundamentally backwards.
+How so?
+Think about it this way. Before you can write the symbol x, you have to have a place for
+it to live. You have to have a concept of a thing that can hold a value.
+Oh, I see.
+That concept is a structure. The symbol is just the label we slap on it later.
+So the structure is the territory, and the code we write is just the map.
+In a way, yes. But it's more active than that. The text argues that computation isn't
+reading the map. Computation is the physical act of changing the landscape. You are structurally
+reorganizing what they call the region of possibilities.
+Okay, you used the word region there. That is the first term we really need to define if
+we're going to understand this whole sphere pop theory.
+Yes, sphere pop.
+By the way, sphere pop. Terrible name.
+It is definitely quirky. I think it's meant to sound like sphere of operations, but it
+comes off a bit like a brand of soda.
+It really does. But okay, let's look past the branding. The region is the atom of this
+theory.
+It is. Now, region usually implies space, like a region of memory on a hard drive.
+Yeah, like RAM.
+But the text is very specific that this isn't about hardware at all. In sphere pop, a region
+is a semantic object. It is a finite set of atomic names. Or, to put it simply, a collection
+of distinguishable commitments.
+Distinguishable commitment. That sounds super abstract. Let's try to ground this for you
+listening. The text uses a lot of set theory notation, but I found myself just visualizing
+a bucket.
+A bucket is a perfect analogy. Imagine a bucket. Inside that bucket, you have distinct items.
+Maybe a red block, a blue block, and a green block.
+Okay.
+That bucket holding those specific distinct items is a region.
+And the key here is that I can tell them apart. Red is not blue. Blue is not green.
+Exactly. Because they are distinct, that bucket has a property called optionality.
+Right.
+The text denotes this with the Greek letter omega.
+Which is just a fancy way of counting, right?
+At its simplest level, yes. It's the cardinality of the set. You have three blocks. Your optionality
+is three.
+But why call it optionality instead of just count or size?
+Because it measures your degrees of freedom.
+Degrees of freedom.
+Okay.
+Explain that.
+Think about it. If I tell you to reach into the bucket and pull out a block blindfolded,
+how many choices do you have?
+I have three choices. I could pull red or blue or green.
+Exactly. It's a collection of ores. A region represents potential. It represents an open
+question.
+What could this be?
+Right. Well, it could be red or blue or green. High optionality means you have a lot of choices.
+It means the system is open.
+So a region with, say, a million items has massive optionality.
+A region with one item, say just the red block, has very low optionality. It's almost a certainty.
+Correct. And a region with zero items.
+No choices at all.
+Impossible. It's the void.
+Now keep that idea of degrees of freedom in your mind because this is where the physics metaphor
+really comes in. The text introduces the first primitive operation, the merge.
+The merge, symbolized by the plus sign inside a circle.
+Structural composition. You take two regions, two buckets, and you combine them. You just pour
+one bucket into the other.
+Okay. So I have a bucket with a red block. You have a bucket with a yellow block. We merge them.
+Now we have one bucket with red and yellow.
+Simple enough. But here is the thermodynamic claim the text makes. Merge increases optionality.
+Sure, I have more blocks. But why use the word thermodynamic?
+Think about entropy. Think about a gas expanding.
+If you have a gas trapped in a small bottle, its molecules have a limited amount of space-limited
+states they can be in. If you open that bottle into a large room, the gas expands. It now has
+strictly more possible arrangements.
+It have more places to be.
+Right. In SpherePop, merge is described as work input. You are putting energy into the
+system to create more possibilities.
+So anytime I'm doing something additive in code.
+Exactly. When you define a new variable in a program, or when you add a new field to a
+database, or even when you just concatenate two strings together, you are merging. You are
+building up structure. You are expanding the state space.
+So merge is the act of creating potential. I could do A, or I could do B. I'm merging those
+possibilities into a single structure.
+Yes. And geometrically, this pileup has a mathematical property called associativity.
+Which brings back some high school algebra trauma for me.
+I promise it's harmless. It just means the grouping doesn't matter. A plus B plus C is the
+same as A plus B plus C. If you dump three buckets into a bathtub, it doesn't matter which
+one you dumped first. The resulting pile of blocks is exactly the same.
+Okay. So the history of the dumping doesn't change the final shape of the pile.
+Exactly. Merge creates a disorganized high optionality structure. But here's the thing.
+A computer that just accumulates options isn't actually useful.
+Because it never decides anything.
+Right. If I ask, what is two plus two? And the computer just merges them and says,
+well, I have a two, a plus, and another two. That's not helpful. I need an answer.
+You need to resolve the tension of all that potential.
+You need to reduce the optionality. And that is the second primitive operation, the collapse.
+This is the counterpart. The yin to the yang of merge.
+If merge is expansion and work, collapse is constraint and resolution. Structurally, the formal
+definition is identification. It maps a region to a quotient.
+Okay. Hold on. Quotient. We need to stop here for a second. Because when I hear quotient,
+I think division, long division, remainders, all that. But that's not what this means here.
+No, not in the arithmetic sense at all. In topology and advanced algebra, a quotient is about gluing
+things together.
+Bluing things together.
+Yes. It's about applying a rule that says these two different things. From now on,
+they are the same thing.
+You're blurring the lines between them.
+You are introducing an equivalence relation. Let's go back to your bucket. You have red,
+blue, and green blocks. High optionality.
+Right.
+A collapse operation applies a rule. Let's say the rule is ignore color, only look at shape.
+Okay. So I look in the bucket. I see three blocks. But since I'm ignoring the color,
+they all just look identical. Structurally, they have become the same atom. You have collapsed
+the distinction between red and blue and green. And because you lost that distinction,
+what happened to your optionality?
+It plummeted. I used to have three choices. Now I have one choice block.
+Exactly. Collapse reduces degrees of freedom. It resembles compression. Or to go back to thermodynamics,
+it resembles entropy reduction. You are taking a chaotic system with lots of possibilities and
+forcing it into a simpler, more ordered state. It's like playing the game, guess who?
+That is a perfect analogy. You start with a board of 24 phases.
+Yeah.
+High optionality. That's your initial region. Then you ask a question, does your person have a mustache?
+Mustache. That question is the equivalence relation. Yes. If the answer is no, you flip down all the
+mustache people, you have collapsed the search space, you have fewer options left. And you keep
+doing that constraint until you are left with one single face. The text calls that final state the
+canonical projection. The answer. The answer. And notice what happened. You can't go back. Once you flip
+those tiles down, the information about who those people were is effectively gone from the active set.
+Collapse is fundamentally lossy.
+You're throwing away information to get to the truth. So computation, according to this
+Flickshan character, is just this cycle.
+It's a heartbeat. Expansion via merge gathering data, defining variables, opening files.
+Then constraint via collapse filtering lists, running calculations, resolving logic.
+Expand constrain. Expand constrain.
+Exactly. It's the cycle of redistributing optionality until you reach equilibrium.
+I have to say, thinking of my CPU as a machine that essentially breeds optionality is a lot more
+poetic than thinking of it as a rock we tricked into doing math.
+It really connects the abstract logic to a sense of physical process. And the text claims this simple
+framework merge and collapse is enough to reconstruct the entire history of computer science.
+Which brings us to section two of the text, the lambda calculus.
+The dreaded lambda calculus.
+The absolute bane of undergraduate computer science students everywhere.
+Invented by Alonzo Church in the 1930s.
+It's usually taught as this very dry, symbolic manipulation game.
+Lots of Greek letters, lots of parentheses.
+It is very dry traditionally. And historically, we view Church's lambda calculus and Alan Turing's
+Turing machines as the two foundational pillars of computer science. They are equivalent. They can
+solve the exact same problems, but they feel totally different.
+Right. Turing gives you a physical metaphor. A machine with a tape of infinite length reading
+ones and zeros. It feels mechanical. Church gives you pure mathematical extraction. It feels
+very floaty. And SpherePop claims to bridge this gap. But to do that, it has to radically redefine
+what a variable is. Because in my head, and I think in most people's heads, a variable like
+X is a box. I put a value in the box. Later, I open the box and take it out.
+Infliction argues that is a pernicious metaphor. Those are their exact words. In SpherePop, a variable
+isn't a blank space. It is a minimal structural commitment. It's an atom that exists in its own right.
+Okay, but if it's just an atom and not a box, how do we actually do anything with it? This leads to
+their definition of abstraction. You know, writing a function. Lambda X dot a E.
+Right. The traditional view is just substitution. You have a template, and later you find to replace
+X with an actual value, as text rule. But SpherePop defines abstraction as a promise to perform
+a quotient. A promise to perform a quotient. Yes. And I love the phrase the text uses here to
+explain it. Controlled forgetting. Explain that for us. Because usually when I write code, I'm trying
+very hard not to forget things. Think about what you do when you write a simple math function, say
+F of X equals X plus 1. You are looking at a specific calculation, maybe 5 plus 1, and you are
+saying, I want to generalize this. You are choosing to forget that the number is 5.
+Um, learning the details. You are identifying a pattern. You're saying, I don't care about the
+specific identity of the number right now. I only care about the relationship, the adding one part.
+You are removing the identity, but preserving the dependency. That is the controlled forgetting.
+So then what is application? What happens when I actually run the function, when I give it that 5?
+Well, in standard theory, we say copy the 5 and paste it where X is. But structurally,
+SpherePop describes it as a collision, a violent geometry.
+A violent geometry. I like that.
+Step one is merge. You take the function structure, the X plus 1 region, and the argument region,
+the 5, and you merge them into one shared universe. You literally smash them together.
+Okay. So they are in the same bucket now.
+Step two, identify. You introduce the rule. You say in this new combined universe,
+the atom X is now mathematically equivalent to the atom 5.
+You're gluing them together.
+Exactly. And step three is collapse. You let the physics take over.
+Because X is now 5, the structure resolves itself. The calculation actually happens.
+6 pops out.
+That feels so much more tangible than find and replace. It's like you have two separate soap
+bubbles and you merge them, and suddenly the internal pressures equalize and they snap into
+a totally new geometric shape.
+That is a beautiful visual. And this geometric view solves a major theoretical headache in computer
+science, confluence.
+Right. Confluence. The idea that the order of operations ultimately doesn't matter.
+In lambda calculus, it famously doesn't matter if you evaluate the inside of the parenthesis first
+or the outside first. You eventually get to the exact same answer. Why?
+Spherpop says because merge is associative.
+The bathtub of blocks again.
+Exactly. The shape of the problem is determined by the relationships, the merges, not by the
+timeline of when you do them. The structure exists all at once. The path you take to traverse
+it might vary, but the geography of the structure is fixed. You end up at the same canonical projection
+regardless of the path.
+Structure precedes symbol. It just keeps coming back to that core idea.
+It really does. Let's move to section three, though, types. Because usually types are the
+things that just yell at me in my IDE. Error type mismatch. It feels like a barrier, a wall.
+That is definitely the developer experience. But theoretically, what actually is a type?
+Yeah.
+Spherpop calls them invariants.
+An invariant being something that does not change.
+Right. A type is a structural constraint that must be preserved under both merge and collapse.
+When you assign a type to a region in your code, you are basically making a prophecy.
+A prophecy.
+You are saying, I don't know exactly what specific value is in here. It currently has high optionality.
+But I guarantee that if you perform these merges and collapses, the resulting structure will look like this specific shape.
+So it's a contract.
+It is a contract. Take a function type usually written as A arrow B. In Spherpop, this isn't just a directional arrow. It's a physical rule.
+It says if you merge a region with the invariant structure of A, I guarantee the collapse will produce a region with the invariant structure of B.
+So it's like a safety rail for the collapse. It prevents the entropy from getting out of hand.
+And it prevents me from trying to collapse a cat string with a number integer.
+Precisely. It constrains the optionality to a legal subset. And the text briefly mentions category theory here, which is interesting.
+Oh man, I was hoping we could avoid the C word. Category theory usually makes my head spin right off my shoulders.
+We can keep it very light, I promise. Category theory is often called the mathematics of mathematics.
+It deals with objects and arrows. But Spherpop claims to be the pre-categorical substrate.
+Substrate. Like the soil things grow in.
+Yes. It argues that the arrows and category theory aren't primary at all. They are actually the result of merge and collapse.
+You get the monoidal structure, which is combining things from the merge operation.
+You get the projection from the collapse operation.
+So Flicksheim is saying, I can explain where your advanced math actually comes from.
+It comes from the physics of commitment.
+That is an incredibly bold claim to make.
+But I want to get back to something more visual.
+Something a bit more everyday.
+Section 4. The geometry of flow.
+Because this is where the whole theory really clicked for me.
+The text draws a direct line between high-level math and Unix pipes.
+Oh yeah. Cat pipe. Grep pipe sort.
+The bread and butter of literally every sysadmin.
+I type cat file. I put a vertical bar.
+I type grep, another vertical bar sort.
+The data just flows.
+The text says this is structurally identical to a mathematical function composition, like f of g of x.
+And the key to understand why is that vertical bar, the pipe symbol itself, what is it actually doing?
+Well, it connects them. It lets the data flow from left to right.
+That is the runtime view.
+That's what happens when you hit enter.
+Wait. Merge?
+But it looks like a tunnel.
+Things go in one end and out the other.
+How is that a pile of blocks?
+Think about how you construct the command in your terminal.
+You type the whole line out before you hit enter.
+You are assembling a pipeline.
+You are merging the cat command, the grep command, and the sort command into one single giant composite machine.
+You are piling up these commitments before any data ever moves.
+It's a staged merge.
+Exactly. You build the structure, first merge.
+Right.
+Then you pour the data in and it collapses through the stages.
+And this relates directly to currying.
+Okay, please explain currying.
+What is it?
+Please spare me the spicy food jokes. I've heard them all.
+I'll do my best to resist.
+Currying is named after the mathematician Haskell Curry.
+It is the technique of translating a function that takes multiple arguments into a sequence of functions that each take a single argument.
+So instead of f taking x and y at the same time, you have f of x, which returns a new function that takes y.
+But why does this matter?
+It seems like we're just moving parentheses around for fun.
+In SpherePop, it's about partial application.
+When you give the function just that first argument, x, what are you actually doing structurally?
+You are merging a commitment.
+You are saying x is 5.
+But you haven't given it y yet.
+So you cannot fully collapse the structure.
+So the system is just in a state of tension.
+It's waiting.
+It's a controlled early merge.
+You've committed to part of the structure, but you've left the rest open.
+You still have high optionality until that second argument arrives.
+So a Unix pipeline is really just a function that is heavily curried.
+It's waiting for the data stream to complete the collapse.
+Structurally, yes.
+They are the exact same geometry.
+And Fliction says this applies to stack-based languages, too, like Forth or Postscript.
+A stack is just a region with positional constraints.
+It's a vertical bucket instead of a Y1.
+When you push, you merge a new item onto the top.
+When you pop, you collapse the stack to get that top item back out.
+It's all the exact same physics.
+It's really fascinating how it unifies these things.
+We usually think of functional coding, shell scripting, and stack manipulation as three
+completely different skills, different paradigms.
+But here they are, dialects of the exact same mother tongue.
+And that mother tongue is fundamentally the management of state, which brings us to the
+real drama of Section 5, the villain of the piece.
+Every good story needs a villain.
+And in the story of functional programming, according to Fliction, the villain is mutation.
+Mutation! The enemy of reason!
+Understand why it's the villain, though.
+We first have to understand the hero.
+Pure functional programming.
+What makes it pure in this context?
+Deterministic replay.
+In a pure system, you have referential transparency.
+If I feed the exact same input to a function, I will get the exact same output.
+Always.
+No matter what day it is, no matter what the rest of the computer is doing in the background.
+SpherePop defines this as append only.
+Yes, and this is crucial.
+A pure functional program is basically a historian.
+It records a log of every single merge that has ever happened in the system.
+It never erases anything.
+It only adds.
+Because the complete history is preserved, you can always trace exactly how you got to
+the current state.
+You have a perfect audit trail.
+You have total information.
+Now look at mutation.
+In a language like C or Java or JavaScript, when you say X equals X plus one, what actually
+happens in the memory?
+The old value of X is just gone.
+It's overwritten entirely.
+You have destroyed the past.
+You have performed what the text calls a collapse without history.
+Oh, collapse without history.
+That sounds very Orwellian.
+It is entirely Orwellian.
+You have altered the state of the system, but you have destroyed the record of the merge
+that caused the alteration.
+You've burned the history books.
+And once you burn the books, you can't replay the past.
+You can't rewind.
+You lose provenance.
+You lose the ability to reason mathematically about why the system is in this current state.
+You just have the mess you are in right now.
+The text brings that thermodynamic metaphor back here, which I thought was brilliant.
+It says, pure evaluation preserves total information.
+It acts like a closed system.
+But mutation creates actual entropy.
+It leaks information out of the universe.
+It makes the system chaotic.
+This is exactly why debugging stateful code is so incredibly hard.
+You ask, how did X become negative one?
+And the answer is, something overrode it three hours ago on a different thread.
+In a pure system, you can just rewind the tape and see the exact merge that caused it.
+So immutable data structures aren't just some hipster coding trend.
+They are a structural necessity for maintaining sanity.
+They keep the underlying geometry intact.
+They prevent the universe from falling apart.
+But, and there's always, but in computer science, we don't live in a perfectly pure world.
+We have to change things.
+We have to print text to screens.
+We have to save records to databases.
+We have to fire actual missiles.
+We need side effects.
+Ah, yes.
+The problem with side effects.
+If I print a document to a physical printer, I can't unprint it just by rewinding the code.
+The ink is literally on the paper.
+Right.
+An effect is an irreversible collapse.
+It escapes the mathematical boundaries of the computer and changes the physical world.
+If you let this happen randomly in the middle of your pure logic, you break the replayability completely.
+So how do we control this dangerous weapon?
+How do we interact with the world without ruining the math?
+Section 6 introduces the concept that scares absolutely everyone who tries to learn functional programming.
+Monads.
+The jetted M word.
+I have read so many tutorials on monads.
+People say they are burritos.
+They say they are spacesuits.
+They are railroad tracks.
+Does SpherePop actually have a better explanation?
+I genuinely think it does.
+SpherePop defined a monad very simply as delayed collapse.
+Delayed collapse.
+Okay, let's unpack that.
+Let's look at the IO monad, the input-output monad.
+In a language like Haskell, when you write code to print to the screen, you aren't actually printing to the screen.
+Not yet.
+You're bluffing.
+You are planning.
+You are building a structural description of the effect.
+You are building a very detailed to-do list.
+I'm just creating a region that says item 1, print hello.
+Exactly.
+You are merging these descriptions together.
+You use the bind operator, that's the weird greater than equal symbol, to chain them together.
+First do this, then do that.
+But you are just building a list.
+You are still completely in the world of pure logic.
+You are just manipulating a data structure called the plan.
+So when does the printing actually happen?
+The ink has to hit the paper eventually.
+At the runtime.
+The runtime acts as the boundary of the system.
+The program hands this giant plan region to the runtime and says, okay, I'm done.
+I did the math.
+You deal with this.
+And the runtime is what performs the final irreversible collapse.
+It actually executes the effects.
+So the program stays pure because it's just the architect drawing the blueprints.
+The runtime is the construction crew that actually pours the concrete and gets dirty.
+That is a perfect analogy.
+The architect, the code never gets dirty.
+It just merges options.
+The construction crew, the runtime, deals with the messy collapse of the real world.
+And this naturally separates the what from the how.
+Which leads directly into algebraic effects.
+This is a much newer concept than monads, but sphere pop fits it in perfectly.
+In algebraic effects, you build the description, the merge, but you delegate the actual collapse to a handler.
+A handler.
+Think of the handler as a parameterized collapse operator.
+The code simply says, I need to save a file.
+It doesn't know how to save a file.
+It just merges that request into the structure.
+And then I, as the developer, can plug in different handlers.
+Yes.
+You can plug in a production handler that actually writes to the physical hard drive.
+Or if you are running tests, you can plug in a testing handler that just writes to a dummy log in memory.
+So the core logic, the code doesn't change at all.
+Just the collapse mechanism changes.
+Exactly.
+You have totally decoupled the pure logic from the messy consequence.
+It makes the system incredibly flexible and testable.
+And finally, the text touches on continuation passing style or CPS.
+Which is where you pass the rest of the program as a function argument.
+That concept always melts my brain.
+Think of it this way through the sphere pop lens.
+A continuation is a promise of future merge collapse.
+When you write in CPS, you aren't returning a value back to the caller.
+You are passing the baton forward.
+You say, here is the structure I built.
+You take it and you finish the job.
+It's explicit manual control over exactly when the collapse happens.
+It really seems like the whole history of advanced programming, from monads to algebraic effects to CPS,
+is just us monkeys trying to figure out how to control the collapse.
+We are desperately trying to keep the options open through merge for as long as theoretically possible,
+and only commit to the decision, the collapse, at the very last responsible moment.
+That is the grand unification the text is offering.
+That is the entire calculus of commitment.
+Wow.
+So let's zoom out a bit.
+We've been deep in the weeds here.
+We've talked about buckets of colored blocks that are more dynamic work,
+controlled for getting Unix pipes and burning history books.
+We have covered some serious theoretical ground today.
+If you had to summarize the calculus of commitment on a single bumper sticker, what would it be?
+What is the main takeaway?
+Computation is geometric.
+Computation is geometric.
+Flixixion's final point is that we really need to stop thinking of code as a linear recipe.
+You know, do step one, then do step two.
+We need to start thinking of it as the disciplined reorganization of structural freedom.
+We are literally building shapes in a mathematical space.
+We are managing the geometry of information.
+It fundamentally changes the way you visualize your daily work.
+You aren't script writer typing out dialogue for the computer.
+You are a sculptor.
+You are adding clay with merge and you are carving it away with collapse to reveal the final form.
+And if you respect the material, if you respect the history of your merges and you are careful and deliberate with your collapses,
+you build systems that don't just work but are actually resilient.
+They are structurally sound.
+Structure precedes symbol.
+I think I really finally get it.
+The symbol is just the cheap label we put on the structure after we already built it.
+Exactly.
+Well, Flixixion, whoever you are, whether you're a time traveler from the future, an alien intelligence,
+or just a very bored PhD student in a basement somewhere, you have given us a massive amount to think about.
+Indeed.
+It's the kind of theory that makes you want to go back and rewrite all your old cud from scratch.
+Or at least profusely apologize to it.
+And to you listening, next time you sit down at your keyboard and type X equals 5,
+take a second to really think about the commitment you're making.
+Think about the optionality you just collapsed.
+Are you burning the history books?
+Or are you building a cathedral?
+Hopefully the cathedral.
+Something to think about.
+Thanks for diving deep with us.
+We'll catch you in the next region.
