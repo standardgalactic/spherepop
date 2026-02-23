@@ -1,0 +1,1756 @@
+\documentclass[12pt]{article}
+
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{geometry}
+\usepackage{setspace}
+\usepackage{hyperref}
+\usepackage{microtype}
+\usepackage{titlesec}
+\usepackage{parskip}
+
+\geometry{
+  paper=letterpaper,
+  margin=1.25in
+}
+
+\onehalfspacing
+
+\titleformat{\section}{\large\bfseries}{}{0em}{}[\vspace{-0.5em}\rule{\linewidth}{0.4pt}]
+\titleformat{\subsection}{\normalsize\bfseries\itshape}{}{0em}{}
+
+\title{\textbf{Structure Precedes Symbol:\\
+Geometric Priority in Scalar Theory}}
+
+\author{Flyxion}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+\thispagestyle{empty}
+\begin{abstract}
+\noindent
+This paper examines the structural conditions under which a scalar functional may legitimately claim foundational status. It argues that scalar unification becomes unstable when introduced prior to specification of state space, metric structure, and governing dynamics. Through geometric, spectral, information-theoretic, and dynamical analysis, the paper distinguishes between scalars that are derived as invariants of structured flow and scalars that imply structure without derivation. The central claim is methodological rather than polemical: geometry must precede scalar construction. When this order is reversed, symbolic density substitutes for derivational necessity. The resulting distinction clarifies the limits of universal scalar programs and formalizes the conditions under which coherence-like quantities can be rigorously embedded within established mathematical frameworks.
+\end{abstract}
+
+\newpage
+\section{Introduction}
+
+Across mathematics and physics, scalar quantities occupy a privileged position. A single real-valued functional can encode dynamical evolution, thermodynamic equilibrium, probabilistic divergence, or geometric curvature. When properly derived, such scalars compress structure without distorting it. They are not primitive; they are invariant summaries of deeper relations.
+
+This paper examines a proposed scalar functional intended to measure ``structured resonance'' across physical, informational, and cognitive systems. The functional takes the schematic form
+\[
+\mathcal{C}(\Psi)
+=
+\frac{\displaystyle\sum_n \frac{F_n}{P_m}\,\sin(\theta)}{Z},
+\]
+where recursive growth terms, prime indexing, phase alignment, and normalization are aggregated into a single bounded quantity. The expression is presented as a unifying metric capable of replacing entropy and probability as foundational measures.
+
+The present analysis does not begin by rejecting such ambition. Scalar unification has repeatedly succeeded in the history of mathematical physics. What must be examined instead is derivational order. Does the scalar arise from a specified state space equipped with metric structure and governing dynamics, or does it precede that specification and imply it retroactively?
+
+The distinction is structural. When a scalar is derived from geometry and flow, it inherits invariance and empirical meaning. When introduced prior to the specification of embedding space and dynamical law, it remains syntactically closed but semantically underdetermined.
+
+The question, therefore, is not whether $\mathcal{C}(\Psi)$ is formally writable. It is whether it stands at the end of a derivation or at its beginning.
+
+The sections that follow analyze the functional first at the level of form, then at the level of constituent motifs, and finally at the level of architectural priority. The aim is not refutation but clarification: to distinguish symbolic aggregation from geometric necessity and to formalize the conditions under which a scalar may legitimately claim foundational status.
+
+\section{The Functional Form as a Bounded Scalar Field}
+
+Read without interpretive pressure, $\mathcal{C}(\Psi)$ is a weighted sinusoidal phase-alignment functional, normalized by some constant $Z$. As such it defines, in principle, a bounded scalar over whatever space $\Psi$ inhabits. This is mathematically unproblematic. Bounded scalar functionals appear throughout physics and information theory: partition functions, order parameters, coherence lengths. The form itself carries no pathology.
+
+What it does not carry is content. The terms are placeholders that \emph{suggest} meaning without fixing it. Compare the situation with a functional whose operationalization is complete, such as the KL divergence:
+\[
+  D_{\mathrm{KL}}(P \,\|\, Q) = \sum_x P(x)\,\log\frac{P(x)}{Q(x)}.
+\]
+Here every element is defined: $x$ ranges over an explicit domain, $P$ and $Q$ are probability measures satisfying $\sum P = \sum Q = 1$, the logarithm has a specified base, and convergence conditions are known. The formula is not merely syntactically closed; it is \emph{semantically} closed.
+
+One cannot introduce $\mathcal{C}(\Psi)$ and claim the same semantic closure, because several foundational specifications remain absent. The space in which $\Psi$ is defined has not been fixed, nor has the topology it carries been articulated. The phase parameter $\theta$ has not been derived from measurable system state but appears by analogy. The rule mapping the prime index $m$ to structural constraint has not been formally established. The range of the summation index $n$ is unspecified. The normalization factor $Z$ has not been interpreted in measure-theoretic terms, nor have the conditions under which it remains finite been stated.
+
+These are not aesthetic deficits. They mark the precise distinction between a syntactically well-formed formula and an operational measurement.
+
+\section{Why Scalar Unification Persists}
+
+The impulse to compress structure into a single scalar is not peculiar to the coherence framework. It is one of the central gestures of mathematical physics. Action functionals compress dynamics into a real number whose extremization determines motion. Partition functions compress statistical ensembles into a scalar generating thermodynamic quantities. Free energy functionals compress entropy and energy into a single variational object. Loss functions compress predictive error into a descent direction.
+
+In each of these cases, the scalar does not generate structure. It summarizes it. The Lagrangian is derived from symmetries of the system. The partition function is defined over an explicitly specified state space with a known measure. Free energy emerges from well-defined probabilistic ensembles. The scalar achieves universality only because it is downstream of geometry.
+
+Scalar unification therefore persists not because it is naïve, but because it has repeatedly succeeded when constructed in the correct order. It offers compression, invariance, and calculational tractability. It allows comparison across states that would otherwise remain incommensurable.
+
+The structural difficulty arises when the direction of derivation is reversed. When geometry is not specified and flow not derived, the scalar no longer compresses structure; it implies it. What appears as deep unification becomes symbolic anticipation.
+
+The attraction of $\mathcal{C}(\Psi)$ must be understood in this lineage. It participates in the same aspiration: to find a single quantity whose variation captures structure across domains. The question is not whether such compression is legitimate. It is whether the scalar stands at the end of derivation or at its beginning. Only in the former case does unification stabilize.
+
+\section{Three Motifs and Their Non-Unification}
+
+Each constituent of $\mathcal{C}(\Psi)$ draws on a genuine mathematical structure. The problem is that genuineness is not additivity: three valid structures placed in syntactic proximity do not automatically inherit each other's validity.
+
+\subsection{Fibonacci Scaling}
+
+Fibonacci growth is exponential with base $\varphi = (1 + \sqrt{5})/2$. More precisely, $F_n \sim \varphi^n / \sqrt{5}$ as $n \to \infty$. This ratio appears in phyllotaxis, spiral lattices, and certain resonance structures in classical mechanics. It is \emph{not} a universal organizing principle of complex systems; it is a property of systems whose recursive structure happens to instantiate the recurrence $F_n = F_{n-1} + F_{n-2}$. Using $F_n$ as a weight therefore imports the assumption that the system being measured has this recursive structure. That assumption is not neutral.
+
+\subsection{Prime Indexing}
+
+The prime numbers lack factors other than themselves and one; this makes them structurally irreducible in the arithmetic sense. Whether irreducibility of this kind corresponds to irreducibility in the target domain---whether, for instance, ``prime-indexed'' features of $\Psi$ are genuinely non-decomposable---requires a \emph{proof of correspondence}, not an analogy. Prime indexing, applied to a state space without that proof, is decorative number theory: it confers the aesthetic of foundational structure without the content.
+
+\subsection{Sinusoidal Phase Projection}
+
+Of the three motifs, $\sin(\theta)$ is the most defensible. Phase coherence is a well-defined quantity in oscillator theory. The Kuramoto model offers a rigorous instantiation:
+\[
+  r\,e^{i\psi} = \frac{1}{N}\sum_{j=1}^N e^{i\theta_j},
+\]
+where $r \in [0,1]$ measures synchronization and $\psi$ is the mean phase. When $r \to 1$, oscillators are phase-locked; when $r \to 0$, they are incoherent. This is not metaphor. It is a measurable order parameter with known dynamics. The claim that high entropy corresponds to low $\mathcal{C}(\Psi)$ is therefore not absurd \emph{in oscillator systems}---it is essentially a restatement of the Kuramoto coherence measure. The problem is the leap from ``plausible in oscillator systems'' to ``universal replacement of entropy,'' which requires proving
+\[
+  \mathcal{C}(\Psi) \;\longleftrightarrow\; S^{-1}
+\]
+under an explicit mapping valid across statistical mechanics, information theory, and thermodynamics. That mapping is not given.
+
+\subsection{The Missing Embedding Space}
+
+For the three motifs to compose into a single coherent functional, they require a shared embedding space in which Fibonacci weights, prime constraints, and phase angles are all measurable. No such space is specified. Without it, the formula aggregates three separate mathematical aesthetics rather than deriving a single mathematical structure. The difference between aggregation and derivation is precisely the difference between a metaphor and a theorem.
+
+\section{Entropy and the Scale Inflation Problem}
+
+The reinterpretation of entropy as ``structured phase divergence'' participates in a familiar rhetorical structure: take a well-defined concept, propose an intuitive reformulation, and then replace the original with the reformulation across all its domains of application. The move has a structural name: \emph{scale inflation}.
+
+Entropy is not one thing. It is a family of rigorously related things: Boltzmann's $S = k_B \ln \Omega$, Gibbs's $S = -k_B \sum_i p_i \ln p_i$, Shannon's $H = -\sum_i p_i \log p_i$, and their extensions to continuous distributions, dynamical systems, and quantum states. These are not interpretations of a common essence; they are theorems relating formally distinct quantities under specific conditions. Replacing them requires matching that specificity, not proposing a synthesis at a higher level of abstraction.
+
+The phase coherence reinterpretation is \emph{locally} valid: in systems of coupled oscillators, entropy can indeed be measured through phase space dispersion, and low-entropy states do correspond to phase alignment. But the local validity of an analogy does not license its universalization. To claim that $\mathcal{C}(\Psi)$ universally replaces $S$ is to claim that all entropy-governed systems are, at the relevant level of description, oscillator systems. That is an empirical claim of enormous scope, and it is stated without evidence.
+
+\section{Determinism and the Wavefunction}
+
+The proposal that wavefunction collapse becomes deterministic through phase-locking is, as stated, a hidden-variable hypothesis. This is not forbidden. De Broglie–Bohm mechanics provides a consistent deterministic completion of quantum mechanics. But consistency carries specific obligations. One must specify the hidden variable and the state space it inhabits. One must provide a governing differential equation describing its evolution. One must account for how violations of Bell inequalities are reproduced, which in the Bohmian framework requires explicit nonlocal structure. One must also explain why the experimentally established violation of local realism remains consistent with the proposed mechanism.
+
+Absent these elements, the claim does not rise to the level of theory. It remains a desideratum. The desire for determinism is philosophically respectable. The assertion of determinism without the machinery required to sustain it is a categorically different claim.
+
+\section{Optimization and the Misidentification of Replacement}
+
+The proposal to replace gradient descent with $\mathcal{C}(\Psi)$-optimization rests on a category confusion. Gradient descent is not committed to any particular objective; it is a method for minimizing differentiable scalar functions over parameter spaces. If $\mathcal{C}(\Psi)$ is a differentiable scalar over a parameter space, it can serve as the objective of gradient descent. One has not abolished descent; one has changed what is descended.
+
+The deeper confusion is between the \emph{structure of the objective} and the \emph{structure of the optimization procedure}. Probabilistic AI does not consist of gradient descent plus arbitrary objectives; the objectives (cross-entropy loss, ELBO, etc.) are chosen precisely because they have rigorous probabilistic interpretations that connect model outputs to data distributions. Substituting $\mathcal{C}(\Psi)$ changes the connection being enforced. Whether the new connection is desirable depends on whether $\mathcal{C}(\Psi)$ has a rigorous relationship to whatever the system is supposed to learn. That relationship is currently unspecified.
+
+\section{The Structural Source of Incoherence}
+
+The formula $\mathcal{C}(\Psi)$ is not incoherent at the syntactic level. It is incoherent at the semantic level, and the incoherence has a specific structure:
+
+\begin{quote}
+\emph{The functional form is symbolic; the embeddings are unspecified; the cross-domain extrapolations are asserted without derivation; and the rhetoric escalates faster than the mathematics.}
+\end{quote}
+
+This pattern is worth naming precisely because the constituent intuitions are not wrong. Phase alignment matters in oscillator systems. Coherence metrics exist and are measurable. The relationship between entropy and phase dispersion is non-trivial and underexplored. Stochastic optimization has known failure modes. These are legitimate research directions. The problem is the universalizing speed: the leap from ``this is true in oscillator systems'' to ``this is true'' is presented as self-evident rather than proven.
+
+The attraction of the formula is real and should be understood rather than dismissed. Fibonacci scaling, prime structure, and sinusoidal projection each carry aesthetic weight in the mathematical culture. Their combination produces something that \emph{feels} like a deep unification. That feeling is itself a datum---about the cognitive structure of mathematical intuition, about the way certain formal motifs activate recognition in trained readers. The formula is, in this sense, effective rhetoric. What it is not, without further specification, is effective mathematics.
+
+\section{A Method for Detecting Structural Underdetermination}
+
+The preceding analysis suggests a more general evaluative procedure. Structural underdetermination does not arise from aesthetic excess, nor from interdisciplinary ambition. It arises when derivational order is inverted.
+
+A research program is structurally determined when four conditions are satisfied in sequence. First, the state space in which the system resides must be specified with sufficient precision that its elements are comparable. Second, a metric, divergence, or measure must be defined so that relations among those elements acquire quantitative meaning. Third, a dynamical law or flow must be articulated, specifying how states evolve within that space. Fourth, invariants must be derived from that flow and shown to remain stable under admissible transformations.
+
+When these stages are completed, scalar quantities may be introduced as compressed summaries of geometric or dynamical invariants. When they are introduced prior to those stages, the scalar assumes explanatory weight that properly belongs to structure.
+
+This inversion produces a characteristic signature. The formula appears closed. Its terms evoke established mathematical motifs. Cross-domain implications are stated at high abstraction. Yet the embedding space remains implicit, the dynamical equation absent, and the invariance conditions unstated.
+
+The problem is not that the scalar is false. It is that it floats. Structural patience demands restoring derivational order. Only then can a proposed invariant be evaluated not by rhetorical density but by geometric necessity.
+
+\section{From Diagnosis to Reconstruction}
+
+Critique, if it is to remain structural rather than adversarial, must culminate in reconstruction. The preceding analysis does not deny the possibility that coherence may play a foundational role across physical, informational, or cognitive systems. It questions only the order in which that role is established.
+
+The distinction matters. To identify underdetermination is not to invalidate ambition. It is to clarify what must occur for ambition to stabilize. A coherence functional may indeed exist that unifies entropy, curvature, and generative depth. But if such unification is possible, it will arise through derivation from explicitly specified geometry, not through symbolic aggregation.
+
+The task, then, is not replacement but re-sequencing. Instead of beginning with a universal scalar and inferring structure, one begins with structure and allows invariants to emerge. Instead of declaring universality, one proves local equivalence and extends cautiously. Instead of abolishing probability, one embeds coherence within probabilistic geometry.
+
+What follows therefore shifts from diagnosis to constructive outline. The question is no longer whether $\mathcal{C}(\Psi)$ is underdetermined in its present form. The question becomes: under what conditions would it cease to be?
+
+\section{Toward Specification}
+
+A coherent version of this research program would require a sequence of explicit commitments. The state space in which $\Psi$ resides must be defined with a specified topology and measurable structure. The weighting term $F_n / P_m$ must be derived from properties of that space rather than introduced by analogy. The phase parameter $\theta$ must be shown to arise from system state through a measurable and reproducible procedure. A formal mapping between $\mathcal{C}(\Psi)$ and at least one rigorous formulation of entropy must be established, with clear conditions under which the correspondence holds. Finally, empirical data must be identified against which the functional can be evaluated.
+
+This is not a refutation. It is a specification of what would need to be true for the claim to be true. The distance between the present formulation and that level of specification marks the difference between symbolic weight and mathematical content---between the moment a pattern nearly becomes a concept and the moment it does.
+
+That interval is not a weakness. It is the locus of the most meaningful work.
+
+\bigskip
+\hrule
+\bigskip
+
+\begin{center}
+\small\itshape
+The problem is not the direction. It is the universalizing speed.
+\end{center}
+
+\section{Coherence as Constraint Within Probability Manifolds}
+
+The strongest version of the coherence program does not abolish probability; it constrains it. The distinction is subtle but decisive. Probability theory supplies a measure over a state space. Coherence, if well-defined, supplies a geometric constraint on admissible regions within that space. The two are not mutually exclusive.
+
+Let $\mathcal{M}$ be a statistical manifold equipped with a probability measure $P_\theta$ parameterized by $\theta$. In information geometry, $\mathcal{M}$ carries a Riemannian structure induced by the Fisher information metric. Divergence between distributions is measured through functionals such as
+\[
+  D_{\mathrm{KL}}(P_\theta \,\|\, P_{\theta'}) = 
+  \int P_\theta(x)\,\log\frac{P_\theta(x)}{P_{\theta'}(x)}\,dx.
+\]
+This is not an aesthetic object. It quantifies how curvature in parameter space translates into informational distortion.
+
+A coherence functional $\mathcal{C}(\Psi)$ can, in principle, be defined over the same manifold:
+\[
+  \mathcal{C} : \mathcal{M} \to \mathbb{R}.
+\]
+If so, it does not replace probability. It defines a scalar field over the probability manifold. One may then consider constrained optimization problems of the form
+\[
+  \min_\theta \mathcal{L}(\theta)
+  \quad \text{subject to} \quad
+  \mathcal{C}(P_\theta) \geq \lambda,
+\]
+or equivalently introduce $\mathcal{C}$ as a regularizer:
+\[
+  \mathcal{L}_{\text{total}} = 
+  \mathcal{L}_{\text{prob}} - \alpha \,\mathcal{C}(P_\theta).
+\]
+In this formulation, coherence does not abolish uncertainty. It shapes it. The probabilistic layer remains intact; coherence becomes curvature.
+
+This embedding model is structurally coherent. It replaces rhetoric with constraint.
+
+\section{Field Shaping Versus Binary Gating}
+
+A recurring structural ambiguity concerns emission legality. The coherence framework often presents $\mathcal{C}(\Psi)$ as a binary gate:
+\[
+  \text{emit} \iff \mathcal{C}(\Psi) \geq \theta.
+\]
+This introduces brittleness. Systems near threshold oscillate between silence and emission; small perturbations produce discontinuities. Physical systems rarely behave in this manner except at phase transitions.
+
+An alternative is field shaping. Instead of a hard gate, define emission weights
+\[
+  w(\Psi) = \sigma(\beta \,\mathcal{C}(\Psi)),
+\]
+where $\sigma$ is a smooth activation function. Here coherence modifies probability density without abolishing it:
+\[
+  P'(\Psi) = \frac{w(\Psi)\,P(\Psi)}{\int w(\Psi)\,P(\Psi)\,d\Psi}.
+\]
+This model preserves uncertainty while penalizing incoherence. It resembles energy-based modeling in statistical mechanics, where structure modifies the partition function rather than replacing it.
+
+The distinction between gating and shaping corresponds to two metaphysical stances. Gating implies that incoherence is illegitimate. Shaping implies that incoherence is low-density. The latter is more compatible with known physical and informational systems.
+
+\section{Continuation Structure and Explicit Control Geometry}
+
+Continuation-passing style (CPS) offers a revealing contrast. CPS does not replace symbolic computation; it restructures it by making implicit control flow explicit. A function
+\[
+  f(x) \to y
+\]
+becomes
+\[
+  f(x, k) \to k(y).
+\]
+Control becomes data. Hidden continuation structure becomes geometrically visible.
+
+This transformation does not abolish symbolic logic. It reveals its latent geometry. The analogy is instructive. If symbolic systems drift, the solution may be to expose hidden structural invariants rather than declare symbol illegitimate.
+
+The coherence framework, interpreted charitably, can be seen as a proposal to externalize hidden alignment constraints. But externalization is not replacement. CPS retains symbolic semantics while restructuring evaluation order. A coherence-embedded probabilistic model would retain statistical semantics while restructuring emission geometry.
+
+The difference is not technical; it is architectural.
+
+\section{Oscillator Coherence as the Local Prototype}
+
+The only domain in which phase coherence directly replaces entropy is the domain of coupled oscillators. Consider the Kuramoto order parameter:
+\[
+  r e^{i\psi} = \frac{1}{N}\sum_{j=1}^N e^{i\theta_j}.
+\]
+Here $r$ measures synchronization. When $r$ is small, phase dispersion is high; when $r$ approaches one, oscillators synchronize.
+
+Entropy in this system correlates with phase dispersion. This is a precise statement. It is also domain-specific. The step from ``oscillators synchronize through phase alignment'' to ``all structure emerges through Fibonacci–prime phase cascades'' is a nontrivial extension requiring proof.
+
+The oscillator model shows that coherence metrics are legitimate. It does not show that they are universal.
+
+\section{Assembly Index, Parsimony, and Structural Density}
+
+Other structural measures exist that do not abolish probability. Assembly index quantifies the minimal generative steps required to produce a structure. Parsimony quantifies description length. These measures relate to entropy but do not replace it; they specify structural compression within probabilistic ensembles.
+
+Let $K(x)$ denote Kolmogorov complexity. Then parsimony can be expressed as
+\[
+  \text{Parsimony}(x) \approx -K(x).
+\]
+This does not negate Shannon entropy. It constrains it.
+
+Similarly, KL divergence measures manifold separation. It quantifies curvature between probability distributions. A coherence functional might correlate with low KL divergence relative to a structured prior. That is a mathematically tractable direction. It embeds coherence within information geometry.
+
+The Fibonacci–prime–phase synthesis, by contrast, does not currently connect to these formal measures. It stands adjacent to them without derivation.
+
+\section{Scale Inflation and Universal Replacement}
+
+The most persistent structural instability arises from scale inflation: a locally valid structural motif is universalized without intermediate derivation.
+
+Oscillator coherence becomes cosmology.  
+Phase alignment becomes deterministic collapse.  
+Scalar gating becomes replacement of scientific method.
+
+Each step compresses explanatory scale. The mathematics does not thicken proportionally.
+
+A stable research program would proceed in the opposite direction. One would first demonstrate coherence–entropy equivalence within a specific dynamical system where all variables are measurable and the mapping can be proven. Only after such local equivalence is established would the result be generalized to a broader class of systems under clearly stated constraints. Empirical falsifiability would then be articulated in operational terms. Domain extension would occur only after these stages have been completed.
+
+When intermediate derivations are omitted, symbolic density substitutes for structural grounding.
+
+\section{Toward a Derived Coherence Functional}
+
+A viable coherence functional would require derivation from first principles. For example, suppose $\Psi$ inhabits a Hilbert space $\mathcal{H}$ with basis $\{e_k\}$. Define
+\[
+  \mathcal{C}(\Psi) = 
+  \frac{\left|\sum_k \langle \Psi, e_k \rangle\right|^2}
+       {\|\Psi\|^2}.
+\]
+This resembles a projection onto a coherent subspace. It is measurable. It admits spectral decomposition. It connects to operator theory.
+
+Alternatively, define coherence relative to a probability prior $P_0$:
+\[
+  \mathcal{C}(P) = -D_{\mathrm{KL}}(P \,\|\, P_0).
+\]
+Here coherence measures closeness to a structured baseline. This is mathematically precise and empirically computable.
+
+Such constructions embed coherence inside established geometry. They do not require Fibonacci sequences or prime indexing unless those structures emerge from the dynamics themselves.
+
+\section{Replacement Versus Embedding}
+
+The decisive fork can now be stated cleanly.
+
+Replacement asserts:
+\[
+  \text{Probability} \;\to\; \text{Obsolete}.
+\]
+
+Embedding asserts:
+\[
+  \text{Probability} + \text{Coherence Constraint}
+  \;\to\; \text{Refined Geometry}.
+\]
+
+Replacement is rhetorically powerful and mathematically brittle.
+
+Embedding is rhetorically modest and mathematically extensible.
+
+If the coherence program is to mature, it must choose the second path.
+
+\section{Symbolic Weight and Structural Patience}
+
+The Fibonacci–prime–phase triad has symbolic weight. It activates recognition patterns in mathematically trained readers. It evokes recursion, irreducibility, and oscillation---three archetypes of structure. The formula therefore feels deep.
+
+But depth in mathematics is not achieved by aggregation of archetypes. It is achieved by derivation.
+
+The difference between a pattern and a concept is the existence of a proof. Until the embedding space, the measurement procedure, and the empirical mapping are specified, $\mathcal{C}(\Psi)$ remains in the penumbra between metaphor and invariant.
+
+This is not dismissal. It is a call for structural patience.
+
+\bigskip
+\hrule
+\bigskip
+
+\begin{center}
+\small\itshape
+Coherence may matter.  
+But structure precedes universality.
+\end{center}
+
+\section{Deterministic Collapse and Probabilistic Curvature}
+
+The proposal that coherence replaces stochastic wavefunction collapse may be reframed geometrically rather than polemically. In standard quantum mechanics, a state vector $\Psi$ evolves unitarily under the Schrödinger equation until measurement induces projection onto an eigenbasis. Collapse is probabilistic in accordance with the Born rule:
+\[
+  \mathbb{P}(x_i) = |\langle x_i, \Psi \rangle|^2.
+\]
+
+A coherence-based reinterpretation must therefore specify how deterministic phase alignment reproduces the empirical statistics of quantum measurement. Only two structural pathways are available. Either collapse is governed by hidden phase variables whose distribution yields the Born rule, or the Born rule itself emerges as a curvature property of a deeper coherence manifold.
+
+The first pathway is structurally equivalent to de Broglie–Bohm mechanics. It requires explicit specification of a hidden-variable field, a governing evolution equation for that field, and a clear account of its nonlocal character in order to reproduce experimentally observed Bell inequality violations. Absent these components, determinism remains aspirational rather than operational.
+
+The second option is subtler and more promising. Suppose the quantum state space $\mathcal{H}$ carries not only Hilbert geometry but an additional coherence curvature functional:
+\[
+  \mathcal{C} : \mathcal{H} \to \mathbb{R}.
+\]
+Then state evolution may be described as constrained geodesic flow:
+\[
+  \frac{d\Psi}{dt} = -\nabla_{\mathcal{H}} \big( \mathcal{E}(\Psi) - \alpha \mathcal{C}(\Psi) \big),
+\]
+where $\mathcal{E}$ is the standard energy functional and $\alpha$ regulates coherence pressure. In this formulation collapse is not replaced but reinterpreted: the probability amplitude emerges from curvature-induced stabilization. The probabilistic layer remains intact, but its geometry is enriched.
+
+This approach preserves empirical adequacy while admitting structural reinterpretation. It embeds coherence into quantum curvature rather than declaring probability obsolete.
+
+\section{Continuation-Passing Structure and Emission Legality}
+
+Continuation-passing style (CPS) offers a structural analogy that clarifies the notion of emission legality. In CPS, a computation does not return a value; it receives an explicit continuation that dictates what happens next. Control flow becomes explicit rather than implicit.
+
+Formally, if direct-style evaluation is written
+\[
+  f : X \to Y,
+\]
+CPS transforms it into
+\[
+  f^\ast : X \times (Y \to R) \to R.
+\]
+All intermediate control states become visible in the function signature.
+
+Emission gating in coherence frameworks aspires to a similar externalization: instead of allowing symbols to emit and correcting them post hoc, emission is conditioned on structural alignment. But there is a crucial distinction. CPS restructures evaluation without abolishing return values. It does not prevent computation; it reorganizes it.
+
+A structurally coherent emission model would therefore resemble CPS: symbolic output is permitted, but its continuation space is constrained by coherence. Instead of a binary gate,
+\[
+  \text{emit} \iff \mathcal{C}(\Psi) \geq \theta,
+\]
+one might define:
+\[
+  f(x, k) = k(x) \quad \text{only if} \quad \mathcal{C}(x) \geq \theta,
+\]
+while preserving evaluation structure. This aligns with embedding rather than replacement. Control geometry becomes explicit; symbolic logic remains intact.
+
+\section{Gating as Phase Transition}
+
+Binary coherence gating resembles a phase transition rather than a smooth constraint. Consider a system with order parameter $r$ and critical threshold $r_c$. Below $r_c$ the system is incoherent; above it, synchronized. This is familiar in second-order phase transitions.
+
+Let coherence be modeled as:
+\[
+  \mathcal{C}(\Psi) = r(\Psi).
+\]
+Then emission is:
+\[
+  \text{emit} =
+  \begin{cases}
+    0, & r < r_c, \\
+    1, & r \ge r_c.
+  \end{cases}
+\]
+This produces critical phenomena: small perturbations near $r_c$ cause large behavioral shifts.
+
+Physical systems do exhibit such transitions, but only under specific coupling regimes. Declaring universal gating implies that all cognitive, cosmological, and informational systems operate at criticality. That is a strong empirical claim. It must be demonstrated, not assumed.
+
+A smoother model treats emission probability as:
+\[
+  \mathbb{P}(\text{emit}) = \frac{1}{1 + e^{-\beta(r - r_c)}}.
+\]
+This logistic embedding transforms hard gating into probabilistic shaping. It preserves critical sensitivity without structural brittleness. Again, embedding replaces abolition.
+
+\section{Information Geometry and Coherence Curvature}
+
+The most mathematically promising path for $\mathcal{C}(\Psi)$ lies in information geometry. Let $\mathcal{M}$ be a manifold of probability distributions with Fisher metric $g_{ij}$. Divergence between nearby distributions is locally quadratic:
+\[
+  D_{\mathrm{KL}}(P_{\theta} \,\|\, P_{\theta + d\theta}) 
+  \approx \frac{1}{2} g_{ij} \, d\theta^i d\theta^j.
+\]
+
+Define coherence as inverse curvature:
+\[
+  \mathcal{C}(P_\theta) = \frac{1}{1 + \kappa(\theta)},
+\]
+where $\kappa$ is sectional curvature of $\mathcal{M}$ at $\theta$. Low curvature corresponds to stable, aligned probability structure. High curvature corresponds to chaotic divergence.
+
+In this formulation entropy and coherence are not opposites but conjugates. Entropy measures dispersion in state space; coherence measures curvature stability. The two coexist within a unified geometric framework.
+
+This approach retains probabilistic semantics while introducing structural resonance in a measurable way. It grounds coherence in curvature rather than Fibonacci–prime symbolism.
+
+\section{Assembly Index and Structural Compression}
+
+Assembly index measures minimal generative depth. Let $A(x)$ denote the minimal number of operations required to construct $x$ from primitives. Define structural density as:
+\[
+  \rho(x) = \frac{1}{A(x)}.
+\]
+High $\rho$ indicates compressed, reusable structure. Parsimony and Kolmogorov complexity similarly measure generative economy:
+\[
+  K(x) = \min \{ |p| : U(p) = x \}.
+\]
+
+If coherence is to replace entropy, it must relate to generative depth:
+\[
+  \mathcal{C}(x) \propto \rho(x).
+\]
+But no such derivation currently connects Fibonacci–prime weights to generative complexity. The coherence functional floats independently of algorithmic information theory.
+
+Embedding coherence within assembly metrics would render it measurable. Absent that embedding, the functional remains decorative.
+
+\section{The Pattern–Concept Boundary}
+
+There exists a cognitive moment when symbolic aggregation feels like insight. Fibonacci sequences, primes, and sine waves each encode recognizable structure. Their aggregation activates the expectation of unification. This expectation is not irrational; it reflects pattern sensitivity cultivated through mathematical training.
+
+Yet pattern recognition is not conceptual closure. A concept stabilizes when it survives coordinate transformation, empirical measurement, and derivation from first principles. Until then it inhabits the liminal space between metaphor and invariant.
+
+The coherence program currently occupies that liminal space. Its intuitions about phase alignment and structural drift are legitimate. Its universalizing speed outruns its derivations.
+
+\section{Structural Patience and the Next Step}
+
+A viable path forward does not reject coherence. It refines it. The first task is to specify $\Psi$ as an element of a measurable manifold with defined topology and metric structure. From that geometry, $\mathcal{C}$ must be derived as a consequence of curvature, spectral stability, or generative depth, rather than introduced symbolically. Local equivalence with entropy should then be established within at least one well-defined class of dynamical systems, under explicit constraints. Empirical falsifiability must be demonstrated through measurable predictions. Only after these stages are satisfied can cross-domain extension be responsibly proposed.
+
+Such a path transforms symbolic weight into structural necessity.
+
+\bigskip
+\hrule
+\bigskip
+
+\begin{center}
+\small\itshape
+Coherence may be real.  
+But it must be derived before it is declared.
+\end{center}
+
+\section{Comparison with Manifold-Based Structural Geometry}
+
+The coherence functional $\mathcal{C}(\Psi)$ proposes a scalar measure of structured resonance intended to replace probabilistic and entropic metrics. A manifold-based structural program proceeds differently. It does not introduce a new universal scalar; it begins with a space.
+
+Let $\mathcal{X}$ be a state space endowed with topology $\tau$ and, where appropriate, a Riemannian metric $g$. Structure is not introduced through symbolic aggregation but through geometric relations among points of $\mathcal{X}$. Scalar quantities arise only after the space is specified.
+
+\subsection{Scalar-First Versus Space-First Architecture}
+
+The coherence program is scalar-first. It begins with
+\[
+  \mathcal{C}(\Psi) = \frac{\sum (F_n / P_m)\sin(\theta)}{Z}
+\]
+and allows the meaning of $\Psi$ to remain underdetermined. Geometry is implied by the scalar.
+
+The manifold program is space-first. It begins by specifying the elements of $\mathcal{X}$ and establishing the structure that renders them comparable. A metric or divergence structure is then defined on $\mathcal{X}$ so that relations among its elements acquire quantitative meaning. From this geometry, a dynamical flow $\Phi_t : \mathcal{X} \to \mathcal{X}$ is derived, describing how states evolve over time. Only after the space, its metric, and its dynamics are fixed do scalar invariants emerge as summaries of geometric relations already present.
+
+In the space-first model, scalars are invariants under transformation. In the scalar-first model, geometry is inferred from scalar symbolism. That inversion constitutes the primary structural difference.
+
+\subsection{Entropy as Measure Versus Coherence as Projection}
+
+In manifold-based models, entropy arises as a measure-theoretic property. Let $(\mathcal{X}, \mu)$ be a measurable space. Shannon entropy is defined:
+\[
+  H(P) = -\int_{\mathcal{X}} P(x)\log P(x)\, d\mu(x).
+\]
+This is not aesthetic; it is invariant under coordinate change given appropriate Jacobian correction.
+
+A coherence functional, if embedded within this framework, would be expressed as a projection operator:
+\[
+  \mathcal{C}(P) = \langle P, \Pi P \rangle,
+\]
+where $\Pi$ is a projection onto a structured subspace of $\mathcal{X}$. Coherence becomes a spectral property of the probability distribution relative to the geometry of $\mathcal{X}$.
+
+The difference is decisive. Entropy measures dispersion relative to measure $\mu$. Coherence measures alignment relative to projection $\Pi$. Both coexist naturally in the same geometric framework. One need not abolish the other.
+
+\subsection{Constraint Density Versus Harmonic Symbolism}
+
+A manifold-based approach often treats structure as constraint density. If $T_x\mathcal{X}$ denotes the tangent space at $x$, one may define constraint strength through rank deficiency of admissible directions:
+\[
+  \sigma(x) = \dim(T_x\mathcal{X}) - \dim(\mathcal{A}_x),
+\]
+where $\mathcal{A}_x$ is the admissible subspace under system constraints. High $\sigma(x)$ indicates strong structural restriction; low $\sigma(x)$ indicates freedom.
+
+This is measurable in principle. It corresponds to degrees of freedom reduction. It relates directly to negentropy.
+
+By contrast, Fibonacci and prime motifs import harmonic symbolism. They suggest recursion and irreducibility but do not measure degrees of freedom unless derived from the system's generative grammar. Constraint density arises from the system itself; harmonic symbolism is imposed externally unless justified.
+
+\subsection{Field Dynamics Versus Scalar Evaluation}
+
+In manifold dynamics, evolution is defined by a vector field:
+\[
+  \frac{dx}{dt} = V(x),
+\]
+or more generally by gradient flow:
+\[
+  \frac{dx}{dt} = -\nabla_g \mathcal{E}(x).
+\]
+Structure emerges through trajectory geometry. Fixed points, attractors, and bifurcations are determined by the field.
+
+The coherence program evaluates states through a scalar score. It does not specify a vector field generating state evolution. Without a dynamical equation, $\mathcal{C}(\Psi)$ is diagnostic rather than generative.
+
+A manifold program treats structure as arising from flow. A scalar program treats structure as scored after the fact.
+
+\subsection{Distributed Centrality and Curvature Stability}
+
+A manifold approach to distributed systems introduces curvature explicitly. Let $\mathcal{M}$ be a semantic manifold with metric $g$. Concentration of influence corresponds to positive sectional curvature, inducing geodesic convergence. Renormalization dynamics flatten curvature over time to prevent singularity.
+
+Formally, if $K$ denotes sectional curvature,
+\[
+  \frac{dK}{dt} = -\lambda K + \eta,
+\]
+where $\lambda$ represents dissipative flattening and $\eta$ innovation pressure. Stability is not scalar gating; it is curvature regulation.
+
+This contrasts sharply with coherence gating. The latter sets a threshold; the former reshapes geometry.
+
+\subsection{Continuation Geometry and Historical Invariants}
+
+Continuation-passing structure provides another comparison. In CPS, computation is history-explicit. State transitions are encoded in continuations. The geometry of evaluation becomes visible.
+
+Similarly, manifold-based semantic models treat history as embedded in state space. Each state carries trajectory memory; flow is path-dependent. In such a framework, coherence arises as trajectory alignment rather than harmonic summation.
+
+Symbolic gating attempts to ensure emission legality. Continuation geometry ensures structural consistency through flow invariants.
+
+\subsection{Replacement and Refinement}
+
+The final contrast can be stated formally:
+
+\[
+  \textbf{Replacement:}
+  \quad
+  \text{Probability} \rightarrow \text{Coherence Scalar}.
+\]
+
+\[
+  \textbf{Refinement:}
+  \quad
+  \text{Probability Manifold} 
+  + \text{Curvature Constraint}
+  + \text{Projection Operators}
+  \rightarrow \text{Structured Geometry}.
+\]
+
+The replacement model compresses structure into a universal scalar. The refinement model distributes structure across geometry, measure, and flow.
+
+\section{Structural Underdetermination Revisited}
+
+The coherence functional exhibits symbolic density but geometric underdetermination. The manifold program exhibits geometric density but symbolic restraint. The difference is not stylistic; it concerns derivational order.
+
+If structure precedes symbol, then geometry must precede scalar invariants. Scalars are summaries of geometry, not substitutes for it.
+
+A coherence program consistent with structural priority would proceed differently. The manifold must first be specified, including its topology and metric relations. From that space, a vector field governing dynamical evolution must be derived. Spectral invariants would then emerge as properties of that flow. Only at that stage should a coherence scalar be defined, and only as a derived quantity summarizing relations already present in the geometry.
+
+Until this order is respected, $\mathcal{C}(\Psi)$ remains symbolically suggestive but structurally incomplete.
+
+\bigskip
+\hrule
+\bigskip
+
+\begin{center}
+\small\itshape
+Structure precedes scalar.  
+Scalar does not generate structure.
+\end{center}
+
+\section{Final Synthesis: Structure Before Symbol}
+
+The coherence functional $\mathcal{C}(\Psi)$ occupies a revealing position in the landscape of contemporary structural thought. It is not incoherent because it invokes Fibonacci sequences, primes, or phase alignment. Each of those motifs carries genuine mathematical structure. The instability arises from order of construction.
+
+There are two possible architectural sequences. In the first, symbol precedes scalar and scalar precedes geometry: symbolic forms are introduced, compressed into scalar expressions, and only afterward treated as implying an underlying geometry. In the second, geometry precedes invariant and invariant precedes symbol: a structured space is specified, invariants are derived from its metric and dynamical relations, and only then are those invariants symbolically compressed.
+
+The distinction is not stylistic. It determines whether structure is inferred from symbolic density or derived from geometric necessity.
+
+In the first sequence, a scalar expression suggests a geometry. In the second, geometry gives rise to invariants which are then symbolized. The coherence program, as currently formulated, follows the first path. It introduces a scalar whose symbolic density implies deep structure, and from that implication infers universality.
+
+The manifold-based approach follows the second path. It begins with a state space, equips it with metric and measure, derives curvature and divergence, and only then defines scalars as summaries of that structure. In this order, symbol does not generate structure; it compresses it.
+
+\subsection{The Moment Before Conceptual Closure}
+
+There exists a recognizable intellectual moment when pattern feels like inevitability. Fibonacci recursion, prime irreducibility, sinusoidal resonance: each signals ``deep structure'' within mathematical culture. When aggregated, they produce the sensation of a unified substrate. That sensation is not irrational. It is the product of pattern fluency developed through sustained exposure to formal systems.
+
+But the presence of that sensation does not establish derivational necessity. A pattern becomes a concept only when it survives transformation: coordinate change, empirical measurement, limiting case analysis, and formal proof. Before that, it remains structurally underdetermined.
+
+The coherence functional stands precisely at that boundary. It is heavy with symbolic weight. It gestures toward universality. Yet the embedding space is unspecified, the dynamical flow unarticulated, and the empirical mapping absent. What appears as replacement is, at present, aspiration.
+
+\subsection{Entropy, Coherence, and the Non-Abolition Principle}
+
+Entropy does not disappear because coherence is introduced. Entropy measures dispersion relative to measure; coherence measures alignment relative to projection. In oscillator systems, the two are locally conjugate. In general systems, they coexist.
+
+The attempt to abolish probability misunderstands its role. Probability is not an ontological commitment to randomness; it is a geometric description of incomplete information. A coherence functional may refine that geometry. It cannot replace it without inheriting its measure-theoretic obligations.
+
+Thus the structurally stable formulation is not:
+
+\[
+  \text{Entropy} \rightarrow \text{Obsolete}.
+\]
+
+It is:
+
+\[
+  \text{Entropy} + \text{Coherence Constraint}
+  \rightarrow \text{Enriched Geometry}.
+\]
+
+Replacement collapses complexity into a scalar. Embedding distributes structure across a manifold.
+
+\subsection{Continuation and Invariance}
+
+Continuation-passing style offers a final analogy. CPS does not discard return values; it reveals hidden control invariants. The transformation preserves computation while making structure explicit.
+
+Similarly, a mature coherence program would not discard probabilistic structure. It would reveal latent geometric invariants governing emission and stabilization. The distinction is not technical but philosophical: exposure rather than substitution.
+
+\subsection{Scalar Weight and Structural Patience}
+
+The coherence functional demonstrates how easily symbolic density can be mistaken for derivational depth. Fibonacci recursion suggests emergence. Prime indexing suggests irreducibility. Phase alignment suggests synchronization. Together they evoke inevitability.
+
+But inevitability in mathematics is earned through constraint. A scalar becomes necessary only when geometry demands it.
+
+Structural patience requires allowing geometry to speak first.
+
+\subsection{Reaffirming Priority}
+
+If structure precedes symbol, then geometry precedes scalar invariants. Scalar quantities summarize relations that already exist in a defined space. They do not conjure that space into being.
+
+
+The correct research order is therefore sequential and non-interchangeable. One must first specify the state space in which the system is defined. Only after that space is fixed can one define the metric and measure that render its geometry meaningful. From this geometry, the dynamical flow governing state evolution may be derived. Invariants then emerge as properties of that flow, discovered rather than assumed. Only at the final stage should those invariants be symbolically compressed into scalar quantities that summarize structural relations already established.
+
+When this order is reversed, symbolic weight fills the gap left by absent derivation.
+
+\subsection{What Remains Valid}
+
+None of this nullifies the central intuition motivating coherence theory. Phase alignment matters. Structured resonance matters. Drift in unconstrained systems is real. The desire to replace stochastic drift with lawful stabilization is philosophically coherent.
+
+What fails is not the direction. It is the universalizing speed.
+
+Coherence may indeed function as a curvature constraint in probability manifolds, as a projection operator in Hilbert space, or as a generative depth metric in algorithmic systems. But until those embeddings are specified, $\mathcal{C}(\Psi)$ remains an evocative symbol rather than a derived invariant.
+
+The disagreement at stake is therefore not about coherence, entropy, determinism, or probability in isolation. It concerns architectural sequence. If a scalar is introduced prior to the specification of its embedding space, it must borrow authority from symbolic density. If a scalar emerges after geometry and flow are fixed, it inherits authority from derivation. The difference between those two orders is the difference between anticipation and necessity. 
+
+\bigskip
+\hrule
+\bigskip
+
+\begin{center}
+\small\itshape
+Structure precedes symbol.  
+Geometry precedes scalar.  
+Invariants are discovered, not declared.
+\end{center}
+
+\newpage
+\section*{Appendices}
+
+\appendix
+
+\section{Scalar Invariants as Derived Quantities of Geometric Flow}
+
+Let $\mathcal{M}$ be a smooth manifold with metric $g$ and let 
+\[
+\Phi_t : \mathcal{M} \to \mathcal{M}
+\]
+be a smooth one-parameter flow generated by vector field $V$:
+\[
+\frac{d}{dt} x(t) = V(x(t)).
+\]
+
+\subsection*{Definition A.1 (Invariant Scalar)}
+
+A scalar functional $I : \mathcal{M} \to \mathbb{R}$ is an invariant of the flow $\Phi_t$ if
+\[
+I(\Phi_t(x)) = I(x)
+\quad \forall t.
+\]
+
+\subsection*{Theorem A.1}
+
+A scalar $I$ is invariant under $\Phi_t$ if and only if its Lie derivative along $V$ vanishes:
+\[
+\mathcal{L}_V I = 0.
+\]
+
+\subsection*{Proof}
+
+By definition,
+\[
+\frac{d}{dt} I(x(t)) = dI(V).
+\]
+But
+\[
+\mathcal{L}_V I = V[I] = dI(V).
+\]
+Thus,
+\[
+\frac{d}{dt} I(x(t)) = \mathcal{L}_V I.
+\]
+Therefore,
+\[
+I(\Phi_t(x)) = I(x)
+\quad \Leftrightarrow \quad
+\mathcal{L}_V I = 0.
+\]
+\hfill $\square$
+
+\subsection*{Corollary A.1}
+
+If a scalar functional is introduced prior to specifying $V$, invariance cannot be verified.
+
+Scalar quantities derive necessity from flow invariance. Without a defined vector field, scalar invariance is undefined.
+
+\section{Coherence as Spectral Projection in Hilbert Space}
+
+Let $\mathcal{H}$ be a separable Hilbert space with inner product 
+\[
+\langle \cdot , \cdot \rangle.
+\]
+
+Let $\{e_k\}_{k=1}^{\infty}$ be an orthonormal basis of $\mathcal{H}$.
+
+\subsection*{Definition B.1 (Coherent Subspace)}
+
+Let $\mathcal{H}_c \subset \mathcal{H}$ be a closed subspace spanned by 
+\[
+\{e_k\}_{k \in K}
+\]
+for some index set $K$.
+
+Let $\Pi_c : \mathcal{H} \to \mathcal{H}_c$ denote the orthogonal projection operator.
+
+\subsection*{Definition B.2 (Derived Coherence Functional)}
+
+For $\Psi \in \mathcal{H}$, define
+\[
+\mathcal{C}(\Psi)
+=
+\frac{\|\Pi_c \Psi\|^2}{\|\Psi\|^2}.
+\]
+
+\subsection*{Proposition B.1}
+
+The functional $\mathcal{C}(\Psi)$ satisfies
+\[
+0 \le \mathcal{C}(\Psi) \le 1.
+\]
+
+\subsection*{Proof}
+
+Since $\Pi_c$ is an orthogonal projection,
+\[
+\|\Pi_c \Psi\| \le \|\Psi\|.
+\]
+Therefore
+\[
+0 \le \frac{\|\Pi_c \Psi\|^2}{\|\Psi\|^2} \le 1.
+\]
+\hfill $\square$
+
+\subsection*{Proposition B.2}
+
+$\mathcal{C}(\Psi)$ is invariant under unitary transformations $U$ satisfying
+\[
+U \mathcal{H}_c = \mathcal{H}_c.
+\]
+
+\subsection*{Proof}
+
+If $U$ preserves $\mathcal{H}_c$, then
+\[
+\Pi_c U = U \Pi_c.
+\]
+Thus
+\[
+\mathcal{C}(U\Psi)
+=
+\frac{\|\Pi_c U\Psi\|^2}{\|U\Psi\|^2}
+=
+\frac{\|U\Pi_c \Psi\|^2}{\|\Psi\|^2}
+=
+\frac{\|\Pi_c \Psi\|^2}{\|\Psi\|^2}.
+\]
+\hfill $\square$
+
+\subsection*{Theorem B.1}
+
+Let evolution be given by Schrödinger flow:
+\[
+\frac{d\Psi}{dt} = -i H \Psi,
+\]
+where $H$ is self-adjoint. Then
+\[
+\frac{d}{dt} \mathcal{C}(\Psi)
+=
+\frac{2}{\|\Psi\|^2}
+\operatorname{Re}
+\langle \Pi_c \Psi , \Pi_c (-iH\Psi) \rangle.
+\]
+
+\subsection*{Proof}
+
+Differentiate numerator:
+\[
+\frac{d}{dt} \|\Pi_c \Psi\|^2
+=
+2\,\operatorname{Re}
+\langle \Pi_c \Psi, \Pi_c \dot{\Psi} \rangle.
+\]
+Since $\dot{\Psi} = -iH\Psi$,
+\[
+\frac{d}{dt} \mathcal{C}(\Psi)
+=
+\frac{2\,\operatorname{Re}
+\langle \Pi_c \Psi , \Pi_c (-iH\Psi) \rangle}{\|\Psi\|^2}.
+\]
+\hfill $\square$
+
+\subsection*{Corollary B.1}
+
+If $[H, \Pi_c] = 0$, then $\mathcal{C}(\Psi)$ is conserved.
+
+\subsection*{Proof}
+
+If $[H, \Pi_c] = 0$, then
+\[
+\Pi_c H = H \Pi_c.
+\]
+Thus
+\[
+\langle \Pi_c \Psi , \Pi_c (-iH\Psi) \rangle
+=
+\langle \Pi_c \Psi , -iH \Pi_c \Psi \rangle.
+\]
+Since $H$ is self-adjoint,
+\[
+\operatorname{Re} \langle x , -iH x \rangle = 0.
+\]
+Hence
+\[
+\frac{d}{dt} \mathcal{C}(\Psi) = 0.
+\]
+\hfill $\square$
+
+Coherence arises as a conserved scalar precisely when projection geometry and dynamics commute.
+
+\section{Entropy--Coherence Local Equivalence in Coupled Oscillator Systems}
+
+Let $\{\theta_j\}_{j=1}^N$ be phases on the circle $S^1$.
+
+Define the empirical phase distribution:
+\[
+\rho(\theta) = \frac{1}{N} \sum_{j=1}^N \delta(\theta - \theta_j).
+\]
+
+\subsection*{Definition C.1 (Kuramoto Order Parameter)}
+
+Define
+\[
+r e^{i\psi}
+=
+\frac{1}{N}
+\sum_{j=1}^N e^{i\theta_j}.
+\]
+
+Then $r \in [0,1]$ measures phase synchronization.
+
+\subsection*{Definition C.2 (Shannon Entropy on $S^1$)}
+
+If $\rho(\theta)$ admits a smooth approximation, define
+\[
+H(\rho)
+=
+- \int_{0}^{2\pi}
+\rho(\theta) \log \rho(\theta)\, d\theta.
+\]
+
+\subsection*{Lemma C.1}
+
+If phases are uniformly distributed,
+\[
+\rho(\theta) = \frac{1}{2\pi},
+\]
+then
+\[
+r = 0
+\quad \text{and} \quad
+H(\rho) = \log(2\pi).
+\]
+
+\subsection*{Proof}
+
+For uniform distribution,
+\[
+\int_0^{2\pi} e^{i\theta} \frac{1}{2\pi} d\theta = 0.
+\]
+Thus $r = 0$.
+
+Entropy:
+\[
+H = -\int_0^{2\pi} \frac{1}{2\pi} \log\frac{1}{2\pi} d\theta
+= \log(2\pi).
+\]
+\hfill $\square$
+
+\subsection*{Lemma C.2}
+
+If all phases are identical:
+\[
+\theta_j = \theta_0,
+\]
+then
+\[
+r = 1
+\quad \text{and} \quad
+H(\rho) = 0.
+\]
+
+\subsection*{Proof}
+
+\[
+\frac{1}{N}\sum_{j=1}^N e^{i\theta_0}
+= e^{i\theta_0}
+\Rightarrow r = 1.
+\]
+
+Since
+\[
+\rho(\theta) = \delta(\theta - \theta_0),
+\]
+entropy is zero.
+\hfill $\square$
+
+\subsection*{Theorem C.1 (Local Monotonic Relation)}
+
+For unimodal phase distributions with concentration parameter $\kappa$,
+\[
+r = \frac{I_1(\kappa)}{I_0(\kappa)},
+\]
+where $I_n$ are modified Bessel functions.
+
+Entropy satisfies:
+\[
+H(\kappa)
+=
+\log(2\pi I_0(\kappa))
+- \kappa \frac{I_1(\kappa)}{I_0(\kappa)}.
+\]
+
+\subsection*{Proof Sketch}
+
+For von Mises distribution:
+\[
+\rho(\theta)
+=
+\frac{e^{\kappa \cos(\theta-\psi)}}{2\pi I_0(\kappa)}.
+\]
+
+Direct integration yields:
+
+\[
+r = \frac{I_1(\kappa)}{I_0(\kappa)}.
+\]
+
+Entropy:
+
+\[
+H
+=
+- \int \rho \log \rho
+=
+\log(2\pi I_0(\kappa))
+- \kappa \frac{I_1(\kappa)}{I_0(\kappa)}.
+\]
+\hfill $\square$
+
+\subsection*{Corollary C.1}
+
+For von Mises distributions,
+\[
+\frac{dH}{d\kappa} < 0
+\quad \text{and} \quad
+\frac{dr}{d\kappa} > 0.
+\]
+
+Thus locally:
+\[
+H \downarrow
+\quad \Leftrightarrow \quad
+r \uparrow.
+\]
+
+Entropy and coherence are inversely related in oscillator systems under unimodal phase distributions.
+
+\section{Information-Geometric Embedding of Coherence Functional}
+
+Let $\mathcal{M}$ be a statistical manifold of probability densities 
+\[
+\{ P_\theta(x) \mid \theta \in \Theta \subset \mathbb{R}^n \}.
+\]
+
+Assume smooth parameterization in $\theta$.
+
+\subsection*{Definition D.1 (Fisher Information Metric)}
+
+Define the Fisher metric:
+\[
+g_{ij}(\theta)
+=
+\mathbb{E}_\theta
+\left[
+\partial_i \log P_\theta(x)
+\;
+\partial_j \log P_\theta(x)
+\right].
+\]
+
+This induces a Riemannian structure on $\mathcal{M}$.
+
+\subsection*{Lemma D.1 (Local KL Expansion)}
+
+For small $d\theta$:
+\[
+D_{\mathrm{KL}}(P_\theta \,\|\, P_{\theta + d\theta})
+=
+\frac{1}{2}
+g_{ij}(\theta)
+\, d\theta^i d\theta^j
++
+O(|d\theta|^3).
+\]
+
+\subsection*{Definition D.2 (Sectional Curvature)}
+
+Let $R_{ijkl}$ denote the Riemann curvature tensor of $(\mathcal{M}, g)$.
+
+Sectional curvature for plane spanned by $u, v$:
+\[
+K(u,v)
+=
+\frac{
+R_{ijkl} u^i v^j u^k v^l
+}{
+(g_{ij} u^i u^j)(g_{kl} v^k v^l) - (g_{ij} u^i v^j)^2
+}.
+\]
+
+\subsection*{Definition D.3 (Curvature-Derived Coherence)}
+
+Define coherence as inverse curvature magnitude:
+\[
+\mathcal{C}(\theta)
+=
+\frac{1}{1 + \|K(\theta)\|}.
+\]
+
+\subsection*{Proposition D.1}
+
+If curvature vanishes locally,
+\[
+K = 0,
+\]
+then
+\[
+\mathcal{C}(\theta) = 1.
+\]
+
+\subsection*{Proposition D.2}
+
+If curvature diverges,
+\[
+|K| \to \infty,
+\]
+then
+\[
+\mathcal{C}(\theta) \to 0.
+\]
+
+\subsection*{Definition D.4 (Constrained Optimization)}
+
+Let loss functional:
+\[
+\mathcal{L}(\theta)
+=
+\mathbb{E}_{\theta}[\ell(x)].
+\]
+
+Define coherence-regularized objective:
+\[
+\mathcal{L}_{\text{total}}(\theta)
+=
+\mathcal{L}(\theta)
+-
+\alpha \mathcal{C}(\theta).
+\]
+
+\subsection*{Theorem D.1}
+
+Stationary points satisfy:
+\[
+\nabla \mathcal{L}(\theta)
+=
+\alpha \nabla \mathcal{C}(\theta).
+\]
+
+\subsection*{Proof}
+
+Critical points satisfy:
+\[
+\nabla \mathcal{L}_{\text{total}} = 0.
+\]
+Thus
+\[
+\nabla \mathcal{L}
+-
+\alpha \nabla \mathcal{C}
+=
+0.
+\]
+\hfill $\square$
+
+\subsection*{Corollary D.1}
+
+Coherence modifies gradient descent without abolishing probability geometry.
+
+A coherence scalar may be consistently embedded in probability manifolds when derived from curvature of Fisher geometry.
+
+\section{Deterministic Hidden-Variable Completion and Bell Constraints}
+
+Let $\mathcal{H}$ be a Hilbert space with normalized state
+\[
+\|\Psi\| = 1.
+\]
+
+Measurement operators $\{ \hat{A}_a \}$ and $\{ \hat{B}_b \}$ act on bipartite system
+\[
+\mathcal{H} = \mathcal{H}_A \otimes \mathcal{H}_B.
+\]
+
+\subsection*{Definition E.1 (Born Rule)}
+
+Probability of outcome $a$:
+\[
+\mathbb{P}(a)
+=
+\langle \Psi | \Pi_a | \Psi \rangle,
+\]
+where $\Pi_a$ is projection operator.
+
+\subsection*{Definition E.2 (Hidden Variable Model)}
+
+Introduce hidden variable $\lambda \in \Lambda$ with distribution $\rho(\lambda)$.
+
+Measurement outcomes are deterministic functions:
+\[
+A(a,\lambda) \in \{-1,1\}, \quad
+B(b,\lambda) \in \{-1,1\}.
+\]
+
+Expectation:
+\[
+E(a,b)
+=
+\int_\Lambda
+A(a,\lambda) B(b,\lambda)
+\rho(\lambda) d\lambda.
+\]
+
+\subsection*{Theorem E.1 (CHSH Inequality)}
+
+For local hidden-variable models:
+\[
+|E(a,b) + E(a,b') + E(a',b) - E(a',b')|
+\le 2.
+\]
+
+\subsection*{Proof}
+
+Define
+\[
+S
+=
+A(a,\lambda)B(b,\lambda)
++
+A(a,\lambda)B(b',\lambda)
++
+A(a',\lambda)B(b,\lambda)
+-
+A(a',\lambda)B(b',\lambda).
+\]
+
+Factor:
+\[
+S
+=
+A(a,\lambda)
+\big(
+B(b,\lambda) + B(b',\lambda)
+\big)
++
+A(a',\lambda)
+\big(
+B(b,\lambda) - B(b',\lambda)
+\big).
+\]
+
+Since $B \in \{-1,1\}$,
+\[
+|S| \le 2.
+\]
+
+Integrate over $\lambda$:
+\[
+| \langle S \rangle | \le 2.
+\]
+\hfill $\square$
+
+\subsection*{Quantum Prediction}
+
+For entangled state,
+\[
+|\Psi\rangle
+=
+\frac{1}{\sqrt{2}}
+\big(
+|00\rangle + |11\rangle
+\big),
+\]
+choose observables such that:
+\[
+|S| = 2\sqrt{2}.
+\]
+
+\subsection*{Corollary E.1}
+
+Any deterministic completion reproducing quantum correlations must violate locality:
+\[
+A(a,\lambda)
+\not\perp
+b
+\quad \text{or} \quad
+B(b,\lambda)
+\not\perp
+a.
+\]
+
+\subsection*{Definition E.3 (Nonlocal Deterministic Flow)}
+
+Let extended state:
+\[
+(\Psi, \lambda) \in \mathcal{H} \times \Lambda.
+\]
+
+Evolution:
+\[
+\frac{d}{dt} (\Psi, \lambda)
+=
+F(\Psi, \lambda),
+\]
+with $F$ nonlocal in spatially separated subsystems.
+
+Deterministic coherence-based collapse requires explicit specification of a hidden-variable space $\Lambda$, a probability distribution $\rho(\lambda)$ over that space reproducing empirical statistics, and an evolution equation 
+\[
+\frac{d}{dt} (\Psi,\lambda) = F(\Psi,\lambda)
+\]
+governing joint dynamics. In order to match experimentally observed violations of Bell inequalities, the flow $F$ must introduce nonlocal coupling across spatially separated subsystems. Absent these structural commitments, determinism remains underdetermined relative to quantum prediction.
+
+\section{Spectral Stability and Lyapunov-Derived Coherence}
+
+Let $\mathcal{M}$ be a smooth manifold with vector field
+\[
+\frac{dx}{dt} = V(x).
+\]
+
+Let $x^\ast$ be an equilibrium point:
+\[
+V(x^\ast) = 0.
+\]
+
+\subsection*{Definition F.1 (Linearization)}
+
+Let $J = DV(x^\ast)$ denote the Jacobian matrix.
+
+\subsection*{Definition F.2 (Spectral Stability)}
+
+$x^\ast$ is spectrally stable if all eigenvalues $\lambda_i$ of $J$ satisfy
+\[
+\operatorname{Re}(\lambda_i) < 0.
+\]
+
+\subsection*{Definition F.3 (Lyapunov Function)}
+
+A smooth function $L : \mathcal{M} \to \mathbb{R}$ is a Lyapunov function if
+\[
+L(x) > 0 \text{ for } x \neq x^\ast,
+\quad
+L(x^\ast) = 0,
+\]
+and
+\[
+\dot{L}(x) = \nabla L \cdot V(x) \le 0.
+\]
+
+\subsection*{Proposition F.1}
+
+If there exists $L$ with $\dot{L} < 0$ in a neighborhood of $x^\ast$, then $x^\ast$ is asymptotically stable.
+
+\hfill $\square$
+
+\subsection*{Definition F.4 (Lyapunov-Derived Coherence)}
+
+Define
+\[
+\mathcal{C}(x)
+=
+\frac{1}{1 + L(x)}.
+\]
+
+\subsection*{Theorem F.1}
+
+If $L$ is a Lyapunov function, then
+\[
+\frac{d}{dt} \mathcal{C}(x)
+=
+-\frac{\dot{L}(x)}{(1+L(x))^2}.
+\]
+
+\subsection*{Proof}
+
+\[
+\frac{d}{dt} \mathcal{C}
+=
+-\frac{\dot{L}}{(1+L)^2}.
+\]
+Since $\dot{L} \le 0$, coherence is non-decreasing along stable trajectories.
+\hfill $\square$
+
+Coherence may be derived from spectral stability via Lyapunov decay.
+
+\section{Renormalization Flow and Curvature Flattening}
+
+Let $(\mathcal{M}, g_t)$ be a time-dependent Riemannian manifold.
+
+Define curvature tensor $R_{ijkl}(t)$.
+
+\subsection*{Definition G.1 (Ricci Flow)}
+
+\[
+\frac{\partial}{\partial t} g_{ij}
+=
+-2 \operatorname{Ric}_{ij}.
+\]
+
+\subsection*{Lemma G.1}
+
+Under Ricci flow, regions of positive curvature contract, and regions of negative curvature expand.
+
+\hfill $\square$
+
+\subsection*{Definition G.2 (Curvature-Based Coherence)}
+
+\[
+\mathcal{C}(t)
+=
+\frac{1}{1 + \| \operatorname{Ric}(t) \|}.
+\]
+
+\subsection*{Proposition G.1}
+
+If curvature magnitude decreases under flow:
+\[
+\frac{d}{dt} \| \operatorname{Ric} \| \le 0,
+\]
+then
+\[
+\frac{d}{dt} \mathcal{C}(t) \ge 0.
+\]
+
+\hfill $\square$
+
+Renormalization dynamics increase coherence by flattening curvature.
+
+\section{Assembly Index and Generative Depth Formalization}
+
+Let $\Sigma$ be a finite alphabet.
+
+Let $x \in \Sigma^\ast$.
+
+\subsection*{Definition H.1 (Kolmogorov Complexity)}
+
+\[
+K(x)
+=
+\min \{ |p| : U(p) = x \},
+\]
+where $U$ is universal Turing machine.
+
+\subsection*{Definition H.2 (Assembly Index)}
+
+Let $A(x)$ denote minimal number of constructive operations required to generate $x$ from primitives.
+
+\subsection*{Proposition H.1}
+
+\[
+K(x) \le c\,A(x)
+\]
+for some constant $c$ depending on encoding.
+
+\hfill $\square$
+
+\subsection*{Definition H.3 (Generative Coherence)}
+
+\[
+\mathcal{C}(x)
+=
+\frac{1}{1 + A(x)}.
+\]
+
+\subsection*{Proposition H.2}
+
+If $x$ decomposes into independent components,
+\[
+A(x \oplus y) \ge A(x) + A(y).
+\]
+
+\hfill $\square$
+
+Coherence inversely relates to generative depth.
+
+\section{Phase Transition Formalization of Binary Gating}
+
+Let order parameter $r \in [0,1]$.
+
+Define critical threshold $r_c$.
+
+\subsection*{Definition I.1 (Binary Gating)}
+
+\[
+G(r)
+=
+\begin{cases}
+0 & r < r_c \\
+1 & r \ge r_c
+\end{cases}
+\]
+
+\subsection*{Definition I.2 (Smooth Gating)}
+
+\[
+G_\beta(r)
+=
+\frac{1}{1 + e^{-\beta (r - r_c)}}.
+\]
+
+\subsection*{Lemma I.1}
+
+\[
+\lim_{\beta \to \infty} G_\beta(r) = G(r).
+\]
+
+\hfill $\square$
+
+\subsection*{Definition I.3 (Free Energy Functional)}
+
+\[
+F(r)
+=
+a r^2 + b r^4,
+\]
+with $a$ changing sign at critical temperature.
+
+\subsection*{Proposition I.1}
+
+When $a < 0$, stable minima occur at
+\[
+r = \pm \sqrt{-\frac{a}{2b}}.
+\]
+
+\hfill $\square$
+
+Binary coherence gating corresponds to second-order phase transition structure.
+
+\section{Unified Derivation Theorem for Coherence Functionals}
+
+Let $\mathcal{X}$ be a structured space endowed with governing dynamics or geometric structure. Concretely, $\mathcal{X}$ may be a smooth manifold equipped with a vector field $V$, a Hilbert space with self-adjoint generator $H$, a statistical manifold carrying the Fisher information metric $g$, a generative space equipped with assembly index $A$, or a time-dependent Riemannian manifold evolving under a renormalizing metric flow $g_t$.
+
+\subsection*{Definition J.1 (Geometric Invariant)}
+
+Let $I : \mathcal{X} \to \mathbb{R}_{\ge 0}$ be a non-negative functional satisfying one of:
+
+\[
+\mathcal{L}_V I = 0,
+\quad
+[H, \Pi] = 0,
+\quad
+\nabla I = 0 \text{ along geodesics},
+\quad
+\dot{L} \le 0,
+\quad
+\partial_t g = -2\operatorname{Ric}.
+\]
+
+\subsection*{Definition J.2 (Derived Coherence Functional)}
+
+Let
+\[
+\mathcal{C}(x)
+=
+\phi(I(x)),
+\]
+where $\phi : \mathbb{R}_{\ge 0} \to [0,1]$ is smooth and strictly decreasing.
+
+\subsection*{Theorem J.1 (Coherence Derivation Theorem)}
+
+If $I$ is an invariant or monotone-decaying functional under the governing structure of $\mathcal{X}$, then $\mathcal{C}$ is well-defined and inherits stability properties of $I$.
+
+\subsection*{Proof}
+
+If $I$ is invariant under flow $\Phi_t$, then
+\[
+I(\Phi_t(x)) = I(x).
+\]
+Thus
+\[
+\mathcal{C}(\Phi_t(x))
+=
+\phi(I(\Phi_t(x)))
+=
+\phi(I(x))
+=
+\mathcal{C}(x).
+\]
+
+If $I$ is Lyapunov-decaying,
+\[
+\dot{I} \le 0,
+\]
+then
+\[
+\dot{\mathcal{C}}
+=
+\phi'(I)\dot{I}.
+\]
+Since $\phi' < 0$,
+\[
+\dot{\mathcal{C}} \ge 0.
+\]
+
+If $I$ depends on curvature magnitude $\kappa$ and curvature evolves by renormalization,
+monotonicity transfers identically.
+
+Therefore coherence derived as monotone transform of geometric invariant preserves dynamical stability.
+
+\hfill $\square$
+
+\subsection*{Corollary J.1}
+
+Any coherence functional not expressible as a monotone transform of a geometric invariant lacks derivational grounding.
+
+\subsection*{Corollary J.2}
+
+Scalar-first constructions are structurally underdetermined unless an invariant $I$ is subsequently identified.
+
+All coherent scalar functionals arise from geometry through invariance or monotonic decay. Geometry precedes scalar.
+
+\smallskip
+
+\begin{thebibliography}{99}
+
+\bibitem{Amari2000}
+S.~Amari and H.~Nagaoka,
+\textit{Methods of Information Geometry}.
+American Mathematical Society, 2000.
+
+\bibitem{Ashtekar1999}
+A.~Ashtekar and T.~A.~Schilling,
+``Geometrical formulation of quantum mechanics,''
+in \textit{On Einstein's Path}, Springer, 1999.
+
+\bibitem{BaezStay2010}
+J.~C.~Baez and M.~Stay,
+``Physics, Topology, Logic and Computation: A Rosetta Stone,''
+in \textit{New Structures for Physics}, Springer, 2010.
+
+\bibitem{Bell1964}
+J.~S.~Bell,
+``On the Einstein Podolsky Rosen paradox,''
+\textit{Physics}, vol.~1, pp.~195--200, 1964.
+
+\bibitem{Bohm1952}
+D.~Bohm,
+``A Suggested Interpretation of the Quantum Theory in Terms of `Hidden' Variables I and II,''
+\textit{Physical Review}, vol.~85, pp.~166--193, 1952.
+
+\bibitem{Boltzmann1877}
+L.~Boltzmann,
+``\"Uber die Beziehung zwischen dem zweiten Hauptsatze der mechanischen W\"armetheorie
+und der Wahrscheinlichkeitsrechnung,''
+\textit{Sitzungsberichte der Kaiserlichen Akademie der Wissenschaften}, vol.~76, pp.~373--435, 1877.
+
+\bibitem{Bostick2025}
+D.~Bostick,
+\textit{CODES: The Coherence Framework Replacing Probability in Physics, Intelligence, and Reality},
+Version~23. Zenodo, January 29, 2025.
+\url{https://zenodo.org/records/15347987}
+
+\bibitem{CoverThomas2006}
+T.~M.~Cover and J.~A.~Thomas,
+\textit{Elements of Information Theory}.
+2nd ed., Wiley, 2006.
+
+\bibitem{Fant2006}
+K.~M. Fant,
+\textit{Computer Science Reconsidered: The Invocation Model of Process Expression}.
+John Wiley \& Sons, Inc., 2007.
+ISBN 9780471798149 (print), ISBN 9780470125779 (online).
+doi:10.1002/9780470125779.
+
+\bibitem{Fisher1922}
+R.~A.~Fisher,
+``On the mathematical foundations of theoretical statistics,''
+\textit{Philosophical Transactions of the Royal Society A}, vol.~222, pp.~309--368, 1922.
+
+\bibitem{Gibbs1902}
+J.~W.~Gibbs,
+\textit{Elementary Principles in Statistical Mechanics}.
+Yale University Press, 1902.
+
+\bibitem{Jaynes1957}
+E.~T.~Jaynes,
+``Information Theory and Statistical Mechanics,''
+\textit{Physical Review}, vol.~106, pp.~620--630, 1957.
+
+\bibitem{Kolmogorov1965}
+A.~N.~Kolmogorov,
+``Three approaches to the quantitative definition of information,''
+\textit{Problems of Information Transmission}, vol.~1, pp.~1--7, 1965.
+
+\bibitem{Kullback1951}
+S.~Kullback and R.~A.~Leibler,
+``On information and sufficiency,''
+\textit{Annals of Mathematical Statistics}, vol.~22, pp.~79--86, 1951.
+
+\bibitem{Kuramoto1975}
+Y.~Kuramoto,
+``Self-entrainment of a population of coupled nonlinear oscillators,''
+in \textit{International Symposium on Mathematical Problems in Theoretical Physics},
+Lecture Notes in Physics vol.~39, Springer, 1975, pp.~420--422.
+
+\bibitem{Larson2025}
+S.~B.~Larson,
+``CODES Theory by Devin Bostick -- A 266 Page Assessment by The Echo System,''
+\textit{Field Sensitive}, July 12, 2025.
+\url{https://fieldsensitive.substack.com/p/codes-theory-by-devin-bostick-a-266}
+
+\bibitem{Lee2003}
+J.~M.~Lee,
+\textit{Introduction to Smooth Manifolds}.
+Springer, 2003.
+
+\bibitem{MacKay2003}
+D.~J.~C.~MacKay,
+\textit{Information Theory, Inference, and Learning Algorithms}.
+Cambridge University Press, 2003.
+
+\bibitem{NielsenChuang2010}
+M.~A.~Nielsen and I.~L.~Chuang,
+\textit{Quantum Computation and Quantum Information}.
+10th Anniversary ed., Cambridge University Press, 2010.
+
+\bibitem{Penrose2004}
+R.~Penrose,
+\textit{The Road to Reality: A Complete Guide to the Laws of the Universe}.
+Jonathan Cape, 2004.
+
+\bibitem{Reynolds1993}
+J.~C.~Reynolds,
+``The Discoveries of Continuations,''
+\textit{Lisp and Symbolic Computation}, vol.~6, pp.~233--248, 1993.
+
+\bibitem{Ruelle1989}
+D.~Ruelle,
+\textit{Chaotic Evolution and Strange Attractors}.
+Cambridge University Press, 1989.
+
+\bibitem{Shannon1948}
+C.~E.~Shannon,
+``A Mathematical Theory of Communication,''
+\textit{Bell System Technical Journal}, vol.~27, pp.~379--423 and 623--656, 1948.
+
+\bibitem{Spivak1999}
+M.~Spivak,
+\textit{A Comprehensive Introduction to Differential Geometry}.
+3rd ed., Publish or Perish, 1999.
+
+\bibitem{Strogatz2003}
+S.~H.~Strogatz,
+\textit{Sync: The Emerging Science of Spontaneous Order}.
+Hyperion, 2003.
+
+\bibitem{SussmanSteele1975}
+G.~J.~Sussman and G.~L.~Steele Jr.,
+``Scheme: An Interpreter for Extended Lambda Calculus,''
+AI Memo 349, MIT Artificial Intelligence Laboratory, 1975.
+
+\bibitem{Weinberg2013}
+S.~Weinberg,
+\textit{Lectures on Quantum Mechanics}.
+Cambridge University Press, 2013.
+
+\bibitem{Witten1986}
+E.~Witten,
+``Noncommutative Geometry and String Field Theory,''
+\textit{Nuclear Physics B}, vol.~268, pp.~253--294, 1986.
+
+\end{thebibliography}
+
+\end{document}
