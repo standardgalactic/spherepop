@@ -1,5 +1,7 @@
 # Spherepop
 
+[Structured Irreversibility](https://standardgalactic.github.io/spherepop/Structured%20Irreversibility.pdf)
+
 **Spherepop is an event-driven, visual and formal framework for building meaning, computation, and structure through irreversible actions.**
 
 Instead of starting from *sets, states, or representations*, Spherepop starts from **events**: things that happen once, change what is possible next, and leave an auditable history behind.

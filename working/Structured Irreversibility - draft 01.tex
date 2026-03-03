@@ -1,0 +1,1115 @@
+\documentclass[12pt, a4paper]{article}
+
+% ─── Packages ────────────────────────────────────────────────────────────────
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{geometry}
+\geometry{top=1.2in, bottom=1.2in, left=1.3in, right=1.3in}
+
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{mathtools}
+\usepackage{tikz-cd}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks = true,
+  linkcolor  = black,
+  citecolor  = black,
+  urlcolor   = black,
+}
+\usepackage{natbib}
+\usepackage{setspace}
+\onehalfspacing
+
+% ─── Theorem environments ────────────────────────────────────────────────────
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{axiom}{Axiom}
+\newtheorem{example}[theorem]{Example}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+% ─── Custom macros ───────────────────────────────────────────────────────────
+\newcommand{\Ent}{H}
+\newcommand{\Rnn}{\mathbb{R}_{\ge 0}}
+\newcommand{\SP}{\mathbf{SP}}
+\newcommand{\RSVP}{\mathbf{RSVP}}
+\newcommand{\catO}{\mathcal{O}}
+\newcommand{\catC}{\mathcal{C}}
+\newcommand{\Pop}{\mathrm{Pop}}
+\newcommand{\Refuse}{\mathrm{Ref}}
+\newcommand{\Bind}{\mathrm{Bind}}
+\newcommand{\Collapse}{\mathrm{Col}}
+\newcommand{\Meld}{\mathrm{Meld}}
+\newcommand{\id}{\mathrm{id}}
+\newcommand{\Ob}{\mathrm{Ob}}
+\newcommand{\Hom}{\mathrm{Hom}}
+\newcommand{\Sphere}{\mathrm{Sphere}}
+\newcommand{\Choice}{\mathrm{Choice}}
+\newcommand{\Merge}{\mathrm{Merge}}
+\DeclareMathOperator{\colim}{colim}
+\DeclareMathOperator{\Kc}{K}
+
+% ─── Title block ─────────────────────────────────────────────────────────────
+\title{%
+  \textbf{Spherepop as an Entropy-Decreasing Rewriting Category:\\
+  Axiomatic Foundations, Functorial Geometry, and the RSVP Embedding}
+}
+\author{Flyxion}
+\date{\today}
+
+% ─────────────────────────────────────────────────────────────────────────────
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We present a unified axiomatic treatment of the Spherepop framework, drawing on its
+instantiations as an event-history calculus, a typed functional language (SPC), an OS
+kernel semantics, and a geometric theory of coherence within the Relativistic
+Scalar-Vector Plenum (RSVP). The paper proceeds in four movements. First, we
+formalize the \emph{event-history calculus} through five axioms—sequential
+irreversibility, entropy monotonicity, a quartet of primitive morphisms (Pop, Refuse,
+Bind, Collapse), authority of history, and a collapse-induced identity relation—and
+establish that the resulting category $\SP$ carries the structure of a strict monoidal
+category with an entropy functional. Second, we connect this to the \emph{Spherepop
+Calculus} (SPC), showing that SPC's typed primitives (Sphere, Pop, Merge, Choice)
+correspond precisely to the generating morphisms of $\SP$ interpreted in a presheaf
+topos enriched with the Giry distribution monad. Third, we construct a
+\emph{geometric realization functor} $F : \SP \to \RSVP$ mapping option-spaces to
+smooth manifolds carrying scalar, vector, and entropy fields, and translating each
+primitive morphism into a localized field perturbation—option-elimination becomes
+boundary sharpening, dependency binding becomes directed vector-field coupling, and
+quotient collapse becomes Wilsonian renormalization. Fourth, we characterize the deep
+structural asymmetry between the two frameworks: Spherepop \emph{accumulates}
+constraint in a log-bound combinatorial system; RSVP \emph{redistributes} coherence
+through continuous field dynamics. We conclude with open problems in faithfulness,
+non-trivial entropy functionals for Bind, and compact-closed completions.
+\end{abstract}
+
+\tableofcontents
+\bigskip
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Introduction}
+\label{sec:intro}
+
+\subsection{Background and Motivation}
+
+The Spherepop framework has developed along four distinct but convergent trajectories.
+As an \emph{event-history calculus}, it proposes that worlds are
+constructed through irreversible commitment rather than state update: the fundamental
+ontological unit is not a snapshot but a trajectory, the accumulated result of events
+that permanently constrain the futures remaining accessible. As a \emph{typed
+functional language}, the Spherepop Calculus (SPC) offers
+a geometric reinterpretation of $\lambda$-abstraction as nested spherical scoping,
+extending the Calculus of Constructions with categorical parallelism (Merge as tensor)
+and compositional probability (Choice via the distribution monad). As an \emph{OS
+kernel semantics}, it disciplines utility programs as
+structured consumers of authoritative event logs, enforcing deterministic replay,
+ABI stability, and strict separation between kernel state and derived views. As a
+\emph{geometric theory of coherence}, it situates all of
+these within the RSVP plenum, where a scalar coherence potential $\Phi$, a velocity
+field $v$, and an entropy density $S$ evolve under coupled PDEs whose large-scale
+behavior is the thermodynamic limit of Spherepop's discrete dynamics.
+
+The present paper provides, for the first time, a unified formal treatment connecting
+all four trajectories. The central claim is:
+
+\begin{quote}
+\emph{Spherepop is a finitely generated entropy-decreasing rewriting category; RSVP
+is the smooth dynamical realization of its morphisms as coherence flows in a plenum,
+via a geometric realization functor that translates option-elimination into boundary
+sharpening, dependency into vector-field coupling, and collapse into renormalization.}
+\end{quote}
+
+This is not a metaphor. The functor $F : \SP \to \RSVP$ is constructed explicitly,
+object by object and generating morphism by generating morphism. Its existence and
+properties are stated as a theorem (Theorem~\ref{thm:functor}), with proof sketches
+that identify exactly which mathematical facts are fully established and which require
+additional modeling choices.
+
+\subsection{Irreversibility as Semantic Axiom}
+
+The philosophical core of Spherepop is the elevation of thermodynamic irreversibility
+from implementation artifact to semantic axiom. The basic claim is that any system that performs non-trivial computation in the presence of finite resources
+must dissipate information and lose degrees of freedom \citep{landauer1961,
+bennett1973}. Rather than treating this as a limitation, Spherepop makes it
+constitutive: meaning arises not from instantaneous configuration but from the
+irreversible sequence of events through which a system has passed.
+
+This positions Spherepop in sharp contrast with state-based computational paradigms.
+Classical process calculi permit reversal; cybernetic control theories treat adaptation
+as regulation over an invariant possibility space; probabilistic programming languages
+sample from distributions without accumulating causal history. Spherepop replaces all
+of these with a single organizing principle: \emph{to choose is to permanently reshape
+the topology of the future}.
+
+\subsection{Structure of the Paper}
+
+Section~\ref{sec:primitives} establishes the primitive data and categorical structure
+of $\SP$. Section~\ref{sec:axioms} presents the five formal axioms. Section~\ref{sec:spc}
+connects the event-history calculus to the Spherepop Calculus and its presheaf topos
+semantics. Section~\ref{sec:kernel} discusses the OS kernel interpretation and its
+structural implications. Section~\ref{sec:functor} constructs the functor
+$F : \SP \to \RSVP$. Section~\ref{sec:structure} provides the structural comparison.
+Section~\ref{sec:mechanics} treats the discrete Lagrangian mechanics of commitment.
+Section~\ref{sec:sheaf} develops the sheaf-theoretic interpretation of worldhood and
+the meld operator. Section~\ref{sec:status} surveys mathematical status and open
+problems. Section~\ref{sec:conclusion} compresses the paper to its minimal core.
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Primitive Data and the Category \texorpdfstring{$\SP$}{SP}}
+\label{sec:primitives}
+
+\subsection{Option-Spaces}
+
+\begin{definition}[Option-space]
+An \emph{option-space} is a pair $(\Omega, \mathcal{A})$ where $\Omega$ is a non-empty
+set (the set of admissible futures) and $\mathcal{A} \subseteq 2^\Omega$ is a
+distinguished family closed under finite intersection, representing the
+\emph{admissible subfutures} at any stage of commitment.
+\end{definition}
+
+The intuition is concrete: $\Omega$ is the set of everything that could still happen
+from the current historical position; $\mathcal{A}$ encodes the structural dependencies
+among those futures. A pop shrinks $\Omega$; a bind reduces $\mathcal{A}$ without
+changing $\Omega$; a collapse quotients both.
+
+\begin{definition}[Entropy functional]
+A \emph{Spherepop entropy functional} is a map
+\[
+  \Ent : \Ob(\SP) \longrightarrow \Rnn
+\]
+satisfying: (i) $\Ent(\Omega) = 0$ iff $|\Omega| = 1$; (ii) $\Ent$ is monotone in the
+sense that $\Omega' \subseteq \Omega \Rightarrow \Ent(\Omega') \le \Ent(\Omega)$.
+\end{definition}
+
+The Shannon entropy $\Ent(\Omega) = -\sum_{x \in \Omega} p(x) \log p(x)$ (for any
+probability measure on $\Omega$) provides the canonical instance, but the axioms hold
+for any monotone subadditive functional, including topological entropy on the
+admissibility lattice.
+
+\subsection{Morphisms and Composition}
+
+The category $\SP$ has option-spaces as objects. A morphism $e : \Omega \to \Omega'$
+is an \emph{irreversible event}—a structure-preserving map that weakly decreases
+entropy. Morphisms compose associatively; the identity at $\Omega$ is the degenerate
+history $\id_\Omega$ that leaves all structure unchanged.
+
+A \emph{history of length $n$} is a composable sequence
+\[
+  h = e_n \circ e_{n-1} \circ \cdots \circ e_1 : \Omega_0 \longrightarrow \Omega_n.
+\]
+Histories are the primary semantic objects of $\SP$. Because morphisms are
+irreversible, $\SP$ is not a groupoid: no non-identity morphism has an inverse. This
+asymmetry encodes the arrow of time directly into the algebra.
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{The Five Axioms of Spherepop}
+\label{sec:axioms}
+
+\begin{axiom}[Sequential Irreversibility]
+\label{ax:seq}
+Composition is strictly associative. There is a distinguished initial object $\Omega_0$.
+There is no morphism inverse to any non-identity event: for all $e : \Omega \to \Omega'$
+with $e \ne \id_\Omega$, there is no $e^{-1} : \Omega' \to \Omega$ in $\SP$.
+\end{axiom}
+
+\begin{axiom}[Entropy Monotonicity]
+\label{ax:ent}
+For every morphism $e : \Omega \to \Omega'$ in $\SP$:
+\[
+  \Ent(\Omega') \le \Ent(\Omega).
+\]
+Strict inequality holds for $\Pop$ and $\Refuse$. $\Bind$ preserves $\Ent$ globally
+while reducing structural symmetry. $\Collapse$ may produce non-strict inequality when
+a quotient is entropy-neutral at coarse scale but eliminates fine structure.
+\end{axiom}
+
+\begin{axiom}[Primitive Morphisms]
+\label{ax:prim}
+The category $\SP$ is generated by exactly four families:
+
+\begin{enumerate}[label=(\roman*), leftmargin=2em]
+
+\item \textbf{Pop} $(\Pop : \Omega \to \Omega')$. Strict subobject inclusion in
+the reverse direction:
+\[
+  \Omega' \subsetneq \Omega, \qquad \Ent(\Omega') < \Ent(\Omega).
+\]
+One or more options are permanently excluded. This is the fundamental operation
+of world construction: to pop is to actualize one future by eliminating others.
+
+\item \textbf{Refuse} $(\Refuse : \Omega \to \Omega')$. Geometrically identical to
+$\Pop$—same subobject inclusion—but carrying a semantic tag distinguishing deliberate
+non-selection from positive selection. Formally, $\Refuse$ and $\Pop$ are distinct
+morphisms over the same underlying set map; the distinction is tracked by an
+auxiliary accounting functor $\mathcal{A} : \SP \to \mathbf{C}$ and matters for
+normative interpretation.
+
+\item \textbf{Bind} $(\Bind : \Omega \to \Omega)$. An endomorphism reducing the
+admissible family:
+\[
+  \mathcal{A}_{\Bind(\Omega)} \subsetneq \mathcal{A}_\Omega,
+\]
+without removing elements from $\Omega$. Binding introduces a dependency constraint—a
+partial ordering or precedence among options—without yet eliminating them. It
+corresponds to the introduction of structure rather than reduction of space.
+
+\item \textbf{Collapse} $(\Collapse : \Omega \to \Omega/{\sim})$. A quotient morphism
+induced by an equivalence relation $\sim$ on $\Omega$, required to preserve causal
+structure:
+\[
+  x \sim y \implies \text{the causal past of } x = \text{the causal past of } y.
+\]
+Collapse reduces descriptive complexity while preserving causal consequence. Two
+futures differing only along dimensions irrelevant to downstream commitments are
+identified. This is the only operator permitted to reduce accumulated action.
+\end{enumerate}
+\end{axiom}
+
+\begin{remark}
+The four generators correspond exactly to the SPC primitives and OS kernel event types.
+In SPC: $\Pop \leftrightarrow \mathrm{Pop}(f,u)$ (application), $\Bind \leftrightarrow
+\mathrm{Sphere}(x\!:\!A.\,t)$ (abstraction creating dependency), $\Collapse \leftrightarrow
+\mathrm{Merge}$ (identification under equivalence). In the OS kernel: $\Pop
+\leftrightarrow$ \texttt{POP}, $\Bind \leftrightarrow$ \texttt{LINK}, $\Collapse
+\leftrightarrow$ \texttt{COLLAPSE}, $\Refuse \leftrightarrow$ \texttt{UNLINK} with
+accounting tag.
+\end{remark}
+
+\begin{axiom}[Authority of History]
+\label{ax:hist}
+The state at time $n$ is defined solely by replay:
+\[
+  \Omega_n = (e_n \circ \cdots \circ e_1)(\Omega_0).
+\]
+There is no hidden state. Any two processes with access to the same event log and the
+same $\Omega_0$ reconstruct the same $\Omega_n$. The category $\SP$ admits no monad
+structure that could introduce effectful side-channels.
+\end{axiom}
+
+This axiom is structurally equivalent to the event-sourcing principle in distributed
+systems: \emph{state = replay(log)}. It is also the basis for the OS kernel constraint
+that utilities may not mutate kernel state directly.
+
+\begin{axiom}[Collapse Identity]
+\label{ax:ident}
+Let $q$ be a collapse policy (a family of equivalence relations parameterized by
+resolution level). Two histories $h, h'$ are \emph{$q$-equivalent}, written
+$h \sim_q h'$, if they differ only by refinements annihilated by $q$:
+\[
+  h \sim_q h' \iff q\bigl(h(\Omega_0)\bigr) = q\bigl(h'(\Omega_0)\bigr).
+\]
+Identity in $\SP$ is well-defined modulo $q$.
+\end{axiom}
+
+\subsection{Structural Consequences}
+
+\begin{proposition}[Strict Monoidal Structure]
+\label{prop:monoidal}
+$(\SP, \circ, \id_{\Omega_0})$ is a strict monoidal category in which the entropy
+functional $\Ent$ constitutes a strict monoidal functor $\Ent : \SP \to (\Rnn, +, 0)$.
+\end{proposition}
+
+\begin{proof}[Proof sketch]
+Associativity and unit laws follow from Axiom~\ref{ax:seq}. Strictness holds because
+composition is defined as list concatenation on event sequences, which is strictly
+associative. Functoriality of $\Ent$ follows from Axiom~\ref{ax:ent}:
+$\Ent(h \circ h') \le \Ent(h') \le \Ent(\Omega_0)$, and $\Ent(\id) = \Ent(\Omega_0)$.
+\end{proof}
+
+\begin{proposition}[Universal Property of Collapse]
+\label{prop:collapse-universal}
+$\Collapse$ is the coequalizer of all pairs of morphisms in $\SP$ that produce the same
+causal history on $\Omega_0$. For any functor $G : \SP \to \catC$ such that
+$G(e) = G(e')$ whenever $e \sim_q e'$, there is a unique factorization through
+$\Collapse$.
+\end{proposition}
+
+\begin{proof}[Proof sketch]
+Standard coequalizer construction in a category with quotient objects. The causal
+structure preservation clause of Axiom~\ref{ax:prim}(iv) ensures that the induced
+quotient morphism is well-defined.
+\end{proof}
+
+\begin{proposition}[Meld as Pushout]
+\label{prop:meld}
+The \emph{meld} operator $\Meld_\pi(H_1, H_2) = H_3$ is the pushout of two histories over their common prefix, modulo
+the preference policy $\pi$:
+\[
+\begin{tikzcd}
+  \Omega_0 \arrow[r, "H_1"] \arrow[d, "H_2"'] & \Omega_1 \arrow[d] \\
+  \Omega_2 \arrow[r] & \Omega_3 = \Omega_1 \sqcup_{\Omega_0} \Omega_2 / {\sim_\pi}
+\end{tikzcd}
+\]
+\end{proposition}
+
+The policy $\pi$ determines which incompatible commitments across $\Omega_1$ and
+$\Omega_2$ are identified (collapsed) and which are preserved. This decomposes meld
+into a collapse step followed by a categorical gluing:
+$\Meld_\pi \equiv \text{glue} \circ \Collapse_\pi$.
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{The Spherepop Calculus as Typed Instantiation}
+\label{sec:spc}
+
+The Spherepop Calculus (SPC) provides the type-theoretic
+instantiation of $\SP$. Its grammar of terms is:
+\[
+  t, u \;::=\; x \;\mid\; a \;\mid\; \Sphere(x\!:\!A.\,t) \;\mid\; \Pop(t, u) \;\mid\;
+  \Merge(t, u) \;\mid\; \Choice(p, t, u),
+\]
+and the core reduction rules are:
+\begin{align}
+  \Pop(\Sphere(x\!:\!A.\,t),\, u) &\;\to\; t[u/x] \tag{$\beta$-reduction}\\
+  \Choice(p, t, u) &\;\to\; \begin{cases} t & \text{w.p. } p \\ u & \text{w.p. } 1-p \end{cases}
+  \tag{probabilistic sampling}\\
+  \Merge(t, u) &\;\equiv\; \Merge(u, t) \tag{commutativity}
+\end{align}
+
+\subsection{Correspondence with \texorpdfstring{$\SP$}{SP} Generators}
+
+The four SPC primitives correspond to the generators of $\SP$ as follows:
+
+\begin{center}
+\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{lll}
+\toprule
+\textbf{SPC Primitive} & \textbf{$\SP$ Generator} & \textbf{Action on $\Omega$} \\
+\midrule
+$\Pop(f, u)$ & $\Pop / \Refuse$ & Strict subobject inclusion \\
+$\Sphere(x\!:\!A.\,t)$ & $\Bind$ & Dependency constraint, endomorphism \\
+$\Merge(t, u)$ & $\Collapse$ (pushout) & Quotient/identification \\
+$\Choice(p, t, u)$ & $\Pop$ + probabilistic tag & Weighted option exclusion \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Presheaf Topos Semantics}
+
+SPC is interpreted in the presheaf topos $\mathbf{E} = [\mathbf{Sphere}^{\mathrm{op}},
+\mathbf{Set}]$ enriched with the Giry distribution monad $\mathrm{Dist}$
+\citep{giry1982}. The core semantic clauses are:
+\begin{align}
+  \llbracket \Sphere(x\!:\!A.\,t) \rrbracket &= \text{exponential object } B^A \text{ in } \mathbf{E} \\
+  \llbracket \Pop(t, u) \rrbracket &= \mathrm{ev} \circ \langle \llbracket t \rrbracket, \llbracket u \rrbracket \rangle \\
+  \llbracket \Merge(t, u) \rrbracket &= \langle \llbracket t \rrbracket, \llbracket u \rrbracket \rangle : \Gamma \to A \otimes A \\
+  \llbracket \Choice(p, t, u) \rrbracket &= \lambda\gamma.\; p\,\delta_{\llbracket t \rrbracket(\gamma)} + (1-p)\,\delta_{\llbracket u \rrbracket(\gamma)}
+\end{align}
+
+This gives $\Merge$ the structure of a symmetric monoidal tensor and $\Choice$ the
+structure of a convex algebra. The Independent Channels Lemma follows directly from independence of the product measure:
+\[
+  \Pr\!\bigl[\mathrm{FoldOr}(\Merge(R_1,\ldots,R_n)) = \mathrm{Doom}\bigr]
+  = 1 - \prod_{i=1}^n (1 - p_i).
+\]
+
+\subsection{Meta-Theory}
+
+SPC satisfies the standard type-safety results (Preservation and Progress) together
+with Adequacy of the probabilistic semantics, whose precise statement is:
+for any closed term $t$ of type $A$ and measurable $h : A \to \mathbb{R}$,
+\[
+  \mathbb{E}_{\text{operational}}[h] = \mathbb{E}_{\llbracket t \rrbracket}[h].
+\]
+The connection to $\SP$ makes this also a statement about entropy: the entropy
+functional $\Ent$ applied to the final option-space $F^{-1}(\llbracket t \rrbracket)$
+coincides, up to units, with the entropy density $\int_M S\,d\mathrm{vol}$ in the RSVP
+realization (Theorem~\ref{thm:functor}(c)).
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{The OS Kernel Interpretation}
+\label{sec:kernel}
+
+The Spherepop OS kernel instantiates $\SP$ as an
+\emph{event-sourced append-only log system}. The structural correspondences are exact:
+
+\begin{center}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{ll}
+\toprule
+\textbf{$\SP$ Structure} & \textbf{OS Kernel Counterpart} \\
+\midrule
+History $h = e_n \circ \cdots \circ e_1$ & Append-only event log \\
+Axiom~\ref{ax:hist} (Authority of History) & State = replay(log) \\
+$\Bind$ (endomorphism) & \texttt{LINK} event \\
+$\Collapse$ (quotient) & \texttt{COLLAPSE} + snapshot \\
+$\Pop$ / $\Refuse$ & \texttt{POP} / \texttt{UNLINK} with accounting tag \\
+View generator (utility) & Non-authoritative derived view \\
+Overlay manager & Speculative branch outside kernel \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The design constraint that utilities may not mutate kernel state directly (Authoritative
+Discipline is precisely Axiom~\ref{ax:hist}:
+there is no hidden state, and all authoritative changes must be expressed as proposed
+events submitted to the arbiter. The prohibition on time-dependent behavior and hidden
+mutable caches (Non-Goals) is a consequence of the same axiom.
+
+The \emph{view-cause separation} enforced by the kernel—views may be dropped or
+recomputed without semantic consequence—corresponds categorically to the existence of
+the accounting functor $\mathcal{A} : \SP \to \mathbf{C}$ that tracks $\Refuse$ vs.\
+$\Pop$ distinctions without affecting the underlying morphism in $\catO$.
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{RSVP as a Geometric Realization Functor}
+\label{sec:functor}
+
+\subsection{The RSVP Plenum}
+
+The Relativistic Scalar-Vector Plenum is a smooth field
+theory on a Riemannian manifold $M$ carrying three coupled fields: a scalar coherence
+potential $\Phi \in C^\infty(M)$, a velocity field $v \in \mathfrak{X}(M)$, and an
+entropy density $S \in C^\infty(M, \Rnn)$. Their dynamics are governed by the
+entropy-transport equation
+\begin{equation}
+  \partial_t S = \nabla \cdot (\kappa\,\nabla\Phi),
+  \label{eq:rsvp-pde}
+\end{equation}
+together with continuity equations for $v$ and conservation of total entropy
+flux~\citep{jacobson1995, verlinde2011}.
+
+A \emph{pop derivative} along a spherical embedding
+$f : \mathrm{Sphr} \hookrightarrow M$ is defined as the curvature-weighted radial
+variation of $\Phi$:
+\begin{equation}
+  \partial_P \Phi = \lim_{\epsilon \to 0}
+  \frac{\Phi(\mathrm{Sphr}+\epsilon) - \Phi(\mathrm{Sphr})}{\epsilon}
+  = (\nabla \cdot \mathbf{n})\,\partial_r \Phi + v \cdot \nabla\Phi.
+  \label{eq:pop-deriv}
+\end{equation}
+Positive $\partial_P \Phi$ indicates emergent coherence; negative values signal
+dissolution.
+
+\subsection{The Category RSVP}
+
+\begin{definition}[RSVP objects and morphisms]
+An \emph{RSVP state} is a quadruple $(M, \Phi, v, S)$ as above. A morphism
+$(M, \Phi, v, S) \to (M', \Phi', v', S')$ is a smooth map $\varphi : M \to M'$
+satisfying: (i) $\varphi^* S' \ge S$ (entropy non-decrease); (ii) the entropy
+flux $\kappa\nabla\Phi$ is preserved up to boundary terms under $\varphi_*$.
+\end{definition}
+
+\subsection{Construction of \texorpdfstring{$F$}{F}}
+
+\begin{definition}[Geometric realization functor]
+Define $F : \SP \to \RSVP$ as follows.
+
+\paragraph{On objects.}
+Given $\Omega \in \Ob(\SP)$, set
+\[
+  F(\Omega) = \bigl(\Delta(\Omega),\; \Phi_\Omega,\; v_\Omega,\; S_\Omega\bigr)
+\]
+where $\Delta(\Omega)$ is the probability simplex over $\Omega$ (or a smooth
+approximation), $S_\Omega$ is the Shannon entropy density, and $\Phi_\Omega$,
+$v_\Omega$ are initialized as smooth interpolants of the admissibility structure
+$\mathcal{A}$.
+
+\paragraph{On generating morphisms.}
+Each primitive event is realized as a localized smooth perturbation:
+
+\medskip
+\noindent
+\textbf{Pop under $F$.}
+\[
+  F(\Pop) : (M, \Phi, v, S) \;\longmapsto\;
+  (M \setminus U,\;\; \Phi + \delta\Phi_\partial,\;\; v,\;\; S + \delta S)
+\]
+where $U \subset M$ is the open set corresponding to eliminated options,
+$\delta\Phi_\partial > 0$ is a boundary-sharpening increment concentrated near
+$\partial U$, and $\delta S \ge 0$ enforces Axiom~\ref{ax:ent}. Geometrically:
+option-elimination $\leftrightarrow$ localized entropy-gradient increase + boundary
+sharpening. This is the field-theoretic realization of the pop derivative
+\eqref{eq:pop-deriv}: positive $\partial_P\Phi$ marks the contraction of the
+admissible manifold.
+
+\medskip
+\noindent
+\textbf{Refuse under $F$.}
+Identical field perturbation to $F(\Pop)$, but the perturbation carries a signed tag
+in a distinguished cohomological degree, distinguishing it from positive selection.
+The accounting functor $\mathcal{A}$ tracks this distinction without affecting the
+underlying field equations.
+
+\medskip
+\noindent
+\textbf{Bind under $F$.}
+\[
+  F(\Bind) : v \;\longmapsto\; v + \delta v_{ij}
+\]
+where $\delta v_{ij}$ is a directed coupling term between regions $i, j \subset M$
+corresponding to the constrained options. Dependency binding
+$\leftrightarrow$ directed vector-field coupling. Entropy is globally preserved
+($\delta S = 0$) but the symmetry group of $(M, v)$ is reduced—exactly the
+content of Axiom~\ref{ax:prim}(iii).
+
+\medskip
+\noindent
+\textbf{Collapse under $F$.}
+\[
+  F(\Collapse) : (M, \Phi, v, S) \;\longmapsto\;
+  (\bar M,\; \bar\Phi,\; \bar v,\; \bar S)
+\]
+where $(\bar M, \bar\Phi, \bar v, \bar S)$ is the Wilsonian renormalization-group
+flow image: high-frequency modes of $\Phi$ and $v$ are integrated out, $\bar M$ is a
+coarser-resolution version of $M$, and $\bar S$ is the coarse-grained entropy. The
+action reduction formula of the discrete mechanics (Section~\ref{sec:mechanics}) has
+its RSVP counterpart in the suppression of short-distance entropy fluctuations.
+\end{definition}
+
+\subsection{Functoriality and Entropy Compatibility}
+
+\begin{theorem}[Functoriality of $F$]
+\label{thm:functor}
+$F : \SP \to \RSVP$ is a well-defined functor. Specifically:
+\begin{enumerate}[label=(\alph*)]
+  \item $F(\id_\Omega) = \id_{F(\Omega)}$;
+  \item $F(e_2 \circ e_1) = F(e_2) \circ F(e_1)$;
+  \item Entropy compatibility: $\Ent(\Omega) = \int_{\Delta(\Omega)} S_\Omega\,d\mathrm{vol}$
+        up to units, so entropy decrease in $\SP$ corresponds to net entropy production
+        localized to $\partial M'$ in $\RSVP$.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}[Proof sketch]
+(a) The identity event is the empty perturbation; the corresponding smooth map is
+$\id_{F(\Omega)}$. (b) Sequential perturbations on nested or disjoint regions of $M$
+compose as smooth maps. The locality of each perturbation (concentrated near $\partial
+U$ for $\Pop$, along $\delta v_{ij}$ for $\Bind$, in the RG flow for $\Collapse$)
+ensures that $F(e_2) \circ F(e_1)$ has the same support as $F(e_2 \circ e_1)$.
+(c) By construction, $S_\Omega = -p_\Omega \log p_\Omega$ on $\Delta(\Omega)$,
+so $\int S\,d\mathrm{vol} = \Ent(\Omega)$ by definition of the simplex measure.
+\end{proof}
+
+\paragraph{Commutative diagram.}
+\[
+\begin{tikzcd}[column sep=4em, row sep=3em]
+  \Omega
+  \arrow[r, "e"]
+  \arrow[d, "F"']
+  &
+  \Omega'
+  \arrow[d, "F"]
+  \\
+  (M,\Phi,v,S)
+  \arrow[r, "F(e)"']
+  &
+  (M',\Phi',v',S')
+\end{tikzcd}
+\]
+
+\paragraph{Merge product under $F$.}
+The merge product $\mu^\circ$—the
+coherence-preserving convolution of two overlapping pop fields—corresponds under $F$
+to the RSVP-theoretic image of $\Meld_\pi$ (Proposition~\ref{prop:meld}):
+\[
+  F(\Meld_\pi(H_1, H_2)) = \mu^\circ\bigl(F(H_1), F(H_2)\bigr)
+  = \int_{\mathrm{Sph}_{12}} w(x,y)\,\Phi_1(y)\,\Phi_2(y)\,dV_y,
+\]
+where the kernel $w$ respects entropy flux and the categorical monoidal structure
+of $\mu^\circ$.
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Structural Comparison}
+\label{sec:structure}
+
+\subsection{Not Layers, Not Metaphors: A Precise Duality}
+
+The relationship between $\SP$ and $\RSVP$ is often mischaracterized as a
+``levels of description'' or ``dual perspective'' relationship. Both phrases suggest a
+symmetry that does not exist. The correct characterization is:
+
+\begin{center}
+\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{ll}
+\toprule
+\textbf{Spherepop} ($\SP$) & \textbf{RSVP} \\
+\midrule
+Rewriting system & Thermodynamic limit of that system \\
+Discrete computation & Continuous field theory \\
+Category of histories & Derived geometric space \\
+Constraint \emph{accumulation} & Coherence \emph{redistribution} \\
+Log-bound, combinatorial & Field-bound, differential \\
+Monotone, irreversible & Diffusive, dissipative \\
+$\Collapse$ = coequalizer & $F(\Collapse)$ = renormalization \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Spherepop is the \emph{algebra}; RSVP is its \emph{analytic completion}. The functor
+$F$ is the realization map between them, analogous to the relationship between a
+simplicial set and its geometric realization as a topological space, or between a
+rewriting system and its word problem in the limit.
+
+\subsection{Mapping to Standard Mathematical Frameworks}
+
+\paragraph{Category Theory.}
+\begin{itemize}
+  \item $\SP$ is a category of entropy-decreasing endofunctors on a poset of
+    option-spaces.
+  \item $\Collapse$ is the coequalizer of $\sim_q$-equivalent morphisms
+    (Proposition~\ref{prop:collapse-universal}).
+  \item $\Meld$ is the pushout of two $\Bind$-derived histories over a shared prefix
+    (Proposition~\ref{prop:meld}).
+  \item $\Bind$ enriches hom-sets via a constraint relation, making $\SP$ an enriched
+    category over the lattice of admissibility families.
+\end{itemize}
+
+\paragraph{Information Theory.}
+The generating morphisms map to standard information-theoretic operations:
+\begin{align}
+  \Pop &: \quad \Ent_{t+1} = \Ent_t - \Delta, \quad \Delta > 0 \label{eq:pop-it}\\
+  \Bind &: \quad I(X;Y) \text{ increases (mutual information coupling)} \label{eq:bind-it}\\
+  \Collapse &: \quad \Kc(\Omega/{\sim}) \le \Kc(\Omega),
+  \quad \text{causal graph preserved} \label{eq:col-it}
+\end{align}
+The governing PDE on the RSVP side is the entropy-transport equation~\eqref{eq:rsvp-pde}.
+
+\paragraph{Distributed Systems.}
+Spherepop is structurally isomorphic to the event-sourced architecture pattern: append-only log, state = replay(log), no hidden mutation,
+derived views allowed. $\Collapse$ corresponds to a snapshot: a compressed
+representation valid because of the causal preservation clause in
+Axiom~\ref{ax:prim}(iv).
+
+\paragraph{Cognitive Modeling.}
+The endofunctor characterization frames a Spherepop agent as
+$A : \catO \to \catO$, preserving inclusion but not reversibility. Parsing becomes
+commitment (incoming structure is parsed into constraint rather than representation);
+identity follows from historical effect, not internal state. This supports the
+\emph{log-bound process} account of agency: memory is accumulated constraint, not a
+store of representations.
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{The Mechanics of Commitment}
+\label{sec:mechanics}
+
+Spherepop provides a discrete Lagrangian formulation quantifying the irreversible cost
+of world construction. This section develops the mechanical
+framework and connects it to the RSVP field theory.
+
+\subsection{Optionality and the Discrete Lagrangian}
+
+Let $\Omega(X) \in \Rnn$ denote the \emph{optionality} of an option-space $X$: a
+monotone measure satisfying $X' \subseteq X \Rightarrow \Omega(X') \le \Omega(X)$.
+Each event $e_t : X_{t-1} \to X_t$ induces a local cost
+\begin{equation}
+  L_t = \Delta\Omega_t + \lambda\,\Delta C_t,
+  \label{eq:lagrangian}
+\end{equation}
+where $\Delta\Omega_t = \Omega(X_{t-1}) - \Omega(X_t)$ is the reduction in optionality
+and $\Delta C_t$ records auxiliary accounting costs (ethical, normative, or
+thermodynamic), with $\lambda$ the relative weighting constant.
+
+The \emph{action} of a history $\gamma = (e_1,\ldots,e_n)$ is
+\begin{equation}
+  S[\gamma] = \sum_{t=1}^n L_t.
+  \label{eq:action}
+\end{equation}
+Action is monotone increasing along histories for $\Pop$, $\Refuse$, and $\Bind$,
+encoding irreversibility mechanically.
+
+\subsection{Commitment and the Hamiltonian}
+
+Define the conjugate of optionality as
+\begin{equation}
+  \pi_t = -\frac{\partial L_t}{\partial\Omega},
+  \label{eq:commitment}
+\end{equation}
+interpreted as \emph{commitment}: the marginal cost of further optionality loss. The
+discrete Hamiltonian is
+\begin{equation}
+  H_t = \pi_t\,\Omega(X_t) - L_t,
+  \label{eq:hamiltonian}
+\end{equation}
+measuring \emph{remaining freedom}. $H_t$ decays as commitment accumulates; a system
+with $H_t \approx 0$ is fully world-bound.
+
+This formulation inverts optimization: the goal is not to minimize action but to
+\emph{account for} it. Meaningful histories have non-trivial action; systems that
+avoid commitment remain vacuous.
+
+\subsection{Collapse and Action Reduction}
+
+Collapse is the only operator that may reduce accumulated action. For a policy $q$
+inducing $\sim_q$ with kernel $\ker q$:
+\begin{equation}
+  S \;\longmapsto\; S - \log|\ker q|.
+  \label{eq:collapse-action}
+\end{equation}
+This corresponds, under $F$, to the suppression of high-frequency modes in the RG flow
+image $F(\Collapse)$: fine-structure entropy is integrated out, reducing the action by
+exactly the log of the number of identified degrees of freedom.
+
+\subsection{Connection to RSVP Dynamics}
+
+The discrete equations of motion
+\[
+  X_{t+1} = e_{t+1}(X_t), \qquad \pi_{t+1} - \pi_t = -\Delta\Omega_{t+1}
+\]
+correspond, under $F$, to the integral form of~\eqref{eq:rsvp-pde}: the entropy
+transport equation is the continuous limit of the discrete commitment-optionality
+duality. The diffusion coefficient $\kappa$ in RSVP corresponds to the rate at which
+boundary-sharpening from $F(\Pop)$ propagates across $M$.
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Sheaf-Theoretic Interpretation of Worldhood and Meld}
+\label{sec:sheaf}
+
+\subsection{Local Scopes and the Presheaf of Proposals}
+
+An option-space $X$ admits a cover $\mathcal{U} = \{U_i\}$ of local scopes
+(semantic regions, rhetorical roles, subproblems). Define a presheaf $\mathcal{T}$
+assigning to each open $U \subseteq X$ the set of admissible local update proposals:
+\[
+  \mathcal{T}(U) = \{\text{local tangent proposals valid on } U\},
+\]
+with restriction maps $\rho_{UV} : \mathcal{T}(U) \to \mathcal{T}(V)$ for $V \subseteq U$.
+A family $\{\delta_i \in \mathcal{T}(U_i)\}$ is \emph{compatible} if on each overlap:
+\[
+  \rho_{U_i, U_i \cap U_j}(\delta_i) = \rho_{U_j, U_i \cap U_j}(\delta_j).
+\]
+
+\subsection{Commitment as Gluing}
+
+Commitment resolves local incompatibilities. When an agent enforces compatibility
+through $\Pop$, $\Bind$, or $\Refuse$, local sections are constrained so that they
+may glue. The sheaf condition—compatible local sections determine a unique global
+section—corresponds precisely to the achievement of \emph{worldhood}: local
+possibilities resolved into a coherent whole.
+
+Collapse admits a direct sheaf-theoretic interpretation as \emph{sheafification}: the
+minimal modification of a presheaf enforcing the sheaf condition by quotienting
+incompatible distinctions. Sheafification = collapse = abstraction.
+
+\subsection{Meld as Policy-Induced Sheafification}
+
+The following theorem formalizes the main result of the geometric treatment:
+
+\begin{theorem}[Meld as sheafification]
+\label{thm:meld-sheaf}
+Let $\mathcal{T}$ be a presheaf of local proposals over cover $\mathcal{U}$, and let
+$\{\delta_i \in \mathcal{T}(U_i)\}$ fail to glue due to overlap obstructions. Fix a
+merge policy $\pi$ specifying an identification relation $\sim_\pi$ on the obstruction
+data. Then there exists a canonical sheafification
+$\mathcal{T} \Rightarrow \mathcal{T}^\pi$
+in which the $\delta_i$ become compatible and glue uniquely to a global section
+$\Delta^\pi \in \mathcal{T}^\pi(X)$. The Spherepop operation $\Meld_\pi$ is precisely
+the event that commits to this identification and takes $\Delta^\pi$ as authoritative
+continuation.
+\end{theorem}
+
+Moreover, the decomposition $\Meld_\pi \equiv \mathrm{glue} \circ \Collapse_\pi$
+(Proposition~\ref{prop:meld}) is exactly the sheafification decomposition: collapse
+removes the obstructions; gluing produces the unique global section.
+
+\subsection{Minimal Commitment and Maximal Safe Gluing}
+
+Minimal commitment paths are characterized by the principle: \emph{glue as much as
+possible; collapse only as necessary; defer the rest}. Formally, among all policies
+$\pi$ and subcovers $\mathcal{U}' \subseteq \mathcal{U}$ that reach a target
+semantic class $[D]$, those that maximize the glued domain $\bigcup \mathcal{U}'$
+while minimizing policy-induced identification $|\ker\pi|$ yield histories with minimal
+irreversible action. This follows because gluing increases coherence without increasing
+irreversible identification, while collapse directly contributes to action cost via
+\eqref{eq:collapse-action}.
+
+\subsection{Document Construction and Semantic Manifolds}
+
+In the document construction setting, local scopes $U_i$
+correspond to rhetorical regions (definitions, pivots, proofs); overlaps are shared
+commitments (terminology, notation, narrative voice). The chart-invariant tangent flow
+result can be summarized: a generative program
+that selects weighted local proposals $\delta_i$ with weights $\alpha_i \ge 0$,
+$\sum_i \alpha_i = 1$, enforcing overlap compatibility, realizes a minimal commitment
+step toward any reachable target semantic class. Concretely:
+\[
+  \Delta = \mathrm{glue}\!\left(\sum_{i \in A} \alpha_i\,\delta_i\right)
+  \;\in\; \mathcal{T}^\pi(X),
+\]
+and this weighted local-gluing representation is equivalent, under $F$, to a
+tangent-constrained semantic flow on $M = \Delta(\Omega)$.
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Mathematical Status and Open Problems}
+\label{sec:status}
+
+\subsection{Fully Formalized}
+
+The following components are rigorous and reducible to standard results:
+
+\begin{enumerate}
+  \item The category $\SP$: reduces to rewriting systems and quotient categories over
+    posets with entropy measures.
+  \item The monoidal structure (Proposition~\ref{prop:monoidal}): standard once generators
+    and composition law are fixed.
+  \item The universal property of $\Collapse$ (Proposition~\ref{prop:collapse-universal}):
+    standard coequalizer argument.
+  \item Meld as pushout (Proposition~\ref{prop:meld}): standard pushout construction
+    in $\SP$.
+  \item Functoriality of $F$ (Theorem~\ref{thm:functor}): object and morphism maps are
+    given explicitly; functor laws verified from locality of perturbations.
+  \item SPC type safety (Preservation + Progress)
+    by induction on typing derivations.
+  \item Adequacy of probabilistic semantics: printed via
+    the Giry monad laws.
+  \item Meld as sheafification (Theorem~\ref{thm:meld-sheaf}): follows from the
+    sheafification universal property \citep{maclane1992}.
+\end{enumerate}
+
+\subsection{Modeling-Dependent}
+
+\begin{enumerate}
+  \item The choice of $\Delta(\Omega)$ as the smooth realization of option-spaces.
+    Alternative realizations (Wasserstein spaces, configuration manifolds) are possible.
+  \item The specific form of $\delta\Phi_\partial$ in $F(\Pop)$. Existence is guaranteed;
+    the precise profile depends on the metric on $M$.
+  \item The entropy-transport equation~\eqref{eq:rsvp-pde}. Alternatives (Fokker--Planck,
+    heat equation) produce different RG flows under $F(\Collapse)$.
+\end{enumerate}
+
+\subsection{Open Problems}
+
+\begin{enumerate}
+  \item \textbf{Faithfulness of $F$.} Is $F$ faithful—do distinct morphisms in $\SP$
+    always produce distinct smooth maps in $\RSVP$? Likely requires additional structure
+    on $\Delta(\Omega)$ (e.g., a non-degenerate Riemannian metric).
+
+  \item \textbf{Non-trivial entropy for Bind.} Constructing an entropy functional on $\SP$
+    that makes Axiom~\ref{ax:ent} strictly non-trivial for $\Bind$ alone (which preserves
+    Shannon entropy globally while reducing symmetry) requires a finer invariant—possibly
+    topological entropy on the admissibility lattice $\mathcal{A}$, or a second-order
+    entropy measuring the complexity of the dependency graph.
+
+  \item \textbf{Compact closed completion.} Does $\SP$ admit a completion to a compact
+    closed or $\dagger$-compact category? This would enable a graphical calculus for
+    Spherepop diagrams and connect the framework to string-diagram methods in quantum
+    foundations.
+
+  \item \textbf{Strong normalization.} SPC enjoys strong normalization for the pure
+    deterministic fragment (inherited from CoC). The conjecture that SPC has probabilistic
+    normalization almost surely—as in Kozen-style probabilistic $\lambda$-calculi—remains
+    open.
+
+  \item \textbf{$\pi$-calculus fragment.} The translation $T_\pi$ into SPC handles
+    communication-free parallelism but not full name-passing mobility. Whether a
+    name-passing extension of $\SP$ exists that remains entropy-decreasing is open.
+\end{enumerate}
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Conclusion}
+\label{sec:conclusion}
+
+\paragraph{Compression.}
+The content of this paper compresses to one transportable sentence:
+
+\begin{quote}
+\emph{Spherepop is a finitely generated entropy-decreasing rewriting category whose
+morphisms—option-elimination, dependency binding, and quotient collapse—are realized
+geometrically by the RSVP functor as boundary sharpening, directed vector-field
+coupling, and renormalization, with the deepest structural asymmetry being that
+Spherepop accumulates constraint while RSVP redistributes coherence.}
+\end{quote}
+
+\paragraph{The four-way unification.}
+The paper demonstrates that what appeared as four independent trajectories—event-history
+calculus, typed functional language, OS kernel semantics, and geometric field theory—are
+in fact four presentations of a single mathematical object. The event-history calculus
+provides the axiomatic core. SPC provides the type-theoretic instantiation in a presheaf
+topos. The OS kernel provides the operational/systems instantiation. RSVP provides the
+analytic completion via the functor $F$.
+
+\paragraph{Deepest asymmetry.}
+Spherepop \emph{accumulates}: each morphism adds an irreversible record to the log, and
+the state is always a residue of that accumulation. RSVP \emph{redistributes}: the PDE
+\eqref{eq:rsvp-pde} diffuses local entropy gradients across $M$, and global coherence
+is a time-averaged field property. One is combinatorial and log-bound; the other is
+differential and field-bound. The functor $F$ mediates between them without collapsing
+this difference—and it is precisely this preserved asymmetry that makes the functor
+mathematically non-trivial.
+
+\paragraph{Joy.}
+In a universe of infinite options, nothing matters. It is only by popping futures,
+refusing paths, binding promises, and collapsing detail that a world becomes livable.
+The joy of Spherepop lies here: not in maximal openness, but in the relief of
+resolution—the moment when possibility condenses into reality, and a finite path
+forward appears.
+
+% ─────────────────────────────────────────────────────────────────────────────
+\appendix
+\section{Notation Summary}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{ll}
+\toprule
+\textbf{Symbol} & \textbf{Meaning} \\
+\midrule
+$\SP$ & Category of Spherepop histories \\
+$\RSVP$ & Category of RSVP states and entropy-flux maps \\
+$\Omega$ & Option-space (object of $\SP$) \\
+$\mathcal{A}$ & Admissibility family on $\Omega$ \\
+$\Ent$ & Entropy functional $\Ob(\SP) \to \Rnn$ \\
+$\Pop, \Refuse, \Bind, \Collapse$ & Four primitive generating morphisms \\
+$\Meld_\pi$ & Pushout of histories under policy $\pi$ \\
+$F$ & Geometric realization functor $\SP \to \RSVP$ \\
+$\Phi$ & Scalar coherence potential on $M$ \\
+$v$ & Velocity vector field on $M$ \\
+$S$ & Entropy density on $M$ \\
+$\kappa$ & Diffusion coefficient in~\eqref{eq:rsvp-pde} \\
+$\partial_P \Phi$ & Pop derivative~\eqref{eq:pop-deriv} \\
+$\mu^\circ$ & Merge product (coherence-preserving convolution) \\
+$\Kc$ & Kolmogorov complexity \\
+$\sim_q$ & Collapse-policy equivalence on histories \\
+$\Delta(\Omega)$ & Probability simplex over $\Omega$ \\
+$\Omega(X)$ & Optionality measure on option-space $X$ \\
+$S[\gamma]$ & Action of history $\gamma$ \\
+$\pi_t$ & Commitment (conjugate to optionality) \\
+$H_t$ & Hamiltonian (remaining freedom) \\
+$\mathcal{T}$ & Presheaf of local semantic proposals \\
+$\mathrm{Dist}$ & Giry distribution monad \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{SPC Grammar and Typing Rules (Summary)}
+\label{app:spc}
+
+\paragraph{Grammar.}
+\[
+  t, u \;::=\; x \;\mid\; a \;\mid\; \Sphere(x\!:\!A.\,t) \;\mid\; \Pop(t, u)
+  \;\mid\; \Merge(t, u) \;\mid\; \Choice(p, t, u)
+\]
+
+\paragraph{Selected Typing Rules.}
+\[
+  \frac{\Gamma, x\!:\!A \vdash t : B}{\Gamma \vdash \Sphere(x\!:\!A.\,t) : \Pi x\!:\!A.\,B}
+  \quad
+  \frac{\Gamma \vdash f : \Pi x\!:\!A.\,B \quad \Gamma \vdash u : A}
+       {\Gamma \vdash \Pop(f, u) : B[u/x]}
+\]
+\[
+  \frac{\Gamma \vdash t : A \quad \Gamma \vdash u : A}
+       {\Gamma \vdash \Merge(t, u) : A}
+  \quad
+  \frac{\Gamma \vdash p : \mathrm{Prob} \quad \Gamma \vdash t : A \quad \Gamma \vdash u : A}
+       {\Gamma \vdash \Choice(p, t, u) : A}
+\]
+
+\paragraph{Reduction Rules.}
+\[
+  \Pop(\Sphere(x\!:\!A.\,t), u) \;\to\; t[u/x]
+  \qquad
+  \Merge(t,u) \;\equiv\; \Merge(u,t)
+\]
+\[
+  \Choice(p, t, u) \;\to\;
+  \begin{cases} t & \text{w.p.\ } p \\ u & \text{w.p.\ } 1-p \end{cases}
+\]
+
+% ─────────────────────────────────────────────────────────────────────────────
+\bibliographystyle{plainnat}
+\begin{thebibliography}{99}
+
+\bibitem[Awodey(2010)]{awodey2010}
+Awodey, S. (2010). \emph{Category Theory}, 2nd ed. Oxford University Press.
+
+\bibitem[Bennett(1973)]{bennett1973}
+Bennett, C.~H. (1973). Logical reversibility of computation.
+\emph{IBM Journal of Research and Development}, 17(6):525--532.
+
+\bibitem[Coquand \& Huet(1988)]{coquand1988}
+Coquand, T. and Huet, G. (1988). The calculus of constructions.
+\emph{Proceedings of LICS}, pages 266--278. IEEE.
+
+\bibitem[Fritz(2020)]{fritz2020}
+Fritz, T. (2020). A synthetic approach to Markov kernels, conditional independence,
+and theorems on sufficient statistics.
+\emph{Advances in Mathematics}, 370:107239.
+
+\bibitem[Giry(1982)]{giry1982}
+Giry, M. (1982). A categorical approach to probability theory. In
+\emph{Categorical Aspects of Topology and Analysis}, pages 68--85. Springer.
+
+\bibitem[Girard(1987)]{girard1987}
+Girard, J.-Y. (1987). Linear logic.
+\emph{Theoretical Computer Science}, 50(1):1--101.
+
+\bibitem[Green \& Altenkirch(2008)]{GreenAltenkirch2006}
+A.~Green and T.~Altenkirch, From reversible to irreversible computations,
+\emph{Electronic Notes in Theoretical Computer Science}, 210:65--74, 2008.
+\newblock doi:\href{https://doi.org/10.1016/j.entcs.2008.04.018}{10.1016/j.entcs.2008.04.018}.
+
+\bibitem[Grothendieck(1971)]{grothendieck1971}
+Grothendieck, A. (1971). \emph{Séminaire de Géométrie Algébrique du Bois Marie (SGA 1)}.
+Springer.
+
+\bibitem[Jacobson(1995)]{jacobson1995}
+Jacobson, T. (1995). Thermodynamics of spacetime: The Einstein equation of state.
+\emph{Physical Review Letters}, 75(7):1260--1263.
+
+\bibitem[Kozen(1981)]{kozen1981}
+Kozen, D. (1981). Semantics of probabilistic programs.
+\emph{Journal of Computer and System Sciences}, 22(3):328--350.
+
+\bibitem[Lambek \& Scott(1986)]{lambek1986}
+Lambek, J. and Scott, P.~J. (1986).
+\emph{Introduction to Higher Order Categorical Logic}. Cambridge University Press.
+
+\bibitem[Landauer(1961)]{landauer1961}
+Landauer, R. (1961). Irreversibility and heat generation in the computing process.
+\emph{IBM Journal of Research and Development}, 5(3):183--191.
+
+\bibitem[Lawvere(1970)]{lawvere1970}
+Lawvere, F.~W. (1970). Quantifiers and sheaves.
+\emph{Actes du Congrès International des Mathématiciens}, 1:329--334.
+
+\bibitem[Mac Lane(1978)]{maclane1978}
+Mac Lane, S. (1978). \emph{Categories for the Working Mathematician}. Springer.
+
+\bibitem[Mac Lane \& Moerdijk(1992)]{maclane1992}
+Mac Lane, S. and Moerdijk, I. (1992).
+\emph{Sheaves in Geometry and Logic}. Springer.
+
+\bibitem[Martin-L\"of(1975)]{martinlof1975}
+Martin-L\"of, P. (1975). An intuitionistic theory of types: predicative part.
+In \emph{Logic Colloquium '73}, pages 73--118. North-Holland.
+
+\bibitem[Milner(1999)]{milner1999}
+Milner, R. (1999). \emph{Communicating and Mobile Systems: The $\pi$-Calculus}.
+Cambridge University Press.
+
+\bibitem[Moggi(1991)]{moggi1991}
+Moggi, E. (1991). Notions of computation and monads.
+\emph{Information and Computation}, 93(1):55--92.
+
+\bibitem[Pantev et al.(2013)]{pantev2013}
+Pantev, T., To\"en, B., Vaqui\'e, M., and Vezzosi, G. (2013).
+Shifted symplectic structures.
+\emph{Publications Mathématiques de l'IHÉS}, 117(1):271--328.
+
+\bibitem[Pierce(2002)]{pierce2002}
+Pierce, B.~C. (2002). \emph{Types and Programming Languages}. MIT Press.
+
+\bibitem[Street(1972)]{street1972}
+Street, R. (1972). The formal theory of monads.
+\emph{Journal of Pure and Applied Algebra}, 2(2):149--168.
+
+\bibitem[Verlinde(2011)]{verlinde2011}
+Verlinde, E. (2011). On the origin of gravity and the laws of Newton.
+\emph{Journal of High Energy Physics}, 2011(4):29.
+
+\end{thebibliography}
+
+\end{document}

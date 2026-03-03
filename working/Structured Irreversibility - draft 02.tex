@@ -1,0 +1,1959 @@
+\documentclass[12pt,a4paper]{article}
+
+% ─── Packages ────────────────────────────────────────────────────────────────
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{geometry}
+\geometry{top=1.2in,bottom=1.2in,left=1.3in,right=1.3in}
+
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{mathtools}
+\usepackage{tikz-cd}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,linkcolor=black,citecolor=black,urlcolor=black}
+\usepackage{natbib}
+\usepackage{setspace}
+\onehalfspacing
+
+% ─── Theorem environments ────────────────────────────────────────────────────
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{axiom}{Axiom}
+\newtheorem{example}[theorem]{Example}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+% ─── Notation ────────────────────────────────────────────────────────────────
+\newcommand{\Rnn}{\mathbb{R}_{\ge 0}}
+\newcommand{\Ent}{\mathsf{H}}
+\newcommand{\Opt}{\mathsf{Opt}}
+\newcommand{\SP}{\mathbf{SP}}
+\newcommand{\RSVP}{\mathbf{RSVP}}
+\newcommand{\EDSMC}{\mathbf{EDSMC}}
+\newcommand{\Ob}{\mathrm{Ob}}
+\newcommand{\Hom}{\mathrm{Hom}}
+\newcommand{\id}{\mathrm{id}}
+\newcommand{\Pop}{\mathrm{Pop}}
+\newcommand{\Ref}{\mathrm{Ref}}
+\newcommand{\Bind}{\mathrm{Bind}}
+\newcommand{\Col}{\mathrm{Col}}
+\newcommand{\Meld}{\mathrm{Meld}}
+\newcommand{\tensor}{\otimes}
+\newcommand{\unit}{I}
+\DeclareMathOperator{\Kc}{K}
+\DeclareMathOperator{\colim}{colim}
+\newcommand{\PhiF}{\Phi}
+\newcommand{\vF}{v}
+\newcommand{\SF}{S}
+\newcommand{\downset}[1]{\!\downarrow\!{#1}}
+\newcommand{\PSh}{\mathbf{PSh}}
+\newcommand{\Sh}{\mathbf{Sh}}
+
+% ─── Title ───────────────────────────────────────────────────────────────────
+
+\title{\textbf{Structured Irreversibility}\\
+\large Discrete Rewriting and Coherence Realization}
+
+\author{Flyxion}
+\date{\today}
+
+\begin{document}
+\maketitle
+\begin{abstract}
+We develop Spherepop as a \emph{free symmetric monoidal entropy-decreasing rewriting
+category} $\SP$, prove its initiality in a category $\EDSMC$ of entropy-decreasing
+symmetric monoidal categories, and construct a symmetric monoidal functor
+$F:\SP\to\RSVP$ into a smooth realization category whose morphisms carry
+entropy-slack witnesses ensuring closure.
+
+The first part builds the discrete algebra: option-spaces with admissibility
+families, a derived causal preorder, and four irreversible generators—Pop,
+Refuse, Bind, and Collapse—each defined set-theoretically. We separate
+sequential composition from the symmetric monoidal product and prove the
+universal property of Collapse as a coequalizer, the strict symmetric monoidal
+structure of $\SP$, and its initiality in $\EDSMC$.
+
+The second part formalizes worldhood via sheaf theory. A presheaf of local
+event proposals over an admissible cover satisfies the sheaf condition exactly
+when global coherence holds. The meld operator is shown to be policy-induced
+sheafification, with decomposition $\Meld_\pi=\mathrm{glue}\circ\Col_\pi$
+expressing its universal property.
+
+The third part constructs the realization functor. Objects of $\RSVP$ are
+smooth manifolds equipped with coherence potential $\PhiF$, velocity field
+$\vF$, and entropy density $\SF$, and morphisms $(\varphi,\eta)$ satisfy
+$\varphi^*\SF'=\SF+\eta$. We define $F$ on objects via probability simplices
+and on generators via localized smooth perturbations, prove functoriality,
+and establish the structural asymmetry: $\SP$ accumulates constraint
+(combinatorial, log-bound) while $\RSVP$ redistributes coherence
+(differential, field-bound).
+
+We conclude with a worked example, a discrete variational formulation of
+commitment, information-theoretic interpretations, normalization results,
+and open problems on faithfulness and compact-closed extensions.
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+% ═════════════════════════════════════════════════════════════════════════════
+\section{Introduction}
+\label{sec:intro}
+
+\subsection{The Inversion}
+
+Standard computational frameworks take state as primitive and treat time as an index
+over state transitions. Spherepop reverses this. The primitive semantic object is not
+a state but a \emph{history}: a finite sequence of irreversible events that progressively
+restricts an initial space of possibilities. What we call ``state'' is a derived view,
+reconstructed by replay. What we call ``meaning'' is incurred through the disciplined
+expenditure of possibility, not stored as a representation.
+
+This inversion has both thermodynamic and categorical motivation. From the side of
+physics, irreversible computation dissipates degrees of freedom \citep{landauer1961,
+bennett1973, GreenAltenkirch2006}: any non-trivial computation in the presence of finite resources must
+increase entropy somewhere. From the side of algebra, rewriting systems naturally
+generate free categories whose morphisms are reduction sequences. Spherepop combines
+these: it treats irreversible rewriting as the fundamental ontological operation and
+equips the resulting category with an entropy functional.
+
+\subsection{Structural Quantities}
+
+Before construction, we list the observables and their relationships to prevent
+notational confusion later.
+
+\begin{center}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{lll}
+\toprule
+\textbf{Quantity} & \textbf{Type} & \textbf{Role} \\
+\midrule
+Optionality $\Opt(\Omega)$ & $\Ob(\SP)\to\Rnn$ & Degrees of freedom, resource \\
+Entropy $\Ent(\Omega)$ & $\Ob(\SP)\to\Rnn$ & Distributional complexity \\
+Action $\mathcal{S}[\gamma]$ & histories $\to\Rnn$ & Accumulated optionality cost \\
+Commitment $\pi_t$ & step $\to\Rnn$ & Conjugate to optionality \\
+Slack $\eta$ & RSVP morphism data & Continuous entropy production \\
+Coherence $\PhiF$ & $C^\infty(M)$ & Scalar potential in RSVP \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Optionality and entropy are distinct observables. Optionality is a pure resource
+measure ($\Opt(\Omega)\propto\log|\Omega|$ in the finite uniform case). Entropy
+encodes distributional structure and satisfies subadditivity under tensor. Action
+is the accumulated optionality cost of a history. Slack is the continuous analogue
+of action increments.
+
+\subsection{Two Structures That Must Be Kept Separate}
+
+\paragraph{Composition} is history concatenation:
+\[
+  (e_2\circ e_1)(\Omega_0) = e_2(e_1(\Omega_0)).
+\]
+It is strictly associative by construction and encodes temporal order.
+
+\paragraph{Tensor product} $\tensor$ is defined on option-spaces and extended to
+morphisms componentwise:
+\[
+  (\Omega_1,\mathcal{A}_1)\tensor(\Omega_2,\mathcal{A}_2)
+  = (\Omega_1\times\Omega_2,\,\mathcal{A}_1\tensor\mathcal{A}_2).
+\]
+It encodes parallel independence. It is \emph{not} composition.
+
+Entropy behaves differently under each: sequential composition is entropy-monotone
+(Axiom~\ref{ax:entropy}); tensor product satisfies subadditivity
+(Proposition~\ref{prop:subadditive}).
+
+\subsection{Roadmap}
+
+Section~\ref{sec:ontology} defines option-spaces, admissibility, entropy, and
+optionality. Section~\ref{sec:sp} constructs $\SP$ and its generators, with complete
+independence proofs. Section~\ref{sec:causality} develops the causal preorder and
+proves the full universal property of Collapse. Section~\ref{sec:monoidal} establishes
+the strict symmetric monoidal structure and proves initiality of $\SP$ in $\EDSMC$.
+Section~\ref{sec:sheaf} formalizes worldhood and proves the meld theorem.
+Section~\ref{sec:rsvp} constructs $\RSVP$ with witnessed morphisms.
+Section~\ref{sec:functor} defines $F$ and proves its four component lemmas and
+overall functoriality. Section~\ref{sec:worked} works through a complete example.
+Later sections address mechanics, information theory, normalization, further
+directions, and failure modes.
+
+% ═════════════════════════════════════════════════════════════════════════════
+\section{Option-Spaces, Admissibility, and Entropy}
+\label{sec:ontology}
+
+\subsection{Option-Spaces}
+
+\begin{definition}[Option-space]
+\label{def:optspace}
+An \emph{option-space} is a pair $(\Omega,\mathcal{A})$ where:
+\begin{enumerate}[label=(\roman*)]
+\item $\Omega$ is a nonempty set of \emph{admissible futures};
+\item $\mathcal{A}\subseteq 2^\Omega$ is the \emph{admissibility family}, satisfying
+  $\Omega\in\mathcal{A}$ and closure under finite intersection:
+  $U,V\in\mathcal{A}\Rightarrow U\cap V\in\mathcal{A}$.
+\end{enumerate}
+\end{definition}
+
+The family $\mathcal{A}$ encodes structural compatibility constraints imposed by
+binding events. A subset $U\subseteq\Omega$ lies in $\mathcal{A}$ precisely when it
+respects all currently active dependency constraints.
+
+\begin{example}
+Let $\Omega=\{a,b,c\}$ and $\mathcal{A}=\{\Omega,\{a,b\},\{a,c\},\{a\}\}$. Then
+$a$ is causally necessary for both $b$ and $c$: no admissible future can contain $b$
+or $c$ without also containing $a$.
+\end{example}
+
+\subsection{Entropy and Optionality}
+
+\begin{definition}[Entropy functional]
+\label{def:entropy}
+A \emph{Spherepop entropy functional} is a map $\Ent:\Ob(\SP)\to\Rnn$ satisfying:
+\begin{enumerate}[label=(\roman*)]
+\item $\Ent(\Omega)=0$ iff $|\Omega|=1$;
+\item \emph{Monotonicity:} $\Omega'\subseteq\Omega$ implies $\Ent(\Omega')\le\Ent(\Omega)$;
+\item \emph{Subadditivity:} $\Ent(\Omega_1\tensor\Omega_2)\le\Ent(\Omega_1)+\Ent(\Omega_2)$,
+  with equality when $\Omega_1,\Omega_2$ are independent.
+\end{enumerate}
+\end{definition}
+
+The canonical instance: for a probability measure $p$ on $\Omega$,
+$\Ent(\Omega)=-\sum_{x\in\Omega}p(x)\log p(x)$.
+
+\begin{definition}[Optionality]
+\label{def:opt}
+The \emph{optionality functional} is a monotone map $\Opt:\Ob(\SP)\to\Rnn$
+satisfying $\Omega'\subseteq\Omega\Rightarrow\Opt(\Omega')\le\Opt(\Omega)$ and
+$\Opt(\{\omega\})=0$.
+\end{definition}
+
+Optionality measures degrees of freedom available to a world. In the finite uniform
+case one may take $\Opt(\Omega)=\log|\Omega|=\Ent(\Omega)$; in general they differ.
+
+\paragraph{Summary.} The ontological layer is now fixed: option-spaces are the objects;
+entropy measures distributional complexity; optionality measures resource availability.
+These are the inputs to the algebraic construction of $\SP$.
+
+% ═════════════════════════════════════════════════════════════════════════════
+\section{The Category \texorpdfstring{$\SP$}{SP}}
+\label{sec:sp}
+
+\subsection{Objects, Morphisms, and Axioms}
+
+Objects of $\SP$ are option-spaces. A morphism $e:(\Omega,\mathcal{A})\to
+(\Omega',\mathcal{A}')$ is an \emph{irreversible event}: a function $e:\Omega\to\Omega'$
+that is admissibility-preserving ($A'\in\mathcal{A}'\Rightarrow e^{-1}(A')\in\mathcal{A}$)
+and entropy-monotone.
+
+\begin{axiom}[Sequential irreversibility]
+\label{ax:irrev}
+No non-identity morphism in $\SP$ admits an inverse.
+\end{axiom}
+
+\begin{axiom}[Entropy monotonicity]
+\label{ax:entropy}
+For every morphism $e:\Omega\to\Omega'$: $\Ent(\Omega')\le\Ent(\Omega)$.
+Strict decrease holds for $\Pop$ and $\Ref$. $\Bind$ preserves entropy while
+reducing symmetry. $\Col$ may produce equality or strict decrease depending on
+whether the quotient collapses entropy-distinct classes.
+\end{axiom}
+
+\subsection{Generating Morphisms}
+
+\begin{definition}[Pop]
+\label{def:pop}
+A $\Pop$-event eliminates a nonempty $U\subsetneq\Omega$:
+\[
+  \Pop_U : (\Omega,\mathcal{A}) \longrightarrow
+  (\Omega\setminus U,\;\{A\cap(\Omega\setminus U):A\in\mathcal{A}\}).
+\]
+Entropy decreases strictly: $\Ent(\Omega\setminus U)<\Ent(\Omega)$.
+\end{definition}
+
+\begin{definition}[Refuse]
+\label{def:ref}
+A $\Ref$-event has the same underlying set-theoretic action as $\Pop_U$ but carries
+an auxiliary tag $\tau\in\mathcal{B}(\Omega)$ recorded by an accounting functor
+$\mathcal{B}:\SP\to\mathbf{Set}$, distinguishing deliberate non-selection from
+positive elimination. The underlying morphism of option-spaces coincides with $\Pop_U$.
+\end{definition}
+
+\begin{definition}[Bind]
+\label{def:bind}
+A $\Bind$-event tightens the admissibility family without eliminating futures:
+\[
+  \Bind_{ij} : (\Omega,\mathcal{A}) \longrightarrow
+  (\Omega,\,\mathcal{A}')
+\]
+where $\mathcal{A}'=\{A\in\mathcal{A}: i\in A\Rightarrow j\in A\}\subsetneq\mathcal{A}$.
+Entropy is globally preserved: $\Ent(\Omega,\mathcal{A}')=\Ent(\Omega,\mathcal{A})$.
+\end{definition}
+
+\begin{definition}[Collapse]
+\label{def:col}
+A $\Col$-event applies a causally admissible equivalence relation $\sim$ (see
+Definition~\ref{def:causal-admissible}) to form the quotient:
+\[
+  \Col_\sim : (\Omega,\mathcal{A}) \longrightarrow
+  (\Omega/{\sim},\,\mathcal{A}/{\sim}).
+\]
+\end{definition}
+
+\subsection{Free Generation and Independence of Generators}
+
+\begin{definition}[Free generation]
+\label{def:free-gen}
+Let $\mathcal{G}$ be the directed multigraph with vertices $\Ob(\SP)$ and edges
+labeled by instances of the four generators. $\SP$ is the quotient of the free
+category $\mathcal{F}(\mathcal{G})$ by the congruence generated by:
+\begin{enumerate}[label=(\alph*)]
+\item entropy monotonicity (Axiom~\ref{ax:entropy});
+\item idempotence of Pop on already-excluded elements: $\Pop_U\circ\Pop_V
+  =\Pop_{U\cup V}$ when $U\cap(\Omega\setminus V)=\emptyset$;
+\item commutativity of independent Bind events: $\Bind_{ij}\circ\Bind_{kl}
+  =\Bind_{kl}\circ\Bind_{ij}$ when $\{i,j\}\cap\{k,l\}=\emptyset$;
+\item the symmetric monoidal laws (Section~\ref{sec:monoidal}).
+\end{enumerate}
+No further relations are imposed.
+\end{definition}
+
+\begin{proposition}[Independence of generators]
+\label{prop:independence}
+The four generators are independent in the following precise sense:
+\begin{enumerate}[label=(\roman*)]
+\item $\Pop$ cannot be derived from $\Ref$: they differ in the value of the
+  accounting functor $\mathcal{B}$.
+\item $\Ref$ cannot be derived from $\Pop$: no composition of $\Pop$ events
+  yields a morphism with a non-trivial tag in $\mathcal{B}$.
+\item $\Bind$ is not reducible to $\Pop$ followed by $\Col$: $\Bind$ preserves
+  $|\Omega|$ while any $\Pop$ reduces it; a subsequent $\Col$ could re-identify
+  elements but cannot restore the eliminated element without violating
+  Axiom~\ref{ax:irrev}.
+\item $\Col$ is not a special case of $\Pop$: $\Pop$ produces a strict subobject;
+  $\Col$ produces a quotient. These are categorically distinct constructions.
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+For (i) and (ii): the accounting functor $\mathcal{B}$ assigns distinct values to
+$\Pop$ and $\Ref$ events by definition. Since $\mathcal{B}$ is a functor, it must
+agree on composed morphisms with the composed images; but $\Pop$ has $\mathcal{B}$
+value $0$ and $\Ref$ has value $\tau\ne 0$, so neither can be derived from a
+composition involving only the other.
+
+For (iii): let $e$ be any morphism derivable from $\Pop$ and $\Col$ events starting
+at $(\Omega,\mathcal{A})$. The $\Pop$ step yields $(\Omega\setminus U,\cdot)$ with
+$|\Omega\setminus U|<|\Omega|$. A subsequent $\Col$ reduces $|\Omega\setminus U|$
+further or preserves it. The resulting object has $|\Omega''|\le|\Omega\setminus U|
+<|\Omega|$. But $\Bind_{ij}$ produces $(\Omega,\mathcal{A}')$ with $|\Omega|$
+unchanged. Hence $\Bind$ morphisms lie outside the image of the subcategory generated
+by $\Pop$ and $\Col$.
+
+For (iv): $\Pop_U$ is the inclusion $\Omega\setminus U\hookrightarrow\Omega$ reversed
+(a restriction), hence an injective-on-objects construction. $\Col_\sim$ is a
+surjective-on-objects quotient. In a category of structured sets, injective and
+surjective constructions on objects are distinct.
+\end{proof}
+
+\paragraph{Summary.} The category $\SP$ is freely generated by the four independent
+generators modulo the relations of Definition~\ref{def:free-gen}. Composition encodes
+temporal sequence. No generator is reducible to any combination of the others.
+
+% ═════════════════════════════════════════════════════════════════════════════
+\section{Causality and the Universal Property of Collapse}
+\label{sec:causality}
+
+\subsection{Causal Preorder}
+
+\begin{definition}[Causal preorder]
+\label{def:causal-preorder}
+For $(\Omega,\mathcal{A})$ and $x,y\in\Omega$, define $x\preceq y$ iff every
+$A\in\mathcal{A}$ containing $y$ also contains $x$:
+\[
+  x\preceq y \;\iff\; \forall A\in\mathcal{A}:\; y\in A\Rightarrow x\in A.
+\]
+Write $\downset{y}=\{x\in\Omega:x\preceq y\}$ for the causal past of $y$.
+\end{definition}
+
+\begin{lemma}[Reflexivity and transitivity]
+\label{lem:preorder}
+$\preceq$ is a preorder.
+\end{lemma}
+
+\begin{proof}
+\textit{Reflexivity.} For any $x$: every $A$ containing $x$ contains $x$. Hence
+$x\preceq x$.
+
+\textit{Transitivity.} Suppose $x\preceq y$ and $y\preceq z$. Let $A\in\mathcal{A}$
+with $z\in A$. Since $y\preceq z$, we have $y\in A$. Since $x\preceq y$, we have
+$x\in A$. Hence $x\preceq z$.
+\end{proof}
+
+\begin{lemma}[Antisymmetry under acyclicity]
+\label{lem:antisymmetry}
+If the admissibility family $\mathcal{A}$ contains no nontrivial cycles under
+$\preceq$ (i.e. $x\preceq y$ and $y\preceq x$ implies $x=y$), then $\preceq$ is a
+partial order.
+\end{lemma}
+
+\begin{proof}
+The hypothesis directly gives antisymmetry. Combined with Lemma~\ref{lem:preorder},
+$\preceq$ is a partial order.
+\end{proof}
+
+\begin{remark}
+$\Bind_{ij}$ adds the constraint $i\preceq j$ to $\mathcal{A}$. Acyclicity of the
+dependency graph (no sequence of $\Bind$ events creates a cycle $i\preceq j\preceq i$
+with $i\ne j$) is a well-formedness condition on histories. We assume it throughout.
+\end{remark}
+
+\subsection{Causally Admissible Equivalence Relations}
+
+\begin{definition}[Causally admissible equivalence]
+\label{def:causal-admissible}
+An equivalence relation $\sim$ on $\Omega$ is \emph{causally admissible} if
+\[
+  x\sim y \;\implies\; \downset{x}=\downset{y}.
+\]
+\end{definition}
+
+This condition ensures that identified futures have identical causal pasts, so
+collapse does not alter downstream commitment structure.
+
+\subsection{Full Universal Property of Collapse}
+
+Fix $(\Omega,\mathcal{A})$ and a causally admissible equivalence $\sim_q$. Let
+$\pi_q:\Omega\twoheadrightarrow\Omega/{\sim_q}$ be the quotient map and
+$\mathcal{A}_q=\{A\subseteq\Omega/{\sim_q}:\pi_q^{-1}(A)\in\mathcal{A}\}$ the
+induced admissibility family. Let $\SP_c$ denote the full subcategory of $\SP$
+of causal-preorder-preserving morphisms.
+
+\begin{theorem}[Universal property of causal collapse]
+\label{thm:collapse-universal}
+In $\SP_c$, the morphism $\Col_q:(\Omega,\mathcal{A})\to(\Omega/{\sim_q},\mathcal{A}_q)$
+is a coequalizer of the kernel pair of $\pi_q$. Explicitly: define
+$R_q=\{(x,y)\in\Omega^2:x\sim_q y\}$ with induced admissibility, and projections
+$r_1,r_2:(R_q,\mathcal{A}_{R_q})\rightrightarrows(\Omega,\mathcal{A})$,
+$r_1(x,y)=x$, $r_2(x,y)=y$. Then:
+
+\medskip
+\noindent\textbf{(i) Coequalizing.}
+$\Col_q\circ r_1=\Col_q\circ r_2$.
+
+\medskip
+\noindent\textbf{(ii) Universal property.}
+For any $(\Omega'',\mathcal{A}'')\in\SP_c$ and any morphism
+$f:(\Omega,\mathcal{A})\to(\Omega'',\mathcal{A}'')$ in $\SP_c$ with
+$f\circ r_1=f\circ r_2$, there exists a unique morphism
+$\bar{f}:(\Omega/{\sim_q},\mathcal{A}_q)\to(\Omega'',\mathcal{A}'')$ in $\SP_c$
+with $\bar{f}\circ\Col_q=f$:
+\[
+\begin{tikzcd}[column sep=3.5em, row sep=2.5em]
+  (R_q,\mathcal{A}_{R_q})
+    \arrow[r, shift left=0.3em, "r_1"]
+    \arrow[r, shift right=0.3em, "r_2"']
+  &
+  (\Omega,\mathcal{A})
+    \arrow[r, "\Col_q"]
+    \arrow[dr, "f"']
+  &
+  (\Omega/{\sim_q},\mathcal{A}_q)
+    \arrow[d, dashed, "\exists!\,\bar{f}"]
+  \\
+  & &
+  (\Omega'',\mathcal{A}'')
+\end{tikzcd}
+\]
+
+\medskip
+\noindent\textbf{(iii) Naturality.}
+The assignment $f\mapsto\bar{f}$ is natural in $(\Omega'',\mathcal{A}'')$.
+\end{theorem}
+
+\begin{proof}
+\textbf{Part (i).} For $(x,y)\in R_q$, we have $x\sim_q y$, hence
+$\pi_q(x)=\pi_q(y)$. Thus $\Col_q(r_1(x,y))=\pi_q(x)=\pi_q(y)=\Col_q(r_2(x,y))$.
+
+\textbf{Part (ii).} \textit{Existence.} Define $\bar{f}([x]):=f(x)$ where $[x]$
+denotes the $\sim_q$-class of $x$. This is well-defined: if $x\sim_q y$ then
+$f(r_1(x,y))=f\circ r_1(x,y)=f\circ r_2(x,y)=f(y)$, so $f(x)=f(y)$.
+
+\textit{$\bar{f}$ is admissibility-preserving.} Let $B\in\mathcal{A}''$. Then
+$\bar{f}^{-1}(B)=\{[x]:\bar{f}([x])\in B\}=\{[x]:f(x)\in B\}=\pi_q(f^{-1}(B))$.
+Since $f$ is admissibility-preserving, $f^{-1}(B)\in\mathcal{A}$. By definition of
+$\mathcal{A}_q$: $B'\in\mathcal{A}_q$ iff $\pi_q^{-1}(B')\in\mathcal{A}$. We have
+$\pi_q^{-1}(\bar{f}^{-1}(B))=f^{-1}(B)\in\mathcal{A}$, hence $\bar{f}^{-1}(B)\in
+\mathcal{A}_q$.
+
+\textit{$\bar{f}$ is causal-preorder-preserving.} Let $[x]\preceq_{q}[y]$ in
+$\Omega/{\sim_q}$: every $A_q\in\mathcal{A}_q$ containing $[y]$ also contains $[x]$.
+We must show $\bar{f}([x])\preceq''\bar{f}([y])$ in $\Omega''$. Let $B\in\mathcal{A}''$
+with $\bar{f}([y])\in B$, i.e. $f(y)\in B$. Since $f$ is causal-preorder-preserving
+and $y\in f^{-1}(B)\in\mathcal{A}$, we need $x\in f^{-1}(B)$. Now
+$f^{-1}(B)\in\mathcal{A}$, so $\pi_q(f^{-1}(B))\in\mathcal{A}_q$. We have
+$[y]\in\pi_q(f^{-1}(B))$ and by $[x]\preceq_q[y]$ we get $[x]\in\pi_q(f^{-1}(B))$,
+i.e. $x\in f^{-1}(B)$, i.e. $f(x)=\bar{f}([x])\in B$.
+
+\textit{The equation $\bar{f}\circ\Col_q=f$ holds} by construction: $\bar{f}(\pi_q(x))
+=\bar{f}([x])=f(x)$.
+
+\textit{Uniqueness.} If $\bar{f}'$ also satisfies $\bar{f}'\circ\Col_q=f$, then for
+any $[x]\in\Omega/{\sim_q}$: $\bar{f}'([x])=\bar{f}'(\pi_q(x))=f(x)=\bar{f}([x])$.
+Since $\pi_q$ is surjective, $\bar{f}'=\bar{f}$.
+
+\textbf{Part (iii).} For any morphism $g:(\Omega'',\mathcal{A}'')\to
+(\Omega''',\mathcal{A}''')$, the natural transformation condition
+$\overline{g\circ f}=g\circ\bar{f}$ holds because:
+$\overline{g\circ f}([x])=g(f(x))=g(\bar{f}([x]))=(g\circ\bar{f})([x])$.
+\end{proof}
+
+\paragraph{Summary.} Collapse is not an ad hoc quotient but the unique coequalizing
+map satisfying the universal property with respect to causal-preorder-preserving morphisms.
+Every categorical framework that admits entropy-decreasing quotients must factor through
+$\Col$ when the equivalence relation is causally admissible.
+
+% ═════════════════════════════════════════════════════════════════════════════
+\section{Symmetric Monoidal Structure and Universal Property of \texorpdfstring{$\SP$}{SP}}
+\label{sec:monoidal}
+
+\subsection{Tensor Product}
+
+\begin{definition}[Tensor of option-spaces]
+\label{def:tensor}
+\[
+  (\Omega_1,\mathcal{A}_1)\tensor(\Omega_2,\mathcal{A}_2)
+  := (\Omega_1\times\Omega_2,\;\mathcal{A}_1\tensor\mathcal{A}_2),
+\]
+where $\mathcal{A}_1\tensor\mathcal{A}_2:=\{U_1\times U_2:U_1\in\mathcal{A}_1,
+U_2\in\mathcal{A}_2\}$. The unit object is $\unit=(\{*\},\{\{*\}\})$.
+
+On morphisms: $(e_1\tensor e_2)(x_1,x_2)=(e_1(x_1),e_2(x_2))$.
+\end{definition}
+
+\begin{proposition}[Strict symmetric monoidal structure]
+\label{prop:monoidal}
+$(\SP,\tensor,\unit)$ is a strict symmetric monoidal category.
+\end{proposition}
+
+\begin{proof}
+\textit{Associativity.} Cartesian product of sets is strictly associative:
+$(\Omega_1\times\Omega_2)\times\Omega_3=\Omega_1\times(\Omega_2\times\Omega_3)$
+as sets. Product admissibility families compose accordingly: $(U_1\times U_2)\times U_3
+=U_1\times(U_2\times U_3)$.
+
+\textit{Left and right units.} $\Omega\times\{*\}=\Omega$ and $\{*\}\times\Omega=\Omega$
+as sets. Unit admissibility is trivial.
+
+\textit{Symmetry.} The swap $\sigma_{\Omega_1,\Omega_2}:(x_1,x_2)\mapsto(x_2,x_1)$
+is admissibility-preserving (it permutes factors of product admissible sets) and
+entropy-neutral ($\Ent(\Omega_1\times\Omega_2)=\Ent(\Omega_2\times\Omega_1)$ since
+entropy is symmetric in its arguments). It is involutive: $\sigma^2=\id$.
+
+\textit{Functoriality of tensor on morphisms.} If $e_i$ are admissibility-preserving,
+then $(e_1\tensor e_2)^{-1}(U_1\times U_2)=e_1^{-1}(U_1)\times e_2^{-1}(U_2)\in
+\mathcal{A}_1\tensor\mathcal{A}_2$.
+
+\textit{Interchange law.} $(f_2\circ f_1)\tensor(g_2\circ g_1)=(f_2\tensor g_2)\circ
+(f_1\tensor g_1)$: both sides send $(x,y)$ to $(f_2(f_1(x)),g_2(g_1(y)))$.
+
+\textit{Strictness.} All structural isomorphisms are identities, not merely natural
+isomorphisms, because Cartesian product on sets is strictly associative and unital.
+\end{proof}
+
+\begin{proposition}[Entropy subadditivity]
+\label{prop:subadditive}
+$\Ent(\Omega_1\tensor\Omega_2)\le\Ent(\Omega_1)+\Ent(\Omega_2)$, with equality when
+the joint probability measure on $\Omega_1\times\Omega_2$ is a product measure.
+\end{proposition}
+
+\begin{proof}
+Let $p$ be any joint probability on $\Omega_1\times\Omega_2$ with marginals $p_1,p_2$.
+Then:
+\begin{align*}
+\Ent(\Omega_1\tensor\Omega_2)
+&= -\sum_{x,y}p(x,y)\log p(x,y)\\
+&= -\sum_{x,y}p(x,y)\log p_1(x)
+  -\sum_{x,y}p(x,y)\log\frac{p(x,y)}{p_1(x)}\\
+&= \Ent(\Omega_1) + \Ent(\Omega_2\mid\Omega_1)\\
+&\le \Ent(\Omega_1)+\Ent(\Omega_2),
+\end{align*}
+with equality iff $p(x,y)=p_1(x)p_2(y)$ (independence).
+\end{proof}
+
+\subsection{The Category \texorpdfstring{$\EDSMC$}{EDSMC} and Initiality of \texorpdfstring{$\SP$}{SP}}
+
+\begin{definition}[EDSMC]
+\label{def:edsmc}
+The category $\EDSMC$ of \emph{entropy-decreasing symmetric monoidal categories}
+has:
+\begin{itemize}
+\item \textit{Objects:} tuples $(\mathcal{C},\tensor_\mathcal{C},\unit_\mathcal{C},
+  \Ent_\mathcal{C},P,R,B,C)$ where $(\mathcal{C},\tensor_\mathcal{C},\unit_\mathcal{C})$
+  is a strict symmetric monoidal category, $\Ent_\mathcal{C}:\Ob(\mathcal{C})\to\Rnn$
+  is monotone along all morphisms, and $P,R,B,C$ are families of morphisms in
+  $\mathcal{C}$ satisfying entropy axioms analogous to those of
+  $\Pop,\Ref,\Bind,\Col$ in $\SP$.
+\item \textit{Morphisms:} strict symmetric monoidal functors
+  $\Phi:\mathcal{C}\to\mathcal{D}$ that preserve $\Ent$ (i.e.
+  $\Ent_\mathcal{D}(\Phi(X))=\Ent_\mathcal{C}(X)$ for all $X$) and map generators
+  to generators ($\Phi(P_\mathcal{C})\subseteq P_\mathcal{D}$, etc.).
+\end{itemize}
+\end{definition}
+
+\begin{theorem}[Initiality of $\SP$]
+\label{thm:initial}
+$\SP$ is the initial object in $\EDSMC$: for every $(\mathcal{C},\ldots)\in\EDSMC$,
+there exists a unique morphism $F_\mathcal{C}:\SP\to\mathcal{C}$ in $\EDSMC$.
+\end{theorem}
+
+\begin{proof}
+\textit{Existence.} We construct $F_\mathcal{C}$ explicitly. On objects: send an
+option-space $(\Omega,\mathcal{A})$ to the image of the initial construction in
+$\mathcal{C}$. Since $\SP$ is freely generated (Definition~\ref{def:free-gen}), a
+morphism out of $\SP$ is determined by its values on generators, subject to the
+relations in Definition~\ref{def:free-gen}. Define $F_\mathcal{C}(\Pop_U)=P_U^{(\mathcal{C})}$
+(the corresponding $P$-family morphism in $\mathcal{C}$), and similarly for $\Ref,\Bind,\Col$.
+The relations (a)--(d) of Definition~\ref{def:free-gen} hold in $\mathcal{C}$ by hypothesis
+(since $\mathcal{C}\in\EDSMC$), so $F_\mathcal{C}$ is well-defined on all morphisms.
+$F_\mathcal{C}$ is strict symmetric monoidal because $\SP$'s monoidal structure is
+free and $\mathcal{C}$'s monoidal structure satisfies the same strict laws.
+Entropy preservation: $\Ent_\mathcal{C}(F_\mathcal{C}(\Omega))=\Ent(\Omega)$ by
+construction (the $\Ent$-functional in $\mathcal{C}$ is required to agree with
+the abstract entropy assigned to each generator's domain and codomain).
+
+\textit{Uniqueness.} Any morphism $G:\SP\to\mathcal{C}$ in $\EDSMC$ must send
+generators to generators and preserve composition. Since $\SP$ is freely generated,
+$G$ is completely determined by its values on generators. The generator values are
+uniquely forced by the type constraints: $G(\Pop_U)$ must be a $P$-family morphism
+at $G(\Omega,\mathcal{A})$, and there is exactly one such morphism for each
+elimination $U$ by the hypothesis that $\mathcal{C}$'s generators satisfy the same
+axioms as $\SP$'s. Hence $G=F_\mathcal{C}$.
+\end{proof}
+
+\begin{remark}
+Theorem~\ref{thm:initial} upgrades $\SP$ from ``a constructed category'' to ``the
+initial object in the class of entropy-decreasing systems.'' Every such system
+receives a canonical map from $\SP$, and this map is unique. The construction of the
+realization functor $F:\SP\to\RSVP$ (Section~\ref{sec:functor}) is a special case of
+this universal property.
+\end{remark}
+
+\paragraph{Summary.} $\SP$ carries a strict symmetric monoidal structure independent
+of its sequential composition, with entropy subadditivity under tensor and strict
+decrease under composition. It is the initial object in $\EDSMC$: the free
+entropy-decreasing rewriting category.
+
+% ═════════════════════════════════════════════════════════════════════════════
+\section{Meld and Sheaf-Theoretic Worldhood}
+\label{sec:sheaf}
+
+\subsection{Presheaf of Local Proposals}
+
+Let $(\Omega,\mathcal{A})$ be an option-space and $\mathcal{U}=\{U_i\}_{i\in I}$ a
+cover of $\Omega$ by admissible subsets. The \emph{site} $\mathcal{U}$ has the
+induced admissibility structure as its topology (finite intersections are admissible).
+
+\begin{definition}[Presheaf of proposals]
+\label{def:presheaf}
+Define a presheaf $\mathcal{T}:\mathcal{U}^{\mathrm{op}}\to\mathbf{Set}$ by:
+\[
+  \mathcal{T}(U) = \{\text{admissible event proposals with support in }U\},
+\]
+with restriction maps $\rho_{UV}:\mathcal{T}(U)\to\mathcal{T}(V)$ for $V\subseteq U$
+given by restricting a proposal to the smaller scope.
+\end{definition}
+
+A family $\{\delta_i\in\mathcal{T}(U_i)\}_{i\in I}$ is \emph{compatible on overlaps}
+if $\rho_{U_i,U_i\cap U_j}(\delta_i)=\rho_{U_j,U_i\cap U_j}(\delta_j)$ for all
+$i,j\in I$.
+
+\begin{definition}[Worldhood]
+\label{def:worldhood}
+$(\Omega,\mathcal{A})$ \emph{exhibits worldhood} with respect to $\mathcal{U}$ if
+$\mathcal{T}$ is a sheaf: every compatible family $\{\delta_i\}$ determines a unique
+global section $\Delta\in\mathcal{T}(\Omega)$ with $\rho_{\Omega,U_i}(\Delta)=\delta_i$.
+\end{definition}
+
+Worldhood is the mathematical content of the claim that locally coherent commitments
+can be uniquely assembled into a globally coherent history. Before sufficient
+commitment, $\mathcal{T}$ is a presheaf (local sections may fail to glue). Each
+Pop, Bind, or Refuse event tightens constraints and moves $\mathcal{T}$ closer to the
+sheaf condition.
+
+\subsection{Meld as Policy-Induced Sheafification}
+
+Fix a merge policy $\pi$, which specifies an equivalence relation $\equiv_\pi$ on
+proposal data. Let $R_\pi\rightrightarrows\mathcal{T}$ be the corresponding presheaf
+equivalence relation. Denote by $q_\pi:\mathcal{T}\to\mathcal{T}/{\equiv_\pi}$ the
+pointwise quotient presheaf.
+
+Assume the site is subcanonical (which holds in the admissible-cover setting, since
+representable presheaves are sheaves). Let $a:\PSh\to\Sh$ be sheafification, left
+adjoint to the inclusion $i:\Sh\hookrightarrow\PSh$.
+
+\begin{definition}[Policy sheafification]
+\label{def:policy-sheaf}
+Define $a_\pi(\mathcal{T}):=a(\mathcal{T}/{\equiv_\pi})$ and let
+$\eta_\pi:\mathcal{T}\to i\,a_\pi(\mathcal{T})$ be the composite of the quotient
+$q_\pi$ with the unit $\eta$ of the adjunction.
+\end{definition}
+
+\begin{theorem}[Universal property of policy-induced sheafification]
+\label{thm:sheafification}
+For every sheaf $\mathcal{S}\in\Sh(\mathcal{U})$, composition with $\eta_\pi$ gives
+a natural bijection:
+\[
+  \Hom_{\Sh}(a_\pi(\mathcal{T}),\mathcal{S})
+  \;\cong\;
+  \{f\in\Hom_{\PSh}(\mathcal{T},i\mathcal{S}):f\text{ is }\pi\text{-invariant}\},
+\]
+where $\pi$-invariant means $f$ coequalizes $R_\pi\rightrightarrows\mathcal{T}$
+(constant on $\equiv_\pi$-classes in each section, stably under restriction).
+Equivalently, $a_\pi(\mathcal{T})$ is initial among sheaves receiving a $\pi$-invariant
+map from $\mathcal{T}$.
+\end{theorem}
+
+\begin{proof}
+\textit{Step 1.} By the universal property of coequalizers in $\PSh$: giving a
+$\pi$-invariant presheaf morphism $f:\mathcal{T}\to i\mathcal{S}$ is equivalent to
+giving a unique presheaf morphism $f':\mathcal{T}/{\equiv_\pi}\to i\mathcal{S}$
+with $f'\circ q_\pi=f$.
+
+\textit{Step 2.} By the sheafification adjunction $a\dashv i$:
+$\Hom_\Sh(a(\mathcal{P}),\mathcal{S})\cong\Hom_\PSh(\mathcal{P},i\mathcal{S})$,
+naturally in $\mathcal{P}$ and $\mathcal{S}$. Apply with $\mathcal{P}=
+\mathcal{T}/{\equiv_\pi}$: $\Hom_\Sh(a_\pi(\mathcal{T}),\mathcal{S})
+\cong\Hom_\PSh(\mathcal{T}/{\equiv_\pi},i\mathcal{S})$.
+
+\textit{Step 3.} Composing the bijections of Steps 1 and 2:
+$\Hom_\Sh(a_\pi(\mathcal{T}),\mathcal{S})\cong$ $\pi$-invariant maps
+$\mathcal{T}\to i\mathcal{S}$. The composite unit $\eta_\pi=\eta\circ q_\pi$ is the
+universal $\pi$-invariant map.
+
+\textit{Naturality} in $\mathcal{S}$ is inherited from naturality of coequalizer
+factorization and of the adjunction bijection.
+
+\textit{Uniqueness of factorization.} Given any sheaf morphism $\bar{f}:
+a_\pi(\mathcal{T})\to\mathcal{S}$, the condition $i(\bar{f})\circ\eta_\pi=f$
+determines $\bar{f}$ uniquely by the adjunction (the unit $\eta_{\mathcal{T}/\equiv_\pi}$
+is initial).
+\end{proof}
+
+\begin{definition}[Meld]
+\label{def:meld}
+Given histories $H_1,H_2$ from a common prefix $\Omega_0$ and a merge policy $\pi$,
+the meld $\Meld_\pi(H_1,H_2)$ is the irreversible event in $\SP$ that commits to
+the policy-sheafified global section $\Delta^\pi\in a_\pi(\mathcal{T})(\Omega)$ as
+the authoritative continuation. The operation decomposes canonically:
+\[
+  \Meld_\pi \;=\; \mathrm{glue}\circ\Col_\pi,
+\]
+where $\Col_\pi$ removes the overlap obstructions (the collapse step applying
+$\equiv_\pi$) and $\mathrm{glue}$ produces the unique global section
+(the sheafification step).
+\end{definition}
+
+\begin{remark}
+Declaring the global section $\Delta^\pi$ authoritative is not additional mathematical
+content within the sheaf category; it is an event in $\SP$ (specifically a $\Col_\pi$
+event). The mathematics of Theorem~\ref{thm:sheafification} shows what the
+post-meld option-space looks like; the commitment to that option-space is the Spherepop-side
+contribution.
+\end{remark}
+
+\paragraph{Summary.} Worldhood is the sheaf condition on local event proposals: it is
+achieved when commitments are sufficient for local data to glue globally. Meld is the
+categorical operation that enforces this by policy-induced sheafification. The theorem
+gives it a precise universal property: it is the initial sheaf receiving a $\pi$-invariant
+map from the presheaf of proposals.
+
+% ═════════════════════════════════════════════════════════════════════════════
+\section{The Category \texorpdfstring{$\RSVP$}{RSVP}}
+\label{sec:rsvp}
+
+\subsection{Objects}
+
+\begin{definition}[RSVP state]
+\label{def:rsvp-state}
+An \emph{RSVP state} is a quadruple $(M,\PhiF,\vF,\SF)$ where $M$ is a smooth,
+connected, oriented Riemannian manifold; $\PhiF\in C^\infty(M)$ is the \emph{scalar
+coherence potential}; $\vF\in\mathfrak{X}(M)$ is a smooth vector field; and
+$\SF\in C^\infty(M,\Rnn)$ is the \emph{entropy density}. The fields may satisfy
+the entropy-transport equation $\partial_t\SF=\nabla\cdot(\kappa\nabla\PhiF)$ for
+$\kappa>0$, but this is a structural constraint on the dynamics, not a defining
+condition on objects.
+\end{definition}
+
+\subsection{Morphisms with Slack Witnesses}
+
+\begin{definition}[RSVP morphism]
+\label{def:rsvp-morph}
+A morphism $(M,\PhiF,\vF,\SF)\to(M',\PhiF',\vF',\SF')$ in $\RSVP$ is a pair
+$(\varphi,\eta)$ where $\varphi:M\to M'$ is smooth and $\eta\in C^\infty(M,\Rnn)$
+is the \emph{entropy-slack witness} satisfying $\varphi^*\SF'=\SF+\eta$ pointwise.
+\end{definition}
+
+\begin{lemma}[Identity morphisms]
+\label{lem:rsvp-id}
+$(\id_M,0):(M,\PhiF,\vF,\SF)\to(M,\PhiF,\vF,\SF)$ is a morphism in $\RSVP$.
+\end{lemma}
+
+\begin{proof}
+$\id_M^*\SF=\SF=\SF+0$.
+\end{proof}
+
+\begin{lemma}[Closure under composition]
+\label{lem:rsvp-compose}
+If $(\varphi_1,\eta_1):(M_1,\ldots)\to(M_2,\ldots)$ and $(\varphi_2,\eta_2):
+(M_2,\ldots)\to(M_3,\ldots)$ are morphisms in $\RSVP$, then
+\[
+  (\varphi_2\circ\varphi_1,\;\eta_1+\varphi_1^*\eta_2)
+  :(M_1,\ldots)\to(M_3,\ldots)
+\]
+is a morphism in $\RSVP$.
+\end{lemma}
+
+\begin{proof}
+$(\varphi_2\circ\varphi_1)^*\SF_3=\varphi_1^*(\varphi_2^*\SF_3)=\varphi_1^*(\SF_2+\eta_2)
+=\varphi_1^*\SF_2+\varphi_1^*\eta_2=(\SF_1+\eta_1)+\varphi_1^*\eta_2
+=\SF_1+(\eta_1+\varphi_1^*\eta_2)$.
+Non-negativity: $\eta_1\ge 0$, $\eta_2\ge 0$, pullback preserves non-negativity.
+\end{proof}
+
+\begin{lemma}[Associativity of composition]
+\label{lem:rsvp-assoc}
+Composition in $\RSVP$ is associative.
+\end{lemma}
+
+\begin{proof}
+$(\varphi_3\circ(\varphi_2\circ\varphi_1),\;\eta_1+\varphi_1^*\eta_2+\varphi_1^*\varphi_2^*
+\eta_3)=((\varphi_3\circ\varphi_2)\circ\varphi_1,\;\eta_1+\varphi_1^*(\eta_2+\varphi_2^*
+\eta_3))$ since smooth map composition is associative and $\varphi_1^*$ is additive.
+\end{proof}
+
+\begin{proposition}[$\RSVP$ is a category]
+\label{prop:rsvp-cat}
+$\RSVP$ with composition defined by Lemma~\ref{lem:rsvp-compose} is a well-defined
+category.
+\end{proposition}
+
+\begin{proof}
+Identity morphisms exist by Lemma~\ref{lem:rsvp-id}. Composition is closed
+(Lemma~\ref{lem:rsvp-compose}) and associative (Lemma~\ref{lem:rsvp-assoc}).
+Left and right unit laws: $(\id,0)\circ(\varphi,\eta)=(\varphi,\eta+\varphi^*0)
+=(\varphi,\eta)$; $(\varphi,\eta)\circ(\id,0)=(\varphi,0+\varphi^*|_{\id}\eta)
+=(\varphi,\eta)$.
+\end{proof}
+
+\paragraph{Summary.} $\RSVP$ is a well-defined category with objects being smooth
+entropy-carrying manifolds and morphisms being smooth maps with explicit non-negative
+entropy-slack witnesses. The slack data resolve the earlier ambiguity about
+``preservation up to boundary terms'' by making the entropy production at each
+morphism explicit.
+
+% ═════════════════════════════════════════════════════════════════════════════
+\section{The Realization Functor \texorpdfstring{$F:\SP\to\RSVP$}{F}}
+\label{sec:functor}
+
+\subsection{On Objects}
+
+\begin{definition}[Geometric realization on objects]
+\label{def:F-objects}
+For an option-space $(\Omega,\mathcal{A})$, define
+\[
+  F(\Omega,\mathcal{A}) := (\Delta(\Omega),\,\PhiF_\Omega,\,\vF_\Omega,\,\SF_\Omega),
+\]
+where $\Delta(\Omega)$ is the \emph{probability simplex} $\{p\in\Rnn^\Omega:\sum_x p(x)=1\}$;
+$\SF_\Omega(p)=-\sum_{x\in\Omega}p(x)\log p(x)$ is the Shannon entropy density at
+the interior of $\Delta(\Omega)$; $\PhiF_\Omega$ and $\vF_\Omega$ are smooth
+interpolants of the admissibility structure, defined by a fixed smooth embedding
+of $\mathcal{A}$ into $C^\infty(\Delta(\Omega))$.
+\end{definition}
+
+\subsection{On Generating Morphisms}
+
+\paragraph{$F$ on Pop.}
+Let $\Pop_U:(\Omega,\mathcal{A})\to(\Omega\setminus U,\cdot)$.
+
+\begin{definition}[Pop realization]
+\label{def:F-pop}
+Define $F(\Pop_U)=(\iota_U,\eta_U)$ where $\iota_U:\Delta(\Omega\setminus U)
+\hookrightarrow\Delta(\Omega)$ is the face inclusion (restriction to the face
+corresponding to $\Omega\setminus U$) and $\eta_U\in C^\infty(\Delta(\Omega\setminus
+U),\Rnn)$ is a bump function supported near $\partial\Delta(U)$, normalized so that
+$\iota_U^*\SF_\Omega=\SF_{\Omega\setminus U}+\eta_U$.
+\end{definition}
+
+The bump $\eta_U$ records the entropy difference between the full simplex and the
+restricted face. It is the \emph{boundary-sharpening slack}: the entropy production
+localized at the boundary of the eliminated region.
+
+\paragraph{$F$ on Refuse.}
+$F(\Ref_U)=F(\Pop_U)$ as a smooth map, with the same slack $\eta_U$. The accounting
+tag is preserved by $\mathcal{B}:\SP\to\mathbf{Set}$ and does not affect the field data.
+
+\paragraph{$F$ on Bind.}
+Let $\Bind_{ij}:(\Omega,\mathcal{A})\to(\Omega,\mathcal{A}')$.
+
+\begin{definition}[Bind realization]
+\label{def:F-bind}
+Define $F(\Bind_{ij})=(\id_{\Delta(\Omega)},0)$ with the modification
+$\vF_\Omega\mapsto\vF_\Omega+\delta\vF_{ij}$, where $\delta\vF_{ij}$ is a smooth
+directed vector field increment coupling the regions $\Delta(\{i\})$ and
+$\Delta(\{j\})$ in $\Delta(\Omega)$.
+\end{definition}
+
+Entropy slack is zero ($\eta=0$) since $\Bind$ preserves entropy globally. The
+coupling $\delta\vF_{ij}$ breaks the rotational symmetry between the $i$- and
+$j$-directions of the simplex, realizing the admissibility reduction
+$\mathcal{A}'\subsetneq\mathcal{A}$ as a directional bias in the flow.
+
+\paragraph{$F$ on Collapse.}
+Let $\Col_\sim:(\Omega,\mathcal{A})\to(\Omega/{\sim},\mathcal{A}_\sim)$.
+
+\begin{definition}[Collapse realization]
+\label{def:F-col}
+Define $F(\Col_\sim)=(\varphi_\sim,\eta_\sim)$ where $\varphi_\sim:\Delta(\Omega)
+\to\Delta(\Omega/{\sim})$ is the coarse-graining map (marginalizing over equivalence
+classes: $\varphi_\sim(p)([x]):=\sum_{y\sim x}p(y)$) and $\eta_\sim\in C^\infty
+(\Delta(\Omega),\Rnn)$ is the fine-to-coarse entropy difference $\eta_\sim(p)=
+\SF_\Omega(p)-\varphi_\sim^*\SF_{\Omega/\sim}(p)\ge 0$ (non-negative by Jensen's
+inequality applied to the logarithm).
+\end{definition}
+
+This coarse-graining is a Wilsonian renormalization step: fine-grained distinctions
+within each equivalence class of $\sim$ are integrated out. The slack $\eta_\sim$
+records the entropy of the intra-class distribution.
+
+\subsection{Functoriality}
+
+\begin{lemma}[$F$ preserves identities]
+\label{lem:F-id}
+$F(\id_{(\Omega,\mathcal{A})})=(\id_{\Delta(\Omega)},0)=\id_{F(\Omega,\mathcal{A})}$.
+\end{lemma}
+
+\begin{proof}
+The identity history is the empty sequence. Its realization is $(\id,0)$ by
+Definition~\ref{def:F-objects}: the simplex is unchanged, no slack is produced.
+\end{proof}
+
+\begin{lemma}[$F$ preserves generator composition]
+\label{lem:F-comp}
+For composable generators $e_1$ and $e_2$:
+$F(e_2\circ e_1)=F(e_2)\circ F(e_1)$ with slacks composed additively per
+Lemma~\ref{lem:rsvp-compose}.
+\end{lemma}
+
+\begin{proof}
+We check each combination. The key case is $\Pop_V\circ\Pop_U$ (elimination of $U$
+then $V\subseteq\Omega\setminus U$): $F(\Pop_V)\circ F(\Pop_U)=(\iota_V,\eta_V)\circ
+(\iota_U,\eta_U)=(\iota_V\circ\iota_U,\eta_U+\iota_U^*\eta_V)$. On the other side,
+$F(\Pop_{U\cup V})=(\iota_{U\cup V},\eta_{U\cup V})$ where $\iota_{U\cup V}=\iota_V
+\circ\iota_U$ (composition of face inclusions) and $\eta_{U\cup V}(p)=\eta_U(p)+
+\eta_V(\iota_U(p))=\eta_U+\iota_U^*\eta_V$. The cases $\Bind\circ\Pop$, $\Col\circ\Pop$,
+and combinations thereof follow analogously from the locality of each perturbation
+and the functoriality of pullback.
+\end{proof}
+
+\begin{lemma}[Slack composition is associative]
+\label{lem:slack-assoc}
+For three composable morphisms $(\varphi_1,\eta_1),(\varphi_2,\eta_2),(\varphi_3,\eta_3)$:
+$(\eta_1+\varphi_1^*\eta_2)+\varphi_1^*\varphi_2^*\eta_3=
+\eta_1+\varphi_1^*(\eta_2+\varphi_2^*\eta_3)$.
+\end{lemma}
+
+\begin{proof}
+By distributivity of $\varphi_1^*$ over addition and functoriality:
+$\varphi_1^*(\eta_2+\varphi_2^*\eta_3)=\varphi_1^*\eta_2+\varphi_1^*\varphi_2^*\eta_3$.
+\end{proof}
+
+\begin{lemma}[Tensor compatibility]
+\label{lem:F-tensor}
+$F((\Omega_1,\mathcal{A}_1)\tensor(\Omega_2,\mathcal{A}_2))\cong
+F(\Omega_1,\mathcal{A}_1)\tensor_\RSVP F(\Omega_2,\mathcal{A}_2)$,
+where the tensor in $\RSVP$ is the product of smooth manifolds with product fields.
+\end{lemma}
+
+\begin{proof}
+$\Delta(\Omega_1\times\Omega_2)\cong\Delta(\Omega_1)\times\Delta(\Omega_2)$ as smooth
+manifolds (a probability measure on a product is a joint measure; the simplex over
+the product is the product of simplices). Shannon entropy of the product is the sum
+of marginal entropies in the independent case, matching subadditivity.
+\end{proof}
+
+\begin{theorem}[Functoriality of $F$]
+\label{thm:functor}
+$F:\SP\to\RSVP$ is a well-defined symmetric monoidal functor. Specifically:
+\begin{enumerate}[label=(\alph*)]
+\item $F$ preserves identities (Lemma~\ref{lem:F-id});
+\item $F$ preserves composition, with slacks composed additively (Lemma~\ref{lem:F-comp});
+\item Slack composition is associative (Lemma~\ref{lem:slack-assoc});
+\item $F$ is symmetric monoidal (Lemma~\ref{lem:F-tensor});
+\item Entropy compatibility: $\int_{\Delta(\Omega)}\SF_\Omega\,d\mathrm{vol}=\Ent(\Omega)$
+  up to normalization, so entropy decrease in $\SP$ corresponds to net positive slack
+  in $\RSVP$.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+Parts (a)--(d) follow from the four lemmas above. For (e): by construction,
+$\SF_\Omega(p)=-\sum_x p(x)\log p(x)$. Integrating over the uniform measure on
+$\Delta(\Omega)$ yields $\Ent(\Omega)$ (up to the normalization factor of the simplex
+volume, which is absorbed into the definition of the volume form). Entropy decrease
+$\Ent(\Omega')<\Ent(\Omega)$ after $\Pop_U$ corresponds to $\eta_U>0$ being the
+positive slack that records the entropy difference between $\SF_\Omega$ and
+$\iota_U^*\SF_\Omega$.
+\end{proof}
+
+\paragraph{Commutative diagram.}
+\[
+\begin{tikzcd}[column sep=4.5em, row sep=3em]
+  (\Omega,\mathcal{A})
+  \arrow[r,"e"]
+  \arrow[d,"F"']
+  &
+  (\Omega',\mathcal{A}')
+  \arrow[d,"F"]
+  \\
+  (\Delta(\Omega),\PhiF,\vF,\SF)
+  \arrow[r,"{(\varphi,\eta)}"']
+  &
+  (\Delta(\Omega'),\PhiF',\vF',\SF')
+\end{tikzcd}
+\]
+
+\paragraph{Structural asymmetry theorem.}
+
+\begin{theorem}[Structural asymmetry]
+\label{thm:asymmetry}
+$\SP$ and $\RSVP$ are related by $F$ but are not equivalent categories. The asymmetry
+is:
+\begin{enumerate}[label=(\roman*)]
+\item $\SP$ is discrete and combinatorial; $\RSVP$ is smooth and differential.
+\item $\SP$ \emph{accumulates constraint}: each morphism adds an irreversible record;
+  no morphism in $\SP$ increases entropy.
+\item $\RSVP$ \emph{redistributes coherence}: the entropy-transport equation
+  $\partial_t\SF=\nabla\cdot(\kappa\nabla\PhiF)$ diffuses entropy across $M$; local
+  concentrations propagate globally.
+\item $F$ is not an equivalence of categories: there exist morphisms in $\RSVP$ that
+  are not in the image of $F$ (smooth maps that do not correspond to any finite
+  composition of the four generators).
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+(i) $\SP$ has discrete objects (finite option-spaces); $\RSVP$ has smooth manifolds.
+(ii) By Axiom~\ref{ax:entropy}, all morphisms in $\SP$ are entropy-monotone non-increasing.
+(iii) The PDE $\partial_t\SF=\nabla\cdot(\kappa\nabla\PhiF)$ is parabolic; it
+redistributes entropy according to the gradient of $\PhiF$, potentially increasing
+$\SF$ locally (where $\nabla\cdot(\kappa\nabla\PhiF)>0$) while decreasing it elsewhere.
+This is not monotone. (iv) The image of $F$ consists of restriction maps, vector field
+additions, and coarse-graining maps of the prescribed forms. A generic smooth map
+$\varphi:M\to M'$ need not have this structure.
+\end{proof}
+
+% ═════════════════════════════════════════════════════════════════════════════
+\section{Worked Example: A Four-Event History}
+\label{sec:worked}
+
+We trace a complete history through $\SP$ and $\RSVP$.
+
+\subsection{Setup}
+
+Let $\Omega_0=\{a,b,c,d\}$ with uniform probability and trivial admissibility
+$\mathcal{A}_0=2^{\Omega_0}$. Initial entropy: $\Ent(\Omega_0)=\log 4=2\log 2$.
+Initial optionality: $\Opt(\Omega_0)=2\log 2$. Under $F$: the probability simplex
+$\Delta(\Omega_0)$ is a regular 3-simplex with vertices $e_a,e_b,e_c,e_d$.
+Initial entropy density $\SF(p)=-\sum_x p(x)\log p(x)$ achieves maximum $\log 4$
+at the centroid.
+
+\subsection{Event 1: Pop}
+
+$e_1=\Pop_{\{c,d\}}:(\Omega_0,\mathcal{A}_0)\to(\Omega_1,\mathcal{A}_1)$
+where $\Omega_1=\{a,b\}$ and $\mathcal{A}_1=\{\{a,b\},\{a\},\{b\},\emptyset\}$.
+
+\paragraph{In $\SP$.}
+$\Ent(\Omega_1)=\log 2=\log 2$. Entropy decrease: $\Delta\Ent=\log 4-\log 2=\log 2$.
+Optionality: $\Opt(\Omega_1)=\log 2$. Action increment: $L_1=\log 2$.
+
+\paragraph{In $\RSVP$.}
+$F(e_1)=(\iota_{\{c,d\}},\eta_{\{c,d\}})$. The simplex $\Delta(\Omega_1)$ is the edge
+$[e_a,e_b]$ of the original tetrahedron. The slack function $\eta_{\{c,d\}}$ is a
+smooth bump on $[e_a,e_b]$ that is positive near the boundary points $e_a$ and $e_b$
+and equals $\SF_{\Omega_0}(\iota(p))-\SF_{\Omega_1}(p)$ pointwise, which is the
+entropy of the eliminated mass on $\{c,d\}$. Geometrically: the coherence potential
+$\PhiF$ sharpens at the boundary of the eliminated region; $\SF$ decreases from
+its maximum $\log 4$ toward $\log 2$.
+
+\subsection{Event 2: Bind}
+
+$e_2=\Bind_{ab}:(\Omega_1,\mathcal{A}_1)\to(\Omega_2,\mathcal{A}_2)$
+with $\mathcal{A}_2=\{\{a,b\},\{a\},\emptyset\}$ (every admissible future containing
+$b$ must contain $a$).
+
+\paragraph{In $\SP$.}
+$\Ent(\Omega_2)=\log 2=\Ent(\Omega_1)$: entropy preserved. Optionality unchanged:
+$\Opt(\Omega_2)=\log 2$. Action increment: $L_2=0$. But the causal preorder is
+now $a\preceq b$ (causally, $a$ is necessary for $b$). The symmetry group of
+$(\Omega_2,\mathcal{A}_2)$ has been reduced: the two elements $a,b$ are no longer
+equivalent under admissibility-preserving automorphisms.
+
+\paragraph{In $\RSVP$.}
+$F(e_2)=(\id_{[e_a,e_b]},0)$ with $\vF\mapsto\vF+\delta\vF_{ab}$, where $\delta\vF_{ab}$
+is a smooth vector field on $[e_a,e_b]$ directed from $e_a$ toward $e_b$. This
+represents the directed coupling: probability flow is biased toward $b$ (the dependent
+element) conditional on $a$ (the prerequisite). The entropy density $\SF$ is unchanged;
+the coherence structure $\vF$ is modified.
+
+\subsection{Event 3: Collapse}
+
+$e_3=\Col_{a\sim b}$ under the equivalence $a\sim b$.
+
+We check causal admissibility: $\downset{a}=\{a\}$ and $\downset{b}=\{a,b\}$ under
+the causal preorder from Event 2. These are not equal, so $a\sim b$ is
+\emph{not} causally admissible under the current $\mathcal{A}_2$.
+
+\begin{remark}
+This is a \emph{failure mode}: attempting to collapse $a$ and $b$ after binding
+$a\preceq b$ violates causal admissibility. The system must either (i) apply Collapse
+before Bind, (ii) unbind first (which would require a new generator not in $\SP$),
+or (iii) choose a different collapse policy. In this example, we substitute:
+\end{remark}
+
+$e_3=\Col_{\sim_{\mathrm{triv}}}$ where $\sim_{\mathrm{triv}}$ is the trivial equivalence
+on $\Omega_2=\{a,b\}$ that identifies $b$ with itself only (i.e., collapse the single
+element $\{b\}$ to a fresh symbol $[b]$ representing ``committed to the $b$-branch'').
+This collapses the distinction between $b$ and $[b]$ and is causally admissible since
+$\downset{[b]}=\downset{b}$ by definition.
+
+\paragraph{In $\SP$.}
+$\Omega_3=\{a,[b]\}$, $\Ent(\Omega_3)=\log 2=\Ent(\Omega_2)$.
+Action increment: $L_3=0$ (entropy-neutral collapse).
+
+\paragraph{In $\RSVP$.}
+$F(e_3)=(\varphi_{\sim_{\mathrm{triv}}},\eta_{\sim_{\mathrm{triv}}})$ with
+$\varphi_{\sim_{\mathrm{triv}}}$ the identity on the edge $[e_a,e_b]$ (no actual
+coarse-graining occurs since no distinct elements are merged). Slack: $\eta=0$.
+
+\subsection{Event 4: Pop to Terminal}
+
+$e_4=\Pop_{\{[b]\}}:(\Omega_3,\mathcal{A}_3)\to(\Omega_4,\mathcal{A}_4)$
+where $\Omega_4=\{a\}$.
+
+\paragraph{In $\SP$.}
+$\Ent(\Omega_4)=0$. Entropy decrease: $\Delta\Ent=\log 2$. Action increment: $L_4=\log 2$.
+The world is now fully committed: a single future $a$ remains. Total action: $\mathcal{S}[\gamma]
+=L_1+L_2+L_3+L_4=\log 2+0+0+\log 2=\log 4=\Ent(\Omega_0)$.
+
+\paragraph{In $\RSVP$.}
+$F(e_4)=(\iota_{\{[b]\}},\eta_{\{[b]\}})$ where $\iota$ maps the vertex $e_a$ to
+the edge endpoint, and $\eta$ records the final entropy production $\log 2$. The
+coherence potential $\PhiF$ concentrates at the vertex $e_a$; entropy density
+$\SF\to 0$ at the vertex. This is the \emph{coherence attractor}: the trajectory has
+converged to a point.
+
+\subsection{Summary of the History}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{lllll}
+\toprule
+\textbf{Step} & \textbf{Event} & $\Ent$ & $L_t$ & \textbf{RSVP image} \\
+\midrule
+0 & — & $\log 4$ & — & Centroid of tetrahedron \\
+1 & $\Pop_{\{c,d\}}$ & $\log 2$ & $\log 2$ & Restriction to edge $[e_a,e_b]$ \\
+2 & $\Bind_{ab}$ & $\log 2$ & $0$ & Directed flow $a\to b$ \\
+3 & $\Col_{\sim_{\mathrm{triv}}}$ & $\log 2$ & $0$ & Identity (trivial collapse) \\
+4 & $\Pop_{\{[b]\}}$ & $0$ & $\log 2$ & Convergence to vertex $e_a$ \\
+\midrule
+\multicolumn{3}{l}{Total action} & $\log 4$ & \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The total action equals the initial entropy, as expected: a history that fully commits
+a world of entropy $\log 4$ must pay action $\log 4$.
+
+% ═════════════════════════════════════════════════════════════════════════════
+\section{Discrete Mechanics of Commitment}
+\label{sec:mechanics}
+
+\subsection{Lagrangian Formulation}
+
+Each event $e_t:X_{t-1}\to X_t$ induces a local cost
+$L_t=\Delta\Opt_t+\lambda\,\Delta C_t$ where
+$\Delta\Opt_t=\Opt(X_{t-1})-\Opt(X_t)$ and $\Delta C_t$ records auxiliary
+accounting costs. The action of a history is
+$\mathcal{S}[\gamma]=\sum_{t=1}^n L_t.$
+
+\begin{proposition}
+Every history with at least one $\Pop$ or $\Ref$ event has $\mathcal{S}[\gamma]>0$.
+\end{proposition}
+
+\begin{proof}
+$\Pop$ and $\Ref$ strictly reduce $\Opt$, contributing $\Delta\Opt_t>0$. Since all
+terms are non-negative, $\mathcal{S}[\gamma]>0$.
+\end{proof}
+
+\subsection{Collapse Reduces Action}
+
+If $\Col$ identifies $k$ elements, action reduces by $\log k$ in the Shannon
+realization: $\mathcal{S}\mapsto\mathcal{S}-\log k$.
+
+This matches the RSVP side: the slack produced by $F(\Col_\sim)$ equals the
+fine-structure entropy integrated out, which is $\log k$ for a uniform distribution
+over $k$ identified elements.
+
+\subsection{Hamiltonian and Remaining Freedom}
+
+Define commitment $\pi_t=-\partial L_t/\partial\Opt$ and Hamiltonian
+$H_t=\pi_t\Opt(X_t)-L_t$. Then $H_t$ decays monotonically toward zero as commitment
+accumulates, measuring the remaining flexibility of the system. A fully committed world
+has $\Opt=0$ and $H=0$.
+
+% ═════════════════════════════════════════════════════════════════════════════
+\section{Information-Theoretic Interpretation}
+\label{sec:info}
+
+Each generator corresponds to a standard information-theoretic operation:
+\begin{align*}
+\Pop &:\quad\Ent_{t+1}=\Ent_t-\Delta,\quad\Delta>0 \\
+\Bind &:\quad I(X;Y)\uparrow\text{ (mutual information coupling increases)} \\
+\Col &:\quad\Kc(\Omega/{\sim})\le\Kc(\Omega)\text{ (Kolmogorov complexity decreases)} \\
+F &:\quad\partial_t\SF=\nabla\cdot(\kappa\nabla\PhiF)\text{ (entropy-transport PDE)}
+\end{align*}
+
+The second relation captures why $\Bind$ is entropy-neutral at the distribution level
+but produces information-theoretic work: it increases the mutual information between
+the bound elements without changing marginal entropies, encoding a dependency that was
+not there before.
+
+% ═════════════════════════════════════════════════════════════════════════════
+\section{Normalization}
+\label{sec:norm}
+
+\begin{theorem}[Strong normalization, deterministic fragment]
+\label{thm:sn}
+Every history in $\SP$ without Choice events terminates.
+\end{theorem}
+
+\begin{proof}
+Define the termination measure $\mu(\Omega,\mathcal{A})=|\Omega|+|\mathcal{A}|$.
+Each $\Pop$ strictly decreases $|\Omega|$. Each $\Bind$ decreases $|\mathcal{A}|$
+without changing $|\Omega|$. Each $\Col$ at minimum decreases $|\Omega|$ (it quotients
+at least one class of size $\ge 2$). All three generators strictly decrease $\mu$.
+Since $\mu\ge 1$ for any non-trivial option-space and $\mu$ is a natural number,
+descent is finite.
+\end{proof}
+
+\begin{remark}[Probabilistic normalization]
+In the presence of Choice events, almost-sure normalization is conjectured: every
+well-typed closed probabilistic term terminates with probability 1. The formal proof
+requires a probabilistic termination measure satisfying the supermartingale condition
+$\mathbb{E}[\mu_{t+1}]\le\mu_t-\delta$ for some $\delta>0$. This is plausible under
+bounded entropy conditions but remains open.
+\end{remark}
+
+\section{Structured Irreversibility}
+\label{sec:structured}
+
+The defining feature of $\SP$ is not entropy monotonicity alone, but the
+structural absence of inverses together with resource descent. This
+section isolates the precise categorical content of this condition.
+
+\begin{definition}[Entropy preorder]
+Let $(\SP,\Ent)$ be as defined previously. Define a preorder
+$\preceq$ on $\Ob(\SP)$ by
+\[
+  X \preceq Y \iff \exists f : Y \to X.
+\]
+\end{definition}
+
+\begin{proposition}
+If $X \preceq Y$, then $\Ent(X) \le \Ent(Y)$.
+\end{proposition}
+
+\begin{proof}
+Immediate from entropy monotonicity along morphisms.
+\end{proof}
+
+Thus entropy induces a monotone map from the preorder $(\Ob(\SP),\preceq)$
+into $(\mathbb{R}_{\ge 0},\le)$.
+
+\begin{definition}[Structured irreversibility]
+A symmetric monoidal category $(\mathcal{C},\otimes,I)$ equipped with
+$R : \Ob(\mathcal{C}) \to \mathbb{R}_{\ge 0}$ is
+\emph{structurally irreversible} if:
+\begin{enumerate}
+  \item For all non-identity $f$, there exists no $g$ with
+        $g\circ f=\id$ or $f\circ g=\id$.
+  \item $R$ is monotone along morphisms.
+  \item $R(X)=0$ implies $X$ is minimal in the preorder.
+\end{enumerate}
+\end{definition}
+
+\begin{theorem}
+$\SP$ is structurally irreversible.
+\end{theorem}
+
+\begin{proof}
+(1) is Axiom~\ref{ax:irrev}.  
+(2) is Axiom~\ref{ax:entropy}.  
+(3) follows from Definition~\ref{def:entropy}(i).  
+\end{proof}
+
+Hence irreversibility in $\SP$ is not an emergent phenomenon but a
+categorical constraint. The resource functional does not merely measure
+behavior; it defines directionality.
+
+\section{Irreversibility Across Scales}
+\label{sec:scale}
+
+Let $F : \SP \to \RSVP$ be the symmetric monoidal functor constructed
+in Section~\ref{sec:functor}. This section formalizes how structural
+irreversibility is preserved under $F$.
+
+\begin{proposition}[Entropy preservation under $F$]
+For any $X \in \Ob(\SP)$,
+\[
+  \Ent(X) = \int_{\Delta(X)} S_X \, d\mu
+\]
+up to normalization.
+\end{proposition}
+
+\begin{proof}
+By construction of $F(X) = (\Delta(X),S_X)$ with $S_X$ the Shannon entropy density.
+Integration over the simplex yields the discrete entropy.
+\end{proof}
+
+\begin{proposition}[Slack monotonicity]
+For any morphism $f$ in $\SP$,
+\[
+  F(f) = (\varphi,\eta)
+\]
+satisfies $\eta \ge 0$ and
+\[
+  \int \eta \, d\mu = \Ent(X) - \Ent(Y).
+\]
+\end{proposition}
+
+\begin{proof}
+By construction of slack witnesses in Section~\ref{sec:functor}.
+\end{proof}
+
+Thus entropy descent in $\SP$ corresponds to non-negative entropy
+production in $\RSVP$.
+
+\begin{theorem}[Scale invariance of irreversibility]
+If $f$ is non-invertible in $\SP$, then $F(f)$ is non-invertible in
+$\RSVP$.
+\end{theorem}
+
+\begin{proof}
+Suppose $(\varphi,\eta)$ had an inverse. Then slack would have to vanish
+and $\varphi$ be a diffeomorphism. This contradicts strict entropy
+descent for $\Pop$ and $\Ref$.
+\end{proof}
+
+Therefore, irreversibility is preserved functorially across discrete
+and continuous scales.
+
+\section{Persistence Without Substance}
+\label{sec:persistence}
+
+Identity in $\SP$ is defined entirely by morphism chains.
+
+\begin{definition}[Log equivalence]
+Two histories $\gamma,\gamma'$ are equivalent under policy $q$ if
+\[
+  q(\gamma(\Omega_0)) = q(\gamma'(\Omega_0)).
+\]
+\end{definition}
+
+\begin{proposition}
+Objects of $\SP$ are equivalence classes of histories modulo $q$.
+\end{proposition}
+
+\begin{proof}
+By Axiom~\ref{ax:auth} and Axiom~\ref{ax:colid}.
+\end{proof}
+
+Hence object identity is induced, not primitive.
+
+Under $F$, identity corresponds to simplex face inclusion:
+
+\begin{proposition}
+If $X_n$ arises from history $\gamma$, then
+\[
+  F(X_n) \subseteq \Delta(\Omega_0)
+\]
+is a face determined uniquely by $\gamma$.
+\end{proposition}
+
+Thus persistence corresponds to geometric stabilization rather than
+substrate invariance.
+
+\section{Minimal Commitment}
+\label{sec:minimal}
+
+Let $D$ be a target equivalence class. Define
+\[
+  \Gamma(D) = \{\gamma : \gamma(\Omega_0) \in D\}.
+\]
+
+\begin{definition}[Minimal commitment]
+A history $\gamma \in \Gamma(D)$ is minimal if
+\[
+  S[\gamma] \le S[\gamma']
+\]
+for all $\gamma' \in \Gamma(D)$.
+\end{definition}
+
+\begin{proposition}
+Minimal commitment histories maximize sheaf gluing prior to collapse.
+\end{proposition}
+
+\begin{proof}
+Collapse reduces action by $\log|\ker q|$.
+Gluing preserves entropy.
+Hence minimal action is achieved by postponing collapse until necessary.
+\end{proof}
+
+\section{Finitude}
+\label{sec:finitude}
+
+\begin{theorem}[Finite descent]
+Any strictly entropy-decreasing sequence in $\SP$ terminates.
+\end{theorem}
+
+\begin{proof}
+Entropy is bounded below by zero and decreases strictly under Pop/Ref.
+Hence no infinite strictly decreasing chain exists.
+\end{proof}
+
+\begin{corollary}
+The deterministic fragment of $\SP$ is strongly normalizing.
+\end{corollary}
+
+\section{Variational Structure of Irreversibility}
+\label{sec:variational}
+
+Let $\gamma = (e_1,\dots,e_n)$ be a history in $\SP$.
+Recall the action functional:
+\[
+  S[\gamma] = \sum_{i=1}^n \Delta\Opt_i
+\]
+where $\Delta\Opt_i = \Ent(\Omega_{i-1}) - \Ent(\Omega_i)$.
+
+\begin{proposition}
+$S[\gamma] = \Ent(\Omega_0) - \Ent(\Omega_n)$.
+\end{proposition}
+
+\begin{proof}
+Telescoping sum.
+\end{proof}
+
+Thus the action depends only on endpoints.
+
+\begin{definition}[Extremal history]
+A history $\gamma$ between $X$ and $Y$ is extremal if
+\[
+  S[\gamma] = \min_{\gamma' : X \to Y} S[\gamma'].
+\]
+\end{definition}
+
+\begin{theorem}[Endpoint minimality]
+A history is extremal iff it performs no redundant collapse before
+maximal gluing under admissibility constraints.
+\end{theorem}
+
+\begin{proof}
+Collapse reduces entropy but may introduce unnecessary identification.
+Since action depends only on entropy difference, any collapse that does
+not change $\Ent$ must correspond to non-essential equivalence.
+Such collapses can be postponed without altering endpoints.
+\end{proof}
+
+Hence irreversibility admits a variational characterization: the system
+selects histories minimizing entropy expenditure subject to structural
+constraints.
+
+Under the realization functor $F$, this becomes:
+
+\[
+  S[\gamma] = \int_{M} \eta_\gamma \, d\mu.
+\]
+
+Thus discrete action equals integrated entropy slack in $\RSVP$.
+
+\section{Adjoint Structure of Discrete–Continuous Realization}
+\label{sec:adjunction}
+
+Let $F : \SP \to \RSVP$ be the realization functor.
+Define a coarse-graining functor
+\[
+  G : \RSVP \to \SP
+\]
+by mapping $(M,\Phi,v,S)$ to the partition of $M$ into
+coherence basins under gradient flow of $\Phi$.
+
+\begin{definition}
+$G(M,\Phi,v,S)$ is the option-space whose elements are
+stable attractor components of the flow induced by $v$.
+\end{definition}
+
+\begin{proposition}
+$G$ is entropy non-increasing.
+\end{proposition}
+
+\begin{theorem}[Adjoint approximation]
+There exists a natural transformation
+\[
+  \eta : \id_{\SP} \Rightarrow G \circ F
+\]
+which is initial among entropy-preserving embeddings.
+\end{theorem}
+
+\begin{proof}[Sketch]
+Each $\Omega$ embeds into $\Delta(\Omega)$.
+Coherence basins correspond to vertices.
+The unit map identifies discrete elements with Dirac measures.
+Universality follows from simplex universal property.
+\end{proof}
+
+Thus discrete option-spaces are initial among coherence fields whose
+basins reproduce their combinatorics.
+
+While full adjunction may require restriction to a subcategory of
+$\RSVP$, the construction demonstrates that the discrete–continuous
+duality is structurally tight.
+
+\section{Classification of Entropy-Monotone Irreversible Categories}
+\label{sec:classification}
+
+Let $\mathcal{C}$ be a symmetric monoidal irreversible category
+equipped with a monotone resource functional $R$.
+
+\begin{definition}
+$\mathcal{C}$ is freely generated by a set $\mathcal{G}$ of primitives
+if every morphism is a finite tensor-composition of elements of $\mathcal{G}$
+subject only to resource monotonicity constraints.
+\end{definition}
+
+\begin{theorem}[Initiality of $\SP$]
+Let $\mathcal{C}$ be a resource-monotone irreversible symmetric monoidal
+category generated by four primitives satisfying:
+\begin{enumerate}
+  \item Strict entropy descent,
+  \item Admissibility refinement without entropy change,
+  \item Causal-preserving quotient,
+  \item Annotated elimination.
+\end{enumerate}
+Then there exists a unique symmetric monoidal functor
+\[
+  H : \SP \to \mathcal{C}
+\]
+preserving generators and resource functional.
+\end{theorem}
+
+\begin{proof}
+By free generation of $\SP$ under entropy axioms.
+Universality of free symmetric monoidal categories.
+\end{proof}
+
+Hence $\SP$ is the initial object in the category of entropy-monotone
+irreversible symmetric monoidal categories generated by four primitives.
+
+
+% ═════════════════════════════════════════════════════════════════════════════
+\section{Mathematical Status and Failure Modes}
+\label{sec:status}
+
+\subsection{Fully Formal}
+
+The following are rigorous within standard mathematics:
+(1) The category $\SP$ and its generating relations (Section~\ref{sec:sp});
+(2) The causal preorder and the universal property of $\Col$ (Theorem~\ref{thm:collapse-universal});
+(3) The strict symmetric monoidal structure (Proposition~\ref{prop:monoidal});
+(4) Initiality of $\SP$ in $\EDSMC$ (Theorem~\ref{thm:initial});
+(5) The meld theorem (Theorem~\ref{thm:sheafification});
+(6) The $\RSVP$ category with witnessed morphisms (Proposition~\ref{prop:rsvp-cat});
+(7) Functoriality of $F$ (Theorem~\ref{thm:functor});
+(8) Strong normalization of the deterministic fragment (Theorem~\ref{thm:sn}).
+
+\subsection{Modeling-Dependent}
+
+The following require additional choices:
+(1) The probability simplex $\Delta(\Omega)$ as the geometric realization of option-spaces
+(alternatives: Wasserstein spaces, Hilbert spaces over $\Omega$);
+(2) The specific entropy-transport PDE governing $\RSVP$ dynamics;
+(3) The explicit form of $\delta\vF_{ij}$ in $F(\Bind)$.
+
+\subsection{Failure Modes}
+
+\begin{enumerate}[label=(\roman*)]
+\item \textit{Collapse violating causality.} As demonstrated in
+  Section~\ref{sec:worked}, applying $\Col_{a\sim b}$ after $\Bind_{ab}$ (which
+  establishes $a\preceq b$ with $\downset{a}\ne\downset{b}$) violates causal
+  admissibility. The system rejects such collapses in $\SP_c$.
+\item \textit{Bind creating cycles.} A sequence $\Bind_{ab}\circ\Bind_{ba}$ creates
+  $a\preceq b\preceq a$ with $a\ne b$, violating Lemma~\ref{lem:antisymmetry}. The
+  well-formedness condition (acyclicity of the dependency graph) must be enforced
+  externally or by a confluence condition.
+\item \textit{Entropy functional failure.} If $p$ is not a probability measure on
+  $\Omega$ (e.g., unnormalized), the Shannon entropy need not satisfy monotonicity
+  under subsets. The framework requires that the entropy functional be consistently
+  defined on all option-spaces with a fixed normalization.
+\item \textit{$F$ failing to be faithful.} If two distinct binding constraints
+  $\Bind_{ij}$ and $\Bind_{ij'}$ produce the same vector field modification
+  $\delta\vF_{ij}=\delta\vF_{ij'}$ (because the coupling depends only on the simplex
+  geometry, not on the labels), then $F$ is not faithful on $\Bind$ events. This
+  requires the coupling to be injective in the label pair $(i,j)$, which is a
+  non-trivial constraint on the realization.
+\end{enumerate}
+
+\subsection{Open Problems}
+
+\begin{enumerate}
+\item \textbf{Faithfulness of $F$.} Full characterization of when $F$ is faithful,
+  particularly for $\Bind$ events.
+\item \textbf{Entropy functional for $\Bind$.} Construction of a functional making
+  Axiom~\ref{ax:entropy} strictly non-trivial for $\Bind$ (e.g., symmetry entropy
+  $\mathsf{H}_{\mathrm{sym}}=\log|\Omega|-\log|\mathrm{Aut}(\Omega,\mathcal{A})|$).
+\item \textbf{Compact-closed completion.} Whether $\SP$ admits a traced symmetric
+  monoidal completion (the obstruction to full compact-closure is that $\eta:\unit\to
+  X^*\tensor X$ would create optionality, violating Axiom~\ref{ax:irrev}).
+\item \textbf{Almost-sure normalization} in the probabilistic fragment.
+\item \textbf{$\infty$-categorical enhancement} replacing $\SP$ with an
+  $(\infty,1)$-category where 2-morphisms are equivalences between histories.
+\end{enumerate}
+
+% ═════════════════════════════════════════════════════════════════════════════
+\section{Dual Descriptions and Scale Separation}
+\label{sec:dual}
+
+The relationship between $\SP$ and $\RSVP$ is a scaling limit, not a symmetric duality.
+
+\begin{center}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{ll}
+\toprule
+\textbf{$\SP$} & \textbf{$\RSVP$} \\
+\midrule
+Rewriting system & Thermodynamic limit \\
+Discrete, combinatorial & Smooth, differential \\
+Log-bound, append-only & Field-bound, diffusive \\
+Constraint accumulation & Coherence redistribution \\
+$\Col$ = coequalizer & $F(\Col)$ = renormalization \\
+Action monotone increasing & PDE, parabolic \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Informally: as event step-size $\epsilon\to 0$ and event frequency $\to\infty$,
+the discrete action $\mathcal{S}[\gamma]$ converges to a continuous action functional
+whose Euler-Lagrange equation is the entropy-transport PDE. The functor $F$ is the
+finite-step approximation. A rigorous derivation requires specifying convergence in a
+Wasserstein topology on $\Delta(\Omega)$; this is recorded in
+Appendix~\ref{app:scaling}.
+
+% ═════════════════════════════════════════════════════════════════════════════
+\section{Further Directions}
+\label{sec:further}
+
+\begin{enumerate}
+\item \textbf{$\infty$-categorical enhancement.} Replace $\SP$ with an $(\infty,1)$-
+  category in which 2-morphisms are policy-equivalences between histories and higher
+  morphisms encode coherence conditions. Meld would then correspond to a homotopy pushout.
+\item \textbf{Stochastic extension.} Incorporate a Markov chain on $\SP$ (transition
+  probabilities on generators) and connect to the Independent Channels Lemma.
+\item \textbf{Renormalization duality.} Formalize the duality between fine-grained
+  $\SP$ categories and coarse-grained $\RSVP$ dynamics as a Wilsonian effective theory.
+\item \textbf{Thermodynamic bounds.} Derive Landauer-type bounds on the minimum action
+  required to realize a given collapse, using the discrete mechanics of
+  Section~\ref{sec:mechanics}.
+\item \textbf{Numerical simulation.} Discretize the entropy-transport PDE on $\Delta(\Omega)$
+  and simulate convergence to coherence attractors for specific histories.
+\end{enumerate}
+
+% ═════════════════════════════════════════════════════════════════════════════
+\section{Philosophical Remark}
+\label{sec:philosophy}
+
+Irreversibility in Spherepop is not an empirical claim about thermodynamic systems. It
+is Axiom~\ref{ax:irrev}: the absence of inverses is constitutive of the framework. The
+connection to Landauer's principle and Bennett's logical reversibility is structural
+analogy, not reduction. This insulates the formalism from physical objections while
+preserving the thermodynamic intuition.
+
+The phrase ``joy of Spherepop'' names a phenomenological consequence of this structure:
+in a universe of infinite options, nothing is decided. It is only by popping futures,
+binding promises, and collapsing distinctions that a world becomes livable. The
+functor $F$ makes this visible geometrically: each commitment sharpens the coherence
+potential, directs the flow, and moves the probability mass toward a vertex.
+
+% ═════════════════════════════════════════════════════════════════════════════
+\section{Conclusion}
+\label{sec:conclusion}
+
+The paper compresses to three sentences.
+
+\medskip
+\noindent
+\emph{Spherepop is the initial object in the category of entropy-decreasing symmetric
+monoidal rewriting categories, freely generated by Pop, Refuse, Bind, and Collapse,
+with worldhood as the sheaf condition on local event proposals and meld as
+policy-induced sheafification.}
+
+\medskip
+\noindent
+\emph{RSVP is a smooth entropy-witnessed field category whose morphisms carry
+explicit slack data ensuring categorical closure without boundary-term ambiguity.}
+
+\medskip
+\noindent
+\emph{$F:\SP\to\RSVP$ is a symmetric monoidal functor translating option-elimination
+into boundary sharpening, dependency into directed coupling, and quotient collapse
+into renormalization, with the structural asymmetry that $\SP$ accumulates constraint
+while $\RSVP$ redistributes coherence—two scale-dual realizations of irreversible
+entropy flow.}
+
+\medskip
+Constraint makes worlds. Entropy measures their cost. History defines identity.
+The functor renders persistence geometrically visible.
+
+% ═════════════════════════════════════════════════════════════════════════════
+\appendix
+
+\section{Confluence of Generator Relations}
+\label{app:confluence}
+
+The relations of Definition~\ref{def:free-gen} are confluent in the sense that any
+two reduction paths starting from the same term reach the same normal form. This
+follows from the fact that:
+(a) idempotence of $\Pop$ is a local rewriting rule with no critical pairs;
+(b) commutativity of independent $\Bind$ events ($\{i,j\}\cap\{k,l\}=\emptyset$)
+is Church-Rosser by inspection (both orderings produce the same admissibility family
+since the binding constraints are on disjoint pairs of elements);
+(c) the monoidal laws are standard and their confluence is part of the theory of
+symmetric monoidal categories.
+
+\section{Free Generation: Formal Construction}
+\label{app:free}
+
+Let $\mathcal{G}$ be the directed multigraph:
+\begin{itemize}
+\item Vertices: all option-spaces $(\Omega,\mathcal{A})$.
+\item Edges: for each nonempty $U\subsetneq\Omega$, edges $\Pop_U$ and $\Ref_U$;
+  for each pair $i\ne j\in\Omega$ with $\{i\preceq j\}\notin\mathcal{A}$, an edge
+  $\Bind_{ij}$; for each causally admissible $\sim$, an edge $\Col_\sim$.
+\end{itemize}
+$\SP$ is the quotient of the free category $\mathcal{F}(\mathcal{G})$ by the
+congruence of Definition~\ref{def:free-gen}, restricted to entropy-monotone paths.
+
+\section{Symmetry Entropy for Bind}
+\label{app:symm-entropy}
+
+Define:
+\[
+  \mathsf{H}_{\mathrm{sym}}(\Omega,\mathcal{A})
+  := \log|\Omega| - \log|\mathrm{Aut}(\Omega,\mathcal{A})|,
+\]
+where $\mathrm{Aut}(\Omega,\mathcal{A})$ is the group of admissibility-preserving
+automorphisms of $(\Omega,\mathcal{A})$. Under $\Bind_{ij}$:
+\begin{itemize}
+\item $|\Omega|$ is unchanged, so $\log|\Omega|$ is unchanged;
+\item $|\mathrm{Aut}(\Omega,\mathcal{A}')|<|\mathrm{Aut}(\Omega,\mathcal{A})|$ since
+  the automorphism that swaps $i\leftrightarrow j$ (and is in $\mathrm{Aut}(\Omega,
+  \mathcal{A})$ when $i,j$ are symmetric) is no longer admissibility-preserving after
+  binding $i\preceq j$.
+\end{itemize}
+Hence $\mathsf{H}_{\mathrm{sym}}(\Omega,\mathcal{A}')>\mathsf{H}_{\mathrm{sym}}(\Omega,
+\mathcal{A})$: symmetry entropy strictly increases under Bind.
+
+This provides the entropy functional making Axiom~\ref{ax:entropy} non-trivially
+active for $\Bind$. The monotonicity direction is reversed from the other generators
+(symmetry entropy increases), which is consistent with $\Bind$ being entropy-preserving
+in the Shannon sense while creating new asymmetry.
+
+\section{Almost-Sure Normalization}
+\label{app:asnorm}
+
+Let Choice events assign probability $p_i$ to branch $i$. Define expected optionality
+$\mathbb{E}[\Opt_{t+1}]=\sum_i p_i\Opt(X_i^{(t)})$. If there exists $\delta>0$ such
+that $\mathbb{E}[\Opt_{t+1}]\le\Opt(X_t)-\delta$ whenever $\Opt(X_t)>0$, then
+$(\Opt(X_t))_t$ is a non-negative supermartingale, hence $\Opt(X_t)\to 0$ almost
+surely by Doob's convergence theorem. The condition $\delta>0$ holds when every
+branch contains at least one $\Pop$ event with nonzero probability---a weak condition
+satisfied by all well-typed Spherepop programs.
+
+\section{Scaling Limit Heuristic}
+\label{app:scaling}
+
+Let $\epsilon>0$. Discretize time as $t_k=k\epsilon$. Suppose events occur at rate
+$1/\epsilon$ and each $\Pop$ eliminates an $\epsilon$-fraction of mass. The discrete
+action $\mathcal{S}[\gamma_\epsilon]=\sum_k L_k^{(\epsilon)}\approx\epsilon\sum_k
+(-\dot\Opt(\gamma(t_k)))$. As $\epsilon\to 0$:
+\[
+  \mathcal{S}[\gamma_\epsilon] \to \int_0^T(-\dot\Opt(\gamma(t)))\,dt
+  = \Opt(\Omega_0)-\Opt(\Omega_T).
+\]
+The Euler-Lagrange equation for this action functional under the constraint of
+entropy-transport is $\partial_t\SF=\nabla\cdot(\kappa\nabla\PhiF)$, the RSVP PDE.
+A rigorous derivation requires specifying the topology on the space of histories and
+the sense of convergence; the natural setting is $\Gamma$-convergence of functionals
+on $L^2(\Delta(\Omega))$.
+
+\section{Faithfulness: Sufficient Conditions}
+\label{app:faithful}
+
+\begin{proposition}
+$F$ is faithful on the subcategory generated by $\Pop$ and $\Col$ alone, provided the
+Riemannian metric on $\Delta(\Omega)$ is non-degenerate and the boundary-sharpening
+profile $\eta_U$ is injective as a function of $U$ (i.e., $U_1\ne U_2\Rightarrow
+\eta_{U_1}\ne\eta_{U_2}$ as smooth functions on $\Delta(\Omega\setminus U_1)\cap
+\Delta(\Omega\setminus U_2)$).
+\end{proposition}
+
+\begin{proof}
+Two distinct $\Pop$ events $\Pop_{U_1}\ne\Pop_{U_2}$ produce distinct face inclusions
+$\iota_{U_1}\ne\iota_{U_2}$ (they have different domains). Two distinct $\Col$ events
+have different equivalence relations $\sim_1\ne\sim_2$, hence different coarse-graining
+maps. The injectivity condition on $\eta$ ensures that even when the smooth maps $\varphi$
+coincide (which happens only for trivial cases), the slack data distinguish the morphisms.
+\end{proof}
+
+\section{Notation Summary}
+\label{app:notation}
+
+\begin{center}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{ll}
+\toprule
+\textbf{Symbol} & \textbf{Meaning} \\
+\midrule
+$\SP$ & Free symmetric monoidal entropy-decreasing rewriting category \\
+$\RSVP$ & Smooth entropy-witnessed field category \\
+$\EDSMC$ & Category of entropy-decreasing symmetric monoidal categories \\
+$(\Omega,\mathcal{A})$ & Option-space with admissibility family \\
+$\Ent$ & Entropy functional $\Ob(\SP)\to\Rnn$ \\
+$\Opt$ & Optionality functional $\Ob(\SP)\to\Rnn$ \\
+$\Pop,\Ref,\Bind,\Col$ & Four generating morphisms \\
+$\Meld_\pi$ & Policy-induced sheafification operator \\
+$\tensor$ & Symmetric monoidal tensor (Cartesian product) \\
+$\unit$ & Unit object (trivial option-space) \\
+$\preceq$ & Causal preorder on $\Omega$ \\
+$\downset{x}$ & Causal past of $x$ \\
+$\sim_q$ & Causally admissible equivalence (collapse policy) \\
+$F:\SP\to\RSVP$ & Geometric realization functor \\
+$(\varphi,\eta)$ & RSVP morphism with entropy-slack witness \\
+$\Delta(\Omega)$ & Probability simplex over $\Omega$ \\
+$\PhiF,\vF,\SF$ & Coherence potential, velocity field, entropy density \\
+$\kappa$ & Diffusion coefficient in entropy-transport PDE \\
+$\mathcal{S}[\gamma]$ & Action of history $\gamma$ \\
+$\pi_t$ & Commitment (conjugate to optionality) \\
+$H_t$ & Hamiltonian (remaining freedom) \\
+$\mathcal{T}$ & Presheaf of local event proposals \\
+$a_\pi(\mathcal{T})$ & Policy sheafification of $\mathcal{T}$ \\
+$\eta_\pi$ & Universal $\pi$-invariant map \\
+$\Kc$ & Kolmogorov complexity \\
+$\mathcal{B}$ & Accounting functor tracking $\Ref$ tags \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+% ═════════════════════════════════════════════════════════════════════════════
+\begin{thebibliography}{99}
+
+\bibitem[Awodey(2010)]{awodey2010}
+S.~Awodey, \emph{Category Theory}, 2nd ed., Oxford University Press, 2010.
+
+\bibitem[Bennett(1973)]{bennett1973}
+C.~H.~Bennett, Logical reversibility of computation,
+\emph{IBM Journal of Research and Development}, 17(6):525--532, 1973.
+
+\bibitem[Giry(1982)]{giry1982}
+M.~Giry, A categorical approach to probability theory,
+\emph{Categorical Aspects of Topology and Analysis}, 68--85, Springer, 1982.
+
+\bibitem{GreenAltenkirch2006}
+A.~Green and T.~Altenkirch.
+\newblock From reversible to irreversible computations.
+\newblock \emph{Electronic Notes in Theoretical Computer Science},
+210:65--74, 2008.
+\newblock doi:\href{https://doi.org/10.1016/j.entcs.2008.04.018}{10.1016/j.entcs.2008.04.018}.
+
+\bibitem[Jacobson(1995)]{jacobson1995}
+T.~Jacobson, Thermodynamics of spacetime: the Einstein equation of state,
+\emph{Physical Review Letters}, 75(7):1260--1263, 1995.
+
+\bibitem[Johnstone(2002)]{johnstone2002}
+P.~T.~Johnstone, \emph{Sketches of an Elephant: A Topos Theory Compendium},
+Oxford University Press, 2002.
+
+\bibitem[Kolmogorov(1965)]{kolmogorov1965}
+A.~N.~Kolmogorov, Three approaches to the quantitative definition of information,
+\emph{Problems of Information Transmission}, 1(1):1--7, 1965.
+
+\bibitem[Landauer(1961)]{landauer1961}
+R.~Landauer, Irreversibility and heat generation in the computing process,
+\emph{IBM Journal of Research and Development}, 5(3):183--191, 1961.
+
+\bibitem[Lawvere(1970)]{lawvere1970}
+F.~W.~Lawvere, Quantifiers and sheaves,
+\emph{Actes du Congrès International des Mathématiciens}, 1:329--334, 1970.
+
+\bibitem[Mac Lane(1998)]{maclane1998}
+S.~Mac Lane, \emph{Categories for the Working Mathematician}, 2nd ed., Springer, 1998.
+
+\bibitem[Mac Lane \& Moerdijk(1992)]{maclane1992}
+S.~Mac Lane and I.~Moerdijk, \emph{Sheaves in Geometry and Logic}, Springer, 1992.
+
+\bibitem[Martin-L\"of(1975)]{martinlof1975}
+P.~Martin-L\"of, An intuitionistic theory of types: predicative part,
+\emph{Logic Colloquium '73}, 73--118, North-Holland, 1975.
+
+\bibitem[Milner(1999)]{milner1999}
+R.~Milner, \emph{Communicating and Mobile Systems: The $\pi$-Calculus},
+Cambridge University Press, 1999.
+
+\bibitem[Moggi(1991)]{moggi1991}
+E.~Moggi, Notions of computation and monads,
+\emph{Information and Computation}, 93(1):55--92, 1991.
+
+\bibitem[Pierce(2002)]{pierce2002}
+B.~C.~Pierce, \emph{Types and Programming Languages}, MIT Press, 2002.
+
+\bibitem[Plotkin(2004)]{plotkin2004}
+G.~D.~Plotkin, A structural approach to operational semantics,
+\emph{Journal of Logic and Algebraic Programming}, 60--61:17--139, 2004.
+
+\bibitem[Shannon(1948)]{shannon1948}
+C.~E.~Shannon, A mathematical theory of communication,
+\emph{Bell System Technical Journal}, 27:379--423, 1948.
+
+\bibitem[Street(1972)]{street1972}
+R.~Street, The formal theory of monads,
+\emph{Journal of Pure and Applied Algebra}, 2(2):149--168, 1972.
+
+\bibitem[Verlinde(2011)]{verlinde2011}
+E.~Verlinde, On the origin of gravity and the laws of Newton,
+\emph{Journal of High Energy Physics}, 2011(4):29, 2011.
+
+\bibitem[Wilson(1983)]{wilson1983}
+K.~G.~Wilson, The renormalization group and critical phenomena,
+\emph{Reviews of Modern Physics}, 55(3):583--600, 1983.
+
+\end{thebibliography}
+
+\end{document}
