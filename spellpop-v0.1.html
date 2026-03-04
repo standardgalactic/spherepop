@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spellpop — Semantic Descent</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #000;
+    color: #00ff88;
+    font-family: 'Share Tech Mono', monospace;
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+    cursor: crosshair;
+  }
+
+  #canvas {
+    display: block;
+    width: 100vw;
+    height: 100vh;
+  }
+
+  #hud {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    padding: 16px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  .hud-block {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .hud-label {
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: #006633;
+    text-transform: uppercase;
+  }
+
+  .hud-value {
+    font-family: 'Orbitron', monospace;
+    font-size: 22px;
+    font-weight: 700;
+    color: #00ff88;
+    text-shadow: 0 0 20px #00ff88, 0 0 40px #00aa55;
+    letter-spacing: 2px;
+  }
+
+  #entropy-bar-wrap {
+    width: 180px;
+  }
+
+  #entropy-label {
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: #006633;
+    margin-bottom: 6px;
+  }
+
+  #entropy-bar {
+    width: 100%;
+    height: 4px;
+    background: #001a0d;
+    border: 1px solid #003322;
+    position: relative;
+    overflow: hidden;
+  }
+
+  #entropy-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #00ff88, #ffaa00);
+    transition: width 0.3s ease;
+    box-shadow: 0 0 10px #00ff88;
+  }
+
+  #mode-indicator {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  .flare-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.3);
+    transition: all 0.2s;
+  }
+
+  .flare-dot.active {
+    transform: scale(1.6);
+    box-shadow: 0 0 15px currentColor;
+  }
+
+  #instructions {
+    position: fixed;
+    bottom: 60px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 10px;
+    color: #004422;
+    letter-spacing: 2px;
+    text-align: center;
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  #splash {
+    position: fixed;
+    inset: 0;
+    background: #000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    cursor: pointer;
+  }
+
+  #splash h1 {
+    font-family: 'Orbitron', monospace;
+    font-size: 52px;
+    font-weight: 900;
+    color: #00ff88;
+    text-shadow: 0 0 40px #00ff88, 0 0 80px #00aa44;
+    letter-spacing: 8px;
+    margin-bottom: 8px;
+  }
+
+  #splash .subtitle {
+    font-size: 11px;
+    letter-spacing: 6px;
+    color: #006633;
+    margin-bottom: 48px;
+  }
+
+  #splash .instructions {
+    font-size: 11px;
+    color: #009944;
+    line-height: 2.2;
+    text-align: center;
+    letter-spacing: 1px;
+    margin-bottom: 48px;
+    max-width: 420px;
+  }
+
+  #splash .start {
+    font-family: 'Orbitron', monospace;
+    font-size: 13px;
+    letter-spacing: 4px;
+    color: #00ff88;
+    border: 1px solid #00ff88;
+    padding: 14px 36px;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; box-shadow: 0 0 20px #00ff88; }
+    50% { opacity: 0.5; box-shadow: none; }
+  }
+
+  #gameover {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    cursor: pointer;
+  }
+
+  #gameover h2 {
+    font-family: 'Orbitron', monospace;
+    font-size: 36px;
+    color: #ff4444;
+    text-shadow: 0 0 30px #ff2222;
+    letter-spacing: 6px;
+    margin-bottom: 24px;
+  }
+
+  #final-score {
+    font-family: 'Orbitron', monospace;
+    font-size: 48px;
+    color: #00ff88;
+    text-shadow: 0 0 30px #00ff88;
+    margin-bottom: 8px;
+  }
+
+  #gameover .restart {
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: #006633;
+    margin-top: 32px;
+  }
+</style>
+</head>
+<body>
+
+<canvas id="canvas"></canvas>
+
+<div id="hud">
+  <div class="hud-block">
+    <div class="hud-label">Score</div>
+    <div class="hud-value" id="score-display">000000</div>
+  </div>
+  <div class="hud-block" style="align-items:center">
+    <div id="entropy-label" class="hud-label">Entropy Field</div>
+    <div id="entropy-bar-wrap">
+      <div id="entropy-bar"><div id="entropy-fill" style="width:50%"></div></div>
+    </div>
+  </div>
+  <div class="hud-block" style="align-items:flex-end">
+    <div class="hud-label">Depth</div>
+    <div class="hud-value" id="depth-display">0000m</div>
+  </div>
+</div>
+
+<div id="mode-indicator">
+  <div class="flare-dot active" id="dot-0" style="background:#00ff88; color:#00ff88"></div>
+  <div class="flare-dot" id="dot-1" style="background:#ff9900; color:#ff9900"></div>
+  <div class="flare-dot" id="dot-2" style="background:#cc44ff; color:#cc44ff"></div>
+  <div class="flare-dot" id="dot-3" style="background:#44aaff; color:#44aaff"></div>
+</div>
+
+<div id="instructions">CLICK TO FIRE · 1-4 SELECT FLARE · MOUSE AIM</div>
+
+<div id="splash" onclick="startGame()">
+  <h1>Spellpop</h1>
+  <div class="subtitle">Semantic Descent — v0.1</div>
+  <div class="instructions">
+    Descend through an uncertain classification field.<br>
+    Bubbles contain corrupted hypotheses about what the system sees.<br>
+    High corruption = high entropy = high score.<br><br>
+    <span style="color:#00ff88">1</span> Visual error &nbsp; <span style="color:#ff9900">2</span> Keyboard proximity<br>
+    <span style="color:#cc44ff">3</span> Swipe gesture &nbsp; <span style="color:#44aaff">4</span> Phonetic channel<br><br>
+    Match the flare to the error type for bonus points.
+  </div>
+  <div class="start">[ INITIATE DESCENT ]</div>
+</div>
+
+<div id="gameover" onclick="startGame()">
+  <h2>FIELD COLLAPSED</h2>
+  <div id="final-score">000000</div>
+  <div class="hud-label" style="letter-spacing:2px">TOTAL ENTROPY RESOLVED</div>
+  <div class="restart">[ CLICK TO REDESCEND ]</div>
+</div>
+
+<script>
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+
+// ─── Word corpus with error types ─────────────────────────────────────────────
+const WORDS = {
+  visual:    ['barn','corn','form','born','torn','worn','lorn','fork','pork','cork','morph','port','sort','word','work','worm','ford','lord','cord','more'],
+  keyboard:  ['tree','free','grew','brew','crew','drew','blew','flew','slew','knew','view','lieu','blue','clue','glue','true','flue','due','sue','rue'],
+  swipe:     ['quick','thick','click','flick','brick','trick','stick','slick','prick','chick','whisk','brisk','crisp','grips','drips','trips','clips','chips','skips','ships'],
+  phonetic:  ['their','there','wear','where','bare','bear','pair','pear','fare','fair','hair','hare','hear','here','dear','deer','feat','feet','meat','meet'],
+};
+
+const ERROR_TYPES = ['visual', 'keyboard', 'swipe', 'phonetic'];
+const FLARE_COLORS = ['#00ff88', '#ff9900', '#cc44ff', '#44aaff'];
+const FLARE_NAMES  = ['VISUAL', 'KEYBD', 'SWIPE', 'PHONE'];
+
+// ─── Corruption engine ────────────────────────────────────────────────────────
+function corruptWord(word, confidence, errorType) {
+  if (confidence > 0.88) return word; // pristine
+
+  const intensity = 1 - confidence;
+  let chars = word.split('');
+
+  if (errorType === 'visual') {
+    const vizSubs = {'l':'1','i':'l','o':'0','e':'c','m':'rn','b':'6','g':'9','a':'@'};
+    chars = chars.map(c => (Math.random() < intensity * 0.9 && vizSubs[c]) ? vizSubs[c] : c);
+  } else if (errorType === 'keyboard') {
+    const kbd = {'e':'r','r':'e','t':'y','y':'t','u':'i','i':'u','o':'p','p':'o','a':'s','s':'a','d':'f','f':'d','g':'h','h':'g','z':'x','x':'z','c':'v','v':'c','n':'m','m':'n'};
+    chars = chars.map(c => (Math.random() < intensity * 0.85 && kbd[c]) ? kbd[c] : c);
+  } else if (errorType === 'swipe') {
+    if (intensity > 0.3 && Math.random() < intensity) {
+      const pos = Math.floor(Math.random() * chars.length);
+      chars.splice(pos, 0, chars[Math.max(0, pos-1)]);
+    }
+    chars = chars.map(c => Math.random() < intensity * 0.5 ? (Math.random()<0.5?c.toUpperCase():c) : c);
+  } else if (errorType === 'phonetic') {
+    const phon = {'th':'d','sh':'s','ch':'k','wh':'w','ph':'f','ck':'k','ee':'i','oo':'u','ea':'e','ou':'u'};
+    let s = chars.join('');
+    for (const [from, to] of Object.entries(phon)) {
+      if (Math.random() < intensity * 0.9) s = s.replace(from, to);
+    }
+    chars = s.split('');
+  }
+
+  // Add noise at very low confidence
+  if (intensity > 0.55) {
+    const noiseChars = 'xzqjkvwybfmpl';
+    for (let i = 0; i < chars.length; i++) {
+      if (Math.random() < (intensity - 0.55) * 1.2) {
+        chars[i] = noiseChars[Math.floor(Math.random() * noiseChars.length)];
+      }
+    }
+  }
+
+  if (intensity > 0.75) {
+    const extras = Math.floor((intensity - 0.6) * 4);
+    for (let i = 0; i < extras; i++) {
+      chars.splice(Math.floor(Math.random() * chars.length), 0,
+        String.fromCharCode(97 + Math.floor(Math.random() * 26)));
+    }
+  }
+
+  return chars.join('');
+}
+
+// ─── Game state ───────────────────────────────────────────────────────────────
+let W, H, cx, cy;
+let bubbles = [], particles = [], shockwaves = [];
+let score = 0, depth = 0, frame = 0, gameActive = false;
+let mouseX = 0, mouseY = 0;
+let flareType = 0;
+let tunnelOffset = 0;
+let spawnTimer = 0;
+let entropy = 0.5;
+
+// ─── Resize ───────────────────────────────────────────────────────────────────
+function resize() {
+  W = canvas.width  = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+  cx = W / 2; cy = H / 2;
+}
+window.addEventListener('resize', resize);
+resize();
+
+// ─── Tunnel geometry ─────────────────────────────────────────────────────────
+function getTunnelRadius(y) {
+  const pct = y / H;
+  // Narrows toward center vanishing point, widens at edges
+  return (W * 0.38) * (0.3 + 0.7 * Math.abs(pct - 0.5) * 2.1);
+}
+
+function drawTunnel() {
+  const rings = 18;
+  const vp = { x: cx, y: cy * 0.85 }; // vanishing point
+
+  ctx.save();
+
+  for (let r = 0; r < rings; r++) {
+    const t = (r / rings + (tunnelOffset * 0.0004)) % 1;
+    const scale = t; // 0=vanishing, 1=screen edge
+    const ellW = W * 0.88 * scale;
+    const ellH = H * 0.72 * scale;
+
+    const alpha = scale * 0.35;
+    const green = Math.floor(80 + 120 * scale);
+
+    ctx.beginPath();
+    ctx.ellipse(vp.x, vp.y + (H * 0.12 * scale), ellW / 2, ellH / 2, 0, 0, Math.PI * 2);
+    ctx.strokeStyle = `rgba(0,${green},50,${alpha})`;
+    ctx.lineWidth = 0.5 + scale * 1.5;
+    ctx.stroke();
+
+    // Cross spokes
+    if (r % 3 === 0) {
+      const hw = ellW / 2, hh = ellH / 2;
+      const vpy = vp.y + (H * 0.12 * scale);
+      ctx.beginPath();
+      [[vp.x - hw, vpy],[vp.x + hw, vpy],
+       [vp.x, vpy - hh],[vp.x, vpy + hh]].forEach(([x2,y2], i) => {
+        if (i % 2 === 0) { ctx.moveTo(vp.x, vp.y); ctx.lineTo(x2, y2); }
+      });
+      ctx.strokeStyle = `rgba(0,${green},30,${alpha * 0.4})`;
+      ctx.lineWidth = 0.3;
+      ctx.stroke();
+    }
+  }
+
+  ctx.restore();
+}
+
+// ─── Bubble spawning ──────────────────────────────────────────────────────────
+function spawnBubble() {
+  const errorType = ERROR_TYPES[Math.floor(Math.random() * 4)];
+  const wordList  = WORDS[errorType];
+  const word      = wordList[Math.floor(Math.random() * wordList.length)];
+  const confidence = 0.08 + Math.random() * 0.88;
+  const corrupted = corruptWord(word, confidence, errorType);
+
+  // Position within tunnel
+  const angle = Math.random() * Math.PI * 2;
+  const dist  = (0.15 + Math.random() * 0.55) * Math.min(W, H) * 0.42;
+  const x = cx + Math.cos(angle) * dist * (W / H);
+  const y = -60;
+
+  const radius = 28 + (1 - confidence) * 38;
+
+  bubbles.push({
+    x, y,
+    vx: (Math.random() - 0.5) * 0.6,
+    vy: 0.7 + (1 - confidence) * 0.8 + Math.random() * 0.5,
+    radius,
+    word,
+    label: corrupted,
+    confidence,
+    errorType,
+    errorIdx: ERROR_TYPES.indexOf(errorType),
+    alpha: 0,
+    age: 0,
+    wobble: Math.random() * Math.PI * 2,
+    wobbleSpeed: 0.02 + Math.random() * 0.02,
+    pulsePhase: Math.random() * Math.PI * 2,
+  });
+}
+
+// ─── Shooting ─────────────────────────────────────────────────────────────────
+function shoot(mx, my) {
+  if (!gameActive) return;
+
+  let bestBubble = null, bestDist = Infinity;
+  for (const b of bubbles) {
+    const d = Math.hypot(b.x - mx, b.y - my);
+    if (d < b.radius + 16 && d < bestDist) {
+      bestDist = d;
+      bestBubble = b;
+    }
+  }
+
+  if (bestBubble) {
+    popBubble(bestBubble, flareType);
+  } else {
+    // Miss — small flare particle
+    spawnFlare(mx, my, flareType, 0);
+  }
+}
+
+function popBubble(b, usedFlareType) {
+  const entropyReduction = 1 - b.confidence;
+  const typeMatch = (usedFlareType === b.errorIdx);
+  const basePoints = Math.round(entropyReduction * 1000);
+  const bonus = typeMatch ? 2.5 : 1.0;
+  const points = Math.round(basePoints * bonus);
+
+  score += points;
+  entropy = Math.max(0, entropy - entropyReduction * 0.08);
+
+  // Particles
+  spawnExplosion(b.x, b.y, b.confidence, usedFlareType, typeMatch, points);
+
+  bubbles = bubbles.filter(bub => bub !== b);
+  updateHUD();
+}
+
+function spawnExplosion(x, y, confidence, flareIdx, matched, points) {
+  const count = 8 + Math.floor((1 - confidence) * 22);
+  const col = FLARE_COLORS[flareIdx];
+
+  for (let i = 0; i < count; i++) {
+    const angle = (Math.PI * 2 * i) / count + Math.random() * 0.4;
+    const speed = 1.5 + Math.random() * 4 * (1 - confidence);
+    particles.push({
+      x, y,
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed - 1,
+      life: 1,
+      decay: 0.018 + Math.random() * 0.025,
+      color: col,
+      size: 1.5 + Math.random() * 2.5,
+      glyph: matched ? null : '?',
+    });
+  }
+
+  // Score floater
+  particles.push({
+    x, y: y - 10,
+    vx: 0, vy: -1.2,
+    life: 1, decay: 0.012,
+    color: matched ? '#ffffff' : col,
+    size: matched ? 14 : 11,
+    text: `+${points}`,
+    isText: true,
+  });
+
+  // Shockwave
+  shockwaves.push({ x, y, r: 0, maxR: 60 + (1-confidence)*60, life: 1, color: col });
+}
+
+function spawnFlare(x, y, flareIdx) {
+  const col = FLARE_COLORS[flareIdx];
+  for (let i = 0; i < 5; i++) {
+    particles.push({
+      x, y,
+      vx: (Math.random()-0.5)*2,
+      vy: (Math.random()-0.5)*2,
+      life: 0.7, decay: 0.04,
+      color: col, size: 1.5,
+    });
+  }
+}
+
+// ─── HUD updates ──────────────────────────────────────────────────────────────
+function updateHUD() {
+  document.getElementById('score-display').textContent = String(score).padStart(6,'0');
+  document.getElementById('depth-display').textContent = String(Math.floor(depth)).padStart(4,'0') + 'm';
+  document.getElementById('entropy-fill').style.width = (entropy * 100) + '%';
+}
+
+function selectFlare(idx) {
+  flareType = idx;
+  document.querySelectorAll('.flare-dot').forEach((d, i) => d.classList.toggle('active', i === idx));
+}
+
+// ─── Main loop ────────────────────────────────────────────────────────────────
+function gameLoop() {
+  if (!gameActive) { requestAnimationFrame(gameLoop); return; }
+
+  frame++;
+  tunnelOffset++;
+  depth += 0.15;
+
+  // Spawn
+  spawnTimer++;
+  const spawnRate = Math.max(28, 80 - depth * 0.05);
+  if (spawnTimer > spawnRate) { spawnBubble(); spawnTimer = 0; }
+
+  // Entropy drift up slowly
+  entropy = Math.min(1, entropy + 0.0003);
+
+  // ─ Draw ───────────────────────────────────────────────────────────────────
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, W, H);
+
+  // Faint scanlines
+  for (let y = 0; y < H; y += 3) {
+    ctx.fillStyle = 'rgba(0,0,0,0.15)';
+    ctx.fillRect(0, y, W, 1);
+  }
+
+  drawTunnel();
+
+  // Aim reticle
+  ctx.save();
+  ctx.strokeStyle = FLARE_COLORS[flareType];
+  ctx.lineWidth = 1;
+  ctx.globalAlpha = 0.7;
+  const rs = 14;
+  ctx.beginPath();
+  ctx.arc(mouseX, mouseY, rs, 0, Math.PI*2);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(mouseX - rs - 6, mouseY); ctx.lineTo(mouseX - rs + 4, mouseY);
+  ctx.moveTo(mouseX + rs - 4, mouseY); ctx.lineTo(mouseX + rs + 6, mouseY);
+  ctx.moveTo(mouseX, mouseY - rs - 6); ctx.lineTo(mouseX, mouseY - rs + 4);
+  ctx.moveTo(mouseX, mouseY + rs - 4); ctx.lineTo(mouseX, mouseY + rs + 6);
+  ctx.stroke();
+  ctx.restore();
+
+  // Shockwaves
+  shockwaves = shockwaves.filter(s => s.life > 0);
+  for (const s of shockwaves) {
+    s.r += (s.maxR - s.r) * 0.15;
+    s.life -= 0.06;
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
+    ctx.strokeStyle = s.color;
+    ctx.globalAlpha = s.life * 0.4;
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  // Bubbles
+  bubbles = bubbles.filter(b => b.y < H + 80);
+  for (const b of bubbles) {
+    b.x += b.vx;
+    b.y += b.vy;
+    b.age++;
+    b.wobble += b.wobbleSpeed;
+    b.pulsePhase += 0.04;
+    b.alpha = Math.min(1, b.age * 0.04);
+
+    const wobbleR = b.radius + Math.sin(b.wobble) * 2.5;
+    const col = FLARE_COLORS[b.errorIdx];
+    const corruptionAlpha = (1 - b.confidence);
+
+    ctx.save();
+    ctx.globalAlpha = b.alpha * 0.85;
+
+    // Outer glow
+    const grd = ctx.createRadialGradient(b.x, b.y, wobbleR * 0.3, b.x, b.y, wobbleR * 1.4);
+    grd.addColorStop(0, `${col}22`);
+    grd.addColorStop(1, 'transparent');
+    ctx.beginPath();
+    ctx.arc(b.x, b.y, wobbleR * 1.4, 0, Math.PI*2);
+    ctx.fillStyle = grd;
+    ctx.fill();
+
+    // Bubble body
+    const bodyGrd = ctx.createRadialGradient(b.x - wobbleR*0.3, b.y - wobbleR*0.3, 0, b.x, b.y, wobbleR);
+    bodyGrd.addColorStop(0, `rgba(0,255,136,${0.06 + corruptionAlpha * 0.08})`);
+    bodyGrd.addColorStop(0.7, `rgba(0,80,40,${0.04})`);
+    bodyGrd.addColorStop(1, `${col}${Math.floor(15 + corruptionAlpha * 30).toString(16).padStart(2,'0')}`);
+    ctx.beginPath();
+    ctx.arc(b.x, b.y, wobbleR, 0, Math.PI*2);
+    ctx.fillStyle = bodyGrd;
+    ctx.fill();
+
+    // Ring
+    ctx.beginPath();
+    ctx.arc(b.x, b.y, wobbleR, 0, Math.PI*2);
+    ctx.strokeStyle = col;
+    ctx.globalAlpha = b.alpha * (0.3 + corruptionAlpha * 0.5 + Math.sin(b.pulsePhase) * 0.1);
+    ctx.lineWidth = 0.8 + corruptionAlpha * 1.5;
+    ctx.stroke();
+
+    // Label
+    ctx.globalAlpha = b.alpha;
+    const fontSize = Math.max(9, Math.min(16, wobbleR * 0.5));
+    ctx.font = `${fontSize}px 'Share Tech Mono', monospace`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+
+    // Color by confidence
+    const g = Math.floor(80 + b.confidence * 175);
+    const r = Math.floor((1 - b.confidence) * 220);
+    ctx.fillStyle = `rgb(${r},${g},${Math.floor(b.confidence * 60)})`;
+
+    // Shake corrupt text
+    const shakeX = corruptionAlpha > 0.5 ? (Math.random()-0.5)*2*corruptionAlpha : 0;
+    const shakeY = corruptionAlpha > 0.5 ? (Math.random()-0.5)*1.5*corruptionAlpha : 0;
+    ctx.fillText(b.label, b.x + shakeX, b.y + shakeY);
+
+    // Error type indicator (tiny)
+    ctx.font = `7px 'Share Tech Mono', monospace`;
+    ctx.fillStyle = `${col}66`;
+    ctx.fillText(FLARE_NAMES[b.errorIdx], b.x, b.y + wobbleR + 9);
+
+    ctx.restore();
+  }
+
+  // Particles
+  particles = particles.filter(p => p.life > 0);
+  for (const p of particles) {
+    p.x += p.vx;
+    p.y += p.vy;
+    p.vy += 0.05;
+    p.life -= p.decay;
+
+    ctx.save();
+    ctx.globalAlpha = p.life;
+
+    if (p.isText) {
+      ctx.font = `bold ${p.size}px 'Orbitron', monospace`;
+      ctx.fillStyle = p.color;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(p.text, p.x, p.y);
+    } else {
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
+      ctx.fillStyle = p.color;
+      ctx.shadowColor = p.color;
+      ctx.shadowBlur = 6;
+      ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  // HUD scanline bottom strip
+  const grad = ctx.createLinearGradient(0, H-60, 0, H);
+  grad.addColorStop(0, 'transparent');
+  grad.addColorStop(1, 'rgba(0,0,0,0.7)');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, H-60, W, 60);
+
+  updateHUD();
+  requestAnimationFrame(gameLoop);
+}
+
+// ─── Input ────────────────────────────────────────────────────────────────────
+canvas.addEventListener('mousemove', e => { mouseX = e.clientX; mouseY = e.clientY; });
+canvas.addEventListener('click', e => { if (gameActive) shoot(e.clientX, e.clientY); });
+
+window.addEventListener('keydown', e => {
+  if (!gameActive) return;
+  if (e.key >= '1' && e.key <= '4') selectFlare(parseInt(e.key) - 1);
+});
+
+// ─── Start / reset ────────────────────────────────────────────────────────────
+function startGame() {
+  document.getElementById('splash').style.display = 'none';
+  document.getElementById('gameover').style.display = 'none';
+  bubbles = []; particles = []; shockwaves = [];
+  score = 0; depth = 0; frame = 0; entropy = 0.5;
+  spawnTimer = 0; tunnelOffset = 0;
+  flareType = 0;
+  selectFlare(0);
+  gameActive = true;
+  updateHUD();
+}
+
+// ─── Launch ───────────────────────────────────────────────────────────────────
+gameLoop();
+</script>
+</body>
+</html>

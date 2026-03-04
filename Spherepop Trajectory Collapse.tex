@@ -1,0 +1,2197 @@
+\documentclass[11pt]{article}
+
+% ------------------------------------------------------------
+% Font and Typography
+% ------------------------------------------------------------
+
+\usepackage{fontspec}
+\setmainfont{Libertinus Serif}
+
+\usepackage{microtype}
+
+% ------------------------------------------------------------
+% Page Layout
+% ------------------------------------------------------------
+
+\usepackage{geometry}
+\geometry{margin=1in}
+
+\usepackage{setspace}
+\onehalfspacing
+
+% ------------------------------------------------------------
+% Mathematics
+% ------------------------------------------------------------
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathtools}
+
+% ------------------------------------------------------------
+% Theorem Environments
+% ------------------------------------------------------------
+
+\usepackage{amsthm}
+
+\newtheorem{definition}{Definition}
+\newtheorem{proposition}{Proposition}
+\newtheorem{principle}{Principle}
+
+% ------------------------------------------------------------
+% Graphics and Diagrams
+% ------------------------------------------------------------
+
+\usepackage{tikz}
+\usepackage{tikz-cd}
+
+% ------------------------------------------------------------
+% Hyperlinks
+% ------------------------------------------------------------
+
+\usepackage{hyperref}
+
+\hypersetup{
+colorlinks=true,
+linkcolor=black,
+citecolor=black,
+urlcolor=blue
+}
+
+% ------------------------------------------------------------
+% Document
+% ------------------------------------------------------------
+
+\begin{document}
+
+\title{Spherepop Trajectory Collapse:\\
+A First-Person Game for Visualizing Semantic Uncertainty}
+
+\author{Flyxion}
+
+\date{\today}
+
+\maketitle
+
+\begin{abstract}
+\noindent
+\emph{Spherepop Trajectory Collapse} proposes a first--person tunnel--descent game that renders probabilistic semantic uncertainty as an explorable field of interactive hypotheses. Along a trajectory identified with the motion of a vehicle or drone through an environment, ambiguous classifications appear as translucent bubbles carrying textual labels. The internal corruption of each label encodes confidence: high--confidence hypotheses exhibit near-correct spellings with minimal perturbations, while low--confidence hypotheses degrade toward high--entropy strings approaching character noise. Bubble popping is framed as an explicit collapse operation that commits the system to a specific hypothesis and earns points proportional to a quantitative proxy for entropy reduction.
+
+A second interaction mode refines uncertainty into structured error channels. Colored flares represent competing noise models, including visual character confusions, keyboard-topology substitutions under QWERTY or Dvorak adjacency, whole-word confusions induced by swipe-gesture traces, and phonetic substitutions characteristic of speech transcription. Correctly matching a flare to an error channel implements a diagnostic selection on the hypothesis space and yields multiplicative reward, thereby coupling uncertainty magnitude with error-type inference.
+
+The same mechanics generalize from pedagogy to distributed perception. In didactic settings, Spherepop supports typing and spelling training by externalizing error structures as interactive targets. In operational settings, ambiguous object recognitions from traffic drones can be routed to passengers’ local touchscreens and AR overlays, stripped of identifying metadata and spatial precision, and converted into Spellpop tasks whose resolutions feed back into the ensemble. The framework is given three formal readings: an RSVP interpretation in which bubbles correspond to localized entropy pockets along a scalar--vector--entropy trajectory; a category-theoretic interpretation in which descent corresponds to a compositional chain of morphisms with bubble collapse selecting branches; and a sheaf-theoretic interpretation in which bubbles mark gluing failures among local observational sections over a trajectory cover, resolved through participatory reconciliation.
+\end{abstract}
+
+\newpage
+\section{Introduction}
+
+The design of interactive systems has historically drawn upon metaphors of physical space in order to make abstract computational processes intelligible to human users. Graphical interfaces transform files into objects and directories into containers, while network diagrams portray flows of information as paths across landscapes. The concept proposed here extends this tradition by rendering probabilistic uncertainty itself as an explorable environment. The game \emph{Spherepop} becomes a first--person experience in which the player traverses a tunnel of hypotheses and actively resolves ambiguity through targeted interaction.
+
+The central visual metaphor is a descent through a cylindrical tunnel populated by translucent bubbles. Each bubble contains a textual label representing a hypothesized identification of some object or signal within a computational system. The player does not simply navigate a geometric space; rather, the player travels along a trajectory through a field of uncertain interpretations. The path of the player corresponds conceptually to the trajectory of a vehicle, drone, or autonomous system moving through an environment while attempting to interpret sensory data.
+
+In practical systems such as robotics, perception is rarely certain. Sensors generate probabilistic predictions that must be interpreted within a continuously evolving model of the world. The tunnel in Spherepop represents this evolving stream of inference. Regions of high confidence are smooth and stable, while regions of ambiguity manifest as bubbles that emerge along the path of motion. Each bubble therefore represents a locus where the system's interpretation of reality is unresolved.
+
+The act of popping a bubble corresponds to collapsing one of these uncertain hypotheses. Instead of collecting items or eliminating enemies, the player removes ambiguity from the environment. The game mechanic transforms the abstract process of uncertainty reduction into a direct physical interaction. By firing a flare at a bubble, the player commits to resolving the ambiguous label contained within it. In doing so, the player symbolically performs the same operation that inference systems perform when they converge upon a stable interpretation of sensory input.
+
+The use of textual labels inside the bubbles introduces an additional conceptual layer. Rather than representing objects visually, the bubbles contain distorted words that encode the system's current guess about what an object might be. The clarity or corruption of the word directly reflects the degree of confidence associated with that guess. As a result, the player is not merely observing uncertainty but reading it as a linguistic signal whose structure reveals the internal state of the system.
+
+This design draws inspiration from earlier concepts explored within the broader Spherepop framework, in which bubbles symbolize informational structures that may collapse under interaction. In that conceptual system, the popping of a bubble represents the irreversible exclusion of competing possibilities. By translating this principle into a first--person interactive environment, the game becomes a concrete demonstration of how ambiguity emerges and is resolved within complex computational processes.
+
+The remainder of this essay develops the conceptual foundations of this mechanic. It examines how uncertainty can be encoded through progressive distortion of textual labels, how scoring may reflect the informational value of resolving ambiguity, and how specialized interaction modes can represent different classes of error within language and perception systems.
+
+\section{Encoding Uncertainty Through Linguistic Distortion}
+
+The visual language of the bubbles is designed so that the internal structure of each word reflects the confidence level of the system that produced it. Instead of displaying numerical probabilities or confidence meters, the game represents uncertainty through progressive deformation of language itself. In this way, linguistic corruption becomes a direct visual proxy for epistemic instability.
+
+When the system possesses high confidence in its interpretation of an object or signal, the textual label inside the bubble appears nearly correct. Minor deviations may still be present, such as a single missing letter, a transposition of two adjacent characters, or a small orthographic anomaly. These distortions correspond to situations in which the system's inference is largely stable but not perfectly resolved. The bubble therefore represents a small pocket of uncertainty within an otherwise coherent interpretive field.
+
+As confidence decreases, the distortion of the word becomes more pronounced. Letters may shift positions, additional characters may appear, or improbable sequences may replace expected ones. The internal structure of the label begins to deviate from conventional spelling patterns, producing strings that remain partially recognizable yet increasingly unstable. At this stage the bubble embodies a larger region of ambiguity in the interpretive space.
+
+When the system's confidence drops to very low levels, the textual label ceases to resemble a normal word altogether. The sequence of characters approaches statistical noise, forming combinations that appear linguistically implausible or effectively random. In such cases the bubble represents a hypothesis that has little support within the underlying inference process. The visual appearance of the label communicates that the system is effectively guessing within a large space of possibilities.
+
+This progressive deformation of words provides an intuitive gradient between certainty and ambiguity. Players learn to interpret the degree of distortion as a measure of informational instability. A nearly correct word signals that the system is already close to convergence, whereas a heavily corrupted label indicates that the system's interpretation remains highly uncertain.
+
+The scoring structure of the game reflects this relationship between distortion and informational value. Destroying a bubble that contains only a minor error resolves a relatively small region of possibility space and therefore yields a modest reward. By contrast, popping a bubble whose label has devolved into near noise collapses a much larger region of uncertainty. The resulting reward is correspondingly greater because the player has eliminated a more significant ambiguity.
+
+In this sense the scoring system functions as a measure of entropy reduction. Each bubble represents a distribution of possible interpretations, and the player receives points proportional to the magnitude of the uncertainty that is resolved through interaction. The more distorted the word appears, the larger the underlying hypothesis space that must be collapsed.
+
+The tunnel environment therefore becomes a dynamic landscape of informational gradients. Bubbles drift into view along the player's trajectory, each carrying a different degree of linguistic distortion that signals the magnitude of unresolved ambiguity. Through repeated interaction the player gradually clears regions of uncertainty, transforming the noisy semantic field into a more coherent structure.
+
+\section{Error Channels and Flare-Based Interaction}
+
+The previous section described how the magnitude of uncertainty may be expressed through the progressive distortion of textual labels. A second gameplay mode introduces a more refined interpretation of ambiguity by distinguishing between the \emph{sources} of distortion rather than merely its magnitude. In this configuration the player must not only identify which bubbles contain the greatest informational instability but must also determine the type of error that produced the corrupted label.
+
+This distinction is implemented through a system of colored flares. Each flare color corresponds to a different channel through which errors may arise during the formation or transmission of linguistic signals. When the player fires a flare at a bubble, the flare acts as a hypothesis about the mechanism that generated the distortion within the word. If the flare corresponds to the correct error channel, the bubble collapses and the player receives a reward proportional both to the magnitude of the distortion and to the accuracy of the classification.
+
+One class of distortion arises from visual similarity between characters. Written symbols often share geometric features that can easily be confused, especially in low resolution or under noisy conditions. Characters such as \emph{l}, \emph{i}, and \emph{1} may blur into one another, while combinations such as \emph{rn} can visually approximate the letter \emph{m}. When such substitutions occur within the game environment, the bubble's word contains distortions that reflect these visual confusions. The corresponding flare color represents the hypothesis that the error originates from visual ambiguity in the character shapes.
+
+Another form of distortion originates from the physical layout of keyboards. Human typists frequently produce errors when adjacent keys are struck accidentally or when the motion of the hand deviates slightly from the intended path. In layouts such as QWERTY or Dvorak, neighboring keys define regions of likely substitution. Words corrupted by this mechanism contain letters that appear close to the intended characters within the keyboard topology. The flare associated with keyboard adjacency therefore resolves bubbles whose distortions arise from spatial proximity within typing systems.
+
+A third class of error emerges in gesture-based text entry systems such as swipe keyboards. In these systems words are produced by tracing a continuous path across the keyboard rather than pressing individual keys. Because the interpretation of the gesture depends on recognizing the shape of the path, entire words may be confused with others whose trajectories across the keyboard are similar. The resulting distortion is not simply a local substitution of characters but a transformation at the level of the entire word. Within the game, bubbles that encode such errors contain labels that resemble alternative lexical candidates generated by the same gesture path. The appropriate flare type collapses these whole-word confusions.
+
+A further source of distortion arises from phonetic transcription. Speech recognition systems must infer written words from acoustic signals, and similar sounding phonemes often produce substitutions between words that share phonological structure. Confusions such as \emph{their} and \emph{there} or \emph{to}, \emph{too}, and \emph{two} illustrate how linguistic interpretation may diverge even when the acoustic signal remains nearly identical. Bubbles produced by this channel display distortions reflecting phonetic similarity rather than orthographic proximity. The flare corresponding to audio transcription errors resolves these cases.
+
+Through the introduction of flare types, the game transforms from a simple mechanism of uncertainty reduction into a process of active diagnosis. The player must infer not only the degree of ambiguity but also the underlying process that generated it. The correct flare acts as a classification of the noise model responsible for the corrupted word. When the correct hypothesis is applied, the bubble collapses and the distorted label vanishes from the tunnel.
+
+This system effectively turns the player into an interpreter of error channels. The bubbles encode traces of different noise processes, while the flares represent the player's attempt to model those processes correctly. Successful gameplay therefore mirrors the operation of adaptive inference systems, in which both the magnitude and the structure of uncertainty must be identified before reliable interpretation becomes possible.
+
+Within the broader conceptual framework of Spherepop, this interaction reflects the principle that ambiguity is not merely a quantity but a structured phenomenon. Distortions arise through identifiable mechanisms, and resolving them requires understanding the pathways through which information becomes corrupted. The colored flare system provides a tangible representation of this principle by allowing the player to match corrective actions to the specific forms of disorder present in the semantic field.
+
+\section{Applications and Extensions}
+
+Although the Spherepop tunnel is presented as a game environment, the underlying mechanism lends itself naturally to several practical applications. Because the system visualizes uncertainty as distorted language embedded in an interactive spatial field, it can function simultaneously as entertainment, training interface, and diagnostic visualization tool. The same mechanics that reward players for resolving ambiguity can be repurposed to teach typing accuracy, spelling, and probabilistic reasoning about language and perception.
+
+One immediate application appears in the design of didactic typing tutorials. Traditional typing instruction relies on repetitive drills that emphasize mechanical memorization of key locations. In the Spherepop framework, keyboard errors can be represented directly within the gameplay environment. Words distorted according to keyboard adjacency errors emerge along the descent trajectory, and the player resolves them by identifying the distortion channel responsible for the corruption. Because the distortion patterns reflect real keyboard topology, the player gradually internalizes the spatial relationships between keys while interacting with the uncertainty field. The result is a training process that transforms the correction of typing mistakes into an exploratory process within a dynamic environment rather than a static repetition of exercises.
+
+A closely related application arises in spelling instruction through a system that may be called \emph{Spellpop}. In this context the bubbles represent candidate spellings generated by noisy linguistic processes. Some distortions resemble common orthographic mistakes, while others reflect phonetic substitutions or structural rearrangements within words. By engaging with these bubbles the learner practices recognizing patterns of linguistic error and develops an intuitive understanding of correct orthography. The interactive environment encourages the learner to attend to structural features of words rather than memorizing isolated spellings. Because the difficulty of the distortions can be scaled continuously from minor variations to near-random noise, the system naturally adapts to different skill levels.
+
+The interface described in the prototype implementation illustrates how such an environment might be realized. The display renders a tunnel-like structure that creates the visual impression of descending through a field of hypotheses. Each bubble contains a corrupted label generated by a distortion engine that simulates different error channels. A heads-up display reports the player's score, the depth of the descent, and an entropy indicator representing the overall level of unresolved ambiguity in the environment. Colored indicators correspond to the currently selected flare type, allowing the player to choose the appropriate corrective action when interacting with a bubble. The result is an environment in which linguistic noise, visual feedback, and player interaction combine to create a dynamic representation of semantic uncertainty.
+
+Beyond educational applications, the same conceptual structure suggests a model for human interaction with complex sensing systems. In many real-world environments, autonomous systems must interpret uncertain sensory inputs while navigating through space. Cameras, lidar sensors, microphones, and other instruments produce streams of probabilistic interpretations that may contain competing hypotheses about the surrounding environment. The Spherepop tunnel can therefore be understood as an abstract visualization of the inference landscape encountered by such systems.
+
+This perspective becomes particularly relevant when considering hierarchical ensemble piloting, sometimes described as swarm piloting. In this framework a vehicle or robotic platform is not controlled by a single agent but by a layered ensemble of participants and computational processes. A human driver, the onboard control system, remote operators, external monitoring systems, and auxiliary sensing agents all contribute to the interpretation of the environment and to the decisions that guide motion along a trajectory.
+
+Within such a system the driver may provide high-level intentions, such as selecting destinations or approving navigational decisions. The onboard control system integrates sensor data, performs obstacle detection, and executes immediate control actions. Remote infrastructure, which may be described metaphorically as a control tower, supplies global context such as traffic patterns or route optimizations derived from network-wide data. Additional agents, including aerial drones or mobile sensing units, expand the perceptual reach of the system by providing vantage points that the primary vehicle cannot directly access.
+
+Passengers or nearby participants may also contribute information. For example, a passenger might visually confirm the identity of an ambiguous roadside object or report a hazard that automated sensors have difficulty interpreting. In some scenarios auxiliary drones or traffic monitors could even be temporarily controlled by nearby participants in order to clarify uncertain regions of the environment. The resulting structure resembles a distributed interpretive network rather than a single centralized controller.
+
+The Spherepop environment provides a useful metaphor for understanding this distributed process. Each bubble represents a localized region of uncertainty encountered along the trajectory of the vehicle. Different participants within the ensemble may contribute to resolving these ambiguities by applying their own perceptual or analytical capabilities. One agent may specialize in visual interpretation, another in linguistic recognition, and another in spatial reasoning derived from sensor fusion. When an appropriate participant resolves the ambiguity, the corresponding bubble collapses and the system's interpretation of the environment becomes more coherent.
+
+From this perspective the flares used in the game correspond to hypotheses about the origin of uncertainty within the system. Selecting the correct flare is analogous to identifying which subsystem is best suited to resolve a particular ambiguity. A distortion caused by visual similarity may be best addressed by a high-resolution imaging system or by a human observer, while a phonetic ambiguity may require linguistic analysis or contextual reasoning. The act of popping a bubble thus represents the collaborative reduction of uncertainty across the ensemble of agents.
+
+In this way the Spherepop concept serves as both a playful interface and a conceptual model for distributed cognition. The descent through the tunnel mirrors the progression of a vehicle through space, while the bubbles embody the uncertainties that inevitably arise during perception and decision-making. By allowing players to interact directly with these structures, the system transforms abstract inference processes into an experiential environment in which ambiguity is visible, manipulable, and ultimately resolvable.
+
+\section{Hierarchical Ensemble Piloting and Human--Machine Collaboration}
+
+The interpretive structure suggested by the Spherepop environment becomes particularly illuminating when considered as a model of hierarchical ensemble piloting. In such systems the act of piloting a vehicle is not confined to a single agent but emerges from the coordinated activity of many participants operating at different layers of abstraction. A vehicle moving through a physical environment simultaneously produces and consumes streams of uncertain information. These streams must be interpreted, filtered, and acted upon in real time. The bubbles encountered in the Spherepop tunnel may therefore be understood as symbolic representations of these localized pockets of uncertainty that arise along a trajectory.
+
+In a conventional autonomous vehicle architecture, perception modules process sensor inputs and produce probabilistic estimates about the surrounding world. These estimates include classifications of objects, predictions of motion, and assessments of environmental conditions. Each estimate carries an associated confidence level, reflecting the degree to which the system trusts its own interpretation. When confidence drops below a threshold, ambiguity arises. The system may detect something in the environment but remain uncertain about what it is. This uncertainty resembles the distorted textual labels within the bubbles of the Spherepop environment.
+
+Hierarchical ensemble piloting extends this architecture by distributing interpretive responsibility across multiple agents. The human driver, the vehicle’s onboard control algorithms, remote supervisory systems, and auxiliary sensing platforms all contribute to the interpretive process. Rather than relying on a single centralized authority, the system forms a layered ensemble of pilots who collectively guide the vehicle. Each participant occupies a distinct level of the hierarchy and possesses unique capabilities for interpreting particular kinds of uncertainty.
+
+The human driver typically occupies the role of high-level supervisor. They provide contextual reasoning, strategic decisions, and an understanding of social conventions that automated systems may struggle to interpret. The vehicle’s onboard control system occupies another layer of the hierarchy, integrating sensor data and executing real-time control actions. Algorithms responsible for sensor fusion combine information from cameras, lidar, radar, and other devices to construct a coherent model of the environment.
+
+Above or alongside these components, network-based infrastructure may provide additional interpretive assistance. Traffic management systems or centralized coordination nodes may aggregate information from multiple vehicles and distribute guidance across the network. This infrastructure functions analogously to a control tower in aviation, monitoring the movement of vehicles and providing recommendations that reflect broader situational awareness.
+
+Additional sensing agents may also participate in the ensemble. Aerial drones, for instance, can observe traffic patterns from elevated perspectives and relay information that ground-based sensors cannot easily obtain. These drones may operate autonomously or under the supervision of human operators. Their observations enrich the collective perception of the system and reduce uncertainty about conditions that lie beyond the immediate sensory range of the vehicle.
+
+Even passengers or nearby participants may contribute information under certain circumstances. When a perception system struggles to classify an object or interpret a signal, a human observer may be asked to provide confirmation. The passenger becomes a temporary interpreter of the environment, assisting the broader system in resolving an ambiguity that automated processes alone cannot confidently address. In effect the ensemble temporarily expands to incorporate additional cognitive resources.
+
+The Spherepop framework offers an intuitive metaphor for this distributed interpretive process. As the vehicle advances along its trajectory, bubbles of uncertainty appear wherever the system’s internal model fails to reach a confident conclusion. Different members of the ensemble can attempt to resolve these bubbles by applying their particular expertise. A human observer may resolve a visual ambiguity, a speech recognition system may resolve a phonetic uncertainty, and a traffic management network may clarify a situational ambiguity related to congestion or hazards.
+
+The colored flare mechanism described earlier mirrors the process by which the ensemble identifies the appropriate subsystem to address a given uncertainty. Each flare corresponds to a particular interpretive channel, representing a hypothesis about the source of the ambiguity. When the correct interpretive channel is applied, the bubble collapses and the system’s understanding of the environment becomes more stable.
+
+Seen from this perspective, the Spherepop environment provides a compact representation of distributed cognition within complex technological systems. The descent through the tunnel represents motion through space and time, while the bubbles represent the uncertain hypotheses that accompany perception and decision making. The interaction between the player and the bubbles models the collaborative effort required to transform uncertain observations into reliable knowledge.
+
+\section{Uncertainty Marking}
+
+The Spherepop and Spellpop concepts demonstrate how interactive environments can be used to visualize and manipulate structures that are ordinarily hidden within computational processes. By representing uncertainty as distorted language embedded in a spatial field, the system translates abstract probabilistic reasoning into a form that can be experienced directly. The player’s descent through the tunnel becomes a journey through a landscape of hypotheses, where each bubble marks a point at which interpretation remains unresolved.
+
+The distortion of textual labels provides a natural mechanism for encoding the degree of confidence associated with a hypothesis. Minor typographic anomalies signal small uncertainties, while heavily corrupted strings indicate large regions of informational instability. Through the act of popping bubbles, the player collapses these uncertain structures and gradually reduces the entropy of the environment. The scoring system reinforces this interpretation by rewarding the resolution of the most ambiguous cases.
+
+The introduction of flare types extends this mechanism by distinguishing between different sources of error. Visual similarity, keyboard adjacency, gesture-based input, and phonetic transcription represent distinct channels through which linguistic signals may become corrupted. By matching the correct flare to the appropriate distortion channel, the player effectively performs a classification of the noise process responsible for the uncertainty.
+
+These mechanics allow the system to function not only as a game but also as a pedagogical tool. In typing instruction and spelling training, the same distortions that appear in gameplay correspond directly to real-world error patterns encountered during text entry. Learners can therefore practice identifying and correcting these patterns within a dynamic and engaging environment. The concept of Spellpop emerges naturally from this framework as a specialized training interface for orthographic and linguistic accuracy.
+
+Beyond educational contexts, the Spherepop metaphor provides insight into the operation of distributed human--machine systems. In hierarchical ensemble piloting, multiple agents collaborate to interpret uncertain information encountered along a trajectory through the world. The bubbles in the Spherepop tunnel represent precisely the kinds of ambiguities that such systems must continually resolve. By visualizing these ambiguities and associating them with specific interpretive channels, the framework offers a conceptual bridge between gameplay, human cognition, and the design of complex autonomous systems.
+
+Ultimately the Spherepop environment demonstrates that uncertainty need not remain an invisible internal variable within computational models. When rendered as an interactive field of hypotheses, it becomes a tangible structure that can be explored, manipulated, and understood through direct experience. The descent through the tunnel thus serves not only as a gameplay mechanic but also as a symbolic journey through the processes by which intelligent systems, human or artificial, transform ambiguous signals into coherent interpretations of the world.
+
+\section{Participatory Recognition and the Conversion of Uncertainty into Spellpop Fields}
+
+An additional extension of the Spherepop framework arises when the interpretive process of a hierarchical ensemble is opened to voluntary participation by nearby observers. In the context of distributed piloting systems, vehicles, infrastructure, and auxiliary sensing devices continuously encounter objects whose classification remains uncertain. These ambiguities may arise from unusual lighting conditions, partial occlusion, sensor noise, or the presence of objects that fall outside the statistical expectations of the recognition system. When such uncertainty appears, the system may temporarily delegate interpretive tasks to nearby participants.
+
+Within a cooperative transportation environment, small aerial traffic drones can serve as mobile sensing agents that assist vehicles in interpreting complex situations. These drones observe the environment from elevated vantage points and relay visual information to nearby vehicles or to regional coordination systems. When a classification problem arises along the path of a vehicle, the drone's camera feed can be transmitted to displays within nearby vehicles or to augmented reality interfaces used by passengers or pedestrians in the vicinity.
+
+Rather than presenting the raw sensor data alone, the system may transform the ambiguous observation into a structured interpretive prompt. The object detected by the drone is represented as a candidate hypothesis that requires confirmation. Multiple possible classifications may exist simultaneously, each associated with a probability estimate generated by the automated recognition system. In situations where confidence remains low, human observers often possess perceptual or contextual knowledge that allows them to resolve the ambiguity rapidly.
+
+To enable this collaborative interpretation without compromising privacy or location security, the system can anonymize and abstract the observational data before presenting it to participants. Precise coordinates and identifying environmental details are removed or generalized. What remains is a simplified representation of the ambiguous object along with a distorted textual hypothesis describing what the automated system believes it might be. The distortion of the label reflects the uncertainty of the classification, just as in the Spherepop and Spellpop environments.
+
+Once anonymized and abstracted, these uncertain observations can be integrated directly into the Spellpop interface. The ambiguous object becomes a bubble within a semantic descent field, appearing alongside other uncertain hypotheses encountered by the system. Participants interacting through touchscreens or augmented reality displays can attempt to resolve the ambiguity by selecting the correct interpretation or by applying the appropriate corrective channel corresponding to the type of recognition error involved.
+
+Because the observations have been stripped of identifying spatial information, the resulting interaction becomes a generalized interpretive task rather than a location-specific report. The system records the resolution provided by participants and integrates it into the ensemble decision process. If multiple participants converge on the same interpretation, the system gains additional confidence in the classification and the uncertainty bubble collapses.
+
+This process effectively converts real-world recognition problems into elements of the Spellpop environment. Ambiguities encountered by autonomous systems become playable interpretive challenges that can be distributed across a network of human observers. The transformation serves several purposes simultaneously. It allows human perception to augment machine recognition, provides participants with meaningful interaction within the transportation ecosystem, and transforms otherwise idle observational capacity into a useful resource for improving system reliability.
+
+Within the broader conceptual structure of Spherepop, this mechanism illustrates how uncertainty fields may be shared across distributed networks of agents. A recognition problem encountered by one vehicle does not remain confined to that vehicle alone. Instead it becomes a bubble within a collective interpretive space that can be accessed by nearby participants. Each participant contributes to the reduction of ambiguity, and the collapse of the bubble represents the convergence of multiple perspectives toward a stable interpretation.
+
+The Spellpop interface therefore becomes more than a game or educational tool. It acts as a bridge between human cognition and machine perception, converting ambiguous observations from real environments into structured tasks that humans can resolve intuitively. Through this conversion process, localized perception errors encountered by autonomous systems are transformed into distributed opportunities for collaborative interpretation.
+
+In this way the Spherepop and Spellpop frameworks illustrate how playful interaction, linguistic reasoning, and distributed sensing can converge into a unified system for managing uncertainty. What appears as a simple act of popping a bubble becomes a microcosm of the broader process through which complex technological systems transform incomplete information into reliable knowledge.
+
+\section{Interpretation within the Relativistic Scalar Vector Plenum Framework}
+
+Within the Relativistic Scalar Vector Plenum (RSVP) framework the Spherepop environment may be interpreted as a simplified visualization of the dynamics of coupled scalar, vector, and entropy fields evolving along a trajectory through a plenum. In RSVP theory the physical and informational structure of the world is described through three interacting quantities: a scalar density field $\Phi$, a vector flow field $\mathbf{v}$, and an entropy density $S$. These fields collectively describe how structure forms, propagates, and relaxes within the plenum.
+
+The descent through the tunnel in the Spherepop environment corresponds to motion along a trajectory through such a field configuration. Instead of representing a literal physical tunnel, the visual geometry may be understood as a projection of a path through a region of plenum state space. At each point along this path the system maintains a set of hypotheses regarding the interpretation of incoming signals. These hypotheses are associated with differing entropy levels depending on the certainty of the interpretation.
+
+In RSVP language, the distorted textual labels appearing within bubbles represent localized regions where the entropy density $S$ is elevated relative to the surrounding field. The distortion of the label corresponds to the dispersion of possible interpretations within the local hypothesis space. When the word appears nearly correct, the entropy density is relatively low and the scalar configuration associated with the interpretation is tightly concentrated. When the word becomes heavily corrupted, the entropy density is higher and the interpretive field spreads across many possible configurations.
+
+Each bubble therefore represents a localized entropy pocket embedded within the trajectory of the system. The bubble boundary can be interpreted as a region where gradients in the scalar and entropy fields generate a temporary separation between stable interpretation and ambiguous signal structure. In RSVP terminology this resembles a lamphron--lamphrodyne interface, in which local energy and informational gradients produce transient structures that eventually relax toward smoother configurations.
+
+The act of firing a flare and popping a bubble corresponds to a local relaxation process in the plenum fields. When a correct interpretation is selected, the entropy associated with the ambiguous hypothesis collapses and the scalar field $\Phi$ settles into a more coherent configuration. The energy associated with the uncertainty diffuses back into the surrounding field, producing a smoother informational landscape along the trajectory.
+
+The scoring system within the game corresponds naturally to the magnitude of entropy reduction achieved during this relaxation process. A bubble with a heavily distorted label represents a region of high entropy density, and collapsing it produces a larger decrease in $S$. The player's reward therefore reflects the amount of entropy removed from the system through successful interpretation.
+
+The colored flare mechanism corresponds to identifying the channel through which the entropy perturbation entered the field. Different distortion types arise from different forms of perturbation in the information flow. Visual similarity errors correspond to perturbations in perceptual channels, keyboard proximity errors arise from motor or spatial encoding processes, gesture-based errors arise from trajectory misinterpretation, and phonetic substitutions arise from acoustic decoding channels. Selecting the correct flare corresponds to applying the appropriate correction operator to the plenum configuration.
+
+From the perspective of RSVP theory, the Spherepop environment therefore models a sequence of entropy relaxation events along a trajectory in the scalar-vector plenum. The player's actions represent localized interventions that guide the system toward lower entropy configurations by resolving ambiguous informational structures. The descent through the tunnel becomes an experiential representation of how interpretive systems continuously smooth irregularities in informational fields as they move through space and time.
+
+\section{A Category-Theoretic Interpretation}
+
+The mechanics of Spherepop and Spellpop admit a natural formulation in the language of category theory, where the flow of interpretations along a trajectory can be described in terms of morphisms between states of knowledge. Instead of viewing the tunnel as a physical structure, it may be regarded as a sequence of objects in a category representing successive informational configurations encountered by an agent moving through an environment.
+
+Let $\mathcal{I}$ denote a category whose objects represent informational states of an interpretive system. Each object corresponds to the set of hypotheses currently entertained about the environment at a given moment along the trajectory. A morphism between objects represents the transition from one informational configuration to another as new sensory data arrives or as ambiguities are resolved. In this formulation, the descent through the tunnel corresponds to a chain of morphisms
+\[
+I_0 \to I_1 \to I_2 \to \cdots \to I_n
+\]
+in which each state evolves from its predecessor through the integration of additional observations.
+
+Within each informational state $I_k$ there may exist several competing interpretations of a signal or object. These competing interpretations can be represented as subobjects or alternative morphisms leading toward possible future states. A bubble appearing within the Spherepop environment corresponds to such a branching structure. The distorted textual label inside the bubble represents a hypothesis whose structure has not yet been stabilized within the interpretive process.
+
+From the categorical perspective, ambiguity arises when multiple morphisms emanating from a given object correspond to distinct but plausible interpretations. The system must eventually select or collapse these alternatives in order to continue along a coherent trajectory. The act of popping a bubble corresponds to identifying one of these morphisms as the appropriate continuation of the interpretive chain, thereby eliminating competing alternatives.
+
+The flare mechanism can also be expressed in categorical terms. Each flare corresponds to a natural transformation that attempts to reconcile two functors describing different models of the error process. One functor may represent the generative mechanism producing distorted words, while another functor represents the interpretive mechanism attempting to reconstruct the intended meaning. When the correct flare is chosen, the natural transformation aligns these two functors in such a way that the corrupted structure becomes interpretable within the existing informational framework.
+
+Scoring in the game may therefore be interpreted as a measure of the categorical complexity reduced by collapsing competing morphisms. A lightly distorted word corresponds to a small branching structure in the category of interpretations, while a heavily corrupted label corresponds to a much larger family of potential morphisms. Resolving such ambiguity removes a larger portion of the branching structure and therefore represents a more significant simplification of the interpretive diagram.
+
+When considered in the broader context of hierarchical ensemble piloting, the category $\mathcal{I}$ can be extended to include morphisms contributed by multiple agents. Each agent within the ensemble—driver, vehicle control system, drone observer, or passenger—acts as a functor mapping sensory inputs to interpretive hypotheses. The combined system therefore forms a network of interacting functors whose outputs must eventually converge to a consistent interpretation of the environment.
+
+Within this framework the Spherepop interface becomes a graphical representation of categorical decision making. The player navigates through a diagram of possible morphisms and selectively collapses branches that correspond to erroneous interpretations. The descent through the tunnel thus models the continuous construction of a coherent path through the category of possible interpretations generated by the system.
+
+\section{A Sheaf-Theoretic Interpretation}
+
+A further layer of formal interpretation emerges when the Spherepop and Spellpop environments are considered through the lens of sheaf theory. Sheaf theory provides a mathematical language for describing how local pieces of information defined on different regions of a space can be combined into coherent global structures. In many domains of perception and distributed computation, agents obtain only partial and localized observations of the world. The problem of interpretation then becomes the problem of determining whether these local observations can be consistently glued together into a unified global description.
+
+Let $X$ represent the trajectory space through which a vehicle or sensing system moves. At each region $U \subseteq X$, sensors, human observers, or auxiliary drones generate local interpretations of the environment. These interpretations may include candidate labels for objects, predictions about motion, or classifications of observed signals. A sheaf $\mathcal{F}$ over $X$ assigns to each region $U$ the set $\mathcal{F}(U)$ of all interpretations available within that region.
+
+Within this framework, the bubbles encountered in the Spherepop environment correspond to local sections of the sheaf that fail to extend coherently to neighboring regions. A distorted textual label represents a local hypothesis about an object whose interpretation is uncertain or incompatible with surrounding observations. The bubble boundary marks a region where the gluing conditions required for a consistent global interpretation are not yet satisfied.
+
+When the player pops a bubble, the system effectively selects a section that can be extended consistently across adjacent regions of the trajectory space. In sheaf-theoretic terms, the action corresponds to choosing a local section whose restrictions agree with the interpretations available in neighboring domains. The collapse of the bubble therefore represents the successful gluing of local observational data into a coherent larger structure.
+
+The flare mechanism introduced earlier may also be interpreted within this framework. Each flare type corresponds to a different rule for determining whether local sections can be reconciled. A visual similarity flare applies a correction based on geometric features of characters, while a keyboard adjacency flare accounts for spatial errors introduced during typing. Gesture-based and phonetic flares correspond to distinct equivalence relations on the space of possible interpretations. Choosing the appropriate flare amounts to selecting the correct compatibility relation that allows neighboring sections of the sheaf to glue together.
+
+This perspective becomes particularly powerful when considering distributed sensing systems such as those involved in hierarchical ensemble piloting. Multiple agents—including vehicles, aerial drones, roadside infrastructure, and human observers—collect observations from different regions of the environment. Each observation produces a local section of the sheaf describing the state of the world. However, these sections may initially conflict or fail to align due to noise, occlusion, or differing sensor modalities.
+
+The anonymized conversion of recognition tasks into Spellpop bubbles allows these local sections to be broadcast to nearby participants without exposing precise spatial information. Passengers interacting through touchscreens or augmented reality interfaces contribute interpretations that effectively propose candidate gluing operations. When several participants converge on the same interpretation, the local sections become compatible and the sheaf extends smoothly across the affected region of the trajectory.
+
+In this way, the Spherepop framework models the dynamic process by which distributed observations are reconciled into coherent knowledge. Each bubble represents a localized failure of the gluing condition, while each successful interaction corresponds to the restoration of consistency across neighboring regions. The descent through the tunnel therefore visualizes the ongoing construction of a global interpretation from many fragmented and uncertain local observations.
+
+The sheaf-theoretic perspective highlights the deep structural relationship between perception, distributed computation, and collaborative interpretation. Rather than viewing ambiguity as an isolated problem within a single sensor or algorithm, it becomes a phenomenon arising from the difficulty of reconciling multiple partial perspectives. The Spherepop environment makes this process visible by transforming the abstract mathematics of local sections and gluing conditions into a concrete interactive landscape where uncertainty appears as bubbles waiting to be resolved.
+
+\section{Toward a Unified Structural View}
+
+The preceding interpretations reveal that the Spherepop and Spellpop environments can be understood simultaneously through several complementary mathematical lenses. Each lens emphasizes a different structural aspect of the same underlying phenomenon: the transformation of uncertain local signals into coherent global interpretation along a trajectory.
+
+Within the RSVP framework the process appears as the relaxation of entropy gradients within a scalar--vector plenum. Ambiguous hypotheses correspond to localized regions of elevated entropy density $S$, while the act of collapsing a bubble represents the smoothing of these gradients as the system converges toward a stable configuration of the scalar field $\Phi$ and the flow field $\mathbf{v}$. The descent through the tunnel represents a path through this informational landscape, where interpretive actions reduce disorder and restore coherence.
+
+The categorical formulation emphasizes the combinatorial structure of interpretation. Each informational state corresponds to an object in a category, and transitions between interpretations correspond to morphisms. Bubbles arise where the system faces a branching family of possible morphisms that could extend the interpretive chain. Selecting the correct flare collapses these branches and allows the system to continue along a single consistent path through the category of interpretations.
+
+The sheaf-theoretic formulation shifts attention to the spatial distribution of knowledge. Observations generated by sensors, passengers, drones, and control systems form local sections of a sheaf defined over the trajectory space of the vehicle. Ambiguities correspond to failures of the gluing conditions that would otherwise allow these local sections to combine into a global description. When participants resolve a bubble through interaction with the Spellpop interface, they effectively supply the compatibility condition required to glue the local sections together.
+
+These three interpretations can be viewed as describing different projections of the same structural process. RSVP emphasizes energetic and entropic dynamics within informational fields. Category theory describes the compositional structure of interpretive transitions. Sheaf theory describes the spatial organization and reconciliation of partial observations. Together they form a conceptual triad linking thermodynamic, algebraic, and geometric perspectives on distributed interpretation.
+
+Within this unified view, the Spherepop environment becomes more than a metaphorical game interface. It acts as a visualization of how intelligent systems navigate uncertainty while moving through the world. Each bubble represents a localized failure of coherence across one or more structural dimensions. Entropy remains elevated, morphisms remain unresolved, and local sections fail to glue. The player’s intervention restores coherence simultaneously across all three representations: entropy decreases, the morphism diagram simplifies, and the sheaf becomes globally consistent.
+
+This structural perspective also clarifies why participatory recognition through Spellpop can integrate naturally with hierarchical ensemble piloting. When passengers, drones, vehicles, and network infrastructure all contribute observations, the interpretive system becomes inherently distributed. No single component possesses complete knowledge of the environment. Instead, each component produces partial information that must be reconciled with the others. The Spellpop interface converts these reconciliation tasks into interactive problems that humans can solve intuitively.
+
+Because the observations are anonymized and abstracted before presentation, participants need not know the precise spatial context of the object being interpreted. They simply resolve distorted hypotheses presented within the semantic descent field. The resulting interpretation can then be reintegrated into the ensemble’s perception system, where it contributes to the stabilization of the global model of the environment.
+
+In this way the playful act of popping a bubble corresponds to a deep structural operation within distributed cognition. Local uncertainty collapses, interpretive branches converge, and fragmented observations become consistent with one another. The environment therefore illustrates how interactive systems can harness both human intuition and machine perception to construct reliable knowledge from incomplete and noisy data streams.
+
+\section{Outlook}
+
+The Spherepop and Spellpop frameworks suggest a broader paradigm in which uncertainty itself becomes an explicit interactive medium. Rather than concealing probabilistic reasoning behind opaque algorithms, the system externalizes ambiguity and invites participants to engage with it directly. Players learn to recognize patterns of distortion, infer the channels through which errors arise, and apply corrective actions that stabilize interpretation.
+
+Such systems may serve simultaneously as educational tools, collaborative sensing platforms, and conceptual models for understanding distributed intelligence. The same mechanics that train users in spelling or typing accuracy can also support the interpretation of sensor data in complex environments. Likewise, the same visualization that illustrates entropy reduction in RSVP fields can serve as an intuitive representation of categorical branching or sheaf gluing.
+
+Future developments may extend this paradigm by integrating richer sensory modalities, adaptive difficulty structures, and deeper forms of human--machine collaboration. As autonomous systems continue to operate within increasingly complex environments, mechanisms for distributed interpretation and participatory uncertainty resolution may become essential components of their architecture.
+
+The Spherepop descent therefore represents not merely a game mechanic but a conceptual prototype. It demonstrates how uncertainty can be transformed from an invisible internal variable into a visible and manipulable structure within an interactive field. By navigating this field, participants participate directly in the process through which intelligent systems—whether biological, artificial, or hybrid—convert ambiguous signals into coherent understanding.
+
+\section{Conclusion}
+
+The Spherepop and Spellpop frameworks demonstrate that uncertainty can be transformed from an abstract internal variable into a visible and interactive structure within an informational environment. By representing ambiguous interpretations as bubbles embedded along a trajectory, the system allows participants to experience the dynamics of interpretation directly. Distorted words encode the degree and type of uncertainty present in a hypothesis, while the act of popping a bubble symbolizes the collapse of competing interpretations into a coherent understanding.
+
+Throughout this essay the tunnel descent has been interpreted not as a literal spatial environment but as a representation of movement through an evolving field of interpretation. Bubbles emerge where informational instability occurs and where the system's confidence in its current hypothesis falls below a stable threshold. The player's interaction with these bubbles models the continual process through which intelligent systems refine their understanding of the world by resolving ambiguity.
+
+The distortion of textual labels provides a gradient representation of uncertainty. Slight typographic deviations signal hypotheses that are nearly stable, while heavily corrupted strings indicate regions of high entropy in the interpretive field. The scoring mechanism reinforces this interpretation by rewarding the resolution of the most uncertain hypotheses. In this way the gameplay loop mirrors the fundamental principle that the greatest informational value lies in resolving the largest ambiguities.
+
+The introduction of colored flare types extends this mechanism by identifying the channels through which errors arise. Visual similarity, keyboard adjacency, gesture-based input, and phonetic transcription represent distinct pathways through which signals become distorted. By selecting the correct flare, the player identifies the mechanism responsible for the corruption and restores coherence to the interpretive field. The game therefore becomes a model of diagnostic reasoning as well as a process of uncertainty reduction.
+
+Applications of the framework extend beyond entertainment into educational and technological domains. In typing tutorials and spelling instruction the same distortions correspond directly to common human error patterns, allowing learners to practice recognition and correction within a dynamic environment. In distributed sensing systems the framework can transform ambiguous observations into interactive Spellpop tasks that allow nearby participants to assist in resolving uncertainty. By anonymizing and abstracting sensor data, recognition challenges can be distributed to passengers and observers through touchscreens or augmented reality interfaces, turning idle perception into a collaborative interpretive resource.
+
+The essay has also explored how this environment admits multiple formal interpretations. Within the Relativistic Scalar Vector Plenum framework, bubbles correspond to localized entropy concentrations in the informational field, and popping them represents the relaxation of these gradients as the system converges toward coherent configurations. In category theory the interpretive process appears as a sequence of morphisms between informational states, with bubbles representing branching structures that must be collapsed in order to maintain a consistent path through the category of interpretations. In sheaf theory the bubbles represent failures of gluing conditions among local sections of observational data, and their resolution restores compatibility between distributed observations across the trajectory space.
+
+Together these perspectives reveal that the Spherepop environment captures a deep structural phenomenon common to many domains of cognition and computation. Intelligent systems continually navigate landscapes of uncertainty while attempting to integrate partial observations into coherent interpretations. Whether expressed as entropy gradients, branching morphisms, or incompatible local sections, ambiguity arises whenever incomplete information must be reconciled with an evolving model of the world.
+
+The Spherepop descent transforms this abstract process into an experiential one. By visualizing uncertainty as bubbles in a semantic field and by allowing participants to collapse those bubbles through interaction, the framework demonstrates how distributed cognition, human intuition, and machine perception can cooperate in the construction of reliable knowledge. What appears at first glance to be a simple bubble-popping mechanic ultimately reflects a general principle of interpretation: coherent understanding emerges through the continual reduction of ambiguity within an evolving field of possibilities.
+
+\newpage
+\section*{Appendices}
+
+\appendix
+
+% ------------------------------------------------------------
+% Appendix A
+% Entropy and Information Reduction
+% ------------------------------------------------------------
+
+\section{Entropy Model of Bubble Uncertainty}
+
+Let $\mathcal{W}$ denote the vocabulary space and let $w \in \mathcal{W}$ be the intended word.
+
+Let $\hat{w}$ denote the observed corrupted label.
+
+Define the hypothesis space
+\[
+\mathcal{H} = \{ w_1, w_2, \dots, w_n \} \subseteq \mathcal{W}.
+\]
+
+Let the probability distribution over hypotheses be
+
+\[
+P : \mathcal{H} \to [0,1], \qquad
+\sum_{i=1}^{n} P(w_i) = 1.
+\]
+
+Define entropy
+
+\[
+H(\mathcal{H}) =
+-\sum_{i=1}^{n} P(w_i)\log P(w_i).
+\]
+
+Define confidence
+
+\[
+C = \max_{w_i \in \mathcal{H}} P(w_i).
+\]
+
+Define corruption intensity
+
+\[
+\kappa = 1 - C.
+\]
+
+Define scoring functional
+
+\[
+S = \alpha H(\mathcal{H})
+\]
+
+for constant $\alpha > 0$.
+
+Bubble collapse operator
+
+\[
+\mathcal{C}(\mathcal{H}) = \{w^*\}
+\]
+
+where
+
+\[
+w^* = \arg\max_{w_i} P(w_i).
+\]
+
+Entropy reduction
+
+\[
+\Delta H =
+H(\mathcal{H}) - H(\{w^*\}) = H(\mathcal{H}).
+\]
+
+Score gain
+
+\[
+\Delta S = \alpha H(\mathcal{H}).
+\]
+
+% ------------------------------------------------------------
+% Appendix B
+% Error Channel Model
+% ------------------------------------------------------------
+
+\section{Error Channel Operators}
+
+Let
+
+\[
+w = (c_1,c_2,\dots,c_k)
+\]
+
+with alphabet $\Sigma$.
+
+Define corruption channel
+
+\[
+\mathcal{E} : \Sigma^k \to \Sigma^*.
+\]
+
+Observed string
+
+\[
+\hat{w} = \mathcal{E}(w).
+\]
+
+Define error channels
+
+\[
+\mathcal{E} =
+\{\mathcal{E}_v,\mathcal{E}_k,\mathcal{E}_s,\mathcal{E}_p\}.
+\]
+
+Visual substitution
+
+\[
+\mathcal{E}_v(c_i) =
+\begin{cases}
+\sigma(c_i) & p_v \\
+c_i & 1-p_v
+\end{cases}
+\]
+
+Keyboard adjacency
+
+\[
+\mathcal{E}_k(c_i) =
+\begin{cases}
+\kappa(c_i) & p_k \\
+c_i & 1-p_k
+\end{cases}
+\]
+
+Swipe path insertion
+
+\[
+\mathcal{E}_s(w) =
+(c_1,\dots,c_i,c_{i+1},c_i,\dots).
+\]
+
+Phonetic mapping
+
+\[
+\mathcal{E}_p(w) = \phi(w)
+\]
+
+with
+
+\[
+\phi : \Sigma^* \to \Sigma^*
+\]
+
+induced by phoneme equivalence.
+
+Flare classification
+
+\[
+f : \Sigma^* \to \mathcal{E}.
+\]
+
+Correct collapse condition
+
+\[
+f(\hat{w}) = \mathcal{E}_i.
+\]
+
+% ------------------------------------------------------------
+% Appendix C
+% Category Theoretic Formulation
+% ------------------------------------------------------------
+
+\section{Category of Interpretations}
+
+Define category
+
+\[
+\mathcal{I}.
+\]
+
+Objects
+
+\[
+\text{Ob}(\mathcal{I}) =
+\{I_0,I_1,\dots\}
+\]
+
+where each $I_k$ is an informational state.
+
+Morphisms
+
+\[
+f_k : I_k \to I_{k+1}.
+\]
+
+Trajectory
+
+\[
+I_0
+\xrightarrow{f_0}
+I_1
+\xrightarrow{f_1}
+I_2
+\cdots
+\xrightarrow{f_n}
+I_n.
+\]
+
+Ambiguity represented by parallel morphisms
+
+\[
+f_i,g_i : I_k \to J.
+\]
+
+Collapse functor
+
+\[
+\mathcal{R} :
+\mathcal{I} \to \mathcal{I}
+\]
+
+such that
+
+\[
+\mathcal{R}(f_i,g_i) = f_i.
+\]
+
+Error channel functors
+
+\[
+F_i : \Sigma^* \to \Sigma^*.
+\]
+
+Flare operator as natural transformation
+
+\[
+\eta : F_i \Rightarrow G.
+\]
+
+% ------------------------------------------------------------
+% Appendix D
+% Sheaf Model
+% ------------------------------------------------------------
+
+\section{Sheaf of Interpretations}
+
+Let $X$ be trajectory space.
+
+Open cover
+
+\[
+\{U_\alpha\}_{\alpha\in A}.
+\]
+
+Define presheaf
+
+\[
+\mathcal{F} :
+\text{Open}(X)^{op}
+\to \mathbf{Set}.
+\]
+
+Assignment
+
+\[
+U \mapsto \mathcal{F}(U).
+\]
+
+Restriction
+
+\[
+\rho_{UV} :
+\mathcal{F}(U) \to \mathcal{F}(V)
+\quad V \subseteq U.
+\]
+
+Local sections
+
+\[
+s_\alpha \in \mathcal{F}(U_\alpha).
+\]
+
+Compatibility condition
+
+\[
+\rho_{U_\alpha U_\alpha \cap U_\beta}(s_\alpha)
+=
+\rho_{U_\beta U_\alpha \cap U_\beta}(s_\beta).
+\]
+
+Global section
+
+\[
+s \in \mathcal{F}(X).
+\]
+
+Bubble condition
+
+\[
+\rho(s_\alpha) \neq \rho(s_\beta).
+\]
+
+Collapse operation
+
+\[
+\Gamma :
+\prod_\alpha \mathcal{F}(U_\alpha)
+\to \mathcal{F}(X).
+\]
+
+% ------------------------------------------------------------
+% Appendix E
+% RSVP Field Interpretation
+% ------------------------------------------------------------
+
+\section{RSVP Field Dynamics}
+
+Let plenum fields
+
+\[
+\Phi(x,t), \qquad
+\mathbf{v}(x,t), \qquad
+S(x,t).
+\]
+
+Continuity
+
+\[
+\partial_t \Phi + \nabla \cdot (\Phi \mathbf{v}) = 0.
+\]
+
+Entropy balance
+
+\[
+\partial_t S
++
+\nabla \cdot (S \mathbf{v})
+=
+D\nabla^2 S
++
+\sigma.
+\]
+
+Bubble region
+
+\[
+\Omega \subset X
+\]
+
+with
+
+\[
+\nabla S \neq 0.
+\]
+
+Collapse relaxation
+
+\[
+S_{t+1}
+=
+S_t - \Delta S.
+\]
+
+Energy functional
+
+\[
+\mathcal{E}
+=
+\int_X
+\left(
+|\nabla \Phi|^2
++
+\lambda S
+\right)
+dx.
+\]
+
+Minimization
+
+\[
+\delta \mathcal{E} = 0.
+\]
+
+Entropy decrease
+
+\[
+\frac{dS}{dt} < 0.
+\]
+
+% ------------------------------------------------------------
+% Appendix F
+% Ensemble Piloting Graph
+% ------------------------------------------------------------
+
+\section{Distributed Recognition Graph}
+
+Define agent graph
+
+\[
+G = (V,E).
+\]
+
+Vertices
+
+\[
+V =
+\{\text{vehicle},\text{driver},\text{drone},\text{passenger},\text{tower}\}.
+\]
+
+Information flow
+
+\[
+E \subseteq V \times V.
+\]
+
+Recognition function
+
+\[
+R_v :
+\mathcal{O}
+\to
+\mathcal{H}.
+\]
+
+Consensus
+
+\[
+w^* =
+\arg\max_w
+\sum_{v\in V}
+P_v(w).
+\]
+
+Bubble condition
+
+\[
+\text{Var}_v(P_v(w)) > \epsilon.
+\]
+
+Resolution
+
+\[
+P(w^*) \to 1.
+\]
+
+% ------------------------------------------------------------
+% Appendix G
+% Word Corruption Dynamics
+% ------------------------------------------------------------
+
+\section{Stochastic String Corruption Process}
+
+Alphabet
+
+\[
+\Sigma = \{a_1,a_2,\dots,a_m\}.
+\]
+
+Word
+
+\[
+w = (c_1,c_2,\dots,c_n) \in \Sigma^n.
+\]
+
+Corruption process
+
+\[
+\hat{w}_t = \mathcal{K}_t(w)
+\]
+
+with stochastic kernel
+
+\[
+\mathcal{K}_t : \Sigma^n \to \Sigma^*.
+\]
+
+Transition probability
+
+\[
+P(\hat{w}|w)
+=
+\prod_{i=1}^{n} P(\hat{c}_i | c_i).
+\]
+
+Visual confusion matrix
+
+\[
+V_{ij} = P(a_j|a_i).
+\]
+
+Keyboard adjacency matrix
+
+\[
+K_{ij} =
+\begin{cases}
+p_k & (i,j)\in A \\
+0 & \text{otherwise}
+\end{cases}
+\]
+
+where $A$ is the keyboard adjacency relation.
+
+Phonetic substitution
+
+\[
+\phi : \Sigma^* \to \Sigma^*
+\]
+
+induced by phoneme mapping
+
+\[
+\pi : \Sigma \to \Pi.
+\]
+
+Swipe insertion operator
+
+\[
+\mathcal{S}(w)
+=
+(c_1,\dots,c_i,c_i,c_{i+1},\dots,c_n).
+\]
+
+Total corruption operator
+
+\[
+\mathcal{E}
+=
+\mathcal{E}_v
+\circ
+\mathcal{E}_k
+\circ
+\mathcal{E}_s
+\circ
+\mathcal{E}_p.
+\]
+
+Corruption intensity
+
+\[
+\kappa = \frac{d(\hat{w},w)}{|w|}
+\]
+
+where $d$ is edit distance.
+
+% ------------------------------------------------------------
+% Appendix H
+% Trajectory and Tunnel Geometry
+% ------------------------------------------------------------
+
+\section{Tunnel Projection Geometry}
+
+Trajectory curve
+
+\[
+\gamma : [0,T] \to \mathbb{R}^3.
+\]
+
+Player position
+
+\[
+x(t) = \gamma(t).
+\]
+
+Perspective projection
+
+\[
+\Pi :
+\mathbb{R}^3 \to \mathbb{R}^2.
+\]
+
+Bubble coordinates
+
+\[
+b_i(t) =
+(x_i(t),y_i(t),z_i(t)).
+\]
+
+Screen projection
+
+\[
+(u,v) =
+\left(
+\frac{x}{z},
+\frac{y}{z}
+\right).
+\]
+
+Bubble radius
+
+\[
+r_i(t) =
+r_0 + \beta (1-C_i).
+\]
+
+Depth field
+
+\[
+d_i(t) = z_i(t).
+\]
+
+Visibility
+
+\[
+\alpha_i =
+\frac{1}{1+d_i}.
+\]
+
+% ------------------------------------------------------------
+% Appendix I
+% Entropy Field Evolution
+% ------------------------------------------------------------
+
+\section{Entropy Field on the Tunnel}
+
+Let entropy field
+
+\[
+S(x,t)
+\]
+
+defined on trajectory domain
+
+\[
+X = \gamma([0,T]).
+\]
+
+Field evolution
+
+\[
+\frac{\partial S}{\partial t}
++
+\mathbf{v}\cdot\nabla S
+=
+D\nabla^2 S + \sigma(x,t).
+\]
+
+Bubble emergence condition
+
+\[
+S(x,t) > S_c.
+\]
+
+Bubble region
+
+\[
+B_i =
+\{x \in X \mid S(x,t) > S_c\}.
+\]
+
+Entropy removal
+
+\[
+S(x,t^+) =
+S(x,t^-)-\Delta S_i.
+\]
+
+Entropy flux
+
+\[
+J_S = -D\nabla S.
+\]
+
+Total entropy
+
+\[
+S_{tot} =
+\int_X S(x,t) dx.
+\]
+
+% ------------------------------------------------------------
+% Appendix J
+% Distributed Consensus Dynamics
+% ------------------------------------------------------------
+
+\section{Multi-Agent Recognition Consensus}
+
+Agents
+
+\[
+A = \{a_1,a_2,\dots,a_n\}.
+\]
+
+Hypothesis distribution
+
+\[
+P_i(w)
+\]
+
+for agent $a_i$.
+
+Consensus distribution
+
+\[
+P(w)
+=
+\frac{1}{n}
+\sum_{i=1}^{n} P_i(w).
+\]
+
+Confidence
+
+\[
+C = \max_w P(w).
+\]
+
+Variance
+
+\[
+\sigma^2(w) =
+\frac{1}{n}
+\sum_{i=1}^{n}
+(P_i(w)-P(w))^2.
+\]
+
+Bubble condition
+
+\[
+\exists w :
+\sigma^2(w) > \epsilon.
+\]
+
+Consensus update
+
+\[
+P_i^{t+1}(w)
+=
+(1-\lambda)P_i^t(w)
++
+\lambda P(w).
+\]
+
+Limit
+
+\[
+\lim_{t\to\infty}
+P_i^t(w)
+=
+P(w).
+\]
+
+Collapse condition
+
+\[
+C \to 1.
+\]
+
+% ------------------------------------------------------------
+% Appendix K
+% Information Value of a Bubble
+% ------------------------------------------------------------
+
+\section{Information Gain Metric}
+
+Prior distribution
+
+\[
+P(w).
+\]
+
+Posterior after collapse
+
+\[
+P'(w).
+\]
+
+Information gain
+
+\[
+IG =
+D_{KL}(P' \| P).
+\]
+
+KL divergence
+
+\[
+D_{KL}(P' \| P)
+=
+\sum_w
+P'(w)
+\log
+\frac{P'(w)}{P(w)}.
+\]
+
+Expected gain
+
+\[
+\mathbb{E}[IG]
+=
+H(P) - H(P').
+\]
+
+Score mapping
+
+\[
+Score = \eta \cdot IG.
+\]
+
+% ------------------------------------------------------------
+% Appendix L
+% Word Manifold and Corruption Geometry
+% ------------------------------------------------------------
+
+\section{Word Manifold Geometry}
+
+Let the alphabet be $\Sigma$ with $|\Sigma| = m$.
+
+Let the space of words of length $n$ be
+
+\[
+\mathcal{W}_n = \Sigma^n.
+\]
+
+Define embedding
+
+\[
+\iota : \mathcal{W}_n \rightarrow \mathbb{R}^{nm}
+\]
+
+where each character is encoded as a one–hot vector.
+
+Word vector
+
+\[
+w = (c_1,\dots,c_n)
+\quad \Rightarrow \quad
+\iota(w) =
+(e_{c_1},\dots,e_{c_n})
+\]
+
+with $e_{c_i} \in \mathbb{R}^m$.
+
+Define metric
+
+\[
+d(w_1,w_2)
+=
+\|\iota(w_1)-\iota(w_2)\|_2.
+\]
+
+Define edit distance
+
+\[
+d_E(w_1,w_2).
+\]
+
+Define corruption field
+
+\[
+\kappa(w,\hat{w})
+=
+\frac{d_E(w,\hat{w})}{|w|}.
+\]
+
+Define word manifold
+
+\[
+\mathcal{M}
+=
+\{ \iota(w) \mid w \in \mathcal{W} \}
+\subset \mathbb{R}^{nm}.
+\]
+
+Bubble neighborhood
+
+\[
+B_\epsilon(w)
+=
+\{u \in \mathcal{M} \mid d(u,w) < \epsilon\}.
+\]
+
+Collapse operator
+
+\[
+\Pi :
+\mathcal{M}
+\rightarrow
+\mathcal{W}
+\]
+
+\[
+\Pi(\hat{w})
+=
+\arg\min_{w\in\mathcal{W}} d_E(\hat{w},w).
+\]
+
+% ------------------------------------------------------------
+% Appendix M
+% Trajectory Field of Hypotheses
+% ------------------------------------------------------------
+
+\section{Hypothesis Trajectory Field}
+
+Let trajectory parameter
+
+\[
+t \in [0,T].
+\]
+
+Let hypothesis set
+
+\[
+\mathcal{H}(t)
+=
+\{h_1(t),\dots,h_k(t)\}.
+\]
+
+Probability field
+
+\[
+P(h,t).
+\]
+
+Normalization
+
+\[
+\sum_{h \in \mathcal{H}(t)} P(h,t) = 1.
+\]
+
+Define trajectory entropy
+
+\[
+H(t)
+=
+-\sum_h P(h,t)\log P(h,t).
+\]
+
+Bubble emergence
+
+\[
+H(t) > H_c.
+\]
+
+Collapse event
+
+\[
+\mathcal{H}(t^+)
+=
+\{h^*(t)\}
+\]
+
+where
+
+\[
+h^*(t) = \arg\max_h P(h,t).
+\]
+
+Entropy change
+
+\[
+\Delta H
+=
+H(t^-) - H(t^+).
+\]
+
+% ------------------------------------------------------------
+% Appendix N
+% RSVP Variational Functional
+% ------------------------------------------------------------
+
+\section{RSVP Variational Formulation}
+
+Fields
+
+\[
+\Phi(x,t), \quad
+\mathbf{v}(x,t), \quad
+S(x,t).
+\]
+
+Action functional
+
+\[
+\mathcal{A}
+=
+\int
+\left(
+\frac{1}{2}|\nabla\Phi|^2
++
+\frac{1}{2}|\mathbf{v}|^2
++
+\lambda S
+\right)
+dx\,dt.
+\]
+
+Euler–Lagrange equation
+
+\[
+\frac{\delta \mathcal{A}}{\delta \Phi} = 0.
+\]
+
+Resulting field equation
+
+\[
+\nabla^2 \Phi
+=
+\partial_t S.
+\]
+
+Entropy dissipation
+
+\[
+\frac{d}{dt}
+\int S\,dx
+\le 0.
+\]
+
+Bubble region
+
+\[
+\Omega
+=
+\{x \mid S(x,t) > S_c\}.
+\]
+
+Collapse transformation
+
+\[
+S(x,t)
+\rightarrow
+S(x,t) - \Delta S.
+\]
+
+% ------------------------------------------------------------
+% Appendix O
+% Category of Error Channels
+% ------------------------------------------------------------
+
+\section{Error Channel Category}
+
+Define category
+
+\[
+\mathcal{E}.
+\]
+
+Objects
+
+\[
+\text{Ob}(\mathcal{E})
+=
+\{\text{visual},\text{keyboard},\text{swipe},\text{phonetic}\}.
+\]
+
+Morphisms
+
+\[
+\text{Hom}(e_i,e_j).
+\]
+
+Error transformation
+
+\[
+T_{ij} :
+\Sigma^* \rightarrow \Sigma^*.
+\]
+
+Functor from word space
+
+\[
+F :
+\mathcal{W}
+\rightarrow
+\mathcal{E}.
+\]
+
+Flare operator
+
+\[
+\mathcal{F}_i :
+\Sigma^* \rightarrow \Sigma^*.
+\]
+
+Correct resolution condition
+
+\[
+\mathcal{F}_i(\hat{w}) = w.
+\]
+
+% ------------------------------------------------------------
+% Appendix P
+% Sheaf Cohomology Interpretation
+% ------------------------------------------------------------
+
+\section{Cohomological Obstruction to Interpretation}
+
+Let sheaf
+
+\[
+\mathcal{F}
+\]
+
+over trajectory space $X$.
+
+Čech complex
+
+\[
+C^0(\mathcal{U},\mathcal{F})
+\rightarrow
+C^1(\mathcal{U},\mathcal{F})
+\rightarrow
+C^2(\mathcal{U},\mathcal{F}).
+\]
+
+Cocycle condition
+
+\[
+\delta s = 0.
+\]
+
+Coboundary
+
+\[
+s = \delta t.
+\]
+
+First cohomology group
+
+\[
+H^1(X,\mathcal{F}).
+\]
+
+Bubble interpretation
+
+\[
+[s] \neq 0
+\in
+H^1(X,\mathcal{F}).
+\]
+
+Collapse operation
+
+\[
+[s] \rightarrow 0.
+\]
+
+% ------------------------------------------------------------
+% Appendix Q
+% Global Entropy Functional
+% ------------------------------------------------------------
+
+\section{Global Entropy Minimization}
+
+Define global entropy
+
+\[
+S_{tot}(t)
+=
+\int_X S(x,t)dx.
+\]
+
+Gradient descent
+
+\[
+\frac{dX}{dt}
+=
+-\nabla S.
+\]
+
+Energy functional
+
+\[
+\mathcal{E}(t)
+=
+\int_X
+\left(
+|\nabla\Phi|^2
++
+\mu S
+\right) dx.
+\]
+
+Stability condition
+
+\[
+\frac{d\mathcal{E}}{dt} \le 0.
+\]
+
+Equilibrium
+
+\[
+\nabla S = 0.
+\]
+
+Global collapse
+
+\[
+\lim_{t\to\infty}
+S(x,t) = 0.
+\]
+
+% ------------------------------------------------------------
+% Appendix R
+% Markov Model of Hypothesis Evolution
+% ------------------------------------------------------------
+
+\section{Markov Dynamics of Interpretive States}
+
+State space
+
+\[
+\mathcal{S} = \{s_1,s_2,\dots,s_n\}.
+\]
+
+Transition matrix
+
+\[
+P =
+\begin{pmatrix}
+p_{11} & p_{12} & \dots & p_{1n} \\
+p_{21} & p_{22} & \dots & p_{2n} \\
+\vdots & \vdots & \ddots & \vdots \\
+p_{n1} & p_{n2} & \dots & p_{nn}
+\end{pmatrix}
+\]
+
+with
+
+\[
+\sum_j p_{ij} = 1.
+\]
+
+Distribution vector
+
+\[
+\pi(t) =
+(\pi_1(t),\dots,\pi_n(t)).
+\]
+
+Evolution
+
+\[
+\pi(t+1) = \pi(t)P.
+\]
+
+Stationary distribution
+
+\[
+\pi^* P = \pi^*.
+\]
+
+Bubble condition
+
+\[
+H(\pi(t)) > H_c.
+\]
+
+Collapse transition
+
+\[
+\pi(t^+) = e_i
+\]
+
+where
+
+\[
+e_i = (0,\dots,1,\dots,0).
+\]
+
+% ------------------------------------------------------------
+% Appendix S
+% Game Scoring Functional
+% ------------------------------------------------------------
+
+\section{Scoring Functional}
+
+Let
+
+\[
+C \in [0,1]
+\]
+
+be confidence.
+
+Corruption level
+
+\[
+\kappa = 1 - C.
+\]
+
+Score function
+
+\[
+\text{Score} = \alpha \kappa^\beta.
+\]
+
+Error–channel multiplier
+
+\[
+M =
+\begin{cases}
+\gamma & \text{correct flare} \\
+1 & \text{otherwise}
+\end{cases}
+\]
+
+Total score increment
+
+\[
+\Delta S = M \cdot \alpha \kappa^\beta.
+\]
+
+% ------------------------------------------------------------
+% Appendix T
+% Tunnel Field Topology
+% ------------------------------------------------------------
+
+\section{Tunnel Topology}
+
+Trajectory manifold
+
+\[
+\mathcal{T} \cong S^1 \times \mathbb{R}.
+\]
+
+Local coordinates
+
+\[
+(\theta,z).
+\]
+
+Metric
+
+\[
+ds^2 = r^2 d\theta^2 + dz^2.
+\]
+
+Bubble location
+
+\[
+b_i = (\theta_i,z_i).
+\]
+
+Neighborhood
+
+\[
+U_i =
+\{(\theta,z) \mid
+|\theta-\theta_i| < \epsilon,
+|z-z_i| < \delta
+\}.
+\]
+
+% ------------------------------------------------------------
+% Appendix U
+% Multi-Agent Observation Model
+% ------------------------------------------------------------
+
+\section{Observation Fusion}
+
+Agents
+
+\[
+A = \{a_1,\dots,a_n\}.
+\]
+
+Observation
+
+\[
+o_i \sim P(o \mid w).
+\]
+
+Likelihood
+
+\[
+L_i(w) = P(o_i \mid w).
+\]
+
+Posterior
+
+\[
+P(w \mid o_1,\dots,o_n)
+\propto
+\prod_{i=1}^n L_i(w)P(w).
+\]
+
+Consensus
+
+\[
+w^* =
+\arg\max_w
+P(w \mid o_1,\dots,o_n).
+\]
+
+Bubble condition
+
+\[
+\max_w P(w \mid o_1,\dots,o_n) < \tau.
+\]
+
+% ------------------------------------------------------------
+% Appendix V
+% Entropy Flow in RSVP Field
+% ------------------------------------------------------------
+
+\section{Entropy Flux}
+
+Entropy density
+
+\[
+S(x,t).
+\]
+
+Flux
+
+\[
+\mathbf{J}_S = -D \nabla S.
+\]
+
+Continuity equation
+
+\[
+\frac{\partial S}{\partial t}
++
+\nabla \cdot \mathbf{J}_S
+=
+\sigma.
+\]
+
+Bubble domain
+
+\[
+B_i =
+\{x \mid S(x,t) > S_c\}.
+\]
+
+Collapse update
+
+\[
+S(x,t^+) =
+S(x,t^-) - \Delta S_i \chi_{B_i}(x).
+\]
+
+Indicator function
+
+\[
+\chi_{B_i}(x) =
+\begin{cases}
+1 & x \in B_i \\
+0 & x \notin B_i
+\end{cases}
+\]
+
+% ------------------------------------------------------------
+% Appendix W
+% Sheaf-Theoretic Consensus
+% ------------------------------------------------------------
+
+\section{Gluing Operator}
+
+Cover
+
+\[
+\mathcal{U} = \{U_i\}.
+\]
+
+Sections
+
+\[
+s_i \in \mathcal{F}(U_i).
+\]
+
+Compatibility
+
+\[
+s_i|_{U_i \cap U_j} =
+s_j|_{U_i \cap U_j}.
+\]
+
+Gluing map
+
+\[
+g :
+\prod_i \mathcal{F}(U_i)
+\rightarrow
+\mathcal{F}(X).
+\]
+
+Global section
+
+\[
+s = g(s_1,\dots,s_n).
+\]
+
+Bubble obstruction
+
+\[
+\exists i,j :
+s_i|_{U_i \cap U_j}
+\neq
+s_j|_{U_i \cap U_j}.
+\]
+
+Collapse condition
+
+\[
+s_i|_{U_i \cap U_j}
+=
+s_j|_{U_i \cap U_j}.
+\]
+
+% ------------------------------------------------------------
+% Appendix X
+% Information Geometry
+% ------------------------------------------------------------
+
+\section{Statistical Manifold}
+
+Probability simplex
+
+\[
+\Delta_n =
+\left\{
+p \in \mathbb{R}^n :
+p_i \ge 0,\;
+\sum_i p_i = 1
+\right\}.
+\]
+
+Fisher metric
+
+\[
+g_{ij}(p)
+=
+\frac{\delta_{ij}}{p_i}.
+\]
+
+Geodesic
+
+\[
+p(t) =
+\frac{p_0^{1-t} p_1^t}
+{\sum_i p_0^{1-t} p_1^t}.
+\]
+
+Information distance
+
+\[
+D_{KL}(p \| q)
+=
+\sum_i p_i \log \frac{p_i}{q_i}.
+\]
+
+Collapse
+
+\[
+p \rightarrow e_i.
+\]
+
+% ------------------------------------------------------------
+% Appendix Y
+% Global Collapse Dynamics
+% ------------------------------------------------------------
+
+\section{Global Convergence}
+
+Let entropy field
+
+\[
+S(x,t).
+\]
+
+Total entropy
+
+\[
+S_{tot}(t)
+=
+\int_X S(x,t)\,dx.
+\]
+
+Lyapunov functional
+
+\[
+V(t) = S_{tot}(t).
+\]
+
+Condition
+
+\[
+\frac{dV}{dt} \le 0.
+\]
+
+Limit
+
+\[
+\lim_{t\to\infty}
+S_{tot}(t) = 0.
+\]
+
+% ------------------------------------------------------------
+% Appendix Z
+% Unified Collapse Operator on Interpretive Fields
+% ------------------------------------------------------------
+
+\section{Unified Collapse Operator}
+
+Let trajectory space
+
+\[
+X
+\]
+
+and hypothesis field
+
+\[
+\mathcal{H}(x,t)
+=
+\{h_1,\dots,h_n\}.
+\]
+
+Probability distribution
+
+\[
+P(h,x,t)
+\]
+
+with normalization
+
+\[
+\sum_h P(h,x,t) = 1.
+\]
+
+Define entropy density
+
+\[
+S(x,t)
+=
+-
+\sum_h
+P(h,x,t)
+\log P(h,x,t).
+\]
+
+Define interpretation bundle
+
+\[
+\pi :
+\mathcal{E}
+\rightarrow
+X
+\]
+
+where fiber
+
+\[
+\pi^{-1}(x) =
+\mathcal{H}(x).
+\]
+
+Section
+
+\[
+s :
+X
+\rightarrow
+\mathcal{E}.
+\]
+
+Define collapse operator
+
+\[
+\mathcal{C} :
+\mathcal{H}(x,t)
+\rightarrow
+h^*(x,t)
+\]
+
+with
+
+\[
+h^*(x,t)
+=
+\arg\max_h
+P(h,x,t).
+\]
+
+Post–collapse distribution
+
+\[
+P'(h,x,t)
+=
+\delta_{h,h^*}.
+\]
+
+Entropy update
+
+\[
+S'(x,t) = 0.
+\]
+
+Define global collapse functional
+
+\[
+\mathcal{C}_X :
+\mathcal{H}(X,t)
+\rightarrow
+\Gamma(X,\mathcal{E})
+\]
+
+where
+
+\[
+\Gamma(X,\mathcal{E})
+\]
+
+is the space of global sections.
+
+Consistency condition
+
+\[
+\rho_{UV}(s_U)
+=
+\rho_{VU}(s_V).
+\]
+
+Unified collapse equation
+
+\[
+\mathcal{C}_X
+=
+\Pi
+\circ
+\Gamma
+\circ
+\mathcal{R}
+\]
+
+where
+
+\[
+\mathcal{R}
+\]
+
+is categorical branch reduction,
+
+\[
+\Gamma
+\]
+
+is sheaf gluing,
+
+and
+
+\[
+\Pi
+\]
+
+is entropy minimization.
+
+Resulting field
+
+\[
+\lim_{t\to\infty}
+P(h,x,t)
+=
+\delta_{h,h^*(x)}.
+\]
+
+Global entropy
+
+\[
+S_{tot}(t)
+=
+\int_X S(x,t)\,dx.
+\]
+
+Limit condition
+
+\[
+\lim_{t\to\infty}
+S_{tot}(t)
+=
+0.
+\]
+
+Unified interpretive state
+
+\[
+\Psi(x)
+=
+h^*(x).
+\]
+
+\newpage
+\begin{thebibliography}{99}
+
+\bibitem{maclane1998}
+Mac Lane, Saunders.
+\textit{Categories for the Working Mathematician}.
+Second Edition. Springer, New York, 1998.
+
+\bibitem{awodey2010}
+Awodey, Steve.
+\textit{Category Theory}.
+Oxford University Press, Oxford, 2010.
+
+\bibitem{riehl2017}
+Riehl, Emily.
+\textit{Category Theory in Context}.
+Dover Publications, Mineola, NY, 2017.
+
+\bibitem{spivak2014}
+Spivak, David I.
+\textit{Category Theory for the Sciences}.
+MIT Press, Cambridge, MA, 2014.
+
+\bibitem{hartshorne1977}
+Hartshorne, Robin.
+\textit{Algebraic Geometry}.
+Springer, New York, 1977.
+
+\bibitem{kashiwara2002}
+Kashiwara, Masaki and Pierre Schapira.
+\textit{Sheaves on Manifolds}.
+Springer, Berlin, 2002.
+
+\bibitem{bredon1997}
+Bredon, Glen E.
+\textit{Sheaf Theory}.
+Second Edition. Springer, New York, 1997.
+
+\bibitem{shannon1948}
+Shannon, Claude E.
+\textit{A Mathematical Theory of Communication}.
+Bell System Technical Journal, 27(3):379--423, 1948.
+
+\bibitem{cover2006}
+Cover, Thomas M. and Joy A. Thomas.
+\textit{Elements of Information Theory}.
+Second Edition. Wiley-Interscience, Hoboken, NJ, 2006.
+
+\bibitem{thrun2005}
+Thrun, Sebastian, Wolfram Burgard, and Dieter Fox.
+\textit{Probabilistic Robotics}.
+MIT Press, Cambridge, MA, 2005.
+
+\bibitem{goodfellow2016}
+Goodfellow, Ian, Yoshua Bengio, and Aaron Courville.
+\textit{Deep Learning}.
+MIT Press, Cambridge, MA, 2016.
+
+\bibitem{russell2021}
+Russell, Stuart and Peter Norvig.
+\textit{Artificial Intelligence: A Modern Approach}.
+Fourth Edition. Pearson, London, 2021.
+
+\bibitem{wiener1948}
+Wiener, Norbert.
+\textit{Cybernetics: Or Control and Communication in the Animal and the Machine}.
+MIT Press, Cambridge, MA, 1948.
+
+\bibitem{barwise1997}
+Barwise, Jon and Lawrence Moss.
+\textit{Vicious Circles: On the Mathematics of Non-Wellfounded Phenomena}.
+CSLI Publications, Stanford, 1997.
+
+\bibitem{friston2010}
+Friston, Karl.
+The Free-Energy Principle: A Unified Brain Theory?
+\textit{Nature Reviews Neuroscience}, 11:127--138, 2010.
+
+\bibitem{jacobson1995}
+Jacobson, Ted.
+Thermodynamics of Spacetime: The Einstein Equation of State.
+\textit{Physical Review Letters}, 75(7):1260--1263, 1995.
+
+\end{thebibliography}
+
+\end{document}

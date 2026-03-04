@@ -10,6 +10,8 @@ At its core, Spherepop replaces static foundations with a **constructive, histor
 
 ![](scope-intro.gif)
 
+Play the [Spellpop mini-game](https://standardgalactic.github.io/spherepop/spellpop.html)
+
 ---
 
 ## What Spherepop Is
