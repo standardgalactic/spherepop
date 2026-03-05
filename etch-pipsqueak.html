@@ -1,0 +1,1413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>ETCH-TERMINAL · PIPSQUEAK</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=VT323&family=Share+Tech+Mono&display=swap');
+
+:root {
+  --green:  #00ff41;
+  --green2: #39ff6e;
+  --amber:  #ffb700;
+  --red:    #ff3c2a;
+  --blue:   #00eeff;
+  --dim:    rgba(0,255,65,0.18);
+  --panel:  rgba(0,10,4,0.93);
+  --mint:   #b0ffcc;
+  --mid:    #3a8f55;
+}
+
+*, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+
+html, body {
+  height: 100%;
+  background: #000;
+  color: var(--mint);
+  font-family: "Share Tech Mono", monospace;
+  overflow-x: hidden;
+}
+
+/* ── CRT SHELL ──────────────────────────────────────────── */
+#crt {
+  min-height: 100vh;
+  background: radial-gradient(ellipse 130% 80% at 50% 0%, #001208 0%, #000 68%);
+  padding: 14px 12px 28px;
+  position: relative;
+}
+#crt::before {   /* scanlines */
+  content:""; pointer-events:none;
+  position:fixed; inset:0; z-index:300;
+  background: repeating-linear-gradient(
+    to bottom, transparent 0px, transparent 2px,
+    rgba(0,0,0,0.15) 2px, rgba(0,0,0,0.15) 4px
+  );
+}
+#crt::after {    /* bloom */
+  content:""; pointer-events:none;
+  position:fixed; inset:-80px; z-index:299;
+  background: radial-gradient(ellipse 80% 55% at 50% 38%,
+    rgba(0,255,65,0.055) 0%, transparent 66%);
+}
+.vignette {
+  pointer-events:none; position:fixed; inset:0; z-index:298;
+  background: radial-gradient(ellipse 100% 100% at 50% 50%,
+    transparent 50%, rgba(0,0,0,0.75) 100%);
+}
+.noise {
+  pointer-events:none; position:fixed; inset:0; z-index:297;
+  opacity:0.02; animation: noiseA 0.09s steps(1) infinite;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+}
+@keyframes noiseA {
+  0%{background-position:0 0} 33%{background-position:-40px 25px} 66%{background-position:30px -35px}
+}
+
+/* ── HEADER ─────────────────────────────────────────────── */
+header {
+  max-width: 1080px; margin: 0 auto 10px;
+  padding: 12px 16px 10px;
+  border: 1px solid rgba(0,255,65,0.26);
+  border-radius: 3px; background: var(--panel);
+  box-shadow: 0 0 40px rgba(0,255,65,0.04), 0 18px 50px rgba(0,0,0,0.7);
+  position: relative; overflow: hidden;
+}
+header::before {
+  content:""; position:absolute; top:0; left:0; right:0; height:1px;
+  background: linear-gradient(90deg, transparent, var(--green), transparent);
+  animation: scanH 5s linear infinite;
+}
+@keyframes scanH {
+  0%{transform:translateX(-110%);opacity:0} 8%{opacity:.7} 92%{opacity:.7} 100%{transform:translateX(110%);opacity:0}
+}
+.hdr-row { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; }
+.title {
+  font-family:"VT323",monospace; font-size:44px; line-height:1;
+  color:var(--green); letter-spacing:2px;
+  text-shadow: 0 0 8px var(--green), 0 0 28px rgba(0,255,65,0.2);
+  animation: flick 9s ease-in-out infinite;
+}
+@keyframes flick { 0%,100%{opacity:1} 92%{opacity:1} 93%{opacity:.8} 94%{opacity:1} 97%{opacity:.9} 98%{opacity:1} }
+.subtitle { font-size:11px; color:#3a7a48; margin-top:4px; max-width:60ch; line-height:1.5; }
+
+.hdr-btns { display:flex; gap:7px; flex-wrap:wrap; align-items:center; }
+.btn {
+  font-family:"VT323",monospace; font-size:20px; letter-spacing:.04em;
+  background:rgba(0,0,0,0.55); color:var(--green);
+  border:1px solid rgba(0,255,65,0.4); border-radius:2px;
+  padding:3px 12px 1px; cursor:pointer;
+  text-shadow:0 0 7px rgba(0,255,65,0.35);
+  transition: background 90ms, border-color 90ms, box-shadow 90ms;
+}
+.btn:hover { background:rgba(0,255,65,0.07); border-color:var(--green); box-shadow:0 0 14px rgba(0,255,65,0.1); }
+.btn:active { transform:scale(0.97); }
+.btn.amber { color:var(--amber); border-color:rgba(255,183,0,0.4); text-shadow:0 0 7px rgba(255,183,0,0.35); }
+.btn.amber:hover { background:rgba(255,183,0,0.07); border-color:var(--amber); }
+.btn.red   { color:var(--red);   border-color:rgba(255,60,42,0.4);  text-shadow:0 0 7px rgba(255,60,42,0.35); }
+.btn.red:hover   { background:rgba(255,60,42,0.07);   border-color:var(--red);   }
+.btn.blue  { color:var(--blue);  border-color:rgba(0,238,255,0.4);  text-shadow:0 0 7px rgba(0,238,255,0.35); }
+.btn.blue:hover  { background:rgba(0,238,255,0.07);  border-color:var(--blue);  }
+
+select {
+  font-family:inherit; font-size:12px;
+  background:rgba(0,0,0,0.6); color:var(--green);
+  border:1px solid rgba(0,255,65,0.28); border-radius:2px;
+  padding:4px 8px; outline:none; cursor:pointer;
+}
+select option { background:#001208; }
+
+/* ── MSG STRIP ───────────────────────────────────────────── */
+.msg-strip {
+  max-width:1080px; margin:0 auto 8px;
+  padding:5px 12px; border:1px solid rgba(0,255,65,0.18);
+  border-radius:2px; background:rgba(0,0,0,0.42);
+  font-size:11.5px; min-height:28px;
+  display:flex; align-items:center; gap:8px;
+  transition: border-color .25s;
+}
+.msg-strip.ok   { border-color:rgba(0,255,65,0.4); }
+.msg-strip.warn { border-color:rgba(255,183,0,0.4); }
+.msg-strip.bad  { border-color:rgba(255,60,42,0.4); }
+.msg-strip.info { border-color:rgba(0,238,255,0.4); }
+.msg-tag {
+  font-family:"VT323",monospace; font-size:16px;
+  padding:1px 5px; border:1px solid currentColor; border-radius:1px; flex-shrink:0;
+}
+.c-green{color:var(--green)} .c-amber{color:var(--amber)} .c-red{color:var(--red)} .c-blue{color:var(--blue)}
+
+/* ── LAYOUT ──────────────────────────────────────────────── */
+.workspace {
+  max-width:1080px; margin:0 auto;
+  display:grid;
+  grid-template-columns: 1fr 340px;
+  gap:10px;
+}
+@media(max-width:860px){ .workspace{ grid-template-columns:1fr; } }
+
+/* ── ETCH PANEL ──────────────────────────────────────────── */
+.etch-panel {
+  display:flex; flex-direction:column; gap:8px;
+}
+
+.canvas-shell {
+  border:2px solid rgba(0,255,65,0.28);
+  border-radius:4px;
+  background: #000d04;
+  box-shadow:
+    0 0 0 1px rgba(0,255,65,0.06) inset,
+    0 0 40px rgba(0,255,65,0.06),
+    0 20px 60px rgba(0,0,0,0.7);
+  position:relative; overflow:hidden;
+}
+.canvas-shell::after {   /* inner glow ring */
+  content:""; pointer-events:none;
+  position:absolute; inset:0;
+  box-shadow: inset 0 0 60px rgba(0,255,65,0.04);
+}
+
+#etchCanvas {
+  display:block; width:100%; cursor:crosshair;
+  image-rendering:crisp-edges;
+}
+
+/* cursor dot */
+#cursorDot {
+  position:absolute; width:5px; height:5px;
+  border-radius:50%;
+  background:var(--green);
+  box-shadow:0 0 8px var(--green), 0 0 20px rgba(0,255,65,0.5);
+  pointer-events:none;
+  transform:translate(-50%,-50%);
+  transition: left .03s linear, top .03s linear;
+}
+
+/* replay progress bar */
+.replay-bar-bg {
+  height:3px; background:rgba(0,255,65,0.08);
+  border:1px solid rgba(0,255,65,0.15);
+}
+.replay-bar-fill {
+  height:100%; width:0%;
+  background:var(--green); box-shadow:0 0 5px var(--green);
+  transition:width .12s linear;
+}
+
+/* ── KNOBS ROW ───────────────────────────────────────────── */
+.knobs-row {
+  display:flex; gap:12px; align-items:center; justify-content:center;
+  padding:10px 14px;
+  border:1px solid rgba(0,255,65,0.18);
+  border-radius:3px; background:rgba(0,0,0,0.4);
+}
+
+.knob-group { display:flex; flex-direction:column; align-items:center; gap:5px; }
+.knob-label { font-size:9.5px; color:#3a7a48; text-transform:uppercase; letter-spacing:.1em; }
+
+.knob-ring {
+  position:relative; width:58px; height:58px; cursor:grab;
+}
+.knob-ring:active { cursor:grabbing; }
+.knob-svg { width:100%; height:100%; overflow:visible; }
+.knob-track { fill:none; stroke:rgba(0,255,65,0.14); stroke-width:3; }
+.knob-arc   { fill:none; stroke:var(--green); stroke-width:3;
+  stroke-linecap:round;
+  filter:drop-shadow(0 0 3px rgba(0,255,65,0.6));
+  transition:stroke-dashoffset .05s linear;
+}
+.knob-marker { fill:var(--green); filter:drop-shadow(0 0 3px rgba(0,255,65,0.8)); }
+.knob-center { fill:#001208; stroke:rgba(0,255,65,0.25); stroke-width:1.5; }
+
+.knob-val {
+  font-family:"VT323",monospace; font-size:16px; color:var(--green);
+  text-shadow:0 0 6px rgba(0,255,65,0.4); text-align:center;
+  min-width:4ch;
+}
+
+.knob-arrows {
+  display:flex; gap:4px;
+}
+.karrow {
+  font-family:"VT323",monospace; font-size:22px; color:var(--mid);
+  background:rgba(0,0,0,0.4); border:1px solid rgba(0,255,65,0.18);
+  border-radius:2px; padding:0 7px; cursor:pointer; line-height:1.3;
+  transition: color .1s, border-color .1s;
+}
+.karrow:hover { color:var(--green); border-color:rgba(0,255,65,0.5); }
+.karrow:active { transform:scale(0.94); }
+
+.knob-mid {
+  display:flex; flex-direction:column; align-items:center; gap:6px;
+  font-size:9.5px; color:#244832;
+}
+.step-ctrl { display:flex; align-items:center; gap:5px; }
+
+/* replay controls */
+.replay-ctrl {
+  display:flex; gap:6px; flex-wrap:wrap; align-items:center;
+  padding:8px 12px;
+  border:1px solid rgba(0,255,65,0.16);
+  border-radius:3px; background:rgba(0,0,0,0.38);
+}
+.spd-label { font-size:9.5px; color:#2a5a38; text-transform:uppercase; letter-spacing:.1em; }
+
+/* ── RIGHT PANEL: PIPSQUEAK CONSOLE ─────────────────────── */
+.psq-panel {
+  display:flex; flex-direction:column; gap:8px;
+}
+
+.psq-header {
+  font-family:"VT323",monospace; font-size:22px; color:var(--amber);
+  text-shadow:0 0 8px rgba(255,183,0,0.35); letter-spacing:1px;
+  padding:7px 12px;
+  border:1px solid rgba(255,183,0,0.22);
+  border-radius:2px; background:rgba(0,0,0,0.45);
+  display:flex; justify-content:space-between; align-items:center;
+}
+.psq-version { font-size:13px; color:rgba(255,183,0,0.4); }
+
+.psq-editor-wrap {
+  flex:1; position:relative;
+  border:1px solid rgba(255,183,0,0.22);
+  border-radius:2px; background:rgba(0,5,2,0.7);
+  overflow:hidden;
+}
+.psq-linenos {
+  position:absolute; left:0; top:0; bottom:0; width:28px;
+  background:rgba(0,0,0,0.4); border-right:1px solid rgba(255,183,0,0.12);
+  padding-top:8px; overflow:hidden;
+  font-size:11px; color:#1a4428; text-align:right; padding-right:4px;
+  user-select:none; pointer-events:none;
+  line-height:1.52;
+}
+#psqEditor {
+  display:block; width:100%; min-height:280px; max-height:340px;
+  padding:8px 8px 8px 34px;
+  font-family:"Share Tech Mono",monospace; font-size:12px;
+  line-height:1.52;
+  color:var(--green); background:transparent;
+  border:none; outline:none; resize:vertical;
+  caret-color:var(--green);
+  overflow:auto;
+}
+#psqEditor::selection { background:rgba(0,255,65,0.18); }
+
+/* syntax highlighting classes applied by JS */
+.psq-kw  { color:var(--amber); }
+.psq-num { color:var(--blue); }
+.psq-cmt { color:#2a5a38; font-style:italic; }
+
+.psq-btns { display:flex; gap:6px; flex-wrap:wrap; }
+
+/* PSQ example selector */
+.example-bar {
+  display:flex; gap:6px; align-items:center;
+  font-size:10px; color:#2a5a38;
+  flex-wrap:wrap;
+}
+
+/* ── SAVE / LOAD PANEL ───────────────────────────────────── */
+.save-panel {
+  max-width:1080px; margin:8px auto 0;
+  padding:8px 14px; border:1px solid rgba(0,255,65,0.14);
+  border-radius:2px; background:rgba(0,0,0,0.4);
+  display:flex; flex-wrap:wrap; gap:8px; align-items:center;
+  font-size:11px;
+}
+.sp-label { font-size:9.5px; color:#2a5a38; text-transform:uppercase; letter-spacing:.1em; white-space:nowrap; }
+.save-panel input {
+  font-family:"Share Tech Mono",monospace; font-size:11px;
+  background:rgba(0,0,0,0.6); color:var(--green);
+  border:1px solid rgba(0,255,65,0.22); border-radius:2px;
+  padding:4px 8px; outline:none; flex:1;
+  min-width:100px; max-width:380px; letter-spacing:.04em;
+}
+.save-panel input::placeholder { color:#1a3a22; }
+.save-panel .sep { color:#1a3a22; font-size:13px; }
+
+/* ── STATS ROW ───────────────────────────────────────────── */
+.stats-row {
+  display:flex; gap:7px; flex-wrap:wrap; margin-top:2px;
+}
+.stat {
+  display:flex; align-items:center; gap:5px;
+  padding:3px 8px; font-size:11px;
+  border:1px solid rgba(0,255,65,0.14);
+  border-radius:2px; background:rgba(0,0,0,0.28);
+}
+.slabel { font-size:9px; color:#2a5a38; text-transform:uppercase; letter-spacing:.1em; }
+.sval   { font-family:"VT323",monospace; font-size:19px; color:var(--green);
+  text-shadow:0 0 5px rgba(0,255,65,0.35); line-height:1; }
+.sval.amber { color:var(--amber); text-shadow:0 0 5px rgba(255,183,0,0.35); }
+
+/* ── HELP PANEL ──────────────────────────────────────────── */
+.help-panel {
+  padding:10px 12px;
+  border:1px solid rgba(255,183,0,0.18);
+  border-radius:2px; background:rgba(0,0,0,0.4);
+  font-size:10.5px; line-height:1.7;
+  color:#3a6a45;
+}
+.help-panel strong { color:var(--amber); }
+.help-title { font-family:"VT323",monospace; font-size:18px; color:var(--amber); margin-bottom:5px; letter-spacing:.05em; }
+
+footer {
+  max-width:1080px; margin:10px auto 0;
+  font-size:10px; color:#1a3a22; line-height:1.6; padding:0 3px;
+}
+</style>
+</head>
+<body>
+<div id="crt">
+<div class="vignette"></div>
+<div class="noise"></div>
+
+<header>
+  <div class="hdr-row">
+    <div>
+      <div class="title">ETCH-TERMINAL</div>
+      <div class="subtitle">Vector drawing engine · Pipsqueak turtle language · phosphor replay · session save codes</div>
+    </div>
+    <div class="hdr-btns">
+      <button class="btn red"   id="clearBtn">[ CLEAR ]</button>
+      <button class="btn amber" id="shakeBtn">[ SHAKE ]</button>
+      <button class="btn"       id="undoBtn" >[ UNDO ]</button>
+    </div>
+  </div>
+  <div class="stats-row" style="margin-top:8px;">
+    <div class="stat"><span class="slabel">Points</span><span class="sval" id="statPts">0</span></div>
+    <div class="stat"><span class="slabel">Segments</span><span class="sval" id="statSegs">0</span></div>
+    <div class="stat"><span class="slabel">Cursor X</span><span class="sval amber" id="statX">0</span></div>
+    <div class="stat"><span class="slabel">Cursor Y</span><span class="sval amber" id="statY">0</span></div>
+    <div class="stat"><span class="slabel">Step</span><span class="sval" id="statStep">3</span></div>
+    <div class="stat"><span class="slabel">Mode</span><span class="sval" id="statMode">DRAW</span></div>
+  </div>
+</header>
+
+<div class="msg-strip ok" id="msgStrip">
+  <span class="msg-tag c-green" id="msgTag">READY</span>
+  <span id="msgText">Arrow keys or knobs to draw · drag canvas to draw · Pipsqueak console on the right</span>
+</div>
+
+<div class="workspace">
+
+  <!-- LEFT: canvas + knobs + replay -->
+  <div class="etch-panel">
+
+    <div class="canvas-shell" id="canvasShell">
+      <canvas id="etchCanvas"></canvas>
+      <div id="cursorDot"></div>
+    </div>
+
+    <div class="replay-bar-bg"><div class="replay-bar-fill" id="replayBar"></div></div>
+
+    <!-- KNOBS ROW -->
+    <div class="knobs-row">
+      <div class="knob-group">
+        <div class="knob-label">◂ X-AXIS ▸</div>
+        <div class="knob-ring" id="knobX" data-axis="x">
+          <svg class="knob-svg" viewBox="-32 -32 64 64">
+            <circle class="knob-track" r="26" cx="0" cy="0"/>
+            <path class="knob-arc" id="knobXArc" d="" stroke-dasharray="163.4" stroke-dashoffset="163.4"/>
+            <circle class="knob-center" r="16" cx="0" cy="0"/>
+            <circle class="knob-marker" r="3.5" cx="0" cy="-22" id="knobXMark"/>
+          </svg>
+        </div>
+        <div class="knob-val" id="knobXVal">0</div>
+        <div class="knob-arrows">
+          <div class="karrow" data-dir="left">◀</div>
+          <div class="karrow" data-dir="right">▶</div>
+        </div>
+      </div>
+
+      <div class="knob-mid">
+        <div style="font-family:'VT323',monospace;font-size:24px;color:var(--green);text-shadow:0 0 8px rgba(0,255,65,0.3);">✛</div>
+        <div class="step-ctrl">
+          <span class="sp-label">STEP</span>
+          <select id="stepSel">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3" selected>3</option>
+            <option value="5">5</option>
+            <option value="8">8</option>
+            <option value="12">12</option>
+          </select>
+        </div>
+        <div style="font-size:9px;color:#1a3a22;text-align:center;max-width:80px;line-height:1.4;">
+          arrow keys · drag · knobs
+        </div>
+      </div>
+
+      <div class="knob-group">
+        <div class="knob-label">◂ Y-AXIS ▸</div>
+        <div class="knob-ring" id="knobY" data-axis="y">
+          <svg class="knob-svg" viewBox="-32 -32 64 64">
+            <circle class="knob-track" r="26" cx="0" cy="0"/>
+            <path class="knob-arc" id="knobYArc" d="" stroke-dasharray="163.4" stroke-dashoffset="163.4"/>
+            <circle class="knob-center" r="16" cx="0" cy="0"/>
+            <circle class="knob-marker" r="3.5" cx="0" cy="-22" id="knobYMark"/>
+          </svg>
+        </div>
+        <div class="knob-val" id="knobYVal">0</div>
+        <div class="knob-arrows">
+          <div class="karrow" data-dir="up">▲</div>
+          <div class="karrow" data-dir="down">▼</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- REPLAY CONTROLS -->
+    <div class="replay-ctrl">
+      <span class="spd-label">Replay</span>
+      <button class="btn blue"  id="replaySlowBtn">▶ SLOW</button>
+      <button class="btn"       id="replayFastBtn">▶▶ FAST</button>
+      <button class="btn amber" id="replayInstBtn">▶▶▶ INSTANT</button>
+      <button class="btn red"   id="replayStopBtn">■ STOP</button>
+      <span class="sep" style="color:#1a3a22;font-size:13px;">|</span>
+      <span class="spd-label">Speed</span>
+      <select id="replaySpdSel">
+        <option value="20">×0.5</option>
+        <option value="10" selected>×1</option>
+        <option value="5">×2</option>
+        <option value="2">×5</option>
+        <option value="1">×10</option>
+      </select>
+    </div>
+
+  </div><!-- /etch-panel -->
+
+  <!-- RIGHT: PIPSQUEAK console -->
+  <div class="psq-panel">
+
+    <div class="psq-header">
+      <span>PIPSQUEAK CONSOLE</span>
+      <span class="psq-version">v1.0</span>
+    </div>
+
+    <div class="example-bar">
+      <span>Examples:</span>
+      <button class="btn" style="font-size:14px;padding:2px 8px 1px;" data-eg="square">Square</button>
+      <button class="btn" style="font-size:14px;padding:2px 8px 1px;" data-eg="star">Star</button>
+      <button class="btn" style="font-size:14px;padding:2px 8px 1px;" data-eg="spiral">Spiral</button>
+      <button class="btn" style="font-size:14px;padding:2px 8px 1px;" data-eg="circle">Circle</button>
+      <button class="btn" style="font-size:14px;padding:2px 8px 1px;" data-eg="lissajous">Lissajous</button>
+      <button class="btn" style="font-size:14px;padding:2px 8px 1px;" data-eg="spherepop">Spherepop</button>
+      <button class="btn" style="font-size:14px;padding:2px 8px 1px;" data-eg="pentest">Penup</button>
+      <button class="btn" style="font-size:14px;padding:2px 8px 1px;" data-eg="nested">Nested</button>
+    </div>
+
+    <div class="psq-editor-wrap">
+      <div class="psq-linenos" id="psqLinenos">1</div>
+      <textarea id="psqEditor" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off"
+># PIPSQUEAK v1.0
+# Turtle drawing language for ETCH-TERMINAL
+# Try an example above or write your own.
+
+STEP 3
+CENTER
+REPEAT 4 {
+  FORWARD 80
+  TURN 90
+}
+</textarea>
+    </div>
+
+    <div class="psq-btns">
+      <button class="btn amber" id="psqRunBtn">[ RUN ]</button>
+      <button class="btn"       id="psqAppendBtn">[ APPEND ]</button>
+      <button class="btn red"   id="psqClearBtn">[ CLR ]</button>
+    </div>
+
+    <div class="help-panel">
+      <div class="help-title">COMMAND REFERENCE</div>
+      <strong>STEP n</strong> — set step scale<br>
+      <strong>FORWARD n</strong> / <strong>BACK n</strong> — move along heading<br>
+      <strong>LEFT n</strong> / <strong>RIGHT n</strong> — strafe perpendicular<br>
+      <strong>TURN a</strong> — rotate heading by a°<br>
+      <strong>SETHEADING a</strong> — set absolute heading (0=right)<br>
+      <strong>PENUP</strong> / <strong>PENDOWN</strong> — lift / lower pen<br>
+      <strong>CENTER</strong> — jump pen to canvas centre<br>
+      <strong>GOTO x y</strong> — absolute (canvas-centre origin)<br>
+      <strong>GOTO +dx +dy</strong> — relative move (prefix + or −)<br>
+      <strong>ARC r a</strong> — true geometric arc, radius r, sweep a°<br>
+      <strong>POP r n</strong> — Spherepop radial burst: n petals on radius r<br>
+      <strong>REPEAT n { … }</strong> — repeat block (nestable)<br>
+      <strong>CURVE t s e dt { X expr · Y expr }</strong> — parametric<br>
+      <strong># comment</strong>
+    </div>
+
+  </div><!-- /psq-panel -->
+
+</div><!-- /workspace -->
+
+<!-- SAVE / LOAD PANEL -->
+<div class="save-panel">
+  <span class="sp-label">Save</span>
+  <input id="saveCode" readonly placeholder="— press SAVE to generate —"/>
+  <button class="btn" id="saveBtn" style="font-size:16px;padding:2px 10px 1px;">SAVE</button>
+  <span class="sep">|</span>
+  <span class="sp-label">Load</span>
+  <input id="loadCode" placeholder="paste ET-XXXX… code"/>
+  <button class="btn" id="loadBtn" style="font-size:16px;padding:2px 10px 1px;">LOAD</button>
+</div>
+
+<footer>
+  Arrow keys draw · drag canvas · rotate knobs · write Pipsqueak scripts and press RUN · SAVE encodes drawing as session code · SHAKE clears · UNDO removes last segment
+</footer>
+</div><!-- /crt -->
+
+<script>
+(() => {
+'use strict';
+
+// ── CANVAS SETUP ─────────────────────────────────────────────────────────────
+const shell   = document.getElementById('canvasShell');
+const canvas  = document.getElementById('etchCanvas');
+const ctx     = canvas.getContext('2d');
+const dot     = document.getElementById('cursorDot');
+
+let CW, CH;
+function resizeCanvas() {
+  const r = shell.getBoundingClientRect();
+  CW = Math.floor(r.width);
+  CH = Math.floor(CW * 0.62);
+  canvas.width  = CW;
+  canvas.height = CH;
+  canvas.style.height = CH + 'px';
+  redrawAll();
+  updateDot();
+}
+
+// ── DRAWING STATE ─────────────────────────────────────────────────────────────
+// path: array of {x,y} absolute canvas points (pen-lift not yet implemented but reserved)
+let path    = [];     // array of {x,y}
+let cursor  = {x:0, y:0};
+let stepSize = 3;
+
+// Etch-A-Sketch draws by appending absolute points; a new path segment
+// connects the last point to the next. Lifting isn't supported (true to EAS).
+
+function initCursor() {
+  cursor.x = CW / 2;
+  cursor.y = CH / 2;
+}
+
+function moveTo(nx, ny) {
+  nx = Math.max(0, Math.min(CW, nx));
+  ny = Math.max(0, Math.min(CH, ny));
+  if(path.length === 0) path.push({x: cursor.x, y: cursor.y});
+  cursor.x = nx;
+  cursor.y = ny;
+  path.push({x: nx, y: ny});
+  updateStats();
+}
+
+function jumpTo(nx, ny) {
+  // Move without drawing — inserts a null marker
+  cursor.x = Math.max(0, Math.min(CW, nx));
+  cursor.y = Math.max(0, Math.min(CH, ny));
+  path.push(null);            // null = pen lift
+  path.push({x: cursor.x, y: cursor.y});
+}
+
+// ── RENDERING ─────────────────────────────────────────────────────────────────
+function redrawAll() {
+  ctx.clearRect(0, 0, CW, CH);
+  if(path.length < 2) return;
+  drawPath(path, 0, path.length);
+  updateDot();
+}
+
+function drawPath(pts, from, to) {
+  ctx.save();
+  ctx.strokeStyle = '#00ff41';
+  ctx.lineWidth   = 1.5;
+  ctx.lineCap     = 'round';
+  ctx.lineJoin    = 'round';
+  ctx.shadowColor = 'rgba(0,255,65,0.55)';
+  ctx.shadowBlur  = 5;
+
+  let penDown = false;
+  for(let i = from; i < to && i < pts.length; i++) {
+    const p = pts[i];
+    if(p === null) { penDown = false; continue; }
+    if(!penDown) { ctx.beginPath(); ctx.moveTo(p.x, p.y); penDown = true; }
+    else { ctx.lineTo(p.x, p.y); }
+  }
+  ctx.stroke();
+  ctx.restore();
+}
+
+function updateDot() {
+  if(!CW) return;
+  dot.style.left = cursor.x + 'px';
+  dot.style.top  = cursor.y + 'px';
+}
+
+// ── STATS ─────────────────────────────────────────────────────────────────────
+const msgStrip = document.getElementById('msgStrip');
+const msgTag   = document.getElementById('msgTag');
+const msgText  = document.getElementById('msgText');
+
+function setMsg(tag, tc, text, sc='ok') {
+  msgStrip.className = 'msg-strip ' + sc;
+  msgTag.className   = 'msg-tag ' + tc;
+  msgTag.textContent = tag;
+  msgText.textContent= text;
+}
+
+function updateStats() {
+  document.getElementById('statPts').textContent  = path.filter(p=>p!==null).length;
+  document.getElementById('statSegs').textContent = Math.max(0, path.filter(p=>p!==null).length - 1);
+  document.getElementById('statX').textContent    = Math.round(cursor.x - CW/2);
+  document.getElementById('statY').textContent    = Math.round(cursor.y - CH/2);
+  document.getElementById('statStep').textContent = stepSize;
+}
+
+// ── KNOB VISUALS ──────────────────────────────────────────────────────────────
+let knobXAngle = 0, knobYAngle = 0;
+
+function setKnobAngle(axis, angle) {
+  angle = ((angle % 360) + 360) % 360;
+  if(axis === 'x') knobXAngle = angle;
+  else             knobYAngle = angle;
+
+  const id    = axis === 'x' ? 'X' : 'Y';
+  const mark  = document.getElementById('knob' + id + 'Mark');
+  const arc   = document.getElementById('knob' + id + 'Arc');
+  const val   = document.getElementById('knob' + id + 'Val');
+  const a     = axis === 'x' ? knobXAngle : knobYAngle;
+
+  // rotate marker dot
+  const rad = (a - 90) * Math.PI / 180;
+  mark.setAttribute('cx', (Math.cos(rad) * 22).toFixed(2));
+  mark.setAttribute('cy', (Math.sin(rad) * 22).toFixed(2));
+
+  // arc stroke
+  const circ   = 2 * Math.PI * 26;
+  const filled = (a / 360) * circ;
+  arc.setAttribute('stroke-dasharray', circ.toFixed(1));
+  arc.setAttribute('stroke-dashoffset', (circ - filled).toFixed(1));
+  // rotate arc start to top
+  arc.setAttribute('transform', 'rotate(-90)');
+
+  // show signed displacement
+  val.textContent = a <= 180 ? '+' + Math.round(a) : '-' + Math.round(360-a);
+}
+
+// ── KNOB DRAG ─────────────────────────────────────────────────────────────────
+let draggingKnob = null;
+let knobDragStart = {y:0, angle:0};
+
+document.querySelectorAll('.knob-ring').forEach(ring => {
+  ring.addEventListener('mousedown', e => {
+    draggingKnob = ring.dataset.axis;
+    knobDragStart.y     = e.clientY;
+    knobDragStart.angle = draggingKnob === 'x' ? knobXAngle : knobYAngle;
+    e.preventDefault();
+  });
+  ring.addEventListener('touchstart', e => {
+    draggingKnob = ring.dataset.axis;
+    knobDragStart.y     = e.touches[0].clientY;
+    knobDragStart.angle = draggingKnob === 'x' ? knobXAngle : knobYAngle;
+    e.preventDefault();
+  }, {passive:false});
+});
+
+document.addEventListener('mousemove', e => {
+  if(!draggingKnob) return;
+  const dy    = e.clientY - knobDragStart.y;
+  const delta = -dy * 1.4;
+  const steps = Math.round(delta / 6);
+  if(steps === 0) return;
+  const newAngle = (knobDragStart.angle + steps * 5) % 360;
+  setKnobAngle(draggingKnob, newAngle);
+  if(draggingKnob === 'x') moveTo(cursor.x + steps * stepSize, cursor.y);
+  else                     moveTo(cursor.x, cursor.y + steps * stepSize);
+  redrawAll();
+});
+
+document.addEventListener('mouseup',    () => { draggingKnob = null; });
+document.addEventListener('touchend',   () => { draggingKnob = null; });
+document.addEventListener('touchmove', e => {
+  if(!draggingKnob) return;
+  const dy    = e.touches[0].clientY - knobDragStart.y;
+  const steps = Math.round(-dy * 1.4 / 6);
+  if(steps === 0) return;
+  const newAngle = (knobDragStart.angle + steps * 5) % 360;
+  setKnobAngle(draggingKnob, newAngle);
+  if(draggingKnob === 'x') moveTo(cursor.x + steps * stepSize, cursor.y);
+  else                     moveTo(cursor.x, cursor.y + steps * stepSize);
+  redrawAll();
+}, {passive:false});
+
+// ── ARROW BUTTONS ────────────────────────────────────────────────────────────
+document.querySelectorAll('.karrow').forEach(btn => {
+  function doMove() {
+    const d = btn.dataset.dir;
+    if(d==='left')  { moveTo(cursor.x - stepSize, cursor.y); setKnobAngle('x', knobXAngle - 5); }
+    if(d==='right') { moveTo(cursor.x + stepSize, cursor.y); setKnobAngle('x', knobXAngle + 5); }
+    if(d==='up')    { moveTo(cursor.x, cursor.y - stepSize); setKnobAngle('y', knobYAngle - 5); }
+    if(d==='down')  { moveTo(cursor.x, cursor.y + stepSize); setKnobAngle('y', knobYAngle + 5); }
+    redrawAll();
+  }
+  btn.addEventListener('click', doMove);
+  let iv;
+  btn.addEventListener('mousedown', ()=>{ iv = setInterval(doMove, 60); });
+  btn.addEventListener('mouseup',   ()=> clearInterval(iv));
+  btn.addEventListener('mouseleave',()=> clearInterval(iv));
+});
+
+// ── KEYBOARD ──────────────────────────────────────────────────────────────────
+const keysHeld = new Set();
+let keyInterval = null;
+
+function processKeys() {
+  let moved = false;
+  const s = stepSize;
+  if(keysHeld.has('ArrowLeft'))  { moveTo(cursor.x - s, cursor.y); setKnobAngle('x', knobXAngle - 5); moved=true; }
+  if(keysHeld.has('ArrowRight')) { moveTo(cursor.x + s, cursor.y); setKnobAngle('x', knobXAngle + 5); moved=true; }
+  if(keysHeld.has('ArrowUp'))    { moveTo(cursor.x, cursor.y - s); setKnobAngle('y', knobYAngle - 5); moved=true; }
+  if(keysHeld.has('ArrowDown'))  { moveTo(cursor.x, cursor.y + s); setKnobAngle('y', knobYAngle + 5); moved=true; }
+  if(moved) redrawAll();
+}
+
+document.addEventListener('keydown', e => {
+  if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key)) {
+    if(document.activeElement.tagName === 'TEXTAREA' ||
+       document.activeElement.tagName === 'INPUT') return;
+    e.preventDefault();
+    keysHeld.add(e.key);
+    if(!keyInterval) keyInterval = setInterval(processKeys, 30);
+  }
+});
+document.addEventListener('keyup', e => {
+  keysHeld.delete(e.key);
+  if(keysHeld.size === 0) { clearInterval(keyInterval); keyInterval = null; }
+});
+
+// ── CANVAS MOUSE DRAW ─────────────────────────────────────────────────────────
+let mouseDrawing = false;
+let lastMouse = {x:0, y:0};
+
+canvas.addEventListener('mousedown', e => {
+  mouseDrawing = true;
+  const r = canvas.getBoundingClientRect();
+  const sx = CW / r.width, sy = CH / r.height;
+  lastMouse = {x:(e.clientX-r.left)*sx, y:(e.clientY-r.top)*sy};
+  jumpTo(lastMouse.x, lastMouse.y);
+  redrawAll();
+});
+canvas.addEventListener('mousemove', e => {
+  if(!mouseDrawing) return;
+  const r = canvas.getBoundingClientRect();
+  const sx = CW / r.width, sy = CH / r.height;
+  const nx = (e.clientX-r.left)*sx, ny = (e.clientY-r.top)*sy;
+  moveTo(nx, ny);
+  redrawAll();
+});
+canvas.addEventListener('mouseup',    () => { mouseDrawing = false; });
+canvas.addEventListener('mouseleave', () => { mouseDrawing = false; });
+
+// touch draw
+canvas.addEventListener('touchstart', e => {
+  e.preventDefault(); mouseDrawing = true;
+  const r  = canvas.getBoundingClientRect();
+  const sx = CW/r.width, sy = CH/r.height;
+  const t  = e.touches[0];
+  jumpTo((t.clientX-r.left)*sx, (t.clientY-r.top)*sy);
+  redrawAll();
+}, {passive:false});
+canvas.addEventListener('touchmove', e => {
+  e.preventDefault(); if(!mouseDrawing) return;
+  const r  = canvas.getBoundingClientRect();
+  const sx = CW/r.width, sy = CH/r.height;
+  const t  = e.touches[0];
+  moveTo((t.clientX-r.left)*sx, (t.clientY-r.top)*sy);
+  redrawAll();
+}, {passive:false});
+canvas.addEventListener('touchend', () => { mouseDrawing = false; });
+
+// ── STEP SIZE ─────────────────────────────────────────────────────────────────
+document.getElementById('stepSel').addEventListener('change', e => {
+  stepSize = parseInt(e.target.value);
+  updateStats();
+});
+
+// ── CLEAR / SHAKE / UNDO ──────────────────────────────────────────────────────
+document.getElementById('clearBtn').addEventListener('click', () => {
+  path = [];
+  initCursor();
+  redrawAll();
+  setKnobAngle('x', 0); setKnobAngle('y', 0);
+  setMsg('CLEAR','c-red','Canvas cleared.','bad');
+  updateStats();
+});
+
+document.getElementById('shakeBtn').addEventListener('click', () => {
+  // Shake animation then clear
+  canvas.style.transition = 'transform .05s';
+  let t=0;
+  const sh = setInterval(()=>{
+    t++;
+    canvas.style.transform = `translate(${(Math.random()-.5)*8}px,${(Math.random()-.5)*8}px)`;
+    if(t>10){ clearInterval(sh); canvas.style.transform=''; path=[]; initCursor(); redrawAll(); updateStats(); }
+  }, 50);
+  setMsg('SHAKE','c-amber','Drawing erased.','warn');
+});
+
+document.getElementById('undoBtn').addEventListener('click', () => {
+  // Remove back to previous null or start
+  if(path.length === 0) return;
+  path.pop();
+  while(path.length && path[path.length-1] !== null) path.pop();
+  if(path.length && path[path.length-1] === null) path.pop();
+  if(path.length) {
+    const last = path[path.length-1];
+    if(last) { cursor.x = last.x; cursor.y = last.y; }
+  } else {
+    initCursor();
+  }
+  redrawAll();
+  updateStats();
+  setMsg('UNDO','c-green','Last segment removed.','ok');
+});
+
+// ── REPLAY ────────────────────────────────────────────────────────────────────
+let replayTimer = null;
+let replayIdx   = 0;
+let replayPath  = [];
+
+function stopReplay() {
+  if(replayTimer) { clearInterval(replayTimer); replayTimer=null; }
+  document.getElementById('replayBar').style.width = '0%';
+  document.getElementById('statMode').textContent = 'DRAW';
+}
+
+function startReplay(delay) {
+  stopReplay();
+  if(path.length < 2) { setMsg('REPLAY','c-amber','Nothing to replay.','warn'); return; }
+  replayPath = [...path];
+  replayIdx  = 0;
+  document.getElementById('statMode').textContent = 'REPLAY';
+  setMsg('REPLAY','c-blue', delay <= 2 ? 'Fast replay…' : delay <= 5 ? 'Normal replay…' : 'Slow replay…', 'info');
+
+  ctx.clearRect(0,0,CW,CH);
+  cursor = {...(replayPath.find(p=>p!==null) || {x:CW/2,y:CH/2})};
+  updateDot();
+
+  replayTimer = setInterval(() => {
+    const batchSize = delay <= 2 ? 8 : delay <= 5 ? 4 : 1;
+    for(let b=0; b<batchSize; b++) {
+      if(replayIdx >= replayPath.length) { stopReplay(); setMsg('DONE','c-green','Replay complete.','ok'); return; }
+      const p = replayPath[replayIdx++];
+      if(p !== null) {
+        drawPath(replayPath, Math.max(0,replayIdx-2), replayIdx);
+        cursor = {x:p.x, y:p.y};
+      }
+    }
+    const pct = Math.round(replayIdx / replayPath.length * 100);
+    document.getElementById('replayBar').style.width = pct + '%';
+    updateDot();
+  }, delay);
+}
+
+document.getElementById('replaySlowBtn').addEventListener('click', ()=>{
+  const spd = parseInt(document.getElementById('replaySpdSel').value);
+  startReplay(spd * 3);
+});
+document.getElementById('replayFastBtn').addEventListener('click', ()=>{
+  const spd = parseInt(document.getElementById('replaySpdSel').value);
+  startReplay(Math.max(1, Math.round(spd / 2)));
+});
+document.getElementById('replayInstBtn').addEventListener('click', ()=>{
+  stopReplay(); ctx.clearRect(0,0,CW,CH); redrawAll();
+  setMsg('INSTANT','c-green','Instant redraw.','ok');
+});
+document.getElementById('replayStopBtn').addEventListener('click', ()=>{
+  stopReplay(); redrawAll(); setMsg('STOP','c-amber','Replay stopped.','warn');
+});
+
+// ── PIPSQUEAK INTERPRETER ─────────────────────────────────────────────────────
+// Commands: STEP FORWARD BACK LEFT RIGHT TURN SETHEADING CENTER GOTO
+//           ARC POP REPEAT CURVE PENUP PENDOWN
+// All movement functions feed into path via moveTo/jumpTo.
+
+// Safe whitelisted expression evaluator for CURVE.
+// Only exposes: sin cos tan asin acos atan atan2 sqrt abs floor ceil round
+//               log exp pow min max PI E t
+// Any other bare identifier is rejected before evaluation.
+const MATH_FNS = new Set([
+  'sin','cos','tan','asin','acos','atan','atan2','sqrt','abs',
+  'floor','ceil','round','log','exp','pow','min','max','PI','E'
+]);
+
+function safeEval(expr, t) {
+  try {
+    // Replace whitelisted math names with Math.xxx
+    let e2 = expr.replace(/\b([a-zA-Z_][a-zA-Z0-9_]*)\b/g, (m) => {
+      if(m === 't')           return 't';
+      if(MATH_FNS.has(m))     return 'Math.' + m;
+      // Any remaining bare identifier is rejected
+      throw new Error('Disallowed identifier: ' + m);
+    });
+    // Guard against any remaining non-math JS (constructor, __proto__, etc.)
+    if(/\b(constructor|prototype|__proto__|window|document|eval|Function)\b/.test(e2))
+      throw new Error('Disallowed expression');
+    return Function('t', '"use strict"; return (' + e2 + ');')(t);
+  } catch(e) { return 0; }
+}
+
+function runPipsqueak(script, append=false) {
+  if(!append) { path=[]; initCursor(); }
+  else if(path.length === 0) initCursor();
+
+  const turtle = {
+    x:       cursor.x,
+    y:       cursor.y,
+    heading: 0,          // degrees, 0 = right
+    step:    3,
+    penDown: true
+  };
+
+  // Flatten REPEAT blocks — robust explicit brace counter, handles same-line {
+  function flattenScript(lines) {
+    const out = [];
+    let i = 0;
+    while(i < lines.length) {
+      const line = lines[i];
+      const m = line.match(/^REPEAT\s+(\d+)\s*(\{)?\s*$/i);
+      if(m) {
+        const n     = parseInt(m[1]);
+        const block = [];
+        i++;
+        // Count braces explicitly: track open/close across tokens
+        let depth = m[2] ? 1 : 0;
+        // If no { on REPEAT line, consume until we hit one
+        while(i < lines.length && depth === 0) {
+          const bl = lines[i].trim();
+          const opens  = (bl.match(/\{/g)||[]).length;
+          const closes = (bl.match(/\}/g)||[]).length;
+          depth += opens - closes;
+          if(opens > 0 && depth <= 0) { i++; break; }  // lone { then }
+          if(opens > 0) { i++; break; }
+          i++;
+        }
+        // Now collect block lines until depth returns to 0
+        while(i < lines.length) {
+          const bl     = lines[i].trim();
+          const opens  = (bl.match(/\{/g)||[]).length;
+          const closes = (bl.match(/\}/g)||[]).length;
+          depth += opens - closes;
+          if(depth <= 0) { i++; break; }   // closing } reached
+          // Strip trailing { from inline REPEAT … {
+          block.push(bl.replace(/\s*\{$/, ''));
+          i++;
+        }
+        const expanded = flattenScript(block);
+        for(let r=0; r<n; r++) out.push(...expanded);
+      } else {
+        out.push(line);
+        i++;
+      }
+    }
+    return out;
+  }
+
+  function tMove(dx, dy) {
+    turtle.x += dx; turtle.y += dy;
+    if(turtle.penDown) moveTo(turtle.x, turtle.y);
+    else               jumpTo(turtle.x, turtle.y);
+    cursor.x = turtle.x; cursor.y = turtle.y;
+  }
+
+  function fwd(n) {
+    const dist = n * turtle.step;
+    const rad  = turtle.heading * Math.PI / 180;
+    tMove(Math.cos(rad)*dist, Math.sin(rad)*dist);
+  }
+
+  function strafe(n) {
+    const dist = n * turtle.step;
+    const rad  = (turtle.heading + 90) * Math.PI / 180;
+    tMove(Math.cos(rad)*dist, Math.sin(rad)*dist);
+  }
+
+  function parseCurveBlock(lines, startIdx) {
+    const block = [];
+    let i = startIdx;
+    let depth = 0;
+    while(i < lines.length) {
+      const bl = lines[i].trim();
+      if(bl === '{')  { depth++; i++; continue; }
+      if(bl === '}')  { i++; break; }
+      block.push(bl);
+      i++;
+    }
+    return {block, end: i};
+  }
+
+  const rawLines = script
+    .split('\n')
+    .map(l => l.trim())
+    .filter(l => l && !l.startsWith('#'));
+
+  const lines = flattenScript(rawLines);
+
+  let i = 0;
+  while(i < lines.length) {
+    const line  = lines[i];
+    const parts = line.split(/\s+/);
+    const cmd   = parts[0].toUpperCase();
+
+    switch(cmd) {
+      case 'STEP':       turtle.step    = parseFloat(parts[1]) || 1; break;
+      case 'FORWARD':    fwd( parseFloat(parts[1]) || 0); break;
+      case 'BACK':       fwd(-parseFloat(parts[1]) || 0); break;
+      case 'LEFT':       strafe(-(parseFloat(parts[1]) || 0)); break;
+      case 'RIGHT':      strafe( parseFloat(parts[1]) || 0); break;
+      case 'TURN':       turtle.heading += parseFloat(parts[1]) || 0; break;
+      case 'SETHEADING': turtle.heading  = parseFloat(parts[1]) || 0; break;
+      case 'PENUP':      turtle.penDown = false; break;
+      case 'PENDOWN':    turtle.penDown = true;  break;
+      case 'CENTER':
+        turtle.penDown = false;
+        turtle.x = CW/2; turtle.y = CH/2;
+        jumpTo(turtle.x, turtle.y);
+        cursor.x = turtle.x; cursor.y = turtle.y;
+        turtle.penDown = true;
+        break;
+      case 'GOTO': {
+        // Support absolute (no prefix) and relative (+ / -) coordinates
+        const p1 = parts[1] || '0', p2 = parts[2] || '0';
+        const rel = p1.startsWith('+') || p1.startsWith('-');
+        const gx  = rel ? turtle.x + parseFloat(p1)*turtle.step
+                        : parseFloat(p1) + CW/2;
+        const gy  = rel ? turtle.y + parseFloat(p2)*turtle.step
+                        : parseFloat(p2) + CH/2;
+        turtle.penDown = false;
+        turtle.x = gx; turtle.y = gy;
+        jumpTo(gx, gy);
+        cursor.x = gx; cursor.y = gy;
+        turtle.penDown = true;
+        break;
+      }
+      case 'ARC': {
+        // Geometrically correct arc: sample circle centred perpendicular to heading
+        const radius = parseFloat(parts[1]) || 40;
+        const sweep  = parseFloat(parts[2]) || 360;
+        const steps  = Math.max(8, Math.abs(Math.round(sweep * 1.2)));
+        const da     = sweep / steps * Math.PI / 180;
+
+        // Centre of curvature is 90° left of current heading at distance=radius
+        const perpRad = (turtle.heading - 90) * Math.PI / 180;
+        const cx      = turtle.x + Math.cos(perpRad) * radius;
+        const cy      = turtle.y + Math.sin(perpRad) * radius;
+
+        // Starting angle from centre to turtle
+        let θ = Math.atan2(turtle.y - cy, turtle.x - cx);
+
+        for(let s=0; s<steps; s++) {
+          θ += da;
+          const nx = cx + Math.cos(θ) * radius;
+          const ny = cy + Math.sin(θ) * radius;
+          if(turtle.penDown) moveTo(nx, ny);
+          else               jumpTo(nx, ny);
+          turtle.x = nx; turtle.y = ny;
+          cursor.x  = nx; cursor.y = ny;
+        }
+        // Update heading to tangent at end of arc
+        turtle.heading += sweep;
+        break;
+      }
+      case 'POP': {
+        const r  = parseFloat(parts[1]) || 60;
+        const n  = parseInt(parts[2])   || 8;
+        const cx = turtle.x, cy = turtle.y;
+        for(let p=0; p<n; p++) {
+          const angle      = (p / n) * 2 * Math.PI;
+          const petalSweep = 360 / n;
+          // Jump to petal start on circle perimeter
+          const sx = cx + Math.cos(angle) * r;
+          const sy = cy + Math.sin(angle) * r;
+          turtle.penDown = false;
+          jumpTo(sx, sy);
+          turtle.x = sx; turtle.y = sy; cursor.x = sx; cursor.y = sy;
+          turtle.penDown = true;
+          turtle.heading = (angle * 180 / Math.PI) + 90;
+          // Draw arc petal (geometric arc)
+          const petalRad  = r * 0.8;
+          const arcSteps  = Math.max(6, Math.round(petalSweep * 1.4));
+          const dθ = petalSweep / arcSteps * Math.PI / 180;
+          const perpRad = (turtle.heading - 90) * Math.PI / 180;
+          const acx = turtle.x + Math.cos(perpRad) * petalRad;
+          const acy = turtle.y + Math.sin(perpRad) * petalRad;
+          let θ = Math.atan2(turtle.y - acy, turtle.x - acx);
+          for(let s=0; s<arcSteps; s++) {
+            θ += dθ;
+            const nx = acx + Math.cos(θ) * petalRad;
+            const ny = acy + Math.sin(θ) * petalRad;
+            moveTo(nx, ny);
+            turtle.x = nx; turtle.y = ny; cursor.x = nx; cursor.y = ny;
+          }
+          // Return to centre
+          turtle.penDown = false;
+          jumpTo(cx, cy);
+          turtle.x = cx; turtle.y = cy; cursor.x = cx; cursor.y = cy;
+          turtle.penDown = true;
+        }
+        break;
+      }
+      case 'CURVE': {
+        const tStart = parseFloat(parts[2]) || 0;
+        const tEnd   = parseFloat(parts[3]) || 6.28;
+        const tStep  = parseFloat(parts[4]) || 0.05;
+        const {block, end} = parseCurveBlock(lines, i+1);
+        i = end;
+        let xExpr = '', yExpr = '';
+        for(const bl of block) {
+          const bx = bl.match(/^X\s+(.+)$/i);
+          const by = bl.match(/^Y\s+(.+)$/i);
+          if(bx) xExpr = bx[1];
+          if(by) yExpr = by[1];
+        }
+        let first = true;
+        for(let t=tStart; t<=tEnd+tStep*0.01; t+=tStep) {
+          const px = safeEval(xExpr, t) * turtle.step + CW/2;
+          const py = safeEval(yExpr, t) * turtle.step + CH/2;
+          if(first) { jumpTo(px, py); first=false; }
+          else       moveTo(px, py);
+          turtle.x = cursor.x; turtle.y = cursor.y;
+        }
+        continue;
+      }
+    }
+    i++;
+  }
+  cursor.x = turtle.x;
+  cursor.y = turtle.y;
+  stepSize = parseInt(document.getElementById('stepSel').value);
+  redrawAll();
+  updateStats();
+}
+
+// ── PSQ EDITOR ────────────────────────────────────────────────────────────────
+const psqEditor = document.getElementById('psqEditor');
+const psqLinenos= document.getElementById('psqLinenos');
+
+function updateLinenos() {
+  const lines = psqEditor.value.split('\n').length;
+  psqLinenos.innerHTML = Array.from({length:lines},(_,i)=>i+1).join('<br>');
+}
+
+psqEditor.addEventListener('input', updateLinenos);
+psqEditor.addEventListener('scroll', () => { psqLinenos.scrollTop = psqEditor.scrollTop; });
+updateLinenos();
+
+psqEditor.addEventListener('keydown', e => {
+  if(e.key === 'Tab') {
+    e.preventDefault();
+    const s=psqEditor.selectionStart, en=psqEditor.selectionEnd;
+    psqEditor.value = psqEditor.value.substring(0,s)+'  '+psqEditor.value.substring(en);
+    psqEditor.selectionStart=psqEditor.selectionEnd=s+2;
+  }
+});
+
+document.getElementById('psqRunBtn').addEventListener('click', () => {
+  try {
+    runPipsqueak(psqEditor.value, false);
+    setMsg('RUN','c-amber','Pipsqueak script executed.','ok');
+  } catch(e) {
+    setMsg('ERR','c-red','Script error: '+e.message,'bad');
+  }
+});
+document.getElementById('psqAppendBtn').addEventListener('click', () => {
+  try {
+    runPipsqueak(psqEditor.value, true);
+    setMsg('APPEND','c-amber','Script appended to existing drawing.','ok');
+  } catch(e) {
+    setMsg('ERR','c-red','Script error: '+e.message,'bad');
+  }
+});
+document.getElementById('psqClearBtn').addEventListener('click', () => {
+  psqEditor.value = '';
+  updateLinenos();
+});
+
+// ── EXAMPLES ──────────────────────────────────────────────────────────────────
+const EXAMPLES = {
+  square:
+`# Square
+STEP 3
+CENTER
+REPEAT 4 {
+  FORWARD 60
+  TURN 90
+}`,
+  star:
+`# Star polygon (36-step)
+STEP 2
+CENTER
+SETHEADING 0
+REPEAT 36 {
+  FORWARD 20
+  TURN 170
+}`,
+  spiral:
+`# Archimedean spiral
+STEP 1
+CENTER
+SETHEADING 0
+REPEAT 200 {
+  FORWARD 2
+  TURN 7
+}`,
+  circle:
+`# True geometric circle
+STEP 2
+CENTER
+SETHEADING 0
+ARC 80 360`,
+  lissajous:
+`# Lissajous 3:2
+STEP 1
+CURVE t 0 6.30 0.03 {
+  X cos(t*3)*90
+  Y sin(t*2)*70
+}`,
+  spherepop:
+`# Spherepop nested rings
+STEP 2
+CENTER
+POP 85 8
+CENTER
+PENUP
+GOTO +0 +0
+PENDOWN
+POP 45 12`,
+  pentest:
+`# PENUP / PENDOWN demo
+STEP 3
+CENTER
+FORWARD 40
+PENUP
+TURN 90
+FORWARD 30
+PENDOWN
+FORWARD 40
+PENUP
+TURN 90
+FORWARD 30
+PENDOWN
+FORWARD 40`,
+  nested:
+`# Nested REPEAT
+STEP 2
+CENTER
+REPEAT 6 {
+  REPEAT 4 {
+    FORWARD 35
+    TURN 90
+  }
+  TURN 60
+}`
+};
+
+document.querySelectorAll('[data-eg]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    psqEditor.value = EXAMPLES[btn.dataset.eg] || '';
+    updateLinenos();
+  });
+});
+
+// ── SAVE / LOAD (session codes) ───────────────────────────────────────────────
+// Two modes:
+//   ET-S-… encodes only the Pipsqueak script (short, deterministic)
+//   ET-P-… encodes the full drawn path (for freehand drawings without a script)
+
+function exportState() {
+  const script = psqEditor.value.trim();
+  let raw, prefix;
+
+  if(script) {
+    // Script mode: just encode the script text — much shorter code
+    raw    = btoa(unescape(encodeURIComponent(JSON.stringify({s: script}))));
+    prefix = 'ET-S';
+  } else {
+    // Path mode: encode delta-compressed path
+    const deltas = [];
+    let prev = null;
+    for(const p of path) {
+      if(p === null) { deltas.push('L'); prev=null; continue; }
+      if(prev === null) deltas.push([Math.round(p.x), Math.round(p.y)]);
+      else              deltas.push([Math.round(p.x-prev.x), Math.round(p.y-prev.y)]);
+      prev = p;
+    }
+    raw    = btoa(unescape(encodeURIComponent(JSON.stringify({w:CW,h:CH,p:deltas}))));
+    prefix = 'ET-P';
+  }
+
+  const seg = raw.match(/.{1,8}/g) || [raw];
+  return prefix + '-' + seg.slice(0, 10).join('-');
+}
+
+function importState(code) {
+  try {
+    const isScript = code.startsWith('ET-S-');
+    const stripped = code.replace(/^ET-[SP]-/,'').replace(/-/g,'');
+    const data     = JSON.parse(decodeURIComponent(escape(atob(stripped))));
+
+    if(isScript && data.s) {
+      // Restore script and re-run interpreter
+      psqEditor.value = data.s;
+      updateLinenos();
+      runPipsqueak(data.s, false);
+      setMsg('LOADED','c-blue','Script session restored and re-executed.','info');
+    } else if(data.p) {
+      // Restore raw path
+      path = [];
+      let cx = 0, cy = 0, abs = true;
+      for(const d of data.p) {
+        if(d === 'L') { path.push(null); abs=true; continue; }
+        if(abs) { cx=d[0]; cy=d[1]; abs=false; }
+        else    { cx+=d[0]; cy+=d[1]; }
+        path.push({x:cx, y:cy});
+      }
+      const last = [...path].reverse().find(p=>p!==null);
+      if(last) { cursor.x=last.x; cursor.y=last.y; }
+      redrawAll(); updateStats();
+      setMsg('LOADED','c-blue','Path session restored.','info');
+    }
+  } catch(e) {
+    setMsg('ERROR','c-red','Invalid session code.','bad');
+  }
+}
+
+document.getElementById('saveBtn').addEventListener('click', () => {
+  const code = exportState();
+  const el   = document.getElementById('saveCode');
+  el.value   = code;
+  el.select();
+  setMsg('SAVED','c-green','Session code generated — copy to save progress.','ok');
+});
+
+document.getElementById('loadBtn').addEventListener('click', () => {
+  const code = document.getElementById('loadCode').value.trim();
+  if(code) importState(code);
+  else setMsg('INPUT','c-amber','Paste an ET-… code into the LOAD field.','warn');
+});
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+initCursor();
+setKnobAngle('x', 0);
+setKnobAngle('y', 0);
+updateStats();
+setMsg('READY','c-green','Arrow keys · drag canvas · rotate knobs · or write Pipsqueak and press RUN.','ok');
+
+})();
+</script>
+</body>
+</html>

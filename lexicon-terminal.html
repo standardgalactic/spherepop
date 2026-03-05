@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>LEXICON-TERMINAL — ARABIC VOCABULARY TRAINER</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=VT323&family=Share+Tech+Mono&family=Amiri:wght@400;700&display=swap');
+
+:root {
+  --green:  #00ff41;
+  --green2: #39ff6e;
+  --amber:  #ffb700;
+  --red:    #ff3c2a;
+  --blue:   #00eeff;
+  --panel:  rgba(0,12,5,0.92);
+  --mint:   #b0ffcc;
+  --dim:    #1a5c30;
+  --mid:    #3a8f55;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  min-height: 100%;
+  background: #000;
+  color: var(--mint);
+  font-family: "Share Tech Mono", monospace;
+  overflow-x: hidden;
+}
+
+/* ── CRT LAYERS ─────────────────────────────────────────── */
+#crt {
+  min-height: 100vh;
+  background: radial-gradient(ellipse 140% 90% at 50% 0%, #001208 0%, #000 70%);
+  padding: 18px 14px 36px;
+  position: relative;
+}
+
+/* scanlines */
+#crt::before {
+  content: "";
+  pointer-events: none;
+  position: fixed; inset: 0; z-index: 200;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0px, transparent 2px,
+    rgba(0,0,0,0.16) 2px, rgba(0,0,0,0.16) 4px
+  );
+}
+
+/* phosphor bloom */
+#crt::after {
+  content: "";
+  pointer-events: none;
+  position: fixed; inset: -80px; z-index: 199;
+  background: radial-gradient(ellipse 80% 55% at 50% 38%,
+    rgba(0,255,65,0.06) 0%, transparent 68%);
+}
+
+.vignette {
+  pointer-events: none;
+  position: fixed; inset: 0; z-index: 198;
+  background: radial-gradient(ellipse 100% 100% at 50% 50%,
+    transparent 52%, rgba(0,0,0,0.72) 100%);
+}
+
+.noise {
+  pointer-events: none;
+  position: fixed; inset: 0; z-index: 197;
+  opacity: 0.022;
+  animation: noiseShift 0.09s steps(1) infinite;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+}
+@keyframes noiseShift {
+  0%  { background-position: 0 0; }
+  33% { background-position: -40px 25px; }
+  66% { background-position: 30px -35px; }
+}
+
+/* ── HEADER ─────────────────────────────────────────────── */
+header {
+  max-width: 900px;
+  margin: 0 auto 14px;
+  padding: 14px 18px 12px;
+  border: 1px solid rgba(0,255,65,0.28);
+  border-radius: 3px;
+  background: var(--panel);
+  box-shadow:
+    0 0 0 1px rgba(0,255,65,0.05) inset,
+    0 0 40px rgba(0,255,65,0.05),
+    0 18px 50px rgba(0,0,0,0.7);
+  position: relative;
+  overflow: hidden;
+}
+
+/* animated scan stripe on header top edge */
+header::before {
+  content: "";
+  position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--green), transparent);
+  animation: scanH 5s linear infinite;
+}
+@keyframes scanH {
+  0%   { transform: translateX(-110%); opacity: 0; }
+  8%   { opacity: 0.7; }
+  92%  { opacity: 0.7; }
+  100% { transform: translateX(110%); opacity: 0; }
+}
+
+.hdr-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.title {
+  font-family: "VT323", monospace;
+  font-size: 46px;
+  line-height: 1;
+  color: var(--green);
+  letter-spacing: 2px;
+  text-shadow:
+    0 0 8px var(--green),
+    0 0 28px rgba(0,255,65,0.22),
+    0 0 60px rgba(0,255,65,0.07);
+  animation: titleFlicker 10s ease-in-out infinite;
+}
+@keyframes titleFlicker {
+  0%,100%{ opacity:1; }
+  91%{ opacity:1; }
+  92%{ opacity:0.78; }
+  93%{ opacity:1; }
+  97%{ opacity:0.88; }
+  98%{ opacity:1; }
+}
+
+.subtitle {
+  margin-top: 5px;
+  font-size: 11.5px;
+  color: var(--mid);
+  max-width: 52ch;
+  line-height: 1.5;
+}
+
+/* ── CONTROLS ───────────────────────────────────────────── */
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.ctrl-grp {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border: 1px solid rgba(0,255,65,0.18);
+  border-radius: 2px;
+  background: rgba(0,0,0,0.4);
+}
+
+.ctrl-grp label {
+  font-size: 10px;
+  color: var(--dim);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #3a8040;
+}
+
+select {
+  font-family: inherit;
+  font-size: 12px;
+  background: rgba(0,0,0,0.6);
+  color: var(--green);
+  border: 1px solid rgba(0,255,65,0.28);
+  border-radius: 2px;
+  padding: 4px 8px;
+  outline: none;
+  cursor: pointer;
+}
+select option { background: #001208; }
+
+.btn {
+  font-family: "VT323", monospace;
+  font-size: 21px;
+  background: rgba(0,0,0,0.55);
+  color: var(--green);
+  border: 1px solid rgba(0,255,65,0.42);
+  border-radius: 2px;
+  padding: 4px 14px 2px;
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  text-shadow: 0 0 8px rgba(0,255,65,0.35);
+  transition: background 100ms, border-color 100ms, box-shadow 100ms;
+}
+.btn:hover {
+  background: rgba(0,255,65,0.07);
+  border-color: var(--green);
+  box-shadow: 0 0 16px rgba(0,255,65,0.12);
+}
+.btn:active { transform: scale(0.97); }
+
+/* ── HUD ─────────────────────────────────────────────────── */
+.hud {
+  margin-top: 11px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.stat {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border: 1px solid rgba(0,255,65,0.15);
+  border-radius: 2px;
+  background: rgba(0,0,0,0.28);
+  font-size: 12px;
+}
+.slabel {
+  font-size: 9.5px;
+  color: #3a7a48;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+.sval {
+  font-family: "VT323", monospace;
+  font-size: 22px;
+  color: var(--green);
+  text-shadow: 0 0 6px rgba(0,255,65,0.4);
+  line-height: 1;
+  min-width: 2ch;
+  text-align: center;
+}
+.sval.amber { color: var(--amber); text-shadow: 0 0 6px rgba(255,183,0,0.4); }
+.sval.red   { color: var(--red);   text-shadow: 0 0 6px rgba(255,60,42,0.4); }
+.sval.blue  { color: var(--blue);  text-shadow: 0 0 6px rgba(0,238,255,0.4); }
+
+/* progress bar */
+.prog-wrap {
+  flex: 1;
+  min-width: 120px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.prog-bg {
+  flex: 1;
+  height: 5px;
+  background: rgba(0,255,65,0.08);
+  border: 1px solid rgba(0,255,65,0.18);
+  border-radius: 1px;
+  overflow: hidden;
+}
+.prog-fill {
+  height: 100%;
+  background: var(--green);
+  box-shadow: 0 0 6px var(--green);
+  transition: width 0.5s ease;
+  width: 0%;
+}
+
+/* ── MSG STRIP ───────────────────────────────────────────── */
+.msg-strip {
+  max-width: 900px;
+  margin: 0 auto 12px;
+  padding: 7px 14px;
+  border: 1px solid rgba(0,255,65,0.18);
+  border-radius: 2px;
+  background: rgba(0,0,0,0.45);
+  font-size: 12px;
+  min-height: 32px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: border-color 0.25s, background 0.25s;
+}
+.msg-strip.ok   { border-color: rgba(0,255,65,0.45); }
+.msg-strip.warn { border-color: rgba(255,183,0,0.45); background: rgba(20,10,0,0.55); }
+.msg-strip.bad  { border-color: rgba(255,60,42,0.45); background: rgba(20,0,0,0.55); }
+.msg-strip.win  { border-color: rgba(0,238,255,0.55); background: rgba(0,5,12,0.55); }
+
+.msg-tag {
+  font-family: "VT323", monospace;
+  font-size: 17px;
+  padding: 1px 6px;
+  border: 1px solid currentColor;
+  border-radius: 1px;
+  flex-shrink: 0;
+}
+.c-green { color: var(--green); }
+.c-amber { color: var(--amber); }
+.c-red   { color: var(--red); }
+.c-blue  { color: var(--blue); }
+
+/* ── MAIN ARENA ──────────────────────────────────────────── */
+main {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.arena {
+  border: 1px solid rgba(0,255,65,0.2);
+  border-radius: 3px;
+  background:
+    linear-gradient(180deg, rgba(0,10,4,0.85), rgba(0,0,0,0.65)),
+    repeating-linear-gradient(90deg,
+      rgba(0,255,65,0.012) 0px, rgba(0,255,65,0.012) 1px,
+      transparent 1px, transparent 42px
+    );
+  box-shadow: 0 0 0 1px rgba(0,255,65,0.04) inset, 0 20px 60px rgba(0,0,0,0.65);
+  padding: 28px 24px 24px;
+}
+
+/* ── QUESTION PROMPT ─────────────────────────────────────── */
+.prompt-zone {
+  text-align: center;
+  margin-bottom: 28px;
+  min-height: 110px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  position: relative;
+}
+
+.prompt-label {
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #3a7a48;
+}
+
+.prompt-arabic {
+  font-family: "Amiri", serif;
+  font-size: 68px;
+  line-height: 1.1;
+  color: var(--green);
+  direction: rtl;
+  text-shadow:
+    0 0 10px rgba(0,255,65,0.4),
+    0 0 35px rgba(0,255,65,0.12),
+    0 0 70px rgba(0,255,65,0.05);
+  animation: arabicGlow 4s ease-in-out infinite alternate;
+  letter-spacing: 0.02em;
+}
+@keyframes arabicGlow {
+  from { text-shadow: 0 0 10px rgba(0,255,65,0.4), 0 0 30px rgba(0,255,65,0.1); }
+  to   { text-shadow: 0 0 14px rgba(0,255,65,0.55), 0 0 50px rgba(0,255,65,0.18); }
+}
+
+.prompt-hint {
+  font-size: 10px;
+  color: #2a5a38;
+  letter-spacing: 0.08em;
+}
+
+/* round counter badge */
+.round-badge {
+  position: absolute;
+  top: 0; right: 0;
+  font-family: "VT323", monospace;
+  font-size: 16px;
+  color: #3a7a48;
+  letter-spacing: 0.05em;
+}
+
+/* weight badge (spaced repetition indicator) */
+.sr-dot {
+  display: inline-block;
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  margin: 0 1px;
+  background: rgba(0,255,65,0.25);
+  transition: background 0.3s;
+}
+.sr-dot.active { background: var(--amber); box-shadow: 0 0 5px var(--amber); }
+
+/* ── CHOICE GRID ─────────────────────────────────────────── */
+.choices {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+@media(max-width:560px){ .choices{ grid-template-columns: 1fr; } }
+
+/* ── CHOICE CARD ─────────────────────────────────────────── */
+.choice-card {
+  position: relative;
+  height: 88px;
+  perspective: 700px;
+  cursor: pointer;
+  user-select: none;
+}
+.choice-card.locked { pointer-events: none; }
+
+.choice-inner {
+  position: absolute; inset: 0;
+  transform-style: preserve-3d;
+  transition: transform 0.38s cubic-bezier(0.4,0.2,0.2,1.05);
+  border-radius: 3px;
+}
+.choice-card.flipped .choice-inner { transform: rotateY(180deg); }
+
+.choice-face {
+  position: absolute; inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  border-radius: 3px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  border: 1px solid rgba(0,255,65,0.22);
+  overflow: hidden;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+/* FRONT: English translation */
+.choice-front {
+  background:
+    repeating-linear-gradient(45deg,
+      rgba(0,255,65,0.02) 0px, rgba(0,255,65,0.02) 1px,
+      transparent 1px, transparent 9px),
+    linear-gradient(155deg, rgba(0,18,7,0.92), rgba(0,4,1,0.97));
+}
+
+.choice-card:hover:not(.locked):not(.correct):not(.wrong) .choice-front {
+  border-color: rgba(0,255,65,0.52);
+  box-shadow: 0 0 20px rgba(0,255,65,0.09), inset 0 0 12px rgba(0,255,65,0.05);
+}
+
+.choice-en {
+  font-family: "VT323", monospace;
+  font-size: 26px;
+  color: var(--mint);
+  letter-spacing: 0.03em;
+  text-align: center;
+  padding: 0 10px;
+  line-height: 1.15;
+}
+
+.flip-hint {
+  font-size: 9px;
+  color: rgba(0,255,65,0.25);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* BACK: Arabic word */
+.choice-back {
+  transform: rotateY(180deg);
+  background: linear-gradient(155deg, rgba(0,15,6,0.97), rgba(0,3,1,0.97));
+  border-color: rgba(0,255,65,0.28);
+}
+
+.choice-ar {
+  font-family: "Amiri", serif;
+  font-size: 34px;
+  color: var(--green);
+  direction: rtl;
+  text-shadow: 0 0 8px rgba(0,255,65,0.35);
+  line-height: 1.15;
+}
+
+.choice-en-small {
+  font-size: 10px;
+  color: #3a7a48;
+  text-align: center;
+  padding: 0 8px;
+}
+
+/* CORRECT state */
+.choice-card.correct .choice-front,
+.choice-card.correct .choice-back {
+  border-color: var(--green);
+  box-shadow: 0 0 0 1px rgba(0,255,65,0.18) inset, 0 0 28px rgba(0,255,65,0.2);
+  animation: correctPulse 0.55s ease-out;
+}
+@keyframes correctPulse {
+  0%  { filter: brightness(2.4) saturate(1.5); }
+  40% { filter: brightness(1.5); }
+  100%{ filter: brightness(1); }
+}
+
+/* WRONG state */
+.choice-card.wrong .choice-front,
+.choice-card.wrong .choice-back {
+  border-color: var(--red);
+  box-shadow: 0 0 0 1px rgba(255,60,42,0.18) inset, 0 0 18px rgba(255,60,42,0.12);
+}
+.choice-card.wrong .choice-inner {
+  animation: wrongShake 0.35s ease;
+}
+@keyframes wrongShake {
+  0%,100%{ transform: translateX(0); }
+  20%{ transform: translateX(-6px); }
+  40%{ transform: translateX(6px); }
+  60%{ transform: translateX(-4px); }
+  80%{ transform: translateX(4px); }
+}
+
+/* REVEALED (right answer shown after wrong pick) */
+.choice-card.reveal .choice-front,
+.choice-card.reveal .choice-back {
+  border-color: var(--amber);
+  box-shadow: 0 0 0 1px rgba(255,183,0,0.15) inset, 0 0 18px rgba(255,183,0,0.1);
+}
+
+/* ── SPACED-REP QUEUE INDICATOR ──────────────────────────── */
+.queue-strip {
+  max-width: 900px;
+  margin: 10px auto 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 10px;
+  color: #2a5a38;
+  padding: 0 2px;
+}
+.queue-dots {
+  display: flex;
+  gap: 3px;
+  flex-wrap: wrap;
+}
+.q-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: rgba(0,255,65,0.18);
+  transition: background 0.4s, box-shadow 0.4s;
+}
+.q-dot.hot {
+  background: var(--amber);
+  box-shadow: 0 0 5px var(--amber);
+}
+.q-dot.warm {
+  background: rgba(255,183,0,0.45);
+}
+
+/* ── FOOTER ──────────────────────────────────────────────── */
+footer {
+  max-width: 900px;
+  margin: 12px auto 0;
+  font-size: 10.5px;
+  color: #244832;
+  line-height: 1.6;
+  padding: 0 3px;
+}
+</style>
+</head>
+<body>
+<div id="crt">
+  <div class="vignette"></div>
+  <div class="noise"></div>
+
+  <header>
+    <div class="hdr-row">
+      <div>
+        <div class="title">LEXICON-TERMINAL</div>
+        <div class="subtitle">Arabic ↔ English concept trainer · RSVP / category theory / information theory vocabulary · Spaced repetition weighted by error rate</div>
+      </div>
+      <div class="controls">
+        <div class="ctrl-grp">
+          <label for="domain">Domain</label>
+          <select id="domain">
+            <option value="all" selected>All domains</option>
+            <option value="rsvp">RSVP / Computation</option>
+            <option value="physics">Physics / Fields</option>
+            <option value="logic">Logic / Inference</option>
+            <option value="info">Information theory</option>
+            <option value="philosophy">Philosophy</option>
+          </select>
+        </div>
+        <div class="ctrl-grp">
+          <label for="choices-n">Choices</label>
+          <select id="choices-n">
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4" selected>4</option>
+            <option value="6">6</option>
+          </select>
+        </div>
+        <button class="btn" id="resetBtn">[ RESET ]</button>
+      </div>
+    </div>
+    <div class="hud">
+      <div class="stat"><span class="slabel">Round</span><span class="sval" id="hRound">1</span></div>
+      <div class="stat"><span class="slabel">Score</span><span class="sval" id="hScore">0</span></div>
+      <div class="stat"><span class="slabel">Streak</span><span class="sval amber" id="hStreak">0</span></div>
+      <div class="stat"><span class="slabel">Accuracy</span><span class="sval" id="hAcc">—</span></div>
+      <div class="stat"><span class="slabel">Mastered</span><span class="sval blue" id="hMastered">0</span></div>
+      <div class="stat prog-wrap">
+        <span class="slabel">Progress</span>
+        <div class="prog-bg"><div class="prog-fill" id="progFill"></div></div>
+        <span class="sval" id="progPct">0%</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="msg-strip ok" id="msgStrip">
+    <span class="msg-tag c-green" id="msgTag">READY</span>
+    <span id="msgText">Flip cards to inspect both sides, then select the correct English translation.</span>
+  </div>
+
+  <main>
+    <div class="arena">
+      <div class="prompt-zone">
+        <div class="round-badge" id="roundBadge">Q 1</div>
+        <div class="prompt-label">TRANSLATE</div>
+        <div class="prompt-arabic" id="promptAr" dir="rtl">—</div>
+        <div class="prompt-hint">Select the correct English translation below · flip any card to see its Arabic</div>
+      </div>
+      <div class="choices" id="choicesGrid"></div>
+    </div>
+  </main>
+
+  <div class="queue-strip">
+    <span>SR WEIGHT:</span>
+    <div class="queue-dots" id="queueDots"></div>
+  </div>
+
+  <footer>
+    Spaced repetition: words answered incorrectly gain weight and appear more frequently.
+    Words answered correctly three times in a row are marked as mastered and retire from rotation.
+    Flip cards to inspect the Arabic on the reverse before committing to an answer.
+  </footer>
+</div>
+
+<script>
+(() => {
+'use strict';
+
+// ── VOCABULARY ──────────────────────────────────────────────────────────────
+// Each entry: { ar, en, domain, weight (1=normal, higher=more frequent), correct, seen }
+const RAW = [
+  // RSVP / Computation
+  { ar:"القيد",              en:"constraint",          d:"rsvp" },
+  { ar:"التنفيذ",            en:"execution",           d:"rsvp" },
+  { ar:"التاريخ",            en:"history",             d:"rsvp" },
+  { ar:"الاختزال",           en:"reduction",           d:"rsvp" },
+  { ar:"الاختيار",           en:"selection",           d:"rsvp" },
+  { ar:"الاستبعاد",          en:"exclusion",           d:"rsvp" },
+  { ar:"الاحتمال",           en:"possibility",         d:"rsvp" },
+  { ar:"فضاء الاحتمالات",   en:"possibility space",   d:"rsvp" },
+  { ar:"المسار",             en:"trajectory",          d:"rsvp" },
+  { ar:"الاندماج",           en:"merge",               d:"rsvp" },
+  { ar:"الامتداد",           en:"extension",           d:"rsvp" },
+  { ar:"البنية",             en:"structure",           d:"rsvp" },
+  { ar:"النظام",             en:"system",              d:"rsvp" },
+  { ar:"الملاحِظ",           en:"observer",            d:"rsvp" },
+  { ar:"الإدراك",            en:"perception",          d:"rsvp" },
+  { ar:"الوكالة",            en:"agency",              d:"rsvp" },
+  { ar:"الوكالة المحاكاة",  en:"simulated agency",    d:"rsvp" },
+  { ar:"الإسقاط",           en:"projection",          d:"rsvp" },
+  { ar:"الضغط",              en:"compression",         d:"info" },
+  { ar:"الترميز",            en:"encoding",            d:"info" },
+  { ar:"فك الترميز",         en:"decoding",            d:"info" },
+  // Information theory
+  { ar:"المعلومة",           en:"information",         d:"info" },
+  { ar:"الإنتروبيا",         en:"entropy",             d:"info" },
+  { ar:"الإنتروبيا السالبة", en:"negentropy",          d:"info" },
+  { ar:"التنظيم",            en:"order",               d:"info" },
+  { ar:"الفوضى",             en:"disorder",            d:"info" },
+  { ar:"الترابط",            en:"coherence",           d:"info" },
+  { ar:"التكامل",            en:"integration",         d:"info" },
+  { ar:"التفكك",             en:"decomposition",       d:"info" },
+  { ar:"الاحتمال البايزي",   en:"bayesian probability",d:"info" },
+  { ar:"التنبؤ",             en:"prediction",          d:"info" },
+  // Physics / Fields
+  { ar:"المجال",             en:"field",               d:"physics" },
+  { ar:"المجال القياسي",     en:"scalar field",        d:"physics" },
+  { ar:"المجال المتجهي",     en:"vector field",        d:"physics" },
+  { ar:"التدفق",             en:"flow",                d:"physics" },
+  { ar:"الكثافة",            en:"density",             d:"physics" },
+  { ar:"التوازن",            en:"equilibrium",         d:"physics" },
+  { ar:"الاستقرار",          en:"stability",           d:"physics" },
+  { ar:"التحول",             en:"transformation",      d:"physics" },
+  { ar:"التماثل",            en:"symmetry",            d:"physics" },
+  { ar:"كسر التماثل",        en:"symmetry breaking",   d:"physics" },
+  { ar:"الاستمرارية",        en:"continuity",          d:"physics" },
+  { ar:"الانحناء",           en:"curvature",           d:"physics" },
+  { ar:"التوسع",             en:"expansion",           d:"physics" },
+  { ar:"الكمون",             en:"potential",           d:"physics" },
+  { ar:"الطاقة الحرة",       en:"free energy",         d:"physics" },
+  // Logic / Inference
+  { ar:"الاستدلال",          en:"inference",           d:"logic" },
+  { ar:"الاستنتاج",          en:"deduction",           d:"logic" },
+  { ar:"الاستقراء",          en:"induction",           d:"logic" },
+  { ar:"التقريب",            en:"approximation",       d:"logic" },
+  { ar:"التحكم",             en:"control",             d:"logic" },
+  { ar:"التغذية الراجعة",    en:"feedback",            d:"logic" },
+  { ar:"الديناميكيات",       en:"dynamics",            d:"logic" },
+  { ar:"التطور",             en:"evolution",           d:"logic" },
+  { ar:"المنطق",             en:"logic",               d:"logic" },
+  { ar:"المقدمة",            en:"premise",             d:"logic" },
+  { ar:"النتيجة",            en:"consequence",         d:"logic" },
+  { ar:"التناقض",            en:"contradiction",       d:"logic" },
+  // Philosophy
+  { ar:"الهوية",             en:"identity",            d:"philosophy" },
+  { ar:"الفئة",              en:"category",            d:"philosophy" },
+  { ar:"المورفيزم",          en:"morphism",            d:"philosophy" },
+  { ar:"القمع",              en:"functor",             d:"philosophy" },
+  { ar:"التحويل الطبيعي",   en:"natural transformation",d:"philosophy" },
+  { ar:"الحد",               en:"limit",               d:"philosophy" },
+  { ar:"الحد المشترك",       en:"colimit",             d:"philosophy" },
+  { ar:"التجريد",            en:"abstraction",         d:"philosophy" },
+  { ar:"الاختزالية",         en:"reductionism",        d:"philosophy" },
+  { ar:"الناشئية",           en:"emergence",           d:"philosophy" },
+  { ar:"الوجود",             en:"existence",           d:"philosophy" },
+  { ar:"الزمن",              en:"time",                d:"philosophy" },
+  { ar:"الفضاء",             en:"space",               d:"philosophy" },
+  { ar:"السببية",            en:"causality",           d:"philosophy" },
+  { ar:"الصيرورة",           en:"becoming",            d:"philosophy" },
+];
+
+// Build working word list with SR fields
+let WORDS = [];
+let domainFilter = "all";
+let choicesN     = 4;
+
+function initWords() {
+  const domainSel = document.getElementById("domain").value;
+  domainFilter = domainSel;
+  WORDS = RAW
+    .filter(w => domainFilter === "all" || w.d === domainFilter)
+    .map(w => ({
+      ar: w.ar,
+      en: w.en,
+      d:  w.d,
+      weight:   1,      // spaced-rep: higher = more frequent
+      correct:  0,      // consecutive correct
+      seen:     0,
+      mastered: false,
+    }));
+}
+
+// ── STATE ────────────────────────────────────────────────────────────────────
+let S = {
+  round:    1,
+  score:    0,
+  streak:   0,
+  attempts: 0,
+  hits:     0,
+  mastered: 0,
+  locked:   false,
+  target:   null,
+};
+
+// ── DOM ──────────────────────────────────────────────────────────────────────
+const $ = s => document.querySelector(s);
+const promptAr  = $("#promptAr");
+const choicesG  = $("#choicesGrid");
+const msgStrip  = $("#msgStrip");
+const msgTag    = $("#msgTag");
+const msgText   = $("#msgText");
+const hRound    = $("#hRound");
+const hScore    = $("#hScore");
+const hStreak   = $("#hStreak");
+const hAcc      = $("#hAcc");
+const hMastered = $("#hMastered");
+const progFill  = $("#progFill");
+const progPct   = $("#progPct");
+const roundBadge= $("#roundBadge");
+const queueDots = $("#queueDots");
+
+// ── UTILITIES ────────────────────────────────────────────────────────────────
+function shuffle(a) {
+  for(let i=a.length-1;i>0;i--){
+    const j=0|Math.random()*(i+1);
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+// Weighted random pick from active (non-mastered) words
+function weightedPick(exclude=[]) {
+  const pool = WORDS.filter(w => !w.mastered && !exclude.includes(w));
+  if(!pool.length) return null;
+  const total = pool.reduce((s,w)=>s+w.weight, 0);
+  let r = Math.random() * total;
+  for(const w of pool) {
+    r -= w.weight;
+    if(r <= 0) return w;
+  }
+  return pool[pool.length-1];
+}
+
+function setMsg(tag, tagClass, text, stripClass="ok") {
+  msgStrip.className = "msg-strip " + stripClass;
+  msgTag.className   = "msg-tag " + tagClass;
+  msgTag.textContent = tag;
+  msgText.textContent= text;
+}
+
+function updateHUD() {
+  hRound.textContent    = S.round;
+  hScore.textContent    = S.score;
+  hStreak.textContent   = S.streak;
+  hMastered.textContent = S.mastered;
+  const acc = S.attempts ? Math.round(S.hits/S.attempts*100) : null;
+  hAcc.textContent      = acc !== null ? acc+"%" : "—";
+
+  const total   = WORDS.length;
+  const pct     = total ? Math.round(S.mastered/total*100) : 0;
+  progFill.style.width = pct + "%";
+  progPct.textContent  = pct + "%";
+}
+
+function updateQueueDots() {
+  const active = WORDS.filter(w=>!w.mastered);
+  queueDots.innerHTML = "";
+  for(const w of active.slice(0,40)) {
+    const d = document.createElement("div");
+    d.className = "q-dot" + (w.weight>=3 ? " hot" : w.weight>=2 ? " warm" : "");
+    d.title = w.en;
+    queueDots.appendChild(d);
+  }
+}
+
+// ── ROUND ────────────────────────────────────────────────────────────────────
+function nextRound() {
+  const active = WORDS.filter(w=>!w.mastered);
+  if(!active.length) {
+    allMastered();
+    return;
+  }
+
+  S.locked = false;
+  choicesN  = parseInt(document.getElementById("choices-n").value) || 4;
+
+  // Pick target via weighted selection
+  const target = weightedPick();
+  S.target = target;
+
+  // Pick distractors (unique, not target)
+  const distractors = [];
+  const pool = WORDS.filter(w=>w!==target);
+  shuffle(pool);
+  for(const w of pool) {
+    if(distractors.length >= choicesN-1) break;
+    distractors.push(w);
+  }
+
+  const choices = shuffle([target, ...distractors]);
+
+  promptAr.textContent  = target.ar;
+  roundBadge.textContent= `Q ${S.round}`;
+
+  renderChoices(choices, target);
+  updateQueueDots();
+
+  // Glow animation restart
+  promptAr.style.animation = "none";
+  void promptAr.offsetWidth;
+  promptAr.style.animation = "";
+}
+
+function renderChoices(choices, target) {
+  choicesG.innerHTML = "";
+  choicesG.style.gridTemplateColumns =
+    choices.length === 2 ? "1fr 1fr" :
+    choices.length === 6 ? "repeat(3,1fr)" :
+    "repeat(2,1fr)";
+
+  for(const c of choices) {
+    const card = document.createElement("div");
+    card.className = "choice-card";
+    card.setAttribute("role","button");
+    card.setAttribute("tabindex","0");
+    card.setAttribute("aria-label","Choice: " + c.en);
+    card.setAttribute("aria-pressed","false");
+
+    card.innerHTML = `
+      <div class="choice-inner">
+        <div class="choice-face choice-front">
+          <div class="choice-en">${esc(c.en)}</div>
+          <div class="flip-hint">[ flip to see arabic ]</div>
+        </div>
+        <div class="choice-face choice-back">
+          <div class="choice-ar" dir="rtl">${esc(c.ar)}</div>
+          <div class="choice-en-small">${esc(c.en)}</div>
+        </div>
+      </div>`;
+
+    // Right-click or double-click flips without selecting
+    card.addEventListener("contextmenu", e=>{ e.preventDefault(); toggleFlip(card); });
+    card.addEventListener("dblclick",    e=>{ e.stopPropagation(); toggleFlip(card); });
+
+    // Single click selects
+    card.addEventListener("click", ()=>{ if(!S.locked) select(card, c, target); });
+    card.addEventListener("keydown", e=>{
+      if(e.key===" ") { e.preventDefault(); toggleFlip(card); }
+      if(e.key==="Enter") { if(!S.locked) select(card, c, target); }
+    });
+
+    choicesG.appendChild(card);
+  }
+}
+
+function toggleFlip(card) {
+  card.classList.toggle("flipped");
+  card.setAttribute("aria-pressed", card.classList.contains("flipped") ? "true" : "false");
+}
+
+function esc(s) {
+  return String(s).replace(/[&<>"']/g, c=>
+    ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
+}
+
+// ── SELECT ───────────────────────────────────────────────────────────────────
+function select(card, choice, target) {
+  S.locked  = true;
+  S.attempts++;
+
+  if(choice === target) {
+    // CORRECT
+    S.hits++;
+    S.score  += 100 * Math.max(1, S.streak);
+    S.streak++;
+    target.correct++;
+    target.seen++;
+    target.weight = Math.max(1, target.weight - 1);
+
+    if(target.correct >= 3) {
+      target.mastered = true;
+      S.mastered++;
+      setMsg("LOCKED","c-blue",
+        `"${target.en}" — مُتقَن (mastered). Word retired from rotation.`,"win");
+    } else {
+      const streakMsg = S.streak>=3 ? ` Streak ×${S.streak}!` : "";
+      setMsg("CORRECT","c-green",
+        `"${target.en}" confirmed.${streakMsg} (correct ${target.correct}/3 toward mastery)`,"ok");
+    }
+
+    card.classList.add("correct");
+    updateHUD();
+
+    setTimeout(()=>{
+      S.round++;
+      nextRound();
+    }, target.mastered ? 1200 : 750);
+
+  } else {
+    // WRONG
+    S.streak = 0;
+    target.correct = 0;
+    target.seen++;
+    target.weight = Math.min(6, target.weight + 2);   // boost spaced-rep weight
+    choice.weight = Math.max(1, choice.weight + 1);   // mild boost to confused word too
+
+    card.classList.add("wrong");
+
+    // Reveal the correct card
+    const allCards = [...choicesG.querySelectorAll(".choice-card")];
+    for(const c of allCards) {
+      const label = c.querySelector(".choice-en")?.textContent;
+      if(label === target.en) { c.classList.add("reveal"); }
+    }
+
+    setMsg("INCORRECT","c-red",
+      `"${choice.en}" ✗ — correct: "${target.en}" (${target.ar}). Word weight increased.`,"bad");
+
+    updateHUD();
+
+    setTimeout(()=>{
+      card.classList.remove("wrong");
+      allCards.forEach(c=>c.classList.remove("reveal"));
+      S.locked = false;
+      // Don't advance round on wrong — same target again
+      S.round++;
+      nextRound();
+    }, 1600);
+  }
+}
+
+// ── ALL MASTERED ─────────────────────────────────────────────────────────────
+function allMastered() {
+  promptAr.textContent = "✓";
+  choicesG.innerHTML   = `
+    <div style="grid-column:1/-1;text-align:center;padding:24px 0;">
+      <div style="font-family:'VT323',monospace;font-size:52px;color:var(--blue);
+        text-shadow:0 0 20px var(--blue);letter-spacing:3px;">ALL TERMS MASTERED</div>
+      <div style="margin-top:12px;font-size:13px;color:#3a7a48;">
+        Score: ${S.score} · Rounds: ${S.round-1} ·
+        Accuracy: ${Math.round(S.hits/S.attempts*100)}%
+      </div>
+      <button class="btn" style="margin-top:18px;font-size:26px;padding:8px 20px 5px;"
+        onclick="resetGame()">[ RESET ]</button>
+    </div>`;
+  setMsg("COMPLETE","c-blue","All vocabulary mastered. Session complete.","win");
+  updateHUD();
+}
+
+// ── RESET ────────────────────────────────────────────────────────────────────
+function resetGame() {
+  S = { round:1, score:0, streak:0, attempts:0, hits:0, mastered:0, locked:false, target:null };
+  initWords();
+  updateHUD();
+  setMsg("READY","c-green","Deck armed. Select the correct English translation.","ok");
+  nextRound();
+}
+
+// ── EVENTS ───────────────────────────────────────────────────────────────────
+document.getElementById("resetBtn").addEventListener("click", resetGame);
+document.getElementById("domain").addEventListener("change", resetGame);
+document.getElementById("choices-n").addEventListener("change", ()=>{ nextRound(); });
+
+resetGame();
+})();
+</script>
+</body>
+</html>

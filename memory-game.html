@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>MONITOR-MEMORY — SYMBOL DECK</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=VT323&family=Share+Tech+Mono&display=swap');
+
+:root {
+  --bg0: #000000;
+  --bg1: #000f05;
+  --green: #00ff41;
+  --green2: #39ff6e;
+  --dim: #0a4020;
+  --mid: #1a7a3a;
+  --mint: #b0ffcc;
+  --amber: #ffb700;
+  --red: #ff3322;
+  --blue: #00eeff;
+  --panel: rgba(0,12,5,0.88);
+  --glow: rgba(0,255,65,0.18);
+  --glow2: rgba(0,255,65,0.06);
+}
+
+*{ box-sizing:border-box; margin:0; padding:0; }
+
+html, body {
+  height:100%;
+  background: #000;
+  color: var(--mint);
+  font-family: "Share Tech Mono", monospace;
+  overflow-x: hidden;
+}
+
+/* ── CRT SHELL ─────────────────────────────────────────── */
+#crt {
+  min-height: 100vh;
+  position: relative;
+  background:
+    radial-gradient(ellipse 120% 80% at 50% 0%, #001a08 0%, #000 65%);
+  padding: 18px 14px 32px;
+}
+
+/* scanlines */
+#crt::before {
+  content: "";
+  pointer-events: none;
+  position: fixed; inset: 0; z-index: 100;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent 2px,
+    rgba(0,0,0,0.18) 2px,
+    rgba(0,0,0,0.18) 4px
+  );
+}
+
+/* phosphor bloom */
+#crt::after {
+  content: "";
+  pointer-events: none;
+  position: fixed; inset: -60px; z-index: 99;
+  background:
+    radial-gradient(ellipse 90% 60% at 50% 40%,
+      rgba(0,255,65,0.07) 0%,
+      transparent 70%
+    );
+}
+
+/* vignette */
+.vignette {
+  pointer-events: none;
+  position: fixed; inset: 0; z-index: 98;
+  background: radial-gradient(ellipse 100% 100% at 50% 50%,
+    transparent 55%,
+    rgba(0,0,0,0.65) 100%
+  );
+}
+
+/* flickering noise overlay */
+.noise {
+  pointer-events: none;
+  position: fixed; inset: 0; z-index: 97;
+  opacity: 0.025;
+  animation: noiseAnim 0.08s steps(1) infinite;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+}
+@keyframes noiseAnim {
+  0%  { background-position: 0 0; }
+  25% { background-position: -50px 30px; }
+  50% { background-position: 20px -40px; }
+  75% { background-position: -30px -10px; }
+}
+
+/* ── HEADER ─────────────────────────────────────────────── */
+header {
+  max-width: 1140px;
+  margin: 0 auto 14px;
+  padding: 16px 18px 14px;
+  border: 1px solid rgba(0,255,65,0.28);
+  border-radius: 4px;
+  background: var(--panel);
+  box-shadow:
+    0 0 0 1px rgba(0,255,65,0.06) inset,
+    0 0 40px rgba(0,255,65,0.06),
+    0 20px 50px rgba(0,0,0,0.7);
+  position: relative;
+  overflow: hidden;
+}
+
+header::before {
+  content: "";
+  position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--green), transparent);
+  opacity: 0.6;
+  animation: scanH 4s linear infinite;
+}
+@keyframes scanH {
+  0%   { transform: translateX(-100%); opacity: 0; }
+  10%  { opacity: 0.6; }
+  90%  { opacity: 0.6; }
+  100% { transform: translateX(100%); opacity: 0; }
+}
+
+.hdr-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.title-block {}
+
+.title {
+  font-family: "VT323", monospace;
+  font-size: 52px;
+  line-height: 1;
+  color: var(--green);
+  letter-spacing: 2px;
+  text-shadow:
+    0 0 8px var(--green),
+    0 0 30px rgba(0,255,65,0.25),
+    0 0 60px rgba(0,255,65,0.08);
+  animation: flicker 8s ease-in-out infinite;
+}
+@keyframes flicker {
+  0%,100% { opacity:1; }
+  92% { opacity:1; }
+  93% { opacity:0.82; }
+  94% { opacity:1; }
+  96% { opacity:0.91; }
+  97% { opacity:1; }
+}
+
+.subtitle {
+  margin-top: 6px;
+  font-size: 12.5px;
+  color: var(--mid);
+  color: #5ab878;
+  max-width: 58ch;
+  line-height: 1.55;
+}
+
+/* ── CONTROLS ───────────────────────────────────────────── */
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.ctrl-group {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  padding: 7px 10px;
+  border: 1px solid rgba(0,255,65,0.2);
+  border-radius: 3px;
+  background: rgba(0,0,0,0.4);
+}
+
+.ctrl-group label {
+  font-size: 11px;
+  color: #4a9960;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+select {
+  font-family: inherit;
+  font-size: 12px;
+  background: rgba(0,0,0,0.6);
+  color: var(--green);
+  border: 1px solid rgba(0,255,65,0.3);
+  border-radius: 2px;
+  padding: 5px 8px;
+  outline: none;
+  cursor: pointer;
+}
+select:focus { box-shadow: 0 0 0 2px rgba(0,255,65,0.15); }
+select option { background: #001205; }
+
+.btn {
+  font-family: "VT323", monospace;
+  font-size: 22px;
+  letter-spacing: 0.05em;
+  background: rgba(0,0,0,0.55);
+  color: var(--green);
+  border: 1px solid rgba(0,255,65,0.45);
+  border-radius: 3px;
+  padding: 5px 14px 3px;
+  cursor: pointer;
+  text-shadow: 0 0 8px rgba(0,255,65,0.4);
+  transition: all 100ms;
+  position: relative;
+  overflow: hidden;
+}
+.btn:hover {
+  background: rgba(0,255,65,0.08);
+  border-color: var(--green);
+  box-shadow: 0 0 18px rgba(0,255,65,0.15), inset 0 0 12px rgba(0,255,65,0.06);
+}
+.btn:active { transform: scale(0.97); }
+
+/* ── HUD ────────────────────────────────────────────────── */
+.hud {
+  margin-top: 12px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.stat {
+  font-size: 12px;
+  padding: 5px 10px;
+  border: 1px solid rgba(0,255,65,0.18);
+  border-radius: 2px;
+  background: rgba(0,0,0,0.3);
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.stat-label { color: #4a9960; text-transform: uppercase; font-size: 10px; letter-spacing: 0.1em; }
+.stat-val {
+  color: var(--green);
+  font-size: 14px;
+  text-shadow: 0 0 6px rgba(0,255,65,0.4);
+  min-width: 2ch;
+  text-align: center;
+}
+.stat-val.amber { color: var(--amber); text-shadow: 0 0 8px rgba(255,183,0,0.5); }
+.stat-val.red   { color: var(--red);   text-shadow: 0 0 8px rgba(255,51,34,0.5); }
+
+.score-val {
+  font-family: "VT323", monospace;
+  font-size: 26px;
+  color: var(--green);
+  text-shadow: 0 0 10px rgba(0,255,65,0.5);
+  line-height: 1;
+}
+
+/* accuracy meter */
+.acc-bar-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.acc-bar-bg {
+  width: 60px; height: 6px;
+  background: rgba(0,255,65,0.1);
+  border: 1px solid rgba(0,255,65,0.2);
+  border-radius: 1px;
+  overflow: hidden;
+}
+.acc-bar-fill {
+  height: 100%;
+  background: var(--green);
+  box-shadow: 0 0 6px var(--green);
+  transition: width 0.4s ease;
+  width: 0%;
+}
+
+/* ── MSG ────────────────────────────────────────────────── */
+.msg-strip {
+  max-width: 1140px;
+  margin: 0 auto 10px;
+  padding: 7px 14px;
+  border: 1px solid rgba(0,255,65,0.15);
+  border-radius: 2px;
+  background: rgba(0,0,0,0.45);
+  font-size: 12.5px;
+  min-height: 32px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  letter-spacing: 0.02em;
+  transition: border-color 0.3s;
+}
+.msg-strip.ok   { border-color: rgba(0,255,65,0.35); }
+.msg-strip.warn { border-color: rgba(255,183,0,0.35); }
+.msg-strip.bad  { border-color: rgba(255,51,34,0.35); }
+.msg-strip.win  { border-color: rgba(0,238,255,0.5);
+  box-shadow: 0 0 20px rgba(0,238,255,0.08); }
+
+.msg-tag {
+  font-family: "VT323", monospace;
+  font-size: 18px;
+  padding: 0 6px;
+  border: 1px solid currentColor;
+  border-radius: 1px;
+  flex-shrink: 0;
+}
+.c-green { color: var(--green); }
+.c-amber { color: var(--amber); }
+.c-red   { color: var(--red); }
+.c-blue  { color: var(--blue); }
+
+/* ── BOARD ──────────────────────────────────────────────── */
+main {
+  max-width: 1140px;
+  margin: 0 auto;
+}
+
+.board-shell {
+  padding: 12px;
+  border: 1px solid rgba(0,255,65,0.2);
+  border-radius: 4px;
+  background:
+    linear-gradient(180deg, rgba(0,10,4,0.8), rgba(0,0,0,0.6)),
+    repeating-linear-gradient(
+      90deg,
+      rgba(0,255,65,0.015) 0px,
+      rgba(0,255,65,0.015) 1px,
+      transparent 1px,
+      transparent 40px
+    );
+  box-shadow: 0 0 0 1px rgba(0,255,65,0.05) inset, 0 20px 60px rgba(0,0,0,0.6);
+}
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0,1fr));
+  gap: 9px;
+}
+@media(max-width:960px){ .board{ grid-template-columns: repeat(5,minmax(0,1fr)); } }
+@media(max-width:780px){ .board{ grid-template-columns: repeat(4,minmax(0,1fr)); } }
+@media(max-width:560px){ .board{ grid-template-columns: repeat(3,minmax(0,1fr)); } }
+
+/* ── CARD ───────────────────────────────────────────────── */
+.card {
+  position: relative;
+  height: 100px;
+  perspective: 600px;
+  cursor: pointer;
+  user-select: none;
+}
+.card.matched { cursor: default; }
+
+.card-inner {
+  position: absolute; inset: 0;
+  transform-style: preserve-3d;
+  transition: transform 0.42s cubic-bezier(0.4, 0.2, 0.2, 1.1);
+  border-radius: 4px;
+}
+
+.card.flipped .card-inner,
+.card.matched .card-inner {
+  transform: rotateY(180deg);
+}
+
+.card-face {
+  position: absolute; inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 4px;
+  border: 1px solid rgba(0,255,65,0.22);
+  overflow: hidden;
+}
+
+/* front (hidden side) */
+.card-front {
+  background:
+    repeating-linear-gradient(
+      45deg,
+      rgba(0,255,65,0.025) 0px,
+      rgba(0,255,65,0.025) 1px,
+      transparent 1px,
+      transparent 8px
+    ),
+    linear-gradient(160deg, rgba(0,20,8,0.9), rgba(0,5,2,0.95));
+}
+.card-front::after {
+  content: "?";
+  font-family: "VT323", monospace;
+  font-size: 40px;
+  color: rgba(0,255,65,0.2);
+  text-shadow: 0 0 12px rgba(0,255,65,0.12);
+}
+
+.card:hover:not(.matched) .card-front {
+  border-color: rgba(0,255,65,0.5);
+  background:
+    repeating-linear-gradient(
+      45deg,
+      rgba(0,255,65,0.04) 0px,
+      rgba(0,255,65,0.04) 1px,
+      transparent 1px,
+      transparent 8px
+    ),
+    linear-gradient(160deg, rgba(0,28,10,0.9), rgba(0,8,3,0.95));
+  box-shadow: 0 0 18px rgba(0,255,65,0.1), inset 0 0 10px rgba(0,255,65,0.04);
+}
+
+/* back (symbol side) */
+.card-back {
+  transform: rotateY(180deg);
+  background: linear-gradient(160deg, rgba(0,18,7,0.97), rgba(0,5,2,0.97));
+  border-color: rgba(0,255,65,0.3);
+}
+
+.card.matched .card-back {
+  border-color: rgba(0,255,65,0.7);
+  box-shadow: 0 0 0 1px rgba(0,255,65,0.15) inset, 0 0 24px rgba(0,255,65,0.12);
+  animation: matchPulse 0.5s ease-out;
+}
+@keyframes matchPulse {
+  0%  { box-shadow: 0 0 0 1px rgba(0,255,65,0.5) inset, 0 0 40px rgba(0,255,65,0.4); }
+  100%{ box-shadow: 0 0 0 1px rgba(0,255,65,0.15) inset, 0 0 24px rgba(0,255,65,0.12); }
+}
+
+.card.wrong .card-inner {
+  animation: wrongShake 0.38s ease;
+}
+@keyframes wrongShake {
+  0%,100%{ transform: rotateY(180deg) translateX(0); }
+  20%    { transform: rotateY(180deg) translateX(-5px); }
+  40%    { transform: rotateY(180deg) translateX(5px); }
+  60%    { transform: rotateY(180deg) translateX(-4px); }
+  80%    { transform: rotateY(180deg) translateX(4px); }
+}
+
+.card-tag {
+  position: absolute;
+  top: 6px; left: 7px;
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(0,255,65,0.45);
+  line-height: 1;
+}
+
+.card-glyph {
+  font-family: "VT323", monospace;
+  font-size: 46px;
+  color: var(--green);
+  line-height: 1;
+  text-shadow: 0 0 10px rgba(0,255,65,0.4), 0 0 30px rgba(0,255,65,0.1);
+}
+
+.card.matched .card-glyph {
+  color: var(--green2);
+  text-shadow: 0 0 14px rgba(0,255,65,0.6), 0 0 40px rgba(0,255,65,0.2);
+}
+
+.card-name {
+  font-size: 10px;
+  color: #4a9960;
+  text-align: center;
+  max-width: 16ch;
+  line-height: 1.25;
+  padding: 0 6px;
+}
+
+.card-desc {
+  font-size: 8.5px;
+  color: rgba(74,153,96,0.7);
+  text-align: center;
+  max-width: 18ch;
+  line-height: 1.3;
+  padding: 0 4px;
+  display: none;
+}
+
+/* phosphor decay — CRT burn-in afterimage on match */
+.card.matched {
+  animation: phosphorFade 2.8s ease-out forwards;
+}
+@keyframes phosphorFade {
+  0%   { filter: brightness(2.2) saturate(1.4); }
+  18%  { filter: brightness(1.6) saturate(1.2); }
+  100% { filter: brightness(1)   saturate(1); }
+}
+
+/* definition reveal on matched hover — game becomes study tool */
+.card.matched:hover .card-desc { display: block; }
+.card.matched:hover .card-name { margin-bottom: 1px; }
+
+/* ── WIN OVERLAY ────────────────────────────────────────── */
+#win-overlay {
+  display: none;
+  position: fixed; inset: 0; z-index: 200;
+  background: rgba(0,0,0,0.82);
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 18px;
+  animation: fadeIn 0.4s ease;
+}
+#win-overlay.show { display: flex; }
+@keyframes fadeIn { from{opacity:0} to{opacity:1} }
+
+.win-box {
+  border: 1px solid var(--blue);
+  border-radius: 4px;
+  padding: 32px 48px;
+  background: rgba(0,5,10,0.95);
+  text-align: center;
+  box-shadow: 0 0 60px rgba(0,238,255,0.12), 0 0 0 1px rgba(0,238,255,0.1) inset;
+  position: relative;
+  overflow: hidden;
+}
+.win-box::before {
+  content:"";
+  position:absolute; inset:0;
+  background: repeating-linear-gradient(
+    to bottom, transparent 0px, transparent 3px,
+    rgba(0,238,255,0.02) 3px, rgba(0,238,255,0.02) 4px
+  );
+}
+.win-title {
+  font-family: "VT323", monospace;
+  font-size: 64px;
+  color: var(--blue);
+  text-shadow: 0 0 20px var(--blue), 0 0 60px rgba(0,238,255,0.3);
+  letter-spacing: 4px;
+  animation: glitchTitle 3s steps(1) infinite;
+}
+@keyframes glitchTitle {
+  0%,100%{ text-shadow: 0 0 20px var(--blue), 0 0 60px rgba(0,238,255,0.3); clip-path:none; }
+  92%{ clip-path: inset(40% 0 20% 0); transform: translateX(-3px); }
+  93%{ clip-path: inset(60% 0 5% 0); transform: translateX(3px); }
+  94%{ clip-path:none; transform:none; }
+}
+.win-stats {
+  margin-top: 16px;
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.win-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.win-stat-label {
+  font-size: 11px;
+  color: rgba(0,238,255,0.55);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+.win-stat-val {
+  font-family: "VT323", monospace;
+  font-size: 36px;
+  color: var(--blue);
+  text-shadow: 0 0 10px var(--blue);
+  line-height: 1;
+}
+.win-rating {
+  margin-top: 12px;
+  font-family: "VT323", monospace;
+  font-size: 28px;
+  color: var(--amber);
+  text-shadow: 0 0 12px var(--amber);
+  letter-spacing: 2px;
+}
+
+/* ── COMBO POPUP ────────────────────────────────────────── */
+.combo-pop {
+  position: fixed;
+  pointer-events: none;
+  z-index: 150;
+  font-family: "VT323", monospace;
+  font-size: 32px;
+  color: var(--amber);
+  text-shadow: 0 0 12px var(--amber);
+  animation: comboPop 1s ease-out forwards;
+  white-space: nowrap;
+}
+@keyframes comboPop {
+  0%  { opacity:1; transform: translateY(0) scale(1); }
+  60% { opacity:0.9; transform: translateY(-28px) scale(1.15); }
+  100%{ opacity:0; transform: translateY(-52px) scale(0.9); }
+}
+
+/* ── CATEGORY LEGEND ────────────────────────────────────── */
+.legend {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+.legend-item {
+  font-size: 10px;
+  padding: 3px 8px;
+  border-radius: 2px;
+  border: 1px solid rgba(0,255,65,0.2);
+  color: #4a9960;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.legend-item span {
+  display: inline-block;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  margin-right: 5px;
+  vertical-align: middle;
+}
+.lc-calc { background: #00ff41; box-shadow: 0 0 5px #00ff41; }
+.lc-set  { background: #ffb700; box-shadow: 0 0 5px #ffb700; }
+.lc-cat  { background: #00eeff; box-shadow: 0 0 5px #00eeff; }
+
+.card-tag.tc-calc { color: rgba(0,255,65,0.55); }
+.card-tag.tc-set  { color: rgba(255,183,0,0.55); }
+.card-tag.tc-cat  { color: rgba(0,238,255,0.55); }
+
+/* colored glyph per category */
+.card-glyph.gc-calc { color: var(--green); text-shadow: 0 0 10px rgba(0,255,65,0.4); }
+.card-glyph.gc-set  { color: var(--amber); text-shadow: 0 0 10px rgba(255,183,0,0.4); }
+.card-glyph.gc-cat  { color: var(--blue);  text-shadow: 0 0 10px rgba(0,238,255,0.4); }
+
+.card.matched .card-glyph.gc-calc { text-shadow: 0 0 18px rgba(0,255,65,0.7); }
+.card.matched .card-glyph.gc-set  { text-shadow: 0 0 18px rgba(255,183,0,0.7); }
+.card.matched .card-glyph.gc-cat  { text-shadow: 0 0 18px rgba(0,238,255,0.7); }
+
+/* ── FOOTER ─────────────────────────────────────────────── */
+footer {
+  max-width: 1140px;
+  margin: 10px auto 0;
+  font-size: 11px;
+  color: #2a5a38;
+  line-height: 1.6;
+  padding: 0 4px;
+}
+
+/* ── RESPONSIVE TITLE ───────────────────────────────────── */
+@media(max-width:640px){
+  .title{ font-size:40px; }
+}
+</style>
+</head>
+<body>
+<div id="crt">
+  <div class="vignette"></div>
+  <div class="noise"></div>
+
+  <header>
+    <div class="hdr-top">
+      <div class="title-block">
+        <div class="title">MONITOR-MEMORY</div>
+        <div class="subtitle">Symbol-matching for calculus · set theory · category theory. Two matching glyphs lock. Combos multiply score. Deck and pair-count hot-swap without reload.</div>
+        <div class="legend">
+          <div class="legend-item"><span class="lc-calc"></span>Calculus</div>
+          <div class="legend-item"><span class="lc-set"></span>Set Theory</div>
+          <div class="legend-item"><span class="lc-cat"></span>Category Theory</div>
+        </div>
+      </div>
+      <div class="controls">
+        <div class="ctrl-group">
+          <label for="deck">Deck</label>
+          <select id="deck">
+            <option value="mix" selected>Mixed</option>
+            <option value="calc">Calculus</option>
+            <option value="set">Set Theory</option>
+            <option value="cat">Category Theory</option>
+          </select>
+        </div>
+        <div class="ctrl-group">
+          <label for="size">Pairs</label>
+          <select id="size">
+            <option value="6">6</option>
+            <option value="8">8</option>
+            <option value="10" selected>10</option>
+            <option value="12">12</option>
+            <option value="14">14</option>
+            <option value="16">16</option>
+          </select>
+        </div>
+        <button class="btn" id="newGame">[ NEW GAME ]</button>
+      </div>
+    </div>
+    <div class="hud">
+      <div class="stat"><span class="stat-label">Time</span><span class="stat-val" id="time">0:00</span></div>
+      <div class="stat"><span class="stat-label">Moves</span><span class="stat-val" id="moves">0</span></div>
+      <div class="stat"><span class="stat-label">Matches</span><span class="stat-val" id="matched">0</span>/<span class="stat-val" id="total">0</span></div>
+      <div class="stat"><span class="stat-label">Streak</span><span class="stat-val" id="streak">0</span></div>
+      <div class="stat"><span class="stat-label">Combo</span><span class="stat-val amber" id="combo">×1</span></div>
+      <div class="stat">
+        <span class="stat-label">Accuracy</span>
+        <div class="acc-bar-wrap">
+          <div class="acc-bar-bg"><div class="acc-bar-fill" id="accBar"></div></div>
+          <span class="stat-val" id="acc">—</span>
+        </div>
+      </div>
+      <div class="stat"><span class="stat-label">Score</span><span class="score-val" id="score">0</span></div>
+    </div>
+  </header>
+
+  <div class="msg-strip ok" id="msg" role="status" aria-live="polite">
+    <span class="msg-tag c-green">SYS</span>
+    <span id="msgText">MONITOR-MEMORY v2.0 initialised. Select deck and press NEW GAME or any card to begin.</span>
+  </div>
+
+  <main>
+    <div class="board-shell">
+      <div class="board" id="board" aria-label="Memory board"></div>
+    </div>
+  </main>
+
+  <footer>
+    Each glyph shows its formal name and domain. Green = Calculus · Amber = Set Theory · Cyan = Category Theory.<br>
+    Consecutive correct matches build a combo multiplier that boosts score. Accuracy is correct / total flips.
+  </footer>
+</div>
+
+<!-- WIN OVERLAY -->
+<div id="win-overlay">
+  <div class="win-box">
+    <div class="win-title">DECK CLEARED</div>
+    <div class="win-stats">
+      <div class="win-stat"><div class="win-stat-label">Time</div><div class="win-stat-val" id="wTime">—</div></div>
+      <div class="win-stat"><div class="win-stat-label">Moves</div><div class="win-stat-val" id="wMoves">—</div></div>
+      <div class="win-stat"><div class="win-stat-label">Accuracy</div><div class="win-stat-val" id="wAcc">—</div></div>
+      <div class="win-stat"><div class="win-stat-label">Score</div><div class="win-stat-val" id="wScore">—</div></div>
+      <div class="win-stat"><div class="win-stat-label">Best Streak</div><div class="win-stat-val" id="wStreak">—</div></div>
+    </div>
+    <div class="win-rating" id="wRating"></div>
+    <div style="margin-top:20px;">
+      <button class="btn" id="winNewGame" style="font-size:26px;padding:8px 20px 5px;">[ PLAY AGAIN ]</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+'use strict';
+
+const $ = (s) => document.querySelector(s);
+
+// ── SYMBOL DATABASE ─────────────────────────────────────────────────────────
+const SYMBOLS = {
+  calc: [
+    { g:"∫",  n:"Integral",        d:"Antiderivative / area under curve" },
+    { g:"∂",  n:"Partial deriv.",   d:"Rate of change in one variable" },
+    { g:"∇",  n:"Nabla / gradient", d:"Vector of partial derivatives" },
+    { g:"lim",n:"Limit",            d:"Value a function approaches" },
+    { g:"d/dx",n:"Derivative",      d:"Instantaneous rate of change" },
+    { g:"Σ",  n:"Summation",        d:"Sum of a sequence of terms" },
+    { g:"∞",  n:"Infinity",         d:"Unbounded quantity" },
+    { g:"≈",  n:"Approximately",    d:"Equal up to small error" },
+    { g:"≡",  n:"Identical to",     d:"Holds for all values" },
+    { g:"∘",  n:"Composition",      d:"f composed with g: f∘g" },
+    { g:"→",  n:"Tends to",         d:"Approach / function arrow" },
+    { g:"∬",  n:"Double integral",  d:"Integral over 2D region" },
+    { g:"∮",  n:"Contour integral", d:"Integral along closed path" },
+    { g:"δ",  n:"Delta (small)",    d:"Small increment; variation" },
+    { g:"ε",  n:"Epsilon",          d:"Arbitrarily small positive" },
+    { g:"Π",  n:"Product",          d:"Product over a sequence" },
+  ],
+  set: [
+    { g:"∈",  n:"Element of",       d:"x is a member of set A" },
+    { g:"∉",  n:"Not element",      d:"x is not in set A" },
+    { g:"⊂",  n:"Proper subset",    d:"A strictly contained in B" },
+    { g:"⊆",  n:"Subset",           d:"A contained in or equals B" },
+    { g:"∅",  n:"Empty set",        d:"Set with no elements" },
+    { g:"∀",  n:"For all",          d:"Universal quantifier" },
+    { g:"∃",  n:"There exists",     d:"Existential quantifier" },
+    { g:"∧",  n:"Conjunction",      d:"Logical and" },
+    { g:"∨",  n:"Disjunction",      d:"Logical or" },
+    { g:"¬",  n:"Negation",         d:"Logical not" },
+    { g:"⇒",  n:"Implies",          d:"If P then Q" },
+    { g:"⇔",  n:"Iff",              d:"If and only if" },
+    { g:"∩",  n:"Intersection",     d:"Elements in both sets" },
+    { g:"∪",  n:"Union",            d:"Elements in either set" },
+    { g:"∖",  n:"Set minus",        d:"Elements in A not in B" },
+    { g:"𝒫",  n:"Power set",        d:"Set of all subsets" },
+  ],
+  cat: [
+    { g:"∘",  n:"Composition",      d:"Morphism composition g∘f" },
+    { g:"id", n:"Identity",         d:"Identity morphism on object" },
+    { g:"⊣",  n:"Adjunction",       d:"F ⊣ G: left-right adjoint pair" },
+    { g:"⊗",  n:"Tensor product",   d:"Monoidal category product" },
+    { g:"≅",  n:"Isomorphism",      d:"Invertible morphism" },
+    { g:"⇒",  n:"Nat. transform.",  d:"Natural transformation η:F⇒G" },
+    { g:"F",  n:"Functor",          d:"Structure-preserving map" },
+    { g:"lim",n:"Limit",            d:"Universal cone over diagram" },
+    { g:"colim",n:"Colimit",        d:"Universal cocone" },
+    { g:"∏",  n:"Product",          d:"Categorical product" },
+    { g:"∐",  n:"Coproduct",        d:"Categorical coproduct" },
+    { g:"Hom",n:"Hom-set",          d:"Set of morphisms A→B" },
+    { g:"yo", n:"Yoneda",           d:"Yoneda embedding" },
+    { g:"ob", n:"Objects",          d:"Collection of objects in cat" },
+    { g:"Set",n:"Set (category)",   d:"Category of sets & functions" },
+    { g:"η",  n:"Unit",             d:"Unit of adjunction" },
+  ]
+};
+
+function catClass(cat) {
+  if(cat==="calc") return "calc";
+  if(cat==="set")  return "set";
+  return "cat";
+}
+
+function getPool(mode) {
+  if(mode==="calc") return SYMBOLS.calc.map(s=>({...s,cat:"calc"}));
+  if(mode==="set")  return SYMBOLS.set.map(s=>({...s,cat:"set"}));
+  if(mode==="cat")  return SYMBOLS.cat.map(s=>({...s,cat:"cat"}));
+  // Mixed: deduplicate by glyph string so shared symbols (∘, ⇒, lim, …)
+  // appear only once, drawn first from the category with the richer definition.
+  const seen = new Set();
+  const out  = [];
+  for(const [cat, src] of [["calc",SYMBOLS.calc],["set",SYMBOLS.set],["cat",SYMBOLS.cat]]) {
+    for(const s of src) {
+      if(!seen.has(s.g)) { seen.add(s.g); out.push({...s,cat}); }
+    }
+  }
+  return out;
+}
+
+function shuffle(a) {
+  for(let i=a.length-1;i>0;i--){
+    const j=0|Math.random()*(i+1);
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+
+function uid() {
+  const b=new Uint32Array(2);
+  crypto.getRandomValues(b);
+  return b[0].toString(36)+b[1].toString(36);
+}
+
+// ── STATE ────────────────────────────────────────────────────────────────────
+let G = null;
+
+// ── DOM REFS ─────────────────────────────────────────────────────────────────
+const boardEl   = $("#board");
+const deckSel   = $("#deck");
+const sizeSel   = $("#size");
+const newGameBtn= $("#newGame");
+const winOverlay= $("#win-overlay");
+const winNewGame= $("#winNewGame");
+
+const els = {
+  time: $("#time"), moves: $("#moves"), matched: $("#matched"),
+  total: $("#total"), streak: $("#streak"), combo: $("#combo"),
+  acc: $("#acc"), accBar: $("#accBar"), score: $("#score"),
+  msg: $("#msg"), msgText: $("#msgText"),
+  wTime: $("#wTime"), wMoves: $("#wMoves"), wAcc: $("#wAcc"),
+  wScore: $("#wScore"), wStreak: $("#wStreak"), wRating: $("#wRating"),
+};
+
+// ── TIMER ────────────────────────────────────────────────────────────────────
+function stopTimer() {
+  if(G && G.timerId){ clearInterval(G.timerId); G.timerId=null; }
+}
+function startTimer() {
+  if(!G||G.timerId) return;
+  G.timerId = setInterval(()=>{
+    G.elapsed++;
+    els.time.textContent = fmtTime(G.elapsed);
+  }, 1000);
+}
+function fmtTime(s) {
+  return `${0|s/60}:${String(s%60).padStart(2,"0")}`;
+}
+
+// ── HUD ──────────────────────────────────────────────────────────────────────
+function updateHUD() {
+  els.moves.textContent   = G.moves;
+  els.matched.textContent = G.matches;
+  els.streak.textContent  = G.streak;
+  els.combo.textContent   = `×${G.combo}`;
+  els.score.textContent   = G.score;
+
+  const acc = G.flips===0 ? null : Math.round(G.matches*2/G.flips*100);
+  if(acc===null){
+    els.acc.textContent="—";
+    els.accBar.style.width="0%";
+  } else {
+    els.acc.textContent=acc+"%";
+    els.accBar.style.width=acc+"%";
+    els.accBar.style.background = acc>=80 ? "var(--green)" : acc>=50 ? "var(--amber)" : "var(--red)";
+  }
+}
+
+function setMsg(tag, tagClass, text, stripClass="ok") {
+  els.msg.className = `msg-strip ${stripClass}`;
+  els.msg.querySelector(".msg-tag").className=`msg-tag ${tagClass}`;
+  els.msg.querySelector(".msg-tag").textContent=tag;
+  els.msgText.textContent=text;
+}
+
+// ── COMBO POPUP ──────────────────────────────────────────────────────────────
+function showCombo(cardEl, text) {
+  const r = cardEl.getBoundingClientRect();
+  const pop = document.createElement("div");
+  pop.className = "combo-pop";
+  pop.textContent = text;
+  pop.style.left = (r.left + r.width/2 - 30) + "px";
+  pop.style.top  = (r.top + window.scrollY - 10) + "px";
+  document.body.appendChild(pop);
+  pop.addEventListener("animationend", ()=>pop.remove());
+}
+
+// ── CARD RENDERING ────────────────────────────────────────────────────────────
+function esc(s){ return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c])); }
+
+function buildCards(pool, pairs) {
+  const picked = shuffle(pool.slice()).slice(0, pairs);
+  const doubled = [];
+  for(const s of picked) {
+    const key = `${s.cat}::${s.g}::${s.n}`;
+    doubled.push({...s,key,uid:uid()});
+    doubled.push({...s,key,uid:uid()});
+  }
+  return shuffle(doubled);
+}
+
+function renderBoard(cards) {
+  boardEl.innerHTML="";
+  const frag = document.createDocumentFragment();
+  const cc = catClass;
+
+  for(const c of cards) {
+    const card = document.createElement("div");
+    card.className="card";
+    card.dataset.uid=c.uid;
+    card.dataset.key=c.key;
+    card.setAttribute("role","button");
+    card.setAttribute("tabindex","0");
+    card.setAttribute("aria-label",`Card: ${c.n}, ${c.cat}`);
+    card.setAttribute("aria-pressed","false");
+
+    card.innerHTML=`
+      <div class="card-inner">
+        <div class="card-face card-front"></div>
+        <div class="card-face card-back">
+          <div class="card-tag tc-${cc(c.cat)}">${esc(c.cat.toUpperCase())}</div>
+          <div class="card-glyph gc-${cc(c.cat)}">${esc(c.g)}</div>
+          <div class="card-name">${esc(c.n)}</div>
+          <div class="card-desc">${esc(c.d)}</div>
+        </div>
+      </div>`;
+
+    card.addEventListener("click", ()=>onCard(card));
+    card.addEventListener("keydown", e=>{ if(e.key===" "||e.key==="Enter"){ e.preventDefault(); onCard(card); } });
+    frag.appendChild(card);
+  }
+  boardEl.appendChild(frag);
+}
+
+// ── GAME LOGIC ────────────────────────────────────────────────────────────────
+function onCard(el) {
+  if(!G||G.locked) return;
+  if(el.classList.contains("matched")) return;
+  if(G.open.length===2) return;
+  if(G.open.includes(el)) return;
+
+  if(!G.started) {
+    G.started=true;
+    startTimer();
+    setMsg("BOOT","c-green","Signal acquired — match identical symbols to lock them.");
+  }
+
+  el.classList.add("flipped");
+  el.setAttribute("aria-pressed","true");
+  G.open.push(el);
+  G.flips++;
+
+  if(G.open.length===2) {
+    G.moves++;
+    G.locked=true;
+    updateHUD();
+
+    const [a,b] = G.open;
+    const ka=a.dataset.key, kb=b.dataset.key;
+
+    if(ka===kb) {
+      // MATCH
+      G.matches++;
+      G.streak++;
+      G.bestStreak=Math.max(G.bestStreak,G.streak);
+      G.combo=Math.min(8, 1+Math.floor(G.streak/2));
+
+      const basePoints = 100;
+      const earned = basePoints * G.combo;
+      G.score += earned;
+
+      setTimeout(()=>{
+        a.classList.add("matched"); b.classList.add("matched");
+        a.setAttribute("aria-pressed","mixed"); b.setAttribute("aria-pressed","mixed");
+        a.removeAttribute("tabindex"); b.removeAttribute("tabindex");
+        G.open=[];
+        G.locked=false;
+        updateHUD();
+
+        if(G.combo>=2) {
+          showCombo(a, `×${G.combo} COMBO! +${earned}`);
+        }
+
+        if(G.matches>=G.totalPairs) {
+          endGame();
+        } else {
+          const streakMsg = G.streak>=4 ? ` STREAK ×${G.streak}!` : G.streak>=2 ? ` Streak ${G.streak}.` : "";
+          setMsg("LOCK","c-green", `Match confirmed +${earned}pts.${streakMsg}`,"ok");
+        }
+      }, 180);
+
+    } else {
+      // MISMATCH
+      G.streak=0;
+      G.combo=1;
+      updateHUD();
+
+      // shake animation
+      a.classList.add("wrong"); b.classList.add("wrong");
+      setMsg("DRIFT","c-amber","Mismatch — signal noise detected.","warn");
+
+      setTimeout(()=>{
+        a.classList.remove("flipped","wrong");
+        b.classList.remove("flipped","wrong");
+        a.setAttribute("aria-pressed","false");
+        b.setAttribute("aria-pressed","false");
+        G.open=[];
+        G.locked=false;
+      }, 700);
+    }
+  }
+}
+
+function endGame() {
+  stopTimer();
+  const pairs = G.totalPairs;
+  const acc = G.flips===0 ? 100 : Math.round(G.matches*2/G.flips*100);
+  const t = fmtTime(G.elapsed);
+
+  // time bonus
+  const timeBonus = Math.max(0, 300 - G.elapsed) * 5;
+  G.score += timeBonus;
+
+  // rating
+  let rating;
+  if(acc===100 && G.elapsed<60) rating="S — PERFECT SIGNAL";
+  else if(acc>=90) rating="A — CLEAN LOCK";
+  else if(acc>=75) rating="B — ACCEPTABLE DRIFT";
+  else if(acc>=55) rating="C — SIGNAL DEGRADED";
+  else rating="D — HIGH NOISE FLOOR";
+
+  els.wTime.textContent   = t;
+  els.wMoves.textContent  = G.moves;
+  els.wAcc.textContent    = acc+"%";
+  els.wScore.textContent  = G.score;
+  els.wStreak.textContent = G.bestStreak;
+  els.wRating.textContent = rating;
+
+  updateHUD();
+  setMsg("SYNC","c-blue",`Deck cleared in ${t}. Score: ${G.score}. ${rating}.`,"win");
+  setTimeout(()=>{ winOverlay.classList.add("show"); }, 500);
+}
+
+// ── NEW GAME ──────────────────────────────────────────────────────────────────
+function newGame() {
+  stopTimer();
+  winOverlay.classList.remove("show");
+
+  const mode  = deckSel.value;
+  const pairs = Math.max(2, Math.min(20, parseInt(sizeSel.value)||10));
+  const pool  = getPool(mode);
+  const final = Math.min(pairs, pool.length);
+  const cards = buildCards(pool, final);
+
+  G = {
+    mode, totalPairs:final, cards,
+    open:[], moves:0, matches:0, flips:0,
+    streak:0, bestStreak:0, combo:1, score:0,
+    started:false, locked:false, elapsed:0, timerId:null
+  };
+
+  els.time.textContent   = "0:00";
+  els.score.textContent  = "0";
+  els.combo.textContent  = "×1";
+  els.acc.textContent    = "—";
+  els.accBar.style.width = "0%";
+  els.total.textContent  = final;
+
+  updateHUD();
+  setMsg("READY","c-green",`Deck armed — ${final} pairs. Flip any card to begin.`,"ok");
+  renderBoard(cards);
+}
+
+// ── EVENTS ────────────────────────────────────────────────────────────────────
+deckSel.addEventListener("change", newGame);
+sizeSel.addEventListener("change", newGame);
+newGameBtn.addEventListener("click", newGame);
+winNewGame.addEventListener("click", newGame);
+winOverlay.addEventListener("click", e=>{ if(e.target===winOverlay) winOverlay.classList.remove("show"); });
+
+newGame();
+})();
+</script>
+</body>
+</html>
