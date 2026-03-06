@@ -1,5 +1,7 @@
 # Spherepop
 
+[History as Identity](https://standardgalactic.github.io/spherepop/History%20as%20Identity.pdf)
+
 [Structured Irreversibility](https://standardgalactic.github.io/spherepop/Structured%20Irreversibility.pdf)
 
 **Spherepop is an event-driven, visual and formal framework for building meaning, computation, and structure through irreversible actions.**
@@ -8,11 +10,12 @@ Instead of starting from *sets, states, or representations*, Spherepop starts fr
 
 At its core, Spherepop replaces static foundations with a **constructive, history-based mereology** (part–whole relations built over time).
 
-[Spherepop Game Engine](https://standardgalactic.github.io/spherepop/game-engine.html) — *Playable Demo*
-
 ![](scope-intro.gif)
 
 Play the [Spellpop mini-game](https://standardgalactic.github.io/spherepop/spellpop.html)
+
+[Spherepop Game Engine](https://standardgalactic.github.io/spherepop/game-engine.html) — *Playable Demo*
+
 
 ---
 
