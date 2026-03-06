@@ -1,0 +1,1161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Spherepop — Tunnel Descent</title>
+<style>
+  :root {
+    --fg: #69ff9a;
+    --fg-dim: rgba(105,255,154,0.65);
+    --fg-faint: rgba(105,255,154,0.28);
+    --bg: #020403;
+    --panel: rgba(0, 20, 8, 0.82);
+    --glow: 0 0 8px rgba(105,255,154,0.55), 0 0 18px rgba(105,255,154,0.24);
+    --focal: 600;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    width: 100%; height: 100%;
+    overflow: hidden;
+    background: radial-gradient(ellipse at center, #04100a 0%, #020403 55%, #000 100%);
+    color: var(--fg);
+    font-family: Consolas, "Courier New", monospace;
+  }
+
+  /* CRT scanlines */
+  body::before {
+    content: "";
+    position: fixed; inset: 0;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+      to bottom,
+      rgba(105,255,154,0.032) 0px, rgba(105,255,154,0.032) 1px,
+      transparent 1px, transparent 3px
+    );
+    mix-blend-mode: screen;
+    opacity: 0.6;
+    z-index: 100;
+  }
+
+  /* Vignette */
+  body::after {
+    content: "";
+    position: fixed; inset: 0;
+    pointer-events: none;
+    box-shadow: inset 0 0 180px rgba(0,0,0,0.85);
+    z-index: 101;
+  }
+
+  #game {
+    position: fixed; inset: 0;
+    overflow: hidden;
+    cursor: none;
+  }
+
+  /* Tunnel canvas behind everything */
+  #tunnelCanvas {
+    position: absolute; inset: 0;
+    z-index: 0;
+  }
+
+  #world {
+    position: absolute; inset: 0;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  /* ── HUD ─────────────────────────────────────────── */
+  #hudTop {
+    position: fixed;
+    top: 10px; left: 50%; transform: translateX(-50%);
+    min-width: 480px;
+    text-align: center;
+    padding: 10px 20px;
+    border: 1px solid var(--fg-dim);
+    background: var(--panel);
+    box-shadow: var(--glow);
+    letter-spacing: 0.08em;
+    z-index: 20;
+    pointer-events: none;
+  }
+  #hudTop .title { font-size: 20px; margin-bottom: 3px; }
+  #hudTop .sub   { font-size: 11px; color: var(--fg-dim); }
+
+  #hudLeft, #hudRight {
+    position: fixed;
+    top: 72px;
+    width: 252px;
+    max-height: calc(100vh - 180px);
+    overflow: hidden;
+    border: 1px solid var(--fg-dim);
+    background: var(--panel);
+    box-shadow: var(--glow);
+    z-index: 20;
+    pointer-events: none;
+  }
+  #hudLeft  { left: 10px; }
+  #hudRight { right: 10px; }
+
+  .panelHead {
+    padding: 8px 12px 6px;
+    font-size: 13px;
+    border-bottom: 1px solid rgba(105,255,154,0.22);
+    letter-spacing: 0.06em;
+  }
+  .panelBody {
+    padding: 8px 12px 10px;
+    font-size: 12px;
+    line-height: 1.55;
+    color: var(--fg-dim);
+  }
+
+  .metric { display: flex; justify-content: space-between; gap: 12px; white-space: nowrap; }
+  .metric + .metric { margin-top: 3px; }
+  .metric .val { color: var(--fg); }
+
+  #statusBar {
+    margin-top: 8px;
+    padding-top: 6px;
+    border-top: 1px solid rgba(105,255,154,0.16);
+    font-size: 11px;
+    color: var(--fg-dim);
+    letter-spacing: 0.04em;
+  }
+  .badge {
+    display: inline-block;
+    padding: 1px 6px;
+    border: 1px solid var(--fg-dim);
+    font-size: 10px;
+    margin-right: 4px;
+    color: var(--fg);
+  }
+  .badge.active { background: rgba(105,255,154,0.18); box-shadow: 0 0 6px rgba(105,255,154,0.4); }
+
+  #historyLog {
+    max-height: calc(100vh - 250px);
+    overflow: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--fg-dim) transparent;
+  }
+  .historyItem { margin-bottom: 5px; color: var(--fg-dim); font-size: 11px; }
+  .historyItem strong { color: var(--fg); font-weight: 700; }
+
+  #hudBottom {
+    position: fixed;
+    left: 50%; bottom: 12px;
+    transform: translateX(-50%);
+    min-width: 520px; max-width: 88vw;
+    padding: 8px 14px;
+    border: 1px solid var(--fg-dim);
+    background: var(--panel);
+    box-shadow: var(--glow);
+    text-align: center;
+    z-index: 20;
+    pointer-events: none;
+    font-size: 12px;
+  }
+  #collapseView { margin-top: 3px; color: var(--fg); word-break: break-word; font-size: 11px; }
+
+  #help {
+    position: fixed; bottom: 14px; right: 14px;
+    z-index: 20; padding: 8px 10px; font-size: 11px;
+    border: 1px solid rgba(105,255,154,0.22);
+    background: rgba(0,12,5,0.7);
+    color: var(--fg-dim);
+    pointer-events: none;
+    line-height: 1.6;
+  }
+
+  /* Cockpit overlay */
+  #cockpit {
+    position: fixed; inset: 0;
+    z-index: 10;
+    pointer-events: none;
+  }
+  .cockpitBottom {
+    position: absolute;
+    left: 50%; bottom: -80px;
+    width: 1000px; height: 300px;
+    transform: translateX(-50%);
+    border: 2px solid rgba(105,255,154,0.18);
+    border-top-left-radius: 80% 100%;
+    border-top-right-radius: 80% 100%;
+    border-bottom: none;
+    filter: drop-shadow(0 0 6px rgba(105,255,154,0.14));
+  }
+  .cockpitWingL, .cockpitWingR {
+    position: absolute;
+    bottom: 88px; width: 240px; height: 2px;
+    background: rgba(105,255,154,0.2);
+  }
+  .cockpitWingL { left: calc(50% - 370px); }
+  .cockpitWingR { right: calc(50% - 370px); }
+
+  /* Player ship indicator */
+  #ship {
+    position: fixed;
+    z-index: 30;
+    width: 22px; height: 22px;
+    margin-left: -11px; margin-top: -11px;
+    pointer-events: none;
+  }
+  #ship svg { width: 100%; height: 100%; overflow: visible; filter: drop-shadow(0 0 6px rgba(105,255,154,0.8)); }
+
+  /* Reticle */
+  #reticle {
+    position: fixed;
+    z-index: 31;
+    width: 34px; height: 34px;
+    margin-left: -17px; margin-top: -17px;
+    pointer-events: none;
+    transition: transform 0.05s;
+  }
+  #reticle svg { width: 100%; height: 100%; overflow: visible; filter: drop-shadow(0 0 5px rgba(105,255,154,0.65)); }
+
+  /* Spheres */
+  .sphere {
+    position: absolute;
+    display: grid; place-items: center;
+    border-radius: 50%;
+    border: 2px solid var(--fg);
+    color: var(--fg);
+    background: radial-gradient(circle at 35% 30%, rgba(105,255,154,0.2), rgba(0,0,0,0.12) 55%, rgba(105,255,154,0.04));
+    box-shadow: inset 0 0 20px rgba(105,255,154,0.12), 0 0 14px rgba(105,255,154,0.22);
+    text-align: center;
+    user-select: none;
+    pointer-events: none;
+    overflow: hidden;
+    transition: box-shadow 0.1s;
+  }
+  .sphere .label { font-weight: 700; text-shadow: 0 0 8px rgba(105,255,154,0.45); padding: 0 4px; }
+  .sphere .ring  { position: absolute; inset: 6px; border: 1px solid rgba(105,255,154,0.15); border-radius: 50%; }
+  .sphere.horizon-close {
+    box-shadow: inset 0 0 30px rgba(105,255,154,0.28), 0 0 28px rgba(105,255,154,0.55);
+    border-color: #fff;
+  }
+  .sphere.hit { animation: hitFlash 130ms ease-out 1; }
+  @keyframes hitFlash {
+    0%   { filter: brightness(1) saturate(1); }
+    50%  { filter: brightness(2.4) saturate(0.5); }
+    100% { filter: brightness(1) saturate(1); }
+  }
+
+  /* Flares */
+  .flare {
+    position: absolute;
+    width: 5px; height: 5px; border-radius: 50%;
+    background: var(--fg);
+    box-shadow: 0 0 10px rgba(105,255,154,0.9), 0 0 22px rgba(105,255,154,0.45);
+    pointer-events: none;
+    z-index: 5;
+  }
+
+  /* Flash texts / bursts */
+  .flashText {
+    position: absolute;
+    color: var(--fg);
+    font-size: 13px;
+    pointer-events: none;
+    white-space: nowrap;
+    text-shadow: 0 0 8px rgba(105,255,154,0.7);
+    z-index: 8;
+  }
+  .burstEl {
+    position: absolute;
+    pointer-events: none;
+    z-index: 8;
+  }
+  .burstEl::before, .burstEl::after {
+    content: "";
+    position: absolute; left: 50%; top: 50%;
+    width: 48px; height: 1.5px;
+    background: var(--fg);
+    transform-origin: center;
+    box-shadow: 0 0 8px rgba(105,255,154,0.7);
+  }
+  .burstEl::before { transform: translate(-50%,-50%) rotate(0deg); }
+  .burstEl::after  { transform: translate(-50%,-50%) rotate(90deg); }
+
+  /* Blink flash overlay */
+  #blinkFlash {
+    position: fixed; inset: 0;
+    z-index: 50;
+    pointer-events: none;
+    background: rgba(105,255,154,0.18);
+    opacity: 0;
+  }
+
+  /* Depth fog ring on canvas behind the spheres */
+  #tunnelCanvas { opacity: 0.55; }
+
+  /* ── Panel visibility toggle ───────────────────────── */
+  .panels-hidden .panel { display: none !important; }
+
+  /* HUD toggle button — always visible, desktop & mobile */
+  #panelToggle {
+    position: fixed;
+    top: 14px; left: 14px;
+    z-index: 200;
+    padding: 6px 10px;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    border: 1px solid rgba(105,255,154,0.4);
+    color: var(--fg);
+    background: rgba(0,20,8,0.85);
+    box-shadow: 0 0 6px rgba(105,255,154,0.35);
+    cursor: pointer;
+    user-select: none;
+    font-family: Consolas, "Courier New", monospace;
+    transition: background 0.1s;
+  }
+  #panelToggle:active { background: rgba(105,255,154,0.2); }
+  .panels-hidden #panelToggle { border-color: rgba(105,255,154,0.2); color: var(--fg-dim); }
+
+  /* ── Mobile touch controls ─────────────────────────── */
+  #joystickZone {
+    position: fixed;
+    left: 18px; bottom: 28px;
+    width: 110px; height: 110px;
+    z-index: 150;
+    touch-action: none;
+  }
+  #joystickBase {
+    position: absolute; inset: 0;
+    border-radius: 50%;
+    border: 1px solid rgba(105,255,154,0.25);
+    background: rgba(0,20,8,0.5);
+  }
+  #joystickKnob {
+    position: absolute;
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    background: rgba(105,255,154,0.22);
+    border: 1px solid rgba(105,255,154,0.55);
+    box-shadow: 0 0 10px rgba(105,255,154,0.4);
+    top: 50%; left: 50%;
+    transform: translate(-50%,-50%);
+    pointer-events: none;
+  }
+
+  #blinkBtn {
+    position: fixed;
+    right: 24px; bottom: 90px;
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    border: 1px solid rgba(105,255,154,0.4);
+    background: rgba(0,20,8,0.8);
+    color: var(--fg);
+    font-family: Consolas, "Courier New", monospace;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    z-index: 150;
+    cursor: pointer;
+    touch-action: manipulation;
+    box-shadow: 0 0 10px rgba(105,255,154,0.3);
+    display: grid; place-items: center;
+    user-select: none;
+  }
+  #blinkBtn:active { background: rgba(105,255,154,0.2); }
+
+  #fireBtn {
+    position: fixed;
+    right: 24px; bottom: 20px;
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    border: 1px solid rgba(105,255,154,0.4);
+    background: rgba(0,20,8,0.8);
+    color: var(--fg);
+    font-family: Consolas, "Courier New", monospace;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    z-index: 150;
+    cursor: pointer;
+    touch-action: manipulation;
+    box-shadow: 0 0 10px rgba(105,255,154,0.3);
+    display: grid; place-items: center;
+    user-select: none;
+  }
+  #fireBtn:active { background: rgba(105,255,154,0.22); }
+
+  /* Hide touch controls on desktop */
+  @media (min-width: 900px) and (hover: hover) {
+    #joystickZone, #blinkBtn, #fireBtn { display: none; }
+  }
+</style>
+</head>
+<body>
+<div id="game">
+  <canvas id="tunnelCanvas"></canvas>
+  <div id="world"></div>
+
+  <div id="hudTop" class="panel">
+    <div class="title">SPHEREPOP // TUNNEL DESCENT</div>
+    <div class="sub">FLY INWARD · CROSS HORIZON TO POP · CASCADE EVALUATION OUTWARD</div>
+  </div>
+
+  <div id="hudLeft" class="panel">
+    <div class="panelHead">SYSTEM</div>
+    <div class="panelBody">
+      <div class="metric"><span>Expr</span><span class="val" id="exprLabel" style="font-size:10px;max-width:140px;overflow:hidden;text-overflow:ellipsis"></span></div>
+      <div class="metric"><span>Depth</span><span class="val" id="depthLabel">0</span></div>
+      <div class="metric"><span>Shots</span><span class="val" id="shotsLabel">0</span></div>
+      <div class="metric"><span>Pops</span><span class="val" id="popsLabel">0</span></div>
+      <div class="metric"><span>Leaves</span><span class="val" id="leavesLabel">0</span></div>
+      <div class="metric"><span>Operators</span><span class="val" id="opsLabel">0</span></div>
+      <div class="metric"><span>Innermost</span><span class="val" id="deepestLabel">—</span></div>
+      <div id="statusBar">
+        <span class="badge" id="blinkBadge">BLINK</span>
+        <span class="badge" id="autoBadge">AUTO</span>
+        <span class="badge" id="moveBadge">WASD</span>
+      </div>
+    </div>
+  </div>
+
+  <div id="hudRight" class="panel">
+    <div class="panelHead">COMMITMENT HISTORY</div>
+    <div class="panelBody" id="historyLog"></div>
+  </div>
+
+  <div id="hudBottom" class="panel">
+    <div>COLLAPSE SEQUENCE</div>
+    <div id="collapseView">s₀</div>
+  </div>
+
+  <div id="help" class="panel">
+    WASD = MOVE &nbsp; B = BLINK &nbsp; AB = AUTOBLINK TOGGLE<br>
+    CLICK / SPACE = FLARE &nbsp; WHEEL = ZOOM &nbsp; H = TOGGLE HUD<br>
+    R = RESET &nbsp; N = NEXT EXAMPLE
+  </div>
+
+  <div id="cockpit">
+    <div class="cockpitBottom"></div>
+    <div class="cockpitWingL"></div>
+    <div class="cockpitWingR"></div>
+  </div>
+
+  <div id="blinkFlash"></div>
+
+  <!-- HUD toggle (keyboard H / touch) -->
+  <div id="panelToggle">HUD</div>
+
+  <!-- Mobile virtual joystick -->
+  <div id="joystickZone">
+    <div id="joystickBase"></div>
+    <div id="joystickKnob"></div>
+  </div>
+
+  <!-- Mobile action buttons -->
+  <div id="blinkBtn">BLINK</div>
+  <div id="fireBtn">FIRE</div>
+
+  <!-- Player ship marker -->
+  <div id="ship" aria-hidden="true">
+    <svg viewBox="0 0 40 40">
+      <polygon points="20,2 36,38 20,30 4,38" fill="none" stroke="currentColor" stroke-width="3"/>
+      <line x1="20" y1="30" x2="20" y2="38" stroke="currentColor" stroke-width="2"/>
+    </svg>
+  </div>
+
+  <!-- Aim reticle -->
+  <div id="reticle" aria-hidden="true">
+    <svg viewBox="0 0 100 100">
+      <circle cx="50" cy="50" r="20" fill="none" stroke="currentColor" stroke-width="3.5"/>
+      <line x1="50" y1="4" x2="50" y2="24" stroke="currentColor" stroke-width="3.5"/>
+      <line x1="50" y1="76" x2="50" y2="96" stroke="currentColor" stroke-width="3.5"/>
+      <line x1="4"  y1="50" x2="24" y2="50" stroke="currentColor" stroke-width="3.5"/>
+      <line x1="76" y1="50" x2="96" y2="50" stroke="currentColor" stroke-width="3.5"/>
+      <circle cx="50" cy="50" r="2.5" fill="currentColor"/>
+    </svg>
+  </div>
+</div>
+
+<script>
+(() => {
+"use strict";
+
+// ── DOM refs ─────────────────────────────────────────
+const world      = document.getElementById("world");
+const histLog    = document.getElementById("historyLog");
+const collapseV  = document.getElementById("collapseView");
+const reticle    = document.getElementById("reticle");
+const shipEl     = document.getElementById("ship");
+const blinkFlash = document.getElementById("blinkFlash");
+const canvas     = document.getElementById("tunnelCanvas");
+const ctx        = canvas.getContext("2d");
+
+const ui = {
+  exprLabel:   document.getElementById("exprLabel"),
+  depthLabel:  document.getElementById("depthLabel"),
+  shotsLabel:  document.getElementById("shotsLabel"),
+  popsLabel:   document.getElementById("popsLabel"),
+  leavesLabel: document.getElementById("leavesLabel"),
+  opsLabel:    document.getElementById("opsLabel"),
+  deepestLabel:document.getElementById("deepestLabel"),
+  blinkBadge:  document.getElementById("blinkBadge"),
+  autoBadge:   document.getElementById("autoBadge"),
+  moveBadge:   document.getElementById("moveBadge"),
+};
+
+// ── Constants ─────────────────────────────────────────
+const FOCAL = 620;
+const BASE_Z_SPACING = 480;
+const MOVE_SPEED = 280;
+const FLARE_SPEED = 900;
+const AUTOBLINK_INTERVAL = 0.52; // seconds between auto blinks
+const EXAMPLES = [
+  "(((1+2)+(3+4))+(5+6))",
+  "((2+3)*(4+1))",
+  "(((1+2)+((3+4)+(5+6)))+(7+8))",
+  "(((2*3)+(4*5))*((1+1)+(2+2)))",
+  "(((1+2)+(3+(4+5)))+(6+(7+8)))",
+];
+
+// ── State ─────────────────────────────────────────────
+const state = {
+  zoom: 1,
+  shots: 0,
+  pops: 0,
+  exprIndex: 0,
+  exprText: EXAMPLES[0],
+  root: null,
+  nodes: [],
+  nodeMap: new Map(),
+  flares: [],
+  history: [],
+  pointer: { x: 0, y: 0 },
+  player: { x: 0, y: 0 },  // screen-space player position
+  keys: {},
+  autoBlink: false,
+  autoBlinkTimer: 0,
+  abBuffer: "",          // tracks "ab" key sequence for autoblink toggle
+  lastTime: performance.now(),
+  tunnelOffset: 0,
+};
+
+function clamp(v,a,b){ return Math.max(a,Math.min(b,v)); }
+
+// ── Parser ────────────────────────────────────────────
+function tokenize(expr) {
+  const out = []; let i = 0;
+  while (i < expr.length) {
+    const c = expr[i];
+    if (/\s/.test(c))        { i++; continue; }
+    if ("()+-*".includes(c)) { out.push(c); i++; continue; }
+    if (/\d/.test(c)) {
+      let j = i;
+      while (j < expr.length && /[\d.]/.test(expr[j])) j++;
+      out.push(expr.slice(i,j)); i = j; continue;
+    }
+    throw new Error("Unexpected: " + c);
+  }
+  return out;
+}
+
+function parseExpression(expr) {
+  const tokens = tokenize(expr);
+  let pos = 0, id = 0;
+  const nid = () => "n"+(++id);
+
+  function primary() {
+    const t = tokens[pos];
+    if (t === "(") {
+      pos++;
+      const n = addSub();
+      if (tokens[pos] !== ")") throw new Error("Expected )");
+      pos++; return n;
+    }
+    if (/^\d+(\.\d+)?$/.test(t)) {
+      pos++;
+      return { id:nid(), type:"leaf", value:t, expr:t, evaluated:false, result:Number(t), children:[] };
+    }
+    throw new Error("Expected primary");
+  }
+
+  function mul() {
+    let L = primary();
+    while (tokens[pos]==="*") {
+      const op=tokens[pos++], R=primary();
+      L = { id:nid(), type:"operator", op, expr:`(${L.expr}${op}${R.expr})`, evaluated:false, result:null, children:[L,R] };
+    }
+    return L;
+  }
+
+  function addSub() {
+    let L = mul();
+    while (tokens[pos]==="+" || tokens[pos]==="-") {
+      const op=tokens[pos++], R=mul();
+      L = { id:nid(), type:"operator", op, expr:`(${L.expr}${op}${R.expr})`, evaluated:false, result:null, children:[L,R] };
+    }
+    return L;
+  }
+
+  const root = addSub();
+  if (pos !== tokens.length) throw new Error("Extra tokens");
+  return root;
+}
+
+// ── Layout — assign (baseX, baseY, baseZ) per node ───
+function layoutTree(root) {
+  state.nodes = [];
+  state.nodeMap.clear();
+
+  const W = innerWidth;
+  const rootY = innerHeight * 0.42;
+
+  // Measure tree depth for z-spacing
+  function maxDepth(node) {
+    if (!node.children.length) return 0;
+    return 1 + Math.max(...node.children.map(maxDepth));
+  }
+  const depth = maxDepth(root);
+
+  function traverse(node, xMin, xMax, d) {
+    const x = (xMin+xMax)/2;
+    const y = rootY + d * 60;                  // slight Y spread (projected away)
+    const z = (depth - d) * BASE_Z_SPACING + 200;   // innermost children near z=200, root far
+    const baseSize = clamp(110 - d * 8, 52, 110);
+
+    const model = {
+      id: node.id,
+      ref: node,
+      depth: d,
+      baseX: x, baseY: y,
+      baseZ: z,
+      z: z,                  // current z (decreases as player moves forward)
+      baseSize,
+      wobble: Math.random()*1000,
+      alive: true,
+      el: null, labelEl: null,
+      screenX: x, screenY: y, screenR: baseSize/2,
+    };
+
+    state.nodes.push(model);
+    state.nodeMap.set(node.id, model);
+
+    if (node.type === "operator") {
+      const mid = (xMin+xMax)/2;
+      traverse(node.children[0], xMin, mid, d+1);
+      traverse(node.children[1], mid, xMax, d+1);
+    }
+  }
+
+  traverse(root, 80, W-80, 0);
+}
+
+// ── Sphere DOM ────────────────────────────────────────
+function makeSphere(model) {
+  const el = document.createElement("div");
+  el.className = "sphere";
+  const ring = document.createElement("div"); ring.className="ring"; el.appendChild(ring);
+  const label = document.createElement("div"); label.className="label"; el.appendChild(label);
+  const n = model.ref;
+  label.textContent = n.type==="leaf" ? n.value : n.op;
+  world.appendChild(el);
+  model.el = el; model.labelEl = label;
+}
+
+function renderAll() {
+  world.innerHTML = "";
+  for (const m of state.nodes) makeSphere(m);
+  updateUI();
+  updateCollapse();
+}
+
+// ── Perspective projection ────────────────────────────
+function projectModel(m, now) {
+  const wobbleX = Math.sin(now*0.0014 + m.wobble)*8 + Math.cos(now*0.0009 + m.wobble*0.4)*5;
+  const wobbleY = Math.cos(now*0.0017 + m.wobble)*6;
+
+  const cx = innerWidth/2, cy = innerHeight/2;
+  const zEff = Math.max(m.z, 1);
+  const scale = FOCAL / (FOCAL + zEff);
+
+  const wx = m.baseX + wobbleX;
+  const wy = m.baseY + wobbleY;
+
+  m.screenX = cx + (wx - cx) * scale;
+  m.screenY = cy + (wy - cy) * scale;
+  m.screenR = m.baseSize * scale * state.zoom * 0.5;
+
+  return { scale };
+}
+
+function updateNodeVisual(m, now) {
+  if (!m.el || !m.alive) return;
+  const { scale } = projectModel(m, now);
+
+  const r = m.screenR;
+  const diam = r * 2;
+  m.el.style.left   = (m.screenX - r) + "px";
+  m.el.style.top    = (m.screenY - r) + "px";
+  m.el.style.width  = diam + "px";
+  m.el.style.height = diam + "px";
+
+  const fog = clamp(1 - m.z / 3200, 0.12, 1);
+  m.el.style.opacity = String(fog);
+  m.el.style.borderWidth = Math.max(1, 1.8 * scale * state.zoom) + "px";
+  m.labelEl.style.fontSize = Math.max(10, r / 2.2) + "px";
+
+  // Highlight if player is near horizon
+  const dx = state.player.x - m.screenX;
+  const dy = state.player.y - m.screenY;
+  const dist = Math.hypot(dx, dy);
+  const closeThresh = r * 1.5;
+  if (dist < closeThresh && isShootable(m)) {
+    m.el.classList.add("horizon-close");
+  } else {
+    m.el.classList.remove("horizon-close");
+  }
+}
+
+// ── Evaluation ────────────────────────────────────────
+function evalNode(node) {
+  if (node.type === "leaf") { node.evaluated=true; node.result=Number(node.value); return node.result; }
+  const a = node.children[0].result ?? evalNode(node.children[0]);
+  const b = node.children[1].result ?? evalNode(node.children[1]);
+  let r = node.op==="+" ? a+b : node.op==="-" ? a-b : a*b;
+  node.evaluated=true; node.result=r; return r;
+}
+
+function isShootable(m) {
+  if (!m.alive) return false;
+  const n = m.ref;
+  if (n.evaluated) return false;
+  if (n.type==="leaf") return true;
+  return n.children[0].evaluated && n.children[1].evaluated;
+}
+
+function deepestAvailableNodes() {
+  let maxD = -1; const cands = [];
+  for (const m of state.nodes) {
+    if (!isShootable(m)) continue;
+    if (m.depth > maxD) { maxD=m.depth; cands.length=0; cands.push(m); }
+    else if (m.depth===maxD) cands.push(m);
+  }
+  return cands;
+}
+
+function countNodes(node) {
+  if (!node) return {leaves:0, ops:0};
+  if (node.type==="leaf") return {leaves:1, ops:0};
+  const a=countNodes(node.children[0]), b=countNodes(node.children[1]);
+  return {leaves:a.leaves+b.leaves, ops:a.ops+b.ops+1};
+}
+
+// ── Pop / cascade ─────────────────────────────────────
+function popModel(model, cascadeOnly) {
+  if (!model || !model.alive) return;
+  const node = model.ref;
+  if (node.evaluated && !cascadeOnly) return;
+
+  const result = evalNode(node);
+  model.alive = false;
+  if (model.el) { model.el.remove(); model.el=null; }
+  state.pops++;
+
+  const sym = node.type==="leaf" ? node.expr : node.op+result;
+  addHistory("POP", `${node.expr} → ${result}`, sym);
+  flashText(model.screenX, model.screenY, `${node.expr} = ${result}`);
+  doBurst(model.screenX, model.screenY);
+
+  // If operator: collapse children, resurrect as leaf
+  if (node.type === "operator") {
+    for (const child of node.children) {
+      const cm = state.nodeMap.get(child.id);
+      if (cm && cm.alive) { cm.alive=false; if(cm.el){ cm.el.remove(); cm.el=null; } }
+    }
+    node.type="leaf"; node.value=String(result); node.children=[]; node.expr=String(result);
+    model.alive=true;
+    makeSphere(model);
+    model.el.classList.add("hit");
+    setTimeout(()=>{ if(model.el) model.el.classList.remove("hit"); }, 140);
+  }
+
+  // Cascade: check if parent can now be popped
+  cascadeCheck();
+  updateUI();
+}
+
+function cascadeCheck() {
+  // After any pop, re-check for newly eligible operators and propagate
+  let changed = true;
+  while (changed) {
+    changed = false;
+    for (const m of state.nodes) {
+      if (!m.alive || m.ref.evaluated) continue;
+      const n = m.ref;
+      if (n.type==="operator" && n.children[0].evaluated && n.children[1].evaluated) {
+        // Eligible — pop it automatically as a cascade event
+        popModel(m, true);
+        changed = true;
+        break;
+      }
+    }
+  }
+}
+
+// ── Horizon detection (player enters bubble) ──────────
+function checkHorizon() {
+  for (const m of state.nodes) {
+    if (!isShootable(m)) continue;
+    const dx = state.player.x - m.screenX;
+    const dy = state.player.y - m.screenY;
+    if (Math.hypot(dx, dy) < m.screenR * 0.68) {
+      popModel(m, false);
+    }
+  }
+}
+
+// ── Blink ──────────────────────────────────────────────
+function blink() {
+  const targets = deepestAvailableNodes();
+  if (!targets.length) return;
+
+  // Pick nearest to player
+  let best=targets[0], bestD=Infinity;
+  for (const t of targets) {
+    const d = Math.hypot(t.screenX - state.player.x, t.screenY - state.player.y);
+    if (d < bestD) { bestD=d; best=t; }
+  }
+
+  // Move all nodes' z toward the target's z = ~80 (horizon)
+  const deltaZ = best.z - 80;
+  for (const m of state.nodes) m.z -= deltaZ;
+
+  // Snap player toward that bubble's projected position
+  state.player.x = best.screenX;
+  state.player.y = best.screenY + best.screenR * 0.8;
+
+  // Flash effect
+  blinkFlash.style.opacity = "1";
+  blinkFlash.style.transition = "none";
+  setTimeout(()=>{
+    blinkFlash.style.transition = "opacity 0.22s ease";
+    blinkFlash.style.opacity = "0";
+  }, 40);
+}
+
+// ── Flare shooting ────────────────────────────────────
+function shoot() {
+  state.shots++;
+  const origin = { x: state.player.x, y: state.player.y };
+  const dx = state.pointer.x - origin.x;
+  const dy = state.pointer.y - origin.y;
+  const len = Math.hypot(dx,dy)||1;
+  const dir = {x:dx/len, y:dy/len};
+
+  // Find target in ray
+  let hit=null, bestT=Infinity;
+  for (const m of state.nodes) {
+    if (!isShootable(m)) continue;
+    const ex=m.screenX-origin.x, ey=m.screenY-origin.y;
+    const t=ex*dir.x+ey*dir.y;
+    if (t<0) continue;
+    const px=origin.x+dir.x*t, py=origin.y+dir.y*t;
+    const dist=Math.hypot(m.screenX-px, m.screenY-py);
+    if (dist<=m.screenR*0.82 && t<bestT) { hit=m; bestT=t; }
+  }
+
+  const el=document.createElement("div"); el.className="flare"; world.appendChild(el);
+  state.flares.push({ el, x:origin.x, y:origin.y, vx:dir.x*FLARE_SPEED, vy:dir.y*FLARE_SPEED, ttl:1.5, hit });
+  updateUI();
+}
+
+// ── History / UI ──────────────────────────────────────
+function addHistory(kind, text, symbol) {
+  state.history.push({kind,text,symbol});
+  updateHistory(); updateCollapse(); updateUI();
+}
+
+function updateHistory() {
+  histLog.innerHTML="";
+  if (!state.history.length) { histLog.innerHTML=`<div class="historyItem">[ empty ]</div>`; return; }
+  for (let i=state.history.length-1; i>=0; i--) {
+    const h=state.history[i];
+    const d=document.createElement("div"); d.className="historyItem";
+    d.innerHTML=`<strong>${h.kind}</strong> ${h.text}`; histLog.appendChild(d);
+  }
+}
+
+function updateCollapse() {
+  if (!state.history.length) { collapseV.textContent="s₀"; return; }
+  const parts=state.history.map(h=>h.symbol);
+  collapseV.textContent="T_"+parts.join(" ∘ T_")+"(s₀)";
+}
+
+function updateUI() {
+  const counts=countNodes(state.root);
+  const innermost=deepestAvailableNodes();
+  ui.exprLabel.textContent=state.exprText;
+  ui.shotsLabel.textContent=String(state.shots);
+  ui.popsLabel.textContent=String(state.pops);
+  ui.leavesLabel.textContent=String(counts.leaves);
+  ui.opsLabel.textContent=String(counts.ops);
+  ui.deepestLabel.textContent=innermost.length ? innermost.map(n=>n.ref.expr).join(" | ") : "—";
+
+  // Depth from camera to nearest inner bubble
+  const min_z=innermost.length ? Math.min(...innermost.map(m=>m.z)) : 0;
+  ui.depthLabel.textContent=Math.max(0,Math.round(min_z));
+
+  ui.autoBadge.classList.toggle("active", state.autoBlink);
+  ui.moveBadge.classList.toggle("active", Object.values(state.keys).some(Boolean));
+}
+
+// ── Tunnel canvas renderer ────────────────────────────
+function drawTunnel(now) {
+  canvas.width=innerWidth; canvas.height=innerHeight;
+  const cx=innerWidth/2, cy=innerHeight/2;
+
+  // Animate tunnel offset
+  state.tunnelOffset = (state.tunnelOffset + 0.4) % 60;
+
+  const numRings = 14;
+  for (let i=0; i<numRings; i++) {
+    const t = (i/numRings + state.tunnelOffset/300 * 0.4) % 1;
+    const r = t * Math.min(cx,cy) * 1.05;
+    const alpha = clamp((1 - t) * 0.18, 0, 0.18);
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI*2);
+    ctx.strokeStyle = `rgba(105,255,154,${alpha})`;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
+
+  // Crosshair lines from center
+  const lineAlpha=0.06;
+  ctx.strokeStyle=`rgba(105,255,154,${lineAlpha})`;
+  ctx.lineWidth=1;
+  for (let a=0; a<8; a++) {
+    const angle = (a/8)*Math.PI*2;
+    ctx.beginPath();
+    ctx.moveTo(cx,cy);
+    ctx.lineTo(cx+Math.cos(angle)*Math.max(cx,cy)*1.5, cy+Math.sin(angle)*Math.max(cx,cy)*1.5);
+    ctx.stroke();
+  }
+}
+
+// ── Flash / burst helpers ─────────────────────────────
+function flashText(x,y,text) {
+  const el=document.createElement("div"); el.className="flashText";
+  el.textContent=text; el.style.left=x+"px"; el.style.top=y+"px";
+  world.appendChild(el);
+  let t=0;
+  function step(){ t+=0.028; el.style.top=(y-t*48)+"px"; el.style.opacity=String(1-t); if(t<1)requestAnimationFrame(step); else el.remove(); }
+  requestAnimationFrame(step);
+}
+
+function doBurst(x,y) {
+  const el=document.createElement("div"); el.className="burstEl";
+  el.style.left=(x-4)+"px"; el.style.top=(y-4)+"px";
+  world.appendChild(el);
+  let t=0;
+  function step(){ t+=0.055; el.style.transform=`scale(${1+t*2.2})`; el.style.opacity=String(1-t); if(t<1)requestAnimationFrame(step); else el.remove(); }
+  requestAnimationFrame(step);
+}
+
+// ── Reset ─────────────────────────────────────────────
+function resetGame(next=false) {
+  if (next) state.exprIndex=(state.exprIndex+1)%EXAMPLES.length;
+  state.exprText=EXAMPLES[state.exprIndex];
+  state.history=[]; state.flares=[]; state.shots=0; state.pops=0;
+  state.zoom=1; state.autoBlink=false; state.autoBlinkTimer=0; state.abBuffer="";
+  world.innerHTML="";
+
+  state.player.x=innerWidth/2;
+  state.player.y=innerHeight-100;
+
+  state.root=parseExpression(state.exprText);
+  layoutTree(state.root);
+  renderAll();
+  updateHistory();
+}
+
+// ── Main loop ─────────────────────────────────────────
+function animate(now) {
+  const dt=Math.min(0.05,(now-state.lastTime)/1000||0.016);
+  state.lastTime=now;
+
+  // Draw tunnel
+  drawTunnel(now);
+
+  // Player movement (WASD)
+  const spd=MOVE_SPEED*dt;
+  if (state.keys["KeyW"]||state.keys["ArrowUp"])    state.player.y-=spd;
+  if (state.keys["KeyS"]||state.keys["ArrowDown"])  state.player.y+=spd;
+  if (state.keys["KeyA"]||state.keys["ArrowLeft"])  state.player.x-=spd;
+  if (state.keys["KeyD"]||state.keys["ArrowRight"]) state.player.x+=spd;
+  state.player.x=clamp(state.player.x,0,innerWidth);
+  state.player.y=clamp(state.player.y,0,innerHeight);
+
+  // Autoblink
+  if (state.autoBlink) {
+    state.autoBlinkTimer-=dt;
+    if (state.autoBlinkTimer<=0) { blink(); state.autoBlinkTimer=AUTOBLINK_INTERVAL; }
+  }
+
+  // Update spheres
+  for (const m of state.nodes) updateNodeVisual(m, now);
+
+  // Sort: farther bubbles render "behind" (via z-index)
+  const sorted=[...state.nodes].sort((a,b)=>b.z-a.z);
+  for (let i=0;i<sorted.length;i++) {
+    const m=sorted[i];
+    if (m.el) m.el.style.zIndex=String(i+2);
+  }
+
+  // Check horizon crossings
+  checkHorizon();
+
+  // Update flares
+  for (let i=state.flares.length-1; i>=0; i--) {
+    const f=state.flares[i];
+    f.ttl-=dt; f.x+=f.vx*dt; f.y+=f.vy*dt;
+    f.el.style.left=f.x+"px"; f.el.style.top=f.y+"px";
+    let kill=false;
+    if (f.hit && f.hit.alive) {
+      if (Math.hypot(f.x-f.hit.screenX, f.y-f.hit.screenY) <= f.hit.screenR*0.75) {
+        popModel(f.hit, false); kill=true;
+      }
+    }
+    if (!kill && (f.ttl<=0||f.x<-40||f.y<-40||f.x>innerWidth+40||f.y>innerHeight+40)) kill=true;
+    if (kill) { doBurst(f.x,f.y); f.el.remove(); state.flares.splice(i,1); }
+  }
+
+  // Update ship position
+  shipEl.style.left=state.player.x+"px";
+  shipEl.style.top=state.player.y+"px";
+
+  updateUI();
+  requestAnimationFrame(animate);
+}
+
+// ── Input ─────────────────────────────────────────────
+document.addEventListener("mousemove",(e)=>{
+  state.pointer.x=e.clientX; state.pointer.y=e.clientY;
+  reticle.style.left=e.clientX+"px"; reticle.style.top=e.clientY+"px";
+});
+
+document.addEventListener("mousedown",(e)=>{ if(e.button===0) shoot(); });
+
+// H key + panelToggle button → toggle HUD visibility
+function togglePanels() { document.body.classList.toggle("panels-hidden"); }
+document.getElementById("panelToggle").addEventListener("click", togglePanels);
+
+// Key handling with "ab" sequence detection for autoblink
+document.addEventListener("keydown",(e)=>{
+  state.keys[e.code]=true;
+
+  // "ab" sequence detection
+  if (e.key==="a"||e.key==="A"||e.key==="b"||e.key==="B") {
+    state.abBuffer=(state.abBuffer+e.key.toLowerCase()).slice(-2);
+    if (state.abBuffer==="ab") {
+      state.autoBlink=!state.autoBlink;
+      state.autoBlinkTimer=0;
+      state.abBuffer="";
+      updateUI();
+      return;
+    }
+  } else {
+    state.abBuffer="";
+  }
+
+  if (e.code==="Space")   { e.preventDefault(); shoot(); }
+  if (e.key==="b"||e.key==="B") blink();
+  if (e.key==="h"||e.key==="H") togglePanels();
+  if (e.key==="r"||e.key==="R") resetGame(false);
+  if (e.key==="n"||e.key==="N") resetGame(true);
+});
+
+document.addEventListener("keyup",(e)=>{ state.keys[e.code]=false; });
+
+document.addEventListener("wheel",(e)=>{
+  e.preventDefault();
+  state.zoom=clamp(state.zoom+(e.deltaY>0?-0.07:0.07),0.4,2.8);
+  updateUI();
+},{passive:false});
+
+window.addEventListener("resize",()=>resetGame(false));
+
+// ── Virtual joystick (mobile) ─────────────────────────
+{
+  const zone  = document.getElementById("joystickZone");
+  const knob  = document.getElementById("joystickKnob");
+  const RADIUS = 35;
+  let active = false, touchId = null, originX = 0, originY = 0;
+
+  function joystickMove(cx, cy) {
+    const rect = zone.getBoundingClientRect();
+    const ox = rect.left + rect.width/2;
+    const oy = rect.top  + rect.height/2;
+    const dx = cx - ox, dy = cy - oy;
+    const dist = Math.min(Math.hypot(dx,dy), RADIUS);
+    const angle = Math.atan2(dy, dx);
+    const nx = Math.cos(angle)*dist, ny = Math.sin(angle)*dist;
+    knob.style.transform = `translate(calc(-50% + ${nx}px), calc(-50% + ${ny}px))`;
+    // Map to key-equivalent direction input
+    const threshold = RADIUS * 0.3;
+    state.keys["ArrowLeft"]  = nx < -threshold;
+    state.keys["ArrowRight"] = nx >  threshold;
+    state.keys["ArrowUp"]    = ny < -threshold;
+    state.keys["ArrowDown"]  = ny >  threshold;
+  }
+
+  function joystickRelease() {
+    active = false; touchId = null;
+    knob.style.transform = "translate(-50%,-50%)";
+    state.keys["ArrowLeft"] = state.keys["ArrowRight"] = false;
+    state.keys["ArrowUp"]   = state.keys["ArrowDown"]  = false;
+  }
+
+  zone.addEventListener("touchstart", e => {
+    e.preventDefault();
+    const t = e.changedTouches[0];
+    active = true; touchId = t.identifier;
+    joystickMove(t.clientX, t.clientY);
+  }, {passive:false});
+
+  zone.addEventListener("touchmove", e => {
+    e.preventDefault();
+    for (const t of e.changedTouches) {
+      if (t.identifier === touchId) { joystickMove(t.clientX, t.clientY); break; }
+    }
+  }, {passive:false});
+
+  zone.addEventListener("touchend",    joystickRelease, {passive:false});
+  zone.addEventListener("touchcancel", joystickRelease, {passive:false});
+}
+
+// Mobile blink + fire buttons
+document.getElementById("blinkBtn").addEventListener("touchstart", e => { e.preventDefault(); blink(); }, {passive:false});
+document.getElementById("fireBtn").addEventListener("touchstart",  e => {
+  e.preventDefault();
+  // Aim toward center of screen on mobile
+  state.pointer.x = innerWidth/2;
+  state.pointer.y = innerHeight/2;
+  shoot();
+}, {passive:false});
+
+// Two-finger tap anywhere to toggle panels (mobile)
+{
+  let twoFingerTimer = null;
+  document.addEventListener("touchstart", e => {
+    if (e.touches.length === 2) {
+      twoFingerTimer = setTimeout(togglePanels, 80);
+    }
+  }, {passive:true});
+  document.addEventListener("touchend", () => {
+    if (twoFingerTimer) { clearTimeout(twoFingerTimer); twoFingerTimer=null; }
+  }, {passive:true});
+}
+
+// ── Boot ──────────────────────────────────────────────
+resetGame(false);
+requestAnimationFrame(animate);
+
+})();
+</script>
+</body>
+</html>
