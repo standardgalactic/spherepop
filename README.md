@@ -8,6 +8,8 @@ Instead of starting from *sets, states, or representations*, Spherepop starts fr
 
 At its core, Spherepop replaces static foundations with a **constructive, history-based mereology** (part–whole relations built over time).
 
+[Spherepop Game Engine](https://standardgalactic.github.io/spherepop/game-engine.html) — *Playable Demo*
+
 ![](scope-intro.gif)
 
 Play the [Spellpop mini-game](https://standardgalactic.github.io/spherepop/spellpop.html)
