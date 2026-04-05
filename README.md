@@ -1,5 +1,9 @@
 # Spherepop
 
+Visit the [Facebook Page](https://facebook.com/spherepop)
+
+---
+
 [History as Identity](https://standardgalactic.github.io/spherepop/History%20as%20Identity.pdf)
 
 [Structured Irreversibility](https://standardgalactic.github.io/spherepop/Structured%20Irreversibility.pdf)
