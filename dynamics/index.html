@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Earth Monitor</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#000;color:#7cff7c;font-family:monospace;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:16px}
+canvas{display:block;border-radius:50%;background:#000}
+.controls{margin-top:14px;display:flex;gap:10px;align-items:center}
+button{background:#001400;border:1px solid #00ff00;color:#7cff7c;padding:8px 14px;cursor:pointer;font-family:monospace;font-size:13px}
+button:hover{background:#002200}
+.seek-bar{width:220px;height:8px;background:#001a00;border:1px solid #00aa44;border-radius:3px;cursor:pointer;overflow:hidden}
+.seek-fill{height:100%;width:0%;background:linear-gradient(90deg,#00ff44,#7cff7c)}
+.subs{margin-top:12px;max-width:600px;min-height:2.5em;opacity:.85;text-align:center;font-size:13px;line-height:1.5}
+.footer{margin-top:10px;font-size:.75em;opacity:.6}
+.footer a{color:#7cff7c;text-decoration:none}
+</style>
+</head>
+<body>
+
+<canvas id="c"></canvas>
+
+<div class="controls">
+  <button id="play">▶ Play</button>
+  <div class="seek-bar" id="seek"><div class="seek-fill" id="seekFill"></div></div>
+</div>
+
+<div id="subs" class="subs"></div>
+
+<div class="footer">
+  <a href="https://standardgalactic.github.io/spherepop/entropy_of_austerity.pdf" target="_blank">entropy_of_austerity.pdf</a>
+</div>
+
+<audio id="audio">
+  <source src="The_physics_of_the_austerity_trap.mp3">
+</audio>
+
+<script>
+const canvas = document.getElementById('c')
+const g = canvas.getContext('2d')
+const audio = document.getElementById('audio')
+const playBtn = document.getElementById('play')
+const subsEl = document.getElementById('subs')
+const seek = document.getElementById('seek')
+const seekFill = document.getElementById('seekFill')
+
+const SIZE = Math.min(460, window.innerWidth - 32)
+canvas.width = SIZE
+canvas.height = SIZE
+const R = SIZE * 0.37
+const cx = SIZE / 2
+const cy = SIZE / 2
+
+/* ── offscreen cloud buffer ── */
+const cloudCanvas = document.createElement('canvas')
+cloudCanvas.width = SIZE
+cloudCanvas.height = SIZE
+const cg = cloudCanvas.getContext('2d')
+
+/* ── seek bar ── */
+seek.onclick = e => {
+  if(!audio.duration) return
+  const r = seek.getBoundingClientRect()
+  audio.currentTime = ((e.clientX - r.left) / r.width) * audio.duration
+}
+
+/* ── audio init ── */
+let actx, analyser, timeBuf
+let smoothEnergy = 0
+let bandEnergy = [0,0,0,0]
+
+function initAudio(){
+  if(actx) return
+  actx = new (window.AudioContext||window.webkitAudioContext)()
+  analyser = actx.createAnalyser()
+  analyser.fftSize = 1024
+  analyser.smoothingTimeConstant = 0.85
+  const src = actx.createMediaElementSource(audio)
+  src.connect(analyser)
+  analyser.connect(actx.destination)
+  timeBuf = new Uint8Array(analyser.fftSize)
+}
+
+playBtn.onclick = () => {
+  initAudio()
+  if(audio.paused){ audio.play(); playBtn.textContent='⏸ Pause' }
+  else { audio.pause(); playBtn.textContent='▶ Play' }
+}
+
+/* ── universal VTT subtitle parser ── */
+let cues = []
+
+async function loadVTT(){
+  try{
+    const res = await fetch("The_physics_of_the_austerity_trap.vtt")
+    const text = await res.text()
+    const blocks = text.split("\n\n")
+    for(const b of blocks){
+      const lines = b.trim().split("\n")
+      // find the timestamp line (may be preceded by a cue identifier)
+      const tsLine = lines.find(l => l.includes("-->"))
+      if(!tsLine) continue
+      const tsIdx = lines.indexOf(tsLine)
+      const [start, end] = tsLine.split(" --> ").map(parseTime)
+      const caption = lines.slice(tsIdx + 1).join(" ")
+      if(caption.trim()) cues.push({ start, end, text: caption.trim() })
+    }
+  }catch(e){
+    console.warn("VTT load failed", e)
+  }
+}
+
+function parseTime(t){
+  t = t.trim()
+  const parts = t.split(":")
+  // handle both HH:MM:SS.mmm and MM:SS.mmm
+  if(parts.length === 3){
+    return (+parts[0])*3600 + (+parts[1])*60 + parseFloat(parts[2])
+  }
+  return (+parts[0])*60 + parseFloat(parts[1])
+}
+
+function updateSubs(){
+  const t = audio.currentTime
+  for(const c of cues){
+    if(t >= c.start && t <= c.end){
+      subsEl.textContent = c.text
+      return
+    }
+  }
+  subsEl.textContent = ""
+}
+
+audio.addEventListener('timeupdate', updateSubs)
+audio.addEventListener('seeked', updateSubs)
+audio.addEventListener('play', updateSubs)
+
+loadVTT()
+
+/* ── energy ── */
+function updateEnergy(){
+  if(audio.duration) seekFill.style.width = (audio.currentTime / audio.duration * 100) + '%'
+  if(!analyser) return
+
+  analyser.getByteTimeDomainData(timeBuf)
+  let e = 0
+  for(let i=0;i<timeBuf.length;i++){ const d=timeBuf[i]-128; e+=d*d }
+  e /= timeBuf.length
+  smoothEnergy += (Math.min(e/3000,1) - smoothEnergy) * 0.05
+
+  const freq = new Uint8Array(analyser.frequencyBinCount)
+  analyser.getByteFrequencyData(freq)
+  const band = Math.floor(freq.length/4)
+  for(let b=0;b<4;b++){
+    let s=0; for(let i=b*band;i<(b+1)*band;i++) s+=freq[i]
+    bandEnergy[b] += (s/band/255 - bandEnergy[b]) * 0.07
+  }
+}
+
+/* ── projection ── */
+const DEG = Math.PI/180
+let yaw = 0
+
+function project(lat, lon){
+  const la=lat*DEG, lo=lon*DEG
+  let x=Math.cos(la)*Math.cos(lo)
+  let y=Math.sin(la)
+  let z=Math.cos(la)*Math.sin(lo)
+  const c=Math.cos(yaw), s=Math.sin(yaw)
+  const rx=x*c+z*s
+  const rz=-x*s+z*c
+  return { x:cx+rx*R, y:cy-y*R, visible:rz>-0.05, depth:(rz+1)/2 }
+}
+
+/* ── continents ── */
+const continents = [
+  [[60,-140],[65,-120],[60,-90],[55,-60],[50,-55],[45,-60],[35,-75],[25,-80],[20,-87],[15,-90],[10,-85],[8,-77],[15,-75],[22,-100],[30,-115],[45,-125],[55,-130],[60,-140]],
+  [[10,-75],[8,-62],[5,-52],[0,-50],[-5,-35],[-10,-37],[-20,-40],[-33,-52],[-45,-65],[-55,-68],[-40,-62],[-25,-48],[-15,-38],[-5,-35],[0,-48],[5,-60],[10,-75]],
+  [[70,30],[65,25],[60,20],[55,5],[50,0],[45,0],[44,10],[38,15],[37,22],[40,28],[45,35],[50,30],[55,20],[60,25],[65,28],[70,30]],
+  [[37,10],[30,5],[15,-15],[5,-15],[-5,-5],[-15,12],[-25,15],[-35,20],[-34,26],[-28,32],[-15,36],[0,42],[10,44],[15,42],[22,37],[30,32],[35,25],[37,10]],
+  [[70,30],[68,60],[65,90],[60,120],[55,130],[45,135],[35,120],[25,120],[20,110],[10,100],[5,100],[10,77],[22,70],[28,50],[35,36],[40,38],[45,40],[50,50],[55,60],[60,60],[65,60],[70,30]],
+  [[-15,130],[-17,140],[-20,148],[-30,153],[-38,146],[-38,140],[-35,118],[-32,115],[-22,114],[-17,122],[-15,130]],
+  [[60,-44],[65,-52],[70,-54],[76,-65],[83,-45],[82,-25],[78,-18],[72,-22],[66,-36],[60,-44]]
+]
+
+function drawContinents(){
+  g.save()
+  g.strokeStyle='rgba(110,255,155,0.85)'
+  g.lineWidth=1.2
+  for(const poly of continents){
+    g.beginPath()
+    let started=false
+    for(const [la,lo] of poly){
+      const p=project(la,lo)
+      if(!p.visible){ started=false; continue }
+      started ? g.lineTo(p.x,p.y) : g.moveTo(p.x,p.y)
+      started=true
+    }
+    if(started) g.closePath()
+    g.stroke()
+    g.fillStyle='rgba(0,255,100,0.05)'
+    g.fill()
+  }
+  g.restore()
+}
+
+/* ── grid ── */
+function drawGrid(){
+  g.save()
+  g.strokeStyle='rgba(0,255,136,0.09)'
+  g.lineWidth=0.8
+  for(let lat=-60;lat<=60;lat+=30){
+    g.beginPath(); let first=true
+    for(let lon=-180;lon<=180;lon+=4){
+      const p=project(lat,lon)
+      if(!p.visible){ first=true; continue }
+      first ? g.moveTo(p.x,p.y) : g.lineTo(p.x,p.y)
+      first=false
+    }
+    g.stroke()
+  }
+  for(let lon=-150;lon<=180;lon+=30){
+    g.beginPath(); let first=true
+    for(let lat=-88;lat<=88;lat+=3){
+      const p=project(lat,lon)
+      if(!p.visible){ first=true; continue }
+      first ? g.moveTo(p.x,p.y) : g.lineTo(p.x,p.y)
+      first=false
+    }
+    g.stroke()
+  }
+  g.restore()
+}
+
+/* ── clouds ── */
+const clouds = []
+for(let i=0;i<5;i++)  clouds.push({ lat:-15+Math.random()*30,  baseLon:Math.random()*360-180, lon:0, baseSize:22+Math.random()*20, speed:0.008+Math.random()*0.008, band:0 })
+for(let i=0;i<4;i++)  clouds.push({ lat:40+Math.random()*20,   baseLon:Math.random()*360-180, lon:0, baseSize:18+Math.random()*16, speed:0.010+Math.random()*0.010, band:1 })
+for(let i=0;i<4;i++)  clouds.push({ lat:-40-Math.random()*20,  baseLon:Math.random()*360-180, lon:0, baseSize:18+Math.random()*16, speed:0.010+Math.random()*0.010, band:2 })
+for(let i=0;i<3;i++){
+  clouds.push({ lat:65+Math.random()*15,  baseLon:Math.random()*360-180, lon:0, baseSize:14+Math.random()*12, speed:0.006+Math.random()*0.006, band:3 })
+  clouds.push({ lat:-65-Math.random()*15, baseLon:Math.random()*360-180, lon:0, baseSize:14+Math.random()*12, speed:0.006+Math.random()*0.006, band:3 })
+}
+
+function drawClouds(t){
+  cg.clearRect(0,0,SIZE,SIZE)
+  cg.globalCompositeOperation='lighter'
+
+  for(const c of clouds){
+    c.lon = c.baseLon + t*c.speed
+    if(c.lon>180) c.lon-=360
+
+    const p=project(c.lat, c.lon)
+    if(!p.visible) continue
+
+    const depthScale=0.45+p.depth*0.55
+    const pulse=1+bandEnergy[c.band]*1.6+smoothEnergy*0.5
+    const r=c.baseSize*depthScale*pulse
+    const alpha=0.04+smoothEnergy*0.18
+
+    const grad=cg.createRadialGradient(p.x,p.y,0,p.x,p.y,r)
+    grad.addColorStop(0,  `rgba(140,255,160,${alpha})`)
+    grad.addColorStop(0.5,`rgba(120,220,140,${(alpha*0.6).toFixed(3)})`)
+    grad.addColorStop(1,  'rgba(0,0,0,0)')
+    cg.fillStyle=grad
+    cg.beginPath()
+    cg.arc(p.x,p.y,r,0,Math.PI*2)
+    cg.fill()
+  }
+
+  cg.globalCompositeOperation='source-over'
+  cg.filter='blur(16px)'
+  cg.drawImage(cloudCanvas,0,0)
+  cg.filter='none'
+
+  g.save()
+  g.beginPath()
+  g.arc(cx,cy,R,0,Math.PI*2)
+  g.clip()
+  g.globalAlpha=0.9
+  g.drawImage(cloudCanvas,0,0)
+  g.restore()
+}
+
+/* ── sphere ── */
+function drawSphere(){
+  const bg=g.createRadialGradient(cx-R*0.2,cy-R*0.2,R*0.1,cx,cy,R)
+  bg.addColorStop(0,'rgba(10,40,20,0.5)')
+  bg.addColorStop(0.7,'rgba(2,12,5,0.95)')
+  bg.addColorStop(1,'rgba(0,0,0,0.98)')
+  g.beginPath(); g.arc(cx,cy,R,0,Math.PI*2)
+  g.fillStyle=bg; g.fill()
+  g.strokeStyle='rgba(80,255,130,0.32)'
+  g.lineWidth=1.2; g.stroke()
+
+  const glow=g.createRadialGradient(cx,cy,0,cx,cy,R)
+  glow.addColorStop(0,`rgba(0,255,120,${0.02+smoothEnergy*0.07})`)
+  glow.addColorStop(1,'rgba(0,0,0,0)')
+  g.beginPath(); g.arc(cx,cy,R,0,Math.PI*2)
+  g.fillStyle=glow; g.fill()
+
+  for(let i=0;i<3;i++){
+    g.beginPath()
+    g.arc(cx,cy,R*(1.012+i*0.012),0,Math.PI*2)
+    g.strokeStyle=`rgba(100,255,160,${0.04+smoothEnergy*0.05})`
+    g.lineWidth=1; g.stroke()
+  }
+}
+
+/* ── stars ── */
+function drawStars(t){
+  const n=Math.floor(SIZE*SIZE/4200)
+  g.save()
+  for(let i=0;i<n;i++){
+    const hx=Math.sin(i*91.7+1.1)*43758.54
+    const hy=Math.sin(i*57.3+2.9+t*0.00003)*21781.13
+    const x=(hx-Math.floor(hx))*SIZE
+    const y=(hy-Math.floor(hy))*SIZE
+    const z=0.4+((Math.sin(i*12.9+0.7)*9182.33%1+1)%1)*0.6
+    g.fillStyle=`rgba(130,255,170,${(0.14+z*0.3).toFixed(2)})`
+    g.fillRect(x,y,z>0.85?2:1,z>0.85?2:1)
+  }
+  g.restore()
+}
+
+/* ── render loop ── */
+let t=0
+function draw(){
+  updateEnergy()
+  t++
+  yaw+=0.0012
+
+  g.fillStyle='rgba(0,0,0,0.18)'
+  g.fillRect(0,0,SIZE,SIZE)
+
+  drawStars(t)
+  drawSphere()
+  drawGrid()
+  drawContinents()
+  drawClouds(t)
+
+  requestAnimationFrame(draw)
+}
+draw()
+</script>
+</body>
+</html>
