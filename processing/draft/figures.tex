@@ -1,0 +1,440 @@
+%% figures.tex
+%% All TikZ figures for "Globally Persistent Recomposable Thought"
+%% Black and white. TikZ libraries loaded in main preamble.
+
+%% ─────────────────────────────────────────────────────────────────────────────
+%% FIGURE 1: Substrate vs Accelerant architecture
+%% ─────────────────────────────────────────────────────────────────────────────
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  every node/.style={align=center},
+  layer/.style={draw=black, thick, rounded corners=5pt, minimum width=10cm},
+  sublabel/.style={font=\footnotesize},
+  arrow/.style={-{Stealth[length=5pt]}, thick},
+  recurse/.style={-{Stealth[length=5pt]}, thick, dashed},
+]
+
+\node[layer, fill=gray!8, minimum height=2.0cm] (substrate) at (0,0) {};
+\node[anchor=north west, font=\footnotesize\bfseries]
+  at (substrate.north west) [xshift=8pt, yshift=-6pt] {Substrate Layer};
+\node[sublabel] at (0,-0.1)
+  {repositories \quad forks \quad issue trackers\\[2pt]
+   CI pipelines \quad papers \quad commit histories};
+
+\node[layer, fill=gray!18, minimum height=1.4cm] (graph) at (0, 2.4) {};
+\node[anchor=north west, font=\footnotesize\bfseries]
+  at (graph.north west) [xshift=8pt, yshift=-6pt]
+  {Dependency \& Replay Layer};
+\node[sublabel] at (0,2.4)
+  {dependency graph \quad semantic attractors \quad replay trajectories};
+
+\node[layer, fill=gray!30, minimum height=1.4cm] (model) at (0, 4.4) {};
+\node[anchor=north west, font=\footnotesize\bfseries]
+  at (model.north west) [xshift=8pt, yshift=-6pt] {Synthesis Layer (LLM)};
+\node[sublabel] at (0,4.4)
+  {embeddings \quad autocomplete \quad code synthesis};
+
+\draw[arrow] ([xshift=-1.5cm]substrate.north) -- ([xshift=-1.5cm]graph.south);
+\draw[arrow] ([xshift=-1.5cm]graph.north)     -- ([xshift=-1.5cm]model.south);
+\node[font=\footnotesize\itshape] at (-2.4, 1.2) {feeds};
+\node[font=\footnotesize\itshape] at (-2.4, 3.4) {trains};
+
+%% Recursive loop — on right, tight to box
+\draw[recurse]
+  (model.east) .. controls +(1.2,0) and +(1.2,0) .. (substrate.east);
+\node[font=\footnotesize, right=14pt] at (model.east |- {(0,2.2)})
+  {AI-generated repos\\feed training data};
+
+\end{tikzpicture}
+\caption{The substrate--accelerant architecture. The LLM synthesis layer sits
+\emph{inside} a larger recursion loop: models generate repositories that feed
+future training. The substrate layer preceded the synthesis layer by over a
+decade.}
+\label{fig:substrate}
+\end{figure}
+
+%% ─────────────────────────────────────────────────────────────────────────────
+%% FIGURE 2: Three tiers of admissibility (geometric)
+%% ─────────────────────────────────────────────────────────────────────────────
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  every node/.style={align=center},
+]
+
+\fill[gray!12] (-5.2,-2.8) rectangle (5.2,2.8);
+\draw[black] (-5.2,-2.8) rectangle (5.2,2.8);
+
+\fill[gray!28] (0,0) ellipse (4.1cm and 2.2cm);
+\draw[black, thick] (0,0) ellipse (4.1cm and 2.2cm);
+
+\fill[gray!5] (0,0) ellipse (2.3cm and 1.3cm);
+\draw[black, thick, dashed] (0,0) ellipse (2.3cm and 1.3cm);
+
+\node[font=\footnotesize] at (1.8, 1.45) {$Z(\Phi)$};
+
+\node[font=\small\bfseries] at (0, 0.35) {Tier 1};
+\node[font=\footnotesize] at (0,-0.3) {stable normal form\\$\Phi>0$};
+
+\node[font=\small\bfseries] at (3.15, 1.6) {Tier 2};
+\node[font=\footnotesize] at (3.15, 0.95) {recoverable};
+
+\node[font=\small\bfseries] at (-4.0, 2.3) {Tier 3};
+\node[font=\footnotesize] at (-4.0, 1.75) {no replay\\structure};
+
+\foreach \x/\y in {0.3/0.5,-0.4/0.1,0.1/-0.5,-0.2/0.8,0.6/-0.2}{
+  \fill[black] (\x,\y) circle (2.5pt);
+}
+\foreach \x/\y in {2.2/1.0,-1.9/1.3,2.7/-0.6,-2.6,-0.3,1.5/-1.6}{
+  \draw[black, thick] (\x,\y) circle (2.5pt);
+}
+\foreach \x/\y in {4.4/1.3,-4.6/1.9,4.6,-1.6,-4.1,-1.9,3.8,2.4}{
+  \draw[black] (\x-0.12,\y-0.12) rectangle (\x+0.12,\y+0.12);
+}
+
+\draw[-{Stealth[length=4pt]}, thick] (2.2,1.0) -- (1.2,0.6);
+\node[font=\footnotesize] at (1.85, 1.45) {fork\\repairs};
+
+\draw[-{Stealth[length=4pt]}, thick, dashed] (2.7,-0.6) -- (3.55,-1.4);
+\node[font=\footnotesize] at (4.2,-0.7) {collapses};
+
+\end{tikzpicture}
+\caption{The three tiers of admissibility. Tier~1 (inner, white): stable
+$\Phi>0$, robust contribution. Tier~2 (middle gray annulus): near $Z(\Phi)$,
+recoverable via forking. Tier~3 (outer, darker): no replay structure,
+outside the admissibility manifold.}
+\label{fig:admissibility}
+\end{figure}
+
+%% ─────────────────────────────────────────────────────────────────────────────
+%% FIGURE 3: Replay geometry
+%% ─────────────────────────────────────────────────────────────────────────────
+\begin{figure}[p]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  every node/.style={align=center},
+]
+
+\fill[gray!18] (7.8,-1.35) ellipse (1.1cm and 0.9cm);
+\draw[black, thick] (7.8,-1.35) ellipse (1.1cm and 0.9cm);
+\node[font=\footnotesize] at (7.8,-1.35) {attractor\\basin};
+
+\fill[gray!40] (-0.3,0) circle (7pt);
+\node[font=\footnotesize, below=5pt] at (-0.3,0) {origin};
+
+\draw[black, thick, -{Stealth[length=4pt]}]
+  (-0.3,0) .. controls (2,1.3) and (5.2,0.8) .. (7.8,-1.35);
+\node[font=\footnotesize, above] at (3.5, 0.95) {well-formed fork};
+
+\draw[black, thick, dashed, -{Stealth[length=4pt]}]
+  (-0.3,0) .. controls (1.5,-1.5) and (3.3,-2.2) ..
+  (5.0,-0.85) .. controls (6.1,-0.1) and (6.8,-0.75) .. (7.8,-1.35);
+\node[font=\footnotesize] at (2.8,-2.35) {divergence \& repair};
+
+\draw[black, thick, loosely dashed, -{Stealth[length=4pt]}]
+  (-0.3,0) .. controls (1.8,0.2) and (4.3,2.4) ..
+  (5.6,0.5) .. controls (6.5,-0.65) and (7.1,-1.05) .. (7.8,-1.35);
+\node[font=\footnotesize] at (4.6, 2.35) {reinterpretation};
+
+\draw[black, thick, dotted]
+  (-0.3,0) .. controls (1.3,-2.8) and (3.9,-2.8) .. (4.8,-1.9);
+\fill[black] (4.8,-1.9) circle (4pt);
+\node[font=\footnotesize, below] at (3.5,-2.95) {near-boundary (stalls)};
+
+\fill[black] (1.9,0.95) circle (3pt);
+\node[font=\tiny, above right] at (1.9,0.95) {fork A};
+\fill[black] (3.3,-1.4) circle (3pt);
+\node[font=\tiny, below right] at (3.3,-1.4) {repair};
+\fill[black] (5.6,0.5) circle (3pt);
+\node[font=\tiny, above right] at (5.6,0.5) {fork B};
+
+\draw[-{Stealth[length=4pt]}] (-0.8,-3.5) -- (9.2,-3.5);
+\node[font=\footnotesize, right] at (9.2,-3.5) {developmental time};
+\draw[-{Stealth[length=4pt]}] (-0.8,-3.5) -- (-0.8,1.9);
+\node[font=\footnotesize, rotate=90, above] at (-1.45,-0.8) {semantic distance};
+
+\end{tikzpicture}
+\caption{Repository replay as braided attractor trajectories. Forks, repairs,
+and reinterpretations converge on the attractor basin despite local divergence.
+Near-boundary trajectories may stall. The basin is defined by convergence of
+the replay distribution $\sigma_n \sim \mathbb{P}_n$.}
+\label{fig:replay}
+\end{figure}
+
+%% ─────────────────────────────────────────────────────────────────────────────
+%% FIGURE 4: Lamphron–lamphrodyne dual cycle
+%% ─────────────────────────────────────────────────────────────────────────────
+\begin{figure}[p]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  every node/.style={align=center},
+  vortex/.style={draw=black, thick, ellipse,
+                 minimum width=4.0cm, minimum height=2.2cm},
+  arrow/.style={-{Stealth[length=6pt]}, very thick},
+]
+
+\node[vortex, fill=gray!10] (L) at (-3.0,0) {};
+\node[font=\small\bfseries] at (-3.0, 0.5) {lamphron};
+\node[font=\footnotesize] at (-3.0,-0.05) {specialization};
+\node[font=\tiny] at (-3.0,-0.65) {local structure formation};
+
+\node[vortex, fill=gray!28] (R) at (3.0,0) {};
+\node[font=\small\bfseries] at (3.0, 0.5) {lamphrodyne};
+\node[font=\footnotesize] at (3.0,-0.05) {integration};
+\node[font=\tiny] at (3.0,-0.65) {composite systems};
+
+\fill[gray!18] (0,0) ellipse (0.95cm and 0.6cm);
+\draw[black] (0,0) ellipse (0.95cm and 0.6cm);
+\node[font=\tiny] at (0,0) {coupling};
+
+\draw[arrow, bend left=35]
+  (-1.75,0.72) to
+  node[above, font=\footnotesize, yshift=1pt]
+  {nucleation sites feed integration}
+  (1.75,0.72);
+
+\draw[arrow, bend left=35]
+  (1.75,-0.72) to
+  node[below, font=\footnotesize, yshift=-1pt]
+  {new problems generate specialized components}
+  (-1.75,-0.72);
+
+\draw[arrow] (0,-2.1) -- (0,-2.8);
+\node[font=\footnotesize] at (0,-3.1) {increasing capability density};
+
+\end{tikzpicture}
+\caption{The lamphron--lamphrodyne dual cycle. Lamphron (compact, specialized)
+repositories create conditions for lamphrodyne integration (composite systems).
+Integration generates new problems that spawn new specialized repositories,
+closing the recursive loop.}
+\label{fig:lamphron}
+\end{figure}
+
+%% ─────────────────────────────────────────────────────────────────────────────
+%% FIGURE 5: Semantic quantization sequence
+%% ─────────────────────────────────────────────────────────────────────────────
+\begin{figure}[p]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  every node/.style={align=center},
+  stage/.style={draw=black, thick, rounded corners=4pt,
+                minimum width=3.0cm, minimum height=2.6cm},
+  arrow/.style={-{Stealth[length=6pt]}, very thick},
+]
+
+\node[stage, fill=gray!8] (S1) at (0,0) {};
+\node[font=\footnotesize\bfseries] at (0,0.95) {\texttt{AmbiBFMachine}};
+\foreach \i/\v in {-0.85/{$+$},-0.42/{$-$},0/{$+$},0.42/{$-$},0.85/{$+$}}{
+  \draw[black] (\i-0.18,-0.12) rectangle (\i+0.18,0.38);
+  \node[font=\tiny] at (\i,0.13) {\v};
+}
+\node[font=\footnotesize] at (0,-0.68) {stochastic tape};
+
+\node[stage, fill=gray!20] (S2) at (4.2,0) {};
+\node[font=\footnotesize\bfseries] at (4.2,0.95) {\texttt{Spherepop}};
+\foreach \i in {-0.84,-0.08,0.68}{
+  \fill[gray!45] (\i+4.2-0.18,-0.12) rectangle (\i+4.2+0.18,0.38);
+  \draw[black] (\i+4.2-0.18,-0.12) rectangle (\i+4.2+0.18,0.38);
+}
+\foreach \i in {-0.46,0.30}{
+  \draw[black] (\i+4.2-0.18,-0.12) rectangle (\i+4.2+0.18,0.38);
+}
+\draw[black, thick] (4.2,0.13) ellipse (0.78cm and 0.35cm);
+\node[font=\tiny] at (4.2,0.13) {bubble};
+\node[font=\footnotesize] at (4.2,-0.68) {parity fields};
+
+\node[stage, fill=gray!35] (S3) at (8.4,0) {};
+\node[font=\footnotesize\bfseries] at (8.4,0.95) {Quantum SpherePop};
+\foreach \x/\y/\th in
+  {-0.5/0.25/40,-0.12/0.25/140,0.26/0.25/70,
+   -0.5/-0.15/120,-0.12/-0.15/20,0.26/-0.15/200}{
+  \fill[black] (\x+8.4,\y) circle (2.5pt);
+  \draw[-{Stealth[length=2pt]}, black, thick]
+    (\x+8.4,\y) -- +({cos(\th)*0.19},{sin(\th)*0.19});
+}
+\node[font=\footnotesize] at (8.4,-0.68) {phase lattice $\Psi_i$};
+
+\draw[arrow] (S1.east) -- node[above,font=\tiny,yshift=2pt]
+  {stabilization} (S2.west);
+\draw[arrow] (S2.east) -- node[above,font=\tiny,yshift=2pt]
+  {quantization} (S3.west);
+
+\node[font=\footnotesize, draw=black, rounded corners=3pt,
+      inner sep=4pt, fill=white]
+  at (4.2,-1.95)
+  {invariant developmental geometry preserved across all three stages};
+
+\end{tikzpicture}
+\caption{The semantic quantization sequence. \texttt{AmbiBFMachine}: raw
+stochastic tape. \texttt{Spherepop}: parity-preserving metastable bubbles.
+Quantum SpherePop: coupled phase lattice $\Psi_i = r_i e^{i\theta_i}$.
+Each stage preserves invariant developmental geometry while increasing
+representational richness.}
+\label{fig:quantization}
+\end{figure}
+
+%% ─────────────────────────────────────────────────────────────────────────────
+%% FIGURE 6: GitHub as externalized working memory
+%% ─────────────────────────────────────────────────────────────────────────────
+\begin{figure}[p]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  every node/.style={align=center},
+  block/.style={draw=black, thick, rounded corners=3pt,
+                minimum width=2.9cm, minimum height=0.72cm, font=\footnotesize},
+  arrow/.style={-{Stealth[length=4pt]}, thick},
+  hlabel/.style={font=\small\bfseries},
+]
+
+\node[hlabel] at (-3.7,3.1) {Biological cortex};
+\node[hlabel] at (3.7,3.1)  {GitHub ecosystem};
+
+\node[block,fill=gray!10]  (bmod)   at (-3.7,2.2) {local modules};
+\node[block,fill=gray!10]  (brecur) at (-3.7,1.1) {recurrent loops};
+\node[block,fill=gray!10]  (bsal)   at (-3.7,0.0) {salience routing};
+\node[block,fill=gray!10]  (bsync)  at (-3.7,-1.1) {synchronization};
+\node[block,fill=gray!10]  (berr)   at (-3.7,-2.2) {error correction};
+
+\draw[arrow] (bmod)--(brecur); \draw[arrow] (brecur)--(bsal);
+\draw[arrow] (bsal)--(bsync); \draw[arrow] (bsync)--(berr);
+\draw[arrow, bend right=50] (berr.west) to (bmod.west);
+
+\node[block,fill=gray!28] (grepo) at (3.7,2.2)  {repositories};
+\node[block,fill=gray!28] (gpr)   at (3.7,1.1)  {pull requests};
+\node[block,fill=gray!28] (gstar) at (3.7,0.0)  {stars \& watchers};
+\node[block,fill=gray!28] (gci)   at (3.7,-1.1) {CI pipelines};
+\node[block,fill=gray!28] (giss)  at (3.7,-2.2) {issue trackers};
+
+\draw[arrow] (grepo)--(gpr); \draw[arrow] (gpr)--(gstar);
+\draw[arrow] (gstar)--(gci); \draw[arrow] (gci)--(giss);
+\draw[arrow, bend left=50] (giss.east) to (grepo.east);
+
+\foreach \l/\r in {bmod/grepo,brecur/gpr,bsal/gstar,bsync/gci,berr/giss}{
+  \draw[{Stealth[length=3pt]}-{Stealth[length=3pt]}, thick]
+    (\l.east) -- node[font=\tiny,above] {$\cong$} (\r.west);
+}
+
+\node[font=\footnotesize, draw=black, rounded corners=3pt,
+      inner sep=4pt, fill=white, text width=8.5cm]
+  at (0,-3.25)
+  {structural homology: distributed working memory through
+   recurrent salience-routed correction loops};
+
+\end{tikzpicture}
+\caption{Structural homology between the biological cortex and the GitHub
+ecosystem. Both implement distributed working memory through analogous
+functional layers. The homology is functional and architectural.}
+\label{fig:cortex}
+\end{figure}
+
+%% ─────────────────────────────────────────────────────────────────────────────
+%% FIGURE 7 (Appendix): Parity-preserving bubble region
+%% ─────────────────────────────────────────────────────────────────────────────
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  every node/.style={align=center},
+  cell/.style={draw=black, minimum width=0.74cm, minimum height=0.7cm,
+               font=\footnotesize},
+]
+
+\foreach \i in {-6,...,6}{
+  \pgfmathparse{mod(\i,2)==0 ? "gray!25" : "white"}
+  \edef\fillcol{\pgfmathresult}
+  \node[cell, fill=\fillcol] (C\i) at (\i*0.76,0) {};
+  \node[font=\tiny, below=7pt] at (\i*0.76,0) {\i};
+}
+
+\foreach \i/\v in
+  {-6/0,-5/0,-4/0,-3/{$\!\pm\!1$},-2/0,-1/{$\!\pm\!1$},
+   0/{$\!\pm\!1$},1/0,2/{$\!\pm\!1$},3/0,4/0,5/0,6/0}{
+  \node[font=\tiny] at (\i*0.76,0) {\v};
+}
+
+\draw[black, very thick]
+  (-2*0.76-0.37,0.5) -- (-2*0.76-0.37,0.88)
+  -- (2*0.76+0.37,0.88) -- (2*0.76+0.37,0.5);
+\node[font=\footnotesize] at (0,1.1)
+  {bubble $\Omega_k$: center $c_k=0$, radius $r_k=2$, parity $\pi_k=0$};
+
+\foreach \i in {-6,-5,4,5,6}{
+  \draw[-{Stealth[length=3pt]},black!50]
+    (\i*0.76,0.35) -- +({0.12},{0.25});
+  \draw[-{Stealth[length=3pt]},black!50]
+    (\i*0.76,-0.35) -- +({0.12},{-0.25});
+}
+
+\fill[black] (0,-0.88) -- (-0.11,-1.15) -- (0.11,-1.15) -- cycle;
+\node[font=\tiny,below=1pt] at (0,-1.15) {ptr};
+
+\end{tikzpicture}
+\caption{Parity-preserving bubble region on the \ambibf{} tape. Gray cells
+(even index) form the bubble support $\Omega_k$. Drift arrows on exterior
+cells illustrate stochastic noise the bubble must survive.}
+\label{fig:bubble}
+\end{figure}
+
+%% ─────────────────────────────────────────────────────────────────────────────
+%% FIGURE 8 (Appendix): Semantic mortality and stabilization
+%% ─────────────────────────────────────────────────────────────────────────────
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+  font=\small,
+  every node/.style={align=center},
+  arrow/.style={-{Stealth[length=4pt]}, thick},
+]
+
+\draw[arrow] (0,0) -- (9.0,0)
+  node[right,font=\footnotesize] {time $t$};
+\draw[arrow] (0,0) -- (0,3.9)
+  node[above,font=\footnotesize] {$E(B_k)$};
+
+\draw[black!40,dashed] (0,0.65) -- (9.0,0.65);
+\node[font=\footnotesize,left] at (0,0.65) {$\varepsilon$};
+
+%% Unstabilized
+\draw[black, very thick, dashed]
+  (0,3.2) .. controls (1.5,2.8) and (2.8,2.0) ..
+  (3.7,1.35) .. controls (4.7,0.65) and (5.7,0.18) .. (7.8,0.04);
+\node[font=\footnotesize,right] at (7.6,0.55) {unstabilized};
+
+%% Stabilized
+\draw[black, very thick]
+  (0,3.2)
+  ..controls(0.9,3.0)and(1.3,2.55)..(1.85,2.75)
+  ..controls(2.45,2.95)and(2.85,2.35)..(3.5,2.55)
+  ..controls(4.1,2.75)and(4.55,2.15)..(5.1,2.35)
+  ..controls(5.7,2.55)and(6.1,1.95)..(6.75,2.15)
+  ..controls(7.15,2.35)and(7.55,1.95)..(8.2,2.05);
+\node[font=\footnotesize,right] at (7.8,2.6) {stabilized};
+
+\foreach \x in {1.85,3.5,5.1,6.75}{
+  \draw[black] (\x,0)--(\x,0.16);
+  \node[font=\tiny,below] at (\x,0) {$\mathcal{R}_\lambda$};
+}
+
+\fill[black] (5.8,0.65) circle (2.5pt);
+\draw[black,dashed] (5.8,0)--(5.8,0.65);
+\node[font=\tiny,below] at (5.8,0) {mortality};
+
+\draw[black,very thick] (0.4,-0.9)--(1.2,-0.9);
+\node[font=\footnotesize,right] at (1.3,-0.9) {stabilized};
+\draw[black,very thick,dashed] (4.0,-0.9)--(4.8,-0.9);
+\node[font=\footnotesize,right] at (4.9,-0.9) {unstabilized};
+
+\end{tikzpicture}
+\caption{Semantic mortality and stabilization. Without $\mathcal{R}_\lambda$,
+bubble energy $E(B_k)$ decays to zero almost surely (dashed), crossing
+$\varepsilon$. With active stabilization (solid), repeated reinforcement
+maintains the bubble above threshold.}
+\label{fig:mortality}
+\end{figure}

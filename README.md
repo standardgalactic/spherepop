@@ -1,7 +1,12 @@
 # Spherepop
 
-Visit the [Facebook Page](https://facebook.com/spherepop)
+[Globally Persistent Recomposable Thought](https://standardgalactic.github.io/spherepop/intelligence-explosion.pdf)
 
+* [Github Is the Real Intelligence Explosion](https://standardgalactic.github.io/spherepop/processing/) — *Audio Overview*
+
+<!--
+Visit the [Facebook Page](https://facebook.com/spherepop)
+-->
 ---
 
 [History as Identity](https://standardgalactic.github.io/spherepop/History%20as%20Identity.pdf)
