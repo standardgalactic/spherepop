@@ -1,10 +1,12 @@
 # Spherepop
 
+[Music](https://standardgalactic.github.io/spherepop/music/)
+
+<!--
 [Globally Persistent Recomposable Thought](https://standardgalactic.github.io/spherepop/intelligence-explosion.pdf)
 
 * [Github Is the Real Intelligence Explosion](https://standardgalactic.github.io/spherepop/processing/) — *Audio Overview*
 
-<!--
 Visit the [Facebook Page](https://facebook.com/spherepop)
 -->
 ---

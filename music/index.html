@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spherepop</title>
+
+<style>
+
+:root{
+  --cyan:#8cfbff;
+  --pink:#ff4fd8;
+  --purple:#8a5cff;
+  --deep:#050510;
+  --laser:#79f7ff;
+}
+
+*{
+  box-sizing:border-box;
+}
+
+html,body{
+  margin:0;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+
+  background:
+    radial-gradient(circle at center,
+      #101024 0%,
+      #070711 40%,
+      #020205 100%);
+
+  color:var(--cyan);
+
+  font-family:
+    "Trebuchet MS",
+    "Arial",
+    sans-serif;
+
+  touch-action:manipulation;
+}
+
+/* =====================================================
+   NEW WAVE LASER GRID
+===================================================== */
+
+body::before{
+  content:"";
+
+  position:fixed;
+  inset:0;
+
+  pointer-events:none;
+
+  z-index:2;
+
+  background:
+
+    repeating-linear-gradient(
+      to bottom,
+      rgba(255,255,255,.025) 0px,
+      rgba(255,255,255,.025) 1px,
+      transparent 2px,
+      transparent 4px
+    );
+
+  mix-blend-mode:screen;
+
+  opacity:.22;
+}
+
+/* =====================================================
+   STARFIELD
+===================================================== */
+
+#bg{
+  position:fixed;
+  inset:0;
+  z-index:1;
+}
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+.header{
+
+  position:fixed;
+
+  top:18px;
+  left:50%;
+
+  transform:translateX(-50%);
+
+  width:min(94vw,900px);
+
+  text-align:center;
+
+  z-index:40;
+}
+
+.title{
+
+  font-size:clamp(18px,3vw,34px);
+
+  letter-spacing:.32em;
+
+  text-transform:uppercase;
+
+  color:#d7f8ff;
+
+  text-shadow:
+    0 0 12px var(--cyan),
+    0 0 28px var(--pink);
+
+  margin-bottom:10px;
+}
+
+.subtitle{
+
+  font-size:11px;
+
+  letter-spacing:.24em;
+
+  text-transform:uppercase;
+
+  color:#ff9df2;
+
+  opacity:.8;
+}
+
+/* =====================================================
+   TRACKS
+===================================================== */
+
+.tracks{
+
+  position:fixed;
+
+  top:112px;
+  left:50%;
+
+  transform:translateX(-50%);
+
+  display:flex;
+  gap:12px;
+
+  flex-wrap:wrap;
+
+  justify-content:center;
+
+  width:min(94vw,900px);
+
+  z-index:50;
+}
+
+.track{
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(20,20,40,.92),
+      rgba(10,10,18,.92)
+    );
+
+  border:
+    1px solid rgba(140,251,255,.22);
+
+  color:#dffcff;
+
+  padding:10px 16px;
+
+  font-size:11px;
+
+  letter-spacing:.14em;
+
+  text-transform:uppercase;
+
+  cursor:pointer;
+
+  transition:.22s;
+
+  box-shadow:
+    0 0 12px rgba(121,247,255,.08);
+
+  backdrop-filter:blur(3px);
+}
+
+.track:hover{
+
+  transform:translateY(-2px);
+
+  border-color:
+    rgba(255,79,216,.55);
+
+  box-shadow:
+    0 0 22px rgba(255,79,216,.18);
+}
+
+.track.active{
+
+  border-color:
+    rgba(121,247,255,.75);
+
+  color:#fff;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(40,20,60,.95),
+      rgba(8,10,20,.95)
+    );
+
+  box-shadow:
+    0 0 28px rgba(121,247,255,.24),
+    0 0 60px rgba(255,79,216,.08);
+}
+
+/* =====================================================
+   PORTAL
+===================================================== */
+
+.portal-wrap{
+
+  position:fixed;
+  inset:0;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  z-index:10;
+}
+
+.portal{
+
+  position:relative;
+
+  width:min(560px,88vw);
+  height:min(560px,88vw);
+
+  border-radius:50%;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  background:
+    radial-gradient(circle at center,
+      rgba(24,18,52,.98) 0%,
+      rgba(8,8,18,.98) 48%,
+      rgba(0,0,0,1) 100%);
+
+  border:
+    2px solid rgba(121,247,255,.18);
+
+  box-shadow:
+
+    inset 0 0 140px rgba(121,247,255,.06),
+
+    inset 0 0 240px rgba(255,79,216,.04),
+
+    0 0 40px rgba(121,247,255,.12),
+
+    0 0 120px rgba(255,79,216,.08);
+}
+
+/* laser ring */
+
+.portal::before{
+
+  content:"";
+
+  position:absolute;
+
+  inset:18px;
+
+  border-radius:50%;
+
+  border:
+    1px solid rgba(255,79,216,.22);
+
+  box-shadow:
+    0 0 18px rgba(255,79,216,.18);
+
+  animation:
+    rotateSlow 18s linear infinite;
+}
+
+.portal::after{
+
+  content:"";
+
+  position:absolute;
+
+  inset:38px;
+
+  border-radius:50%;
+
+  border:
+    1px solid rgba(121,247,255,.16);
+
+  box-shadow:
+    0 0 18px rgba(121,247,255,.12);
+
+  animation:
+    rotateSlowReverse 24s linear infinite;
+}
+
+@keyframes rotateSlow{
+  from{ transform:rotate(0deg); }
+  to{ transform:rotate(360deg); }
+}
+
+@keyframes rotateSlowReverse{
+  from{ transform:rotate(360deg); }
+  to{ transform:rotate(0deg); }
+}
+
+/* =====================================================
+   VISUALIZER
+===================================================== */
+
+#viz{
+
+  width:100%;
+  height:100%;
+
+  border-radius:50%;
+
+  display:block;
+}
+
+/* =====================================================
+   STATUS
+===================================================== */
+
+.status{
+
+  position:fixed;
+
+  bottom:22px;
+  left:50%;
+
+  transform:translateX(-50%);
+
+  width:min(92vw,720px);
+
+  text-align:center;
+
+  font-size:11px;
+
+  letter-spacing:.18em;
+
+  text-transform:uppercase;
+
+  color:#d3f7ff;
+
+  opacity:.58;
+
+  z-index:70;
+}
+
+/* =====================================================
+   GLITCH
+===================================================== */
+
+.glitch{
+
+  position:fixed;
+  inset:0;
+
+  pointer-events:none;
+
+  opacity:0;
+
+  z-index:160;
+}
+
+.glitch.active{
+
+  animation:
+    glitch .22s linear;
+}
+
+@keyframes glitch{
+
+  0%{
+    opacity:0;
+    transform:translate(0,0);
+  }
+
+  20%{
+    opacity:.18;
+    transform:translate(-8px,2px);
+  }
+
+  55%{
+    opacity:.12;
+    transform:translate(10px,-4px);
+  }
+
+  100%{
+    opacity:0;
+    transform:translate(0,0);
+  }
+}
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media(max-width:700px){
+
+  .title{
+    font-size:20px;
+    letter-spacing:.22em;
+  }
+
+  .tracks{
+    top:108px;
+    gap:8px;
+  }
+
+  .track{
+    font-size:10px;
+    padding:8px 10px;
+  }
+
+  .portal{
+    width:min(96vw,96vw);
+    height:min(96vw,96vw);
+  }
+
+  .status{
+    bottom:12px;
+    font-size:10px;
+  }
+}
+
+</style>
+</head>
+
+<body>
+
+<canvas id="bg"></canvas>
+
+<div class="header">
+
+  <div class="title">
+    Spherepop
+  </div>
+
+  <div class="subtitle">
+    Event Geometry / Recursive Histories / Timeline Persistence
+  </div>
+
+</div>
+
+<div class="tracks">
+
+<button class="track active">
+  Spherepop
+</button>
+
+<button class="track">
+  Alternate Version
+</button>
+
+</div>
+
+<div class="portal-wrap">
+
+  <div class="portal">
+
+    <canvas id="viz"></canvas>
+
+  </div>
+
+</div>
+
+<div class="status">
+  TOUCH OR CLICK ANYWHERE TO PLAY / PAUSE
+</div>
+
+<div class="glitch" id="glitch"></div>
+
+<audio id="audio"></audio>
+
+<script>
+
+/* =====================================================
+   TRACKS
+===================================================== */
+
+const TRACKS = [
+
+  "Spherepop.mp3",
+
+  "Spherepop - alternate version.mp3"
+
+]
+
+let currentTrack = 0
+
+/* =====================================================
+   DOM
+===================================================== */
+
+const audio =
+  document.getElementById("audio")
+
+const buttons =
+  [...document.querySelectorAll(".track")]
+
+const glitch =
+  document.getElementById("glitch")
+
+/* =====================================================
+   AUDIO
+===================================================== */
+
+let audioCtx
+let analyser
+let data
+
+function initAudio(){
+
+  if(audioCtx) return
+
+  audioCtx =
+    new (
+      window.AudioContext ||
+      window.webkitAudioContext
+    )()
+
+  analyser =
+    audioCtx.createAnalyser()
+
+  analyser.fftSize = 2048
+
+  const src =
+    audioCtx.createMediaElementSource(audio)
+
+  src.connect(analyser)
+
+  analyser.connect(
+    audioCtx.destination
+  )
+
+  data =
+    new Uint8Array(
+      analyser.frequencyBinCount
+    )
+}
+
+/* =====================================================
+   TRACK LOAD
+===================================================== */
+
+async function loadTrack(i,autoplay=true){
+
+  currentTrack =
+    ((i % TRACKS.length) + TRACKS.length)
+    % TRACKS.length
+
+  audio.src =
+    TRACKS[currentTrack]
+
+  audio.load()
+
+  buttons.forEach(
+    b=>b.classList.remove('active')
+  )
+
+  buttons[currentTrack]
+    .classList.add('active')
+
+  if(autoplay){
+
+    try{
+      await audio.play()
+    }catch(e){}
+  }
+}
+
+buttons.forEach((btn,i)=>{
+
+  btn.onclick = async e=>{
+
+    e.stopPropagation()
+
+    initAudio()
+
+    if(audioCtx.state==="suspended")
+      await audioCtx.resume()
+
+    loadTrack(i,true)
+  }
+})
+
+audio.addEventListener('ended',()=>{
+
+  loadTrack(currentTrack+1,true)
+
+})
+
+/* =====================================================
+   PLAY / PAUSE
+===================================================== */
+
+document.body.onclick =
+  async ()=>{
+
+    initAudio()
+
+    if(audioCtx.state==="suspended")
+      await audioCtx.resume()
+
+    if(!audio.src){
+
+      await loadTrack(0,true)
+      return
+    }
+
+    if(audio.paused){
+
+      audio.play()
+
+    }else{
+
+      audio.pause()
+    }
+  }
+
+/* =====================================================
+   STARFIELD
+===================================================== */
+
+const bg =
+  document.getElementById("bg")
+
+const bgc =
+  bg.getContext("2d")
+
+let SW,SH
+
+function resizeBG(){
+
+  SW = bg.width  = innerWidth
+  SH = bg.height = innerHeight
+}
+
+resizeBG()
+
+addEventListener(
+  'resize',
+  resizeBG
+)
+
+const stars = []
+
+for(let i=0;i<260;i++){
+
+  stars.push({
+
+    x:Math.random()*SW,
+    y:Math.random()*SH,
+    z:Math.random()*2,
+    speed:.2 + Math.random()*1.2
+
+  })
+}
+
+function drawBG(){
+
+  bgc.fillStyle =
+    "rgba(2,2,8,.28)"
+
+  bgc.fillRect(
+    0,0,SW,SH
+  )
+
+  for(const s of stars){
+
+    s.y += s.speed
+
+    if(s.y > SH){
+
+      s.y = -10
+      s.x = Math.random()*SW
+    }
+
+    bgc.fillStyle =
+      `rgba(180,240,255,${
+        .08 + s.z*.12
+      })`
+
+    bgc.fillRect(
+      s.x,
+      s.y,
+      s.z*1.5,
+      s.z*1.5
+    )
+  }
+
+  /* laser horizon */
+
+  bgc.strokeStyle =
+    "rgba(255,79,216,.06)"
+
+  bgc.lineWidth = 1
+
+  for(let y=SH*.62; y<SH; y+=24){
+
+    bgc.beginPath()
+
+    bgc.moveTo(0,y)
+
+    bgc.lineTo(SW,y)
+
+    bgc.stroke()
+  }
+}
+
+/* =====================================================
+   VISUALIZER
+===================================================== */
+
+const canvas =
+  document.getElementById("viz")
+
+const ctx =
+  canvas.getContext("2d")
+
+const SIZE = 620
+
+canvas.width  = SIZE
+canvas.height = SIZE
+
+let phase = 0
+
+let bass = 0
+let mids = 0
+let highs = 0
+
+let frame = 0
+
+function draw(){
+
+  frame++
+
+  drawBG()
+
+  ctx.fillStyle =
+    "rgba(4,2,12,.18)"
+
+  ctx.fillRect(
+    0,
+    0,
+    SIZE,
+    SIZE
+  )
+
+  let waveData
+
+  if(analyser){
+
+    analyser.getByteTimeDomainData(data)
+
+    waveData = data
+
+  }else{
+
+    waveData =
+      new Uint8Array(2048)
+
+    for(let i=0;i<waveData.length;i++){
+
+      waveData[i] =
+
+        128 +
+
+        Math.sin(i/42 + phase*1.2)*38 +
+
+        Math.sin(i/18 + phase*2.2)*20 +
+
+        Math.sin(i/8  + phase*3.7)*8
+    }
+  }
+
+  /* energy */
+
+  let e1=0,e2=0,e3=0
+
+  for(let i=0;i<80;i++)
+    e1 += Math.abs((waveData[i]-128)/128)
+
+  for(let i=80;i<240;i++)
+    e2 += Math.abs((waveData[i]-128)/128)
+
+  for(let i=240;i<640;i++)
+    e3 += Math.abs((waveData[i]-128)/128)
+
+  bass  += ((e1/80)  - bass ) * .06
+  mids  += ((e2/160) - mids ) * .05
+  highs += ((e3/400) - highs) * .04
+
+  phase += .018 + bass*.03
+
+  ctx.save()
+
+  /* portal clipping */
+
+  ctx.beginPath()
+
+  ctx.arc(
+    SIZE/2,
+    SIZE/2,
+    SIZE*0.48,
+    0,
+    Math.PI*2
+  )
+
+  ctx.clip()
+
+  /* neon grid */
+
+  ctx.strokeStyle =
+    "rgba(121,247,255,.05)"
+
+  ctx.lineWidth = 1
+
+  for(let y=0;y<SIZE;y+=24){
+
+    ctx.beginPath()
+
+    ctx.moveTo(0,y)
+
+    ctx.lineTo(SIZE,y)
+
+    ctx.stroke()
+  }
+
+  for(let x=0;x<SIZE;x+=24){
+
+    ctx.beginPath()
+
+    ctx.moveTo(x,0)
+
+    ctx.lineTo(x,SIZE)
+
+    ctx.stroke()
+  }
+
+  /* lissajous */
+
+  const CX = SIZE/2
+  const CY = SIZE/2
+
+  const R =
+    SIZE * (.22 + bass*.08)
+
+  for(let pass=0; pass<3; pass++){
+
+    const alpha =
+
+      pass===0 ? .06 :
+      pass===1 ? .22 :
+      .88
+
+    const spread =
+
+      pass===0 ? 1.18 :
+      pass===1 ? 1.08 :
+      1
+
+    ctx.beginPath()
+
+    for(let i=0;i<waveData.length;i++){
+
+      const a =
+        (waveData[i]-128)/128
+
+      const b =
+        (waveData[
+          (i+120)%waveData.length
+        ]-128)/128
+
+      const theta =
+        i / waveData.length *
+        Math.PI * 2
+
+      const x =
+
+        CX +
+
+        Math.sin(
+          theta*3 +
+          phase*.8
+        ) *
+
+        a *
+
+        R *
+
+        spread +
+
+        Math.sin(
+          theta*12 +
+          frame*.01
+        ) *
+
+        highs * 14
+
+      const y =
+
+        CY +
+
+        Math.cos(
+          theta*4 +
+          phase*.5
+        ) *
+
+        b *
+
+        R *
+
+        .92 *
+
+        spread
+
+      i===0
+        ? ctx.moveTo(x,y)
+        : ctx.lineTo(x,y)
+    }
+
+    ctx.strokeStyle =
+      `rgba(${
+        pass===2 ? '220,255,255' : '121,247,255'
+      },${alpha})`
+
+    ctx.shadowBlur =
+      pass===2
+        ? 24 + bass*40
+        : 0
+
+    ctx.shadowColor =
+      "#79f7ff"
+
+    ctx.lineWidth =
+      pass===2
+        ? 1.8 + bass*3
+        : .9
+
+    ctx.stroke()
+  }
+
+  /* orbiting event nodes */
+
+  for(let i=0;i<8;i++){
+
+    const t =
+      phase*.4 + i*Math.PI/4
+
+    const r =
+      SIZE*.23 + Math.sin(frame*.002+i)*20
+
+    const x =
+      CX + Math.cos(t)*r
+
+    const y =
+      CY + Math.sin(t)*r
+
+    ctx.beginPath()
+
+    ctx.arc(
+      x,y,
+      2 + bass*2,
+      0,
+      Math.PI*2
+    )
+
+    ctx.fillStyle =
+      i%2
+        ? "rgba(255,79,216,.7)"
+        : "rgba(121,247,255,.7)"
+
+    ctx.shadowBlur = 16
+
+    ctx.shadowColor =
+      i%2
+        ? "#ff4fd8"
+        : "#79f7ff"
+
+    ctx.fill()
+  }
+
+  ctx.restore()
+
+  requestAnimationFrame(draw)
+}
+
+draw()
+
+/* =====================================================
+   GLITCHES
+===================================================== */
+
+setInterval(()=>{
+
+  glitch.classList.add(
+    'active'
+  )
+
+  setTimeout(()=>{
+
+    glitch.classList.remove(
+      'active'
+    )
+
+  },220)
+
+},32000 + Math.random()*12000)
+
+</script>
+
+</body>
+</html>
