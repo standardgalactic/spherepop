@@ -1,5 +1,12 @@
 # Spherepop
 
+[Geometry, Cognition, and the Transparency of Computation](https://standardgalactic.github.io/spherepop/admissibility/spherepop-monograph.pdf)
+
+* [The Geometry of Computation](https://standardgalactic.github.io/spherepop/admissibility/The_Geometry_of_Computation.pdf) — *Notes*
+
+* [How Nested Bubbles Fix Flat Math](https://standardgalactic.github.io/spherepop/admissibility/) — *Audio Overview*
+
+--- 
 [Music](https://standardgalactic.github.io/spherepop/music/)
 
 <!--
