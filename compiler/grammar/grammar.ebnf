@@ -1,0 +1,47 @@
+(* Spherepop EBNF grammar.
+ * Bubbles are not parentheses; they are topological objects (§1.4).
+ *)
+
+program     = { statement } ;
+statement   = let_stmt | fn_def | if_stmt | while_stmt
+            | return_stmt | print_stmt | expr_stmt | bubble_stmt ;
+
+let_stmt    = "let" [ "mut" ] ident "=" expr ";" ;
+fn_def      = "fn" ident "(" [ param_list ] ")" block ;
+if_stmt     = "if" expr block [ "else" ( if_stmt | block ) ] ;
+while_stmt  = "while" expr block ;
+return_stmt = "return" [ expr ] ";" ;
+print_stmt  = "print" [ "(" ] expr [ ")" ] ";" ;
+bubble_stmt = "bubble" block [ ";" ] ;
+expr_stmt   = expr ";" ;
+
+block       = "{" { statement } "}" ;
+
+expr        = assign ;
+assign      = ident "=" assign | or_expr ;
+or_expr     = and_expr { "||" and_expr } ;
+and_expr    = cmp_expr { "&&" cmp_expr } ;
+cmp_expr    = add_expr { ("==" | "!=" | "<" | ">" | "<=" | ">=") add_expr } ;
+add_expr    = mul_expr { ("+" | "-") mul_expr } ;
+mul_expr    = pow_expr { ("*" | "/" | "%") pow_expr } ;
+pow_expr    = unary [ "^" pow_expr ] ;
+unary       = ("-" | "!") unary | postfix ;
+postfix     = primary { "." ident } ;
+primary     = int_lit | float_lit | string_lit | bool_lit | "null"
+            | "pop" "(" expr ")"
+            | "refuse" [ "(" expr ")" ]
+            | "observe" "(" expr ")"
+            | "history" "(" expr ")"
+            | ident [ "(" [ arg_list ] ")" ]
+            | "(" expr ")"
+            | "bubble" block
+            | block ;
+
+param_list  = ident { "," ident } ;
+arg_list    = expr { "," expr } ;
+
+int_lit     = digit { digit } ;
+float_lit   = digit { digit } "." { digit } ;
+string_lit  = '"' { char } '"' ;
+bool_lit    = "true" | "false" ;
+ident       = letter { letter | digit | "_" } ;

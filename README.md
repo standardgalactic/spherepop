@@ -9,6 +9,9 @@
 --- 
 [Music](https://standardgalactic.github.io/spherepop/music/)
 
+
+[Implementation in C](compiler/README.md)
+
 <!--
 [Globally Persistent Recomposable Thought](https://standardgalactic.github.io/spherepop/intelligence-explosion.pdf)
 

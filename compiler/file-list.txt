@@ -1,0 +1,198 @@
+.
+├── ARCHITECTURE.md
+├── BUILDING.md
+├── CHANGELOG.md
+├── CMakeLists.txt
+├── CONTRIBUTING.md
+├── DESIGN_PHILOSOPHY.md
+├── LICENSE
+├── Makefile
+├── README.md
+├── ROADMAP.md
+├── assets
+│   └── {icons,diagrams,screenshots,demo-recordings,topology-examples}
+├── benchmarks
+│   ├── constraint_resolution.sp
+│   └── nested_evaluation.sp
+├── cmake
+│   ├── CompilerWarnings.cmake
+│   ├── Dependencies.cmake
+│   ├── Sanitizers.cmake
+│   └── spherepop.pc.in
+├── docs
+│   ├── action-formalism.md
+│   ├── admissibility.md
+│   ├── bubble-semantics.md
+│   ├── builtin-functions.md
+│   ├── bytecode.md
+│   ├── category-theory.md
+│   ├── cognitive-foundations.md
+│   ├── collapse-operators.md
+│   ├── constraint-engine.md
+│   ├── embedding-api.md
+│   ├── evaluator.md
+│   ├── examples
+│   ├── formal-semantics.md
+│   ├── generated
+│   │   └── api
+│   ├── geometry-runtime.md
+│   ├── getting-started.md
+│   ├── graph-reduction.md
+│   ├── histories.md
+│   ├── index.md
+│   ├── interpreter-architecture.md
+│   ├── language-overview.md
+│   ├── language-reference.md
+│   ├── plugin-system.md
+│   ├── provenance.md
+│   ├── renderer-api.md
+│   ├── runtime-memory-model.md
+│   ├── sheaf-semantics.md
+│   ├── standard-library.md
+│   ├── thermodynamic-semantics.md
+│   ├── topology.md
+│   ├── visual-computation.md
+│   ├── visualization-api.md
+│   ├── vm-design.md
+│   └── {examples,generated
+│       └── api}
+├── examples
+│   ├── action_minimization.sp
+│   ├── arithmetic.sp
+│   ├── bubble_nesting.sp
+│   ├── clio_projection.sp
+│   ├── hello.sp
+│   ├── manifold_walk.sp
+│   ├── observerhood.sp
+│   ├── provenance.sp
+│   ├── recursive_collapse.sp
+│   ├── semantic_navigation.sp
+│   ├── sheaf_gluing.sp
+│   ├── thermodynamic_reduction.sp
+│   └── visual_topology.sp
+├── file-list.txt
+├── generators
+│   └── {docgen,diagrams,static_site,literate}
+├── grammar
+│   └── grammar.ebnf
+├── scripts
+│   ├── benchmark.sh
+│   ├── build.sh
+│   └── format.sh
+├── spec
+│   ├── grammar.ebnf
+│   └── operational-semantics.md
+├── src
+│   ├── config.c
+│   ├── geometry
+│   │   ├── boundaries.c
+│   │   ├── boundaries.h
+│   │   ├── curvature.c
+│   │   ├── curvature.h
+│   │   ├── embeddings.c
+│   │   ├── embeddings.h
+│   │   ├── graph_layout.c
+│   │   ├── graph_layout.h
+│   │   ├── manifolds.c
+│   │   ├── manifolds.h
+│   │   ├── regions.c
+│   │   └── regions.h
+│   ├── lexer
+│   │   ├── lexer.c
+│   │   ├── lexer.h
+│   │   ├── token.c
+│   │   └── token.h
+│   ├── main.c
+│   ├── parser
+│   │   ├── ast.c
+│   │   ├── ast.h
+│   │   ├── parser.c
+│   │   └── parser.h
+│   ├── repl.c
+│   ├── runtime
+│   │   ├── action.c
+│   │   ├── action.h
+│   │   ├── admissibility.c
+│   │   ├── admissibility.h
+│   │   ├── bubble.c
+│   │   ├── bubble.h
+│   │   ├── collapse.c
+│   │   ├── collapse.h
+│   │   ├── constraints.c
+│   │   ├── constraints.h
+│   │   ├── environment.c
+│   │   ├── environment.h
+│   │   ├── evaluator.c
+│   │   ├── evaluator.h
+│   │   ├── gc.c
+│   │   ├── gc.h
+│   │   ├── history.c
+│   │   ├── history.h
+│   │   ├── manifold.c
+│   │   ├── manifold.h
+│   │   ├── memory.c
+│   │   ├── memory.h
+│   │   ├── provenance.c
+│   │   ├── provenance.h
+│   │   ├── reduction.c
+│   │   ├── reduction.h
+│   │   ├── scope.c
+│   │   ├── scope.h
+│   │   ├── topology.c
+│   │   ├── topology.h
+│   │   ├── trajectories.c
+│   │   ├── trajectories.h
+│   │   ├── value.c
+│   │   └── value.h
+│   ├── semantics
+│   │   ├── category_semantics.c
+│   │   ├── category_semantics.h
+│   │   ├── contextual_equivalence.c
+│   │   ├── contextual_equivalence.h
+│   │   ├── observerhood.c
+│   │   ├── observerhood.h
+│   │   ├── projection.c
+│   │   ├── projection.h
+│   │   ├── semantic_fields.c
+│   │   ├── semantic_fields.h
+│   │   ├── sheaf_semantics.c
+│   │   └── sheaf_semantics.h
+│   ├── sp_common.h
+│   ├── stdlib
+│   │   ├── geometry.sp
+│   │   ├── math.sp
+│   │   ├── thermodynamics.sp
+│   │   └── topology.sp
+│   ├── tools
+│   └── vm
+│       ├── bytecode.c
+│       ├── bytecode.h
+│       ├── opcode.h
+│       ├── vm.c
+│       └── vm.h
+├── tests
+│   ├── admissibility
+│   │   └── test_admissibility.c
+│   ├── integration
+│   │   ├── test_arithmetic.sp
+│   │   ├── test_bubbles.sp
+│   │   ├── test_functions.sp
+│   │   ├── test_history.sp
+│   │   ├── test_programs.c
+│   │   └── test_refuse.sp
+│   ├── lexer
+│   │   └── test_lexer.c
+│   ├── parser
+│   ├── provenance
+│   ├── regression
+│   ├── runtime
+│   │   ├── test_bubble.c
+│   │   └── test_history.c
+│   ├── semantics
+│   └── topology
+└── visualizer
+    └── {public
+        └── {fonts,shaders,textures,examples},src
+            └── {renderer,ui,simulation,styles},shaders}
+
+40 directories, 156 files

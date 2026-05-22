@@ -1,0 +1,41 @@
+(* Spherepop Grammar — EBNF *)
+(* See parser/parser.c for the authoritative recursive descent implementation. *)
+
+program     = { statement } ;
+statement   = let_stmt | assign_stmt | if_stmt | while_stmt
+            | fn_def | return_stmt | expr_stmt | block ;
+let_stmt    = "let" [ "mut" ] ident [ "=" expr ] ";" ;
+assign_stmt = ident "=" expr ";" ;
+if_stmt     = "if" "(" expr ")" statement [ "else" statement ] ;
+while_stmt  = "while" "(" expr ")" statement ;
+fn_def      = "fn" ident "(" [ params ] ")" block ;
+params      = ident { "," ident } ;
+return_stmt = "return" [ expr ] ";" ;
+block       = "{" { statement } "}" ;
+expr_stmt   = expr ";" ;
+
+expr        = or_expr ;
+or_expr     = and_expr { "||" and_expr } ;
+and_expr    = eq_expr { "&&" eq_expr } ;
+eq_expr     = cmp_expr { ( "==" | "!=" ) cmp_expr } ;
+cmp_expr    = add_expr { ( "<" | ">" | "<=" | ">=" ) add_expr } ;
+add_expr    = mul_expr { ( "+" | "-" ) mul_expr } ;
+mul_expr    = pow_expr { ( "*" | "/" | "%" ) pow_expr } ;
+pow_expr    = unary_expr [ "^" pow_expr ] ;
+unary_expr  = [ "-" | "!" ] primary ;
+primary     = INT | FLOAT | STRING | "true" | "false" | "null"
+            | "(" expr ")"
+            | bubble_expr
+            | pop_expr
+            | refuse_expr
+            | observe_expr
+            | "history" "(" ")"
+            | "print" "(" expr ")"
+            | ident [ "(" [ args ] ")" ] { "." ident } ;
+
+bubble_expr = "bubble" "{" { statement } "}" ;
+pop_expr    = "pop" "(" expr ")" ;
+refuse_expr = "refuse" [ "(" expr ")" ] ;
+observe_expr= "observe" "(" expr ")" ;
+args        = expr { "," expr } ;
+ident       = LETTER { LETTER | DIGIT | "_" } ;

@@ -1,0 +1,12 @@
+name: Build
+on:
+  push: {branches: [main, develop]}
+  pull_request: {branches: [main]}
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get install -y cmake gcc
+      - run: make spherepop
+      - run: make test
