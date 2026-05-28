@@ -1,349 +1,840 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Earth Monitor</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nested Mental Bubbles</title>
+
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{background:#000;color:#7cff7c;font-family:monospace;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:16px}
-canvas{display:block;border-radius:50%;background:#000}
-.controls{margin-top:14px;display:flex;gap:10px;align-items:center}
-button{background:#001400;border:1px solid #00ff00;color:#7cff7c;padding:8px 14px;cursor:pointer;font-family:monospace;font-size:13px}
-button:hover{background:#002200}
-.seek-bar{width:220px;height:8px;background:#001a00;border:1px solid #00aa44;border-radius:3px;cursor:pointer;overflow:hidden}
-.seek-fill{height:100%;width:0%;background:linear-gradient(90deg,#00ff44,#7cff7c)}
-.subs{margin-top:12px;max-width:600px;min-height:2.5em;opacity:.85;text-align:center;font-size:13px;line-height:1.5}
-.footer{margin-top:10px;font-size:.75em;opacity:.6}
-.footer a{color:#7cff7c;text-decoration:none}
+
+:root{
+  --green:#00ff88;
+  --soft:#dcffee;
+}
+
+*{
+  box-sizing:border-box;
+}
+
+html,body{
+  margin:0;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  background:#000;
+  color:#00ff88;
+  font-family:monospace;
+  touch-action:manipulation;
+}
+
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:500;
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      rgba(255,255,255,.03) 0px,
+      rgba(255,255,255,.03) 1px,
+      transparent 2px,
+      transparent 4px
+    );
+  opacity:.12;
+}
+
+#bg{
+  position:fixed;
+  inset:0;
+  z-index:1;
+}
+
+.title{
+  position:fixed;
+  top:16px;
+  left:50%;
+  transform:translateX(-50%);
+  width:min(96vw,1100px);
+  text-align:center;
+  font-size:clamp(11px,1.8vw,18px);
+  letter-spacing:.22em;
+  text-transform:uppercase;
+  color:#d7fff0;
+  text-shadow:0 0 14px #00ff88;
+  z-index:100;
+}
+
+.status{
+  position:fixed;
+  top:58px;
+  left:50%;
+  transform:translateX(-50%);
+  opacity:.5;
+  font-size:11px;
+  letter-spacing:.16em;
+  z-index:120;
+}
+
+.portal{
+  position:fixed;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+#viz{
+  width:min(760px,96vw);
+  height:min(760px,96vw);
+  border-radius:50%;
+  background:
+    radial-gradient(circle at center,
+      rgba(0,45,18,.96),
+      rgba(0,0,0,1));
+  border:2px solid rgba(0,255,120,.38);
+  box-shadow:
+    inset 0 0 120px rgba(0,255,120,.06),
+    inset 0 0 40px rgba(0,255,120,.08),
+    0 0 40px rgba(0,255,120,.16);
+  z-index:40;
+}
+
+.subs{
+  position:fixed;
+  bottom:58px;
+  left:0;
+  right:0;
+  margin:auto;
+  width:min(920px,94vw);
+  padding:10px 16px;
+  min-height:3em;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  font-size:clamp(13px,3.4vw,17px);
+  line-height:1.5;
+  color:#d9fff0;
+  text-shadow:0 0 10px rgba(0,255,120,.8);
+  background:rgba(0,16,0,.34);
+  border:1px solid rgba(0,255,120,.18);
+  border-radius:8px;
+  pointer-events:none;
+  z-index:70;
+  transition:
+    opacity .15s ease,
+    transform .08s ease;
+}
+
+.essay{
+  position:fixed;
+  bottom:14px;
+  left:50%;
+  transform:translateX(-50%);
+  color:#9effd0;
+  text-decoration:none;
+  letter-spacing:.10em;
+  font-size:11px;
+  opacity:.72;
+  z-index:90;
+}
+
+.essay:hover{
+  opacity:1;
+}
+
+.glitch{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:300;
+  opacity:0;
+}
+
+.glitch.active{
+  animation:glitch .18s linear;
+}
+
+@keyframes glitch{
+
+  0%{
+    opacity:0;
+    transform:translate(0,0);
+    background:
+      repeating-linear-gradient(
+        90deg,
+        rgba(255,255,255,.08) 0px,
+        transparent 2px,
+        transparent 5px
+      );
+  }
+
+  25%{
+    opacity:.28;
+    transform:translate(-16px,5px);
+  }
+
+  55%{
+    opacity:.20;
+    transform:translate(18px,-4px);
+  }
+
+  100%{
+    opacity:0;
+    transform:translate(0,0);
+  }
+}
+
+@media(max-width:700px){
+
+  .subs{
+    bottom:54px;
+  }
+
+  .status{
+    font-size:9px;
+  }
+}
+
 </style>
 </head>
+
 <body>
 
-<canvas id="c"></canvas>
+<canvas id="bg"></canvas>
 
-<div class="controls">
-  <button id="play">▶ Play</button>
-  <div class="seek-bar" id="seek"><div class="seek-fill" id="seekFill"></div></div>
+<div class="title">
+  THE GEOMETRY OF NESTED MENTAL BUBBLES
 </div>
 
-<div id="subs" class="subs"></div>
-
-<div class="footer">
-  <a href="https://standardgalactic.github.io/spherepop/entropy_of_austerity.pdf" target="_blank">entropy_of_austerity.pdf</a>
+<div class="status">
+  TOUCH / CLICK ANYWHERE TO PLAY OR PAUSE
 </div>
 
-<audio id="audio">
-  <source src="The_physics_of_the_austerity_trap.mp3">
+<div class="portal">
+  <canvas id="viz"></canvas>
+</div>
+
+<div class="subs" id="subs"></div>
+
+<a class="essay"
+href="https://standardgalactic.github.io/spherepop/dynamics/spherepop_scope_dynamics.pdf"
+target="_blank"
+onclick="event.stopPropagation()">
+RECURSIVE CONTAINMENT AND DEFERRED CLOSURE
+</a>
+
+<div class="glitch" id="glitch"></div>
+
+<audio id="audio" preload="auto">
+  <source src="The_Geometry_of_Nested_Mental_Bubbles.mp3">
 </audio>
 
 <script>
-const canvas = document.getElementById('c')
-const g = canvas.getContext('2d')
-const audio = document.getElementById('audio')
-const playBtn = document.getElementById('play')
-const subsEl = document.getElementById('subs')
-const seek = document.getElementById('seek')
-const seekFill = document.getElementById('seekFill')
 
-const SIZE = Math.min(460, window.innerWidth - 32)
-canvas.width = SIZE
-canvas.height = SIZE
-const R = SIZE * 0.37
-const cx = SIZE / 2
-const cy = SIZE / 2
+const audio =
+  document.getElementById("audio")
 
-/* ── offscreen cloud buffer ── */
-const cloudCanvas = document.createElement('canvas')
-cloudCanvas.width = SIZE
-cloudCanvas.height = SIZE
-const cg = cloudCanvas.getContext('2d')
+const subs =
+  document.getElementById("subs")
 
-/* ── seek bar ── */
-seek.onclick = e => {
-  if(!audio.duration) return
-  const r = seek.getBoundingClientRect()
-  audio.currentTime = ((e.clientX - r.left) / r.width) * audio.duration
-}
+const glitch =
+  document.getElementById("glitch")
 
-/* ── audio init ── */
-let actx, analyser, timeBuf
-let smoothEnergy = 0
-let bandEnergy = [0,0,0,0]
+let audioCtx
+let analyser
+let data
 
 function initAudio(){
-  if(actx) return
-  actx = new (window.AudioContext||window.webkitAudioContext)()
-  analyser = actx.createAnalyser()
-  analyser.fftSize = 1024
-  analyser.smoothingTimeConstant = 0.85
-  const src = actx.createMediaElementSource(audio)
+
+  if(audioCtx) return
+
+  audioCtx =
+    new (
+      window.AudioContext ||
+      window.webkitAudioContext
+    )()
+
+  analyser =
+    audioCtx.createAnalyser()
+
+  analyser.fftSize = 2048
+  analyser.smoothingTimeConstant = 0.88
+
+  const src =
+    audioCtx.createMediaElementSource(audio)
+
   src.connect(analyser)
-  analyser.connect(actx.destination)
-  timeBuf = new Uint8Array(analyser.fftSize)
+  analyser.connect(audioCtx.destination)
+
+  data =
+    new Uint8Array(
+      analyser.frequencyBinCount
+    )
 }
 
-playBtn.onclick = () => {
-  initAudio()
-  if(audio.paused){ audio.play(); playBtn.textContent='⏸ Pause' }
-  else { audio.pause(); playBtn.textContent='▶ Play' }
-}
+document.body.onclick =
+  async ()=>{
 
-/* ── universal VTT subtitle parser ── */
+    initAudio()
+
+    if(audioCtx.state==="suspended")
+      await audioCtx.resume()
+
+    if(audio.paused){
+
+      audio.play()
+
+    }else{
+
+      audio.pause()
+    }
+  }
+
+/* subtitles */
+
 let cues = []
 
 async function loadVTT(){
+
   try{
-    const res = await fetch("The_physics_of_the_austerity_trap.vtt")
-    const text = await res.text()
-    const blocks = text.split("\n\n")
-    for(const b of blocks){
-      const lines = b.trim().split("\n")
-      // find the timestamp line (may be preceded by a cue identifier)
-      const tsLine = lines.find(l => l.includes("-->"))
-      if(!tsLine) continue
-      const tsIdx = lines.indexOf(tsLine)
-      const [start, end] = tsLine.split(" --> ").map(parseTime)
-      const caption = lines.slice(tsIdx + 1).join(" ")
-      if(caption.trim()) cues.push({ start, end, text: caption.trim() })
-    }
-  }catch(e){
-    console.warn("VTT load failed", e)
-  }
-}
 
-function parseTime(t){
-  t = t.trim()
-  const parts = t.split(":")
-  // handle both HH:MM:SS.mmm and MM:SS.mmm
-  if(parts.length === 3){
-    return (+parts[0])*3600 + (+parts[1])*60 + parseFloat(parts[2])
-  }
-  return (+parts[0])*60 + parseFloat(parts[1])
-}
+    const r =
+      await fetch(
+        "The_Geometry_of_Nested_Mental_Bubbles.vtt"
+      )
 
-function updateSubs(){
-  const t = audio.currentTime
-  for(const c of cues){
-    if(t >= c.start && t <= c.end){
-      subsEl.textContent = c.text
+    if(!r.ok){
+      console.warn("Missing VTT")
       return
     }
+
+    const txt =
+      await r.text()
+
+    cues =
+      parseVTT(txt)
+
+  }catch(e){
+
+    console.warn(e)
   }
-  subsEl.textContent = ""
 }
 
-audio.addEventListener('timeupdate', updateSubs)
-audio.addEventListener('seeked', updateSubs)
-audio.addEventListener('play', updateSubs)
+function parseVTT(txt){
+
+  const lines =
+    txt.split("\n")
+
+  const out = []
+
+  let i = 0
+
+  while(i < lines.length){
+
+    const line =
+      lines[i].trim()
+
+    if(line.includes("-->")){
+
+      const [s,e] =
+        line.split("-->")
+            .map(v=>v.trim())
+
+      i++
+
+      const text = []
+
+      while(
+        i < lines.length &&
+        lines[i].trim()
+      ){
+
+        text.push(
+          lines[i].trim()
+        )
+
+        i++
+      }
+
+      out.push({
+
+        start:toSec(s),
+        end:toSec(e),
+        text:text.join(" ")
+
+      })
+
+    }else{
+
+      i++
+    }
+  }
+
+  return out
+}
+
+function toSec(t){
+
+  const p =
+    t.replace(",",".")
+     .split(":")
+
+  if(p.length===3){
+
+    return (
+      (+p[0])*3600 +
+      (+p[1])*60 +
+      (+p[2])
+    )
+  }
+
+  return (
+    (+p[0])*60 +
+    (+p[1])
+  )
+}
+
+audio.ontimeupdate = ()=>{
+
+  const t =
+    audio.currentTime
+
+  const cue =
+    cues.find(c=>
+      t >= c.start &&
+      t < c.end + .25
+    )
+
+  subs.textContent =
+    cue ? cue.text : ""
+}
 
 loadVTT()
 
-/* ── energy ── */
-function updateEnergy(){
-  if(audio.duration) seekFill.style.width = (audio.currentTime / audio.duration * 100) + '%'
-  if(!analyser) return
+/* background */
 
-  analyser.getByteTimeDomainData(timeBuf)
-  let e = 0
-  for(let i=0;i<timeBuf.length;i++){ const d=timeBuf[i]-128; e+=d*d }
-  e /= timeBuf.length
-  smoothEnergy += (Math.min(e/3000,1) - smoothEnergy) * 0.05
+const bg =
+  document.getElementById("bg")
 
-  const freq = new Uint8Array(analyser.frequencyBinCount)
-  analyser.getByteFrequencyData(freq)
-  const band = Math.floor(freq.length/4)
-  for(let b=0;b<4;b++){
-    let s=0; for(let i=b*band;i<(b+1)*band;i++) s+=freq[i]
-    bandEnergy[b] += (s/band/255 - bandEnergy[b]) * 0.07
+const bgc =
+  bg.getContext("2d")
+
+let SW,SH
+
+function resizeBG(){
+
+  SW =
+    bg.width =
+      innerWidth
+
+  SH =
+    bg.height =
+      innerHeight
+}
+
+resizeBG()
+
+addEventListener(
+  "resize",
+  resizeBG
+)
+
+const particles = []
+
+for(
+  let i=0;
+  i<420;
+  i++
+){
+
+  particles.push({
+
+    x:Math.random()*SW,
+    y:Math.random()*SH,
+
+    vx:
+      (Math.random()-.5)*0.35,
+
+    vy:
+      (Math.random()-.5)*0.35,
+
+    z:
+      Math.random()*2
+  })
+}
+
+function drawBG(){
+
+  bgc.clearRect(
+    0,0,SW,SH
+  )
+
+  for(const p of particles){
+
+    p.x += p.vx
+    p.y += p.vy
+
+    if(p.x < 0) p.x = SW
+    if(p.x > SW) p.x = 0
+
+    if(p.y < 0) p.y = SH
+    if(p.y > SH) p.y = 0
+
+    bgc.fillStyle =
+      `rgba(180,255,220,${
+        .01 + p.z*.04
+      })`
+
+    bgc.fillRect(
+      p.x,
+      p.y,
+      p.z*1.2,
+      p.z*1.2
+    )
   }
 }
 
-/* ── projection ── */
-const DEG = Math.PI/180
-let yaw = 0
+/* glitch */
 
-function project(lat, lon){
-  const la=lat*DEG, lo=lon*DEG
-  let x=Math.cos(la)*Math.cos(lo)
-  let y=Math.sin(la)
-  let z=Math.cos(la)*Math.sin(lo)
-  const c=Math.cos(yaw), s=Math.sin(yaw)
-  const rx=x*c+z*s
-  const rz=-x*s+z*c
-  return { x:cx+rx*R, y:cy-y*R, visible:rz>-0.05, depth:(rz+1)/2 }
-}
+setInterval(()=>{
 
-/* ── continents ── */
-const continents = [
-  [[60,-140],[65,-120],[60,-90],[55,-60],[50,-55],[45,-60],[35,-75],[25,-80],[20,-87],[15,-90],[10,-85],[8,-77],[15,-75],[22,-100],[30,-115],[45,-125],[55,-130],[60,-140]],
-  [[10,-75],[8,-62],[5,-52],[0,-50],[-5,-35],[-10,-37],[-20,-40],[-33,-52],[-45,-65],[-55,-68],[-40,-62],[-25,-48],[-15,-38],[-5,-35],[0,-48],[5,-60],[10,-75]],
-  [[70,30],[65,25],[60,20],[55,5],[50,0],[45,0],[44,10],[38,15],[37,22],[40,28],[45,35],[50,30],[55,20],[60,25],[65,28],[70,30]],
-  [[37,10],[30,5],[15,-15],[5,-15],[-5,-5],[-15,12],[-25,15],[-35,20],[-34,26],[-28,32],[-15,36],[0,42],[10,44],[15,42],[22,37],[30,32],[35,25],[37,10]],
-  [[70,30],[68,60],[65,90],[60,120],[55,130],[45,135],[35,120],[25,120],[20,110],[10,100],[5,100],[10,77],[22,70],[28,50],[35,36],[40,38],[45,40],[50,50],[55,60],[60,60],[65,60],[70,30]],
-  [[-15,130],[-17,140],[-20,148],[-30,153],[-38,146],[-38,140],[-35,118],[-32,115],[-22,114],[-17,122],[-15,130]],
-  [[60,-44],[65,-52],[70,-54],[76,-65],[83,-45],[82,-25],[78,-18],[72,-22],[66,-36],[60,-44]]
-]
+  glitch.classList.add(
+    "active"
+  )
 
-function drawContinents(){
-  g.save()
-  g.strokeStyle='rgba(110,255,155,0.85)'
-  g.lineWidth=1.2
-  for(const poly of continents){
-    g.beginPath()
-    let started=false
-    for(const [la,lo] of poly){
-      const p=project(la,lo)
-      if(!p.visible){ started=false; continue }
-      started ? g.lineTo(p.x,p.y) : g.moveTo(p.x,p.y)
-      started=true
+  setTimeout(()=>{
+
+    glitch.classList.remove(
+      "active"
+    )
+
+  },180)
+
+},22000 + Math.random()*12000)
+
+/* visualization */
+
+const canvas =
+  document.getElementById("viz")
+
+const ctx =
+  canvas.getContext("2d")
+
+const size = 920
+
+canvas.width  = size
+canvas.height = size
+
+const cx = size/2
+const cy = size/2
+
+let bassSmooth = 0
+let midSmooth  = 0
+let highSmooth = 0
+
+let phase = 0
+let frame = 0
+
+function drawBubbleField(){
+
+  if(analyser && data){
+
+    analyser.getByteFrequencyData(data)
+
+    let bass = 0
+    let mid  = 0
+    let high = 0
+
+    for(let i=0;i<50;i++)
+      bass += data[i]
+
+    for(let i=50;i<220;i++)
+      mid += data[i]
+
+    for(let i=220;i<700;i++)
+      high += data[i]
+
+    bass /= 50 * 255
+    mid  /= 170 * 255
+    high /= 480 * 255
+
+    bassSmooth +=
+      (bass - bassSmooth) * 0.08
+
+    midSmooth +=
+      (mid - midSmooth) * 0.06
+
+    highSmooth +=
+      (high - highSmooth) * 0.05
+  }
+
+  phase +=
+    0.01 +
+    bassSmooth * 0.03
+
+  ctx.save()
+
+  ctx.beginPath()
+
+  ctx.arc(
+    cx,
+    cy,
+    size*0.47,
+    0,
+    Math.PI*2
+  )
+
+  ctx.clip()
+
+  ctx.fillStyle =
+    `rgba(0,5,0,${
+      0.09 + bassSmooth*0.08
+    })`
+
+  ctx.fillRect(
+    0,
+    0,
+    size,
+    size
+  )
+
+  /* nested recursive rings */
+
+  for(let i=0;i<34;i++){
+
+    const r =
+      size *
+      (0.03 + i*0.012)
+
+    ctx.beginPath()
+
+    for(
+      let a=0;
+      a<=Math.PI*2+.02;
+      a+=0.025
+    ){
+
+      const harmonic =
+        Math.sin(
+          a *
+          (4 + i*0.3) +
+          phase *
+          (0.5 + i*0.018)
+        ) *
+        (4 + midSmooth*24)
+
+      const recursive =
+        Math.sin(
+          a *
+          (12 + i*0.55) -
+          phase *
+          (1.4 + i*0.02)
+        ) *
+        (2 + highSmooth*18)
+
+      const x =
+        cx +
+        Math.cos(a) *
+        (r + harmonic + recursive)
+
+      const y =
+        cy +
+        Math.sin(a) *
+        (r + harmonic - recursive*.35)
+
+      if(a===0)
+        ctx.moveTo(x,y)
+      else
+        ctx.lineTo(x,y)
     }
-    if(started) g.closePath()
-    g.stroke()
-    g.fillStyle='rgba(0,255,100,0.05)'
-    g.fill()
-  }
-  g.restore()
-}
 
-/* ── grid ── */
-function drawGrid(){
-  g.save()
-  g.strokeStyle='rgba(0,255,136,0.09)'
-  g.lineWidth=0.8
-  for(let lat=-60;lat<=60;lat+=30){
-    g.beginPath(); let first=true
-    for(let lon=-180;lon<=180;lon+=4){
-      const p=project(lat,lon)
-      if(!p.visible){ first=true; continue }
-      first ? g.moveTo(p.x,p.y) : g.lineTo(p.x,p.y)
-      first=false
+    ctx.strokeStyle =
+      `rgba(120,255,180,${
+        0.004 + i*0.007
+      })`
+
+    ctx.lineWidth =
+      1 + i*0.01
+
+    ctx.stroke()
+  }
+
+  /* bubble membranes */
+
+  for(let i=0;i<18;i++){
+
+    const orbit =
+      frame*0.0012*(1+i*0.03)
+
+    const rr =
+      size *
+      (0.08 + i*0.019)
+
+    const bx =
+      cx +
+      Math.cos(orbit+i) *
+      (i*8)
+
+    const by =
+      cy +
+      Math.sin(orbit*1.3+i) *
+      (i*6)
+
+    const pulse =
+      1 +
+      bassSmooth*0.4 +
+      Math.sin(frame*0.01+i)*0.08
+
+    ctx.beginPath()
+
+    ctx.arc(
+      bx,
+      by,
+      rr*pulse,
+      0,
+      Math.PI*2
+    )
+
+    ctx.strokeStyle =
+      `rgba(160,255,220,${
+        0.012 + highSmooth*0.06
+      })`
+
+    ctx.lineWidth =
+      1.2
+
+    ctx.stroke()
+  }
+
+  /* central trace */
+
+  ctx.save()
+
+  ctx.translate(cx,cy)
+
+  ctx.rotate(
+    Math.sin(frame*0.0002)*0.4
+  )
+
+  const scale =
+    size *
+    (0.12 + bassSmooth*0.08)
+
+  for(let pass=0; pass<5; pass++){
+
+    ctx.beginPath()
+
+    const alpha =
+      pass===0 ? 0.02 :
+      pass===1 ? 0.05 :
+      pass===2 ? 0.12 :
+      pass===3 ? 0.28 :
+      0.92
+
+    const spread =
+      1 + pass*0.05
+
+    for(let i=0;i<=3200;i++){
+
+      const p =
+        i / 3200
+
+      const theta =
+        phase +
+        p * Math.PI * 8
+
+      const fold =
+        Math.sin(
+          theta *
+          (18 + highSmooth*40)
+        ) *
+        highSmooth * 28
+
+      const x =
+        Math.sin(
+          theta *
+          (3 + bassSmooth*2)
+        ) *
+        scale *
+        spread +
+        fold
+
+      const y =
+        Math.sin(
+          theta *
+          (4 + midSmooth*2)
+        ) *
+        scale *
+        0.85 *
+        spread
+
+      if(i===0)
+        ctx.moveTo(x,y)
+      else
+        ctx.lineTo(x,y)
     }
-    g.stroke()
-  }
-  for(let lon=-150;lon<=180;lon+=30){
-    g.beginPath(); let first=true
-    for(let lat=-88;lat<=88;lat+=3){
-      const p=project(lat,lon)
-      if(!p.visible){ first=true; continue }
-      first ? g.moveTo(p.x,p.y) : g.lineTo(p.x,p.y)
-      first=false
-    }
-    g.stroke()
-  }
-  g.restore()
-}
 
-/* ── clouds ── */
-const clouds = []
-for(let i=0;i<5;i++)  clouds.push({ lat:-15+Math.random()*30,  baseLon:Math.random()*360-180, lon:0, baseSize:22+Math.random()*20, speed:0.008+Math.random()*0.008, band:0 })
-for(let i=0;i<4;i++)  clouds.push({ lat:40+Math.random()*20,   baseLon:Math.random()*360-180, lon:0, baseSize:18+Math.random()*16, speed:0.010+Math.random()*0.010, band:1 })
-for(let i=0;i<4;i++)  clouds.push({ lat:-40-Math.random()*20,  baseLon:Math.random()*360-180, lon:0, baseSize:18+Math.random()*16, speed:0.010+Math.random()*0.010, band:2 })
-for(let i=0;i<3;i++){
-  clouds.push({ lat:65+Math.random()*15,  baseLon:Math.random()*360-180, lon:0, baseSize:14+Math.random()*12, speed:0.006+Math.random()*0.006, band:3 })
-  clouds.push({ lat:-65-Math.random()*15, baseLon:Math.random()*360-180, lon:0, baseSize:14+Math.random()*12, speed:0.006+Math.random()*0.006, band:3 })
-}
+    ctx.strokeStyle =
+      `rgba(120,255,180,${alpha})`
 
-function drawClouds(t){
-  cg.clearRect(0,0,SIZE,SIZE)
-  cg.globalCompositeOperation='lighter'
+    ctx.lineWidth =
+      pass===4
+        ? 2 + bassSmooth*4
+        : .8
 
-  for(const c of clouds){
-    c.lon = c.baseLon + t*c.speed
-    if(c.lon>180) c.lon-=360
+    ctx.shadowBlur =
+      pass===4
+        ? 24 + bassSmooth*40
+        : 0
 
-    const p=project(c.lat, c.lon)
-    if(!p.visible) continue
+    ctx.shadowColor =
+      "#00ff88"
 
-    const depthScale=0.45+p.depth*0.55
-    const pulse=1+bandEnergy[c.band]*1.6+smoothEnergy*0.5
-    const r=c.baseSize*depthScale*pulse
-    const alpha=0.04+smoothEnergy*0.18
-
-    const grad=cg.createRadialGradient(p.x,p.y,0,p.x,p.y,r)
-    grad.addColorStop(0,  `rgba(140,255,160,${alpha})`)
-    grad.addColorStop(0.5,`rgba(120,220,140,${(alpha*0.6).toFixed(3)})`)
-    grad.addColorStop(1,  'rgba(0,0,0,0)')
-    cg.fillStyle=grad
-    cg.beginPath()
-    cg.arc(p.x,p.y,r,0,Math.PI*2)
-    cg.fill()
+    ctx.stroke()
   }
 
-  cg.globalCompositeOperation='source-over'
-  cg.filter='blur(16px)'
-  cg.drawImage(cloudCanvas,0,0)
-  cg.filter='none'
+  ctx.restore()
 
-  g.save()
-  g.beginPath()
-  g.arc(cx,cy,R,0,Math.PI*2)
-  g.clip()
-  g.globalAlpha=0.9
-  g.drawImage(cloudCanvas,0,0)
-  g.restore()
+  ctx.restore()
 }
 
-/* ── sphere ── */
-function drawSphere(){
-  const bg=g.createRadialGradient(cx-R*0.2,cy-R*0.2,R*0.1,cx,cy,R)
-  bg.addColorStop(0,'rgba(10,40,20,0.5)')
-  bg.addColorStop(0.7,'rgba(2,12,5,0.95)')
-  bg.addColorStop(1,'rgba(0,0,0,0.98)')
-  g.beginPath(); g.arc(cx,cy,R,0,Math.PI*2)
-  g.fillStyle=bg; g.fill()
-  g.strokeStyle='rgba(80,255,130,0.32)'
-  g.lineWidth=1.2; g.stroke()
+function loop(){
 
-  const glow=g.createRadialGradient(cx,cy,0,cx,cy,R)
-  glow.addColorStop(0,`rgba(0,255,120,${0.02+smoothEnergy*0.07})`)
-  glow.addColorStop(1,'rgba(0,0,0,0)')
-  g.beginPath(); g.arc(cx,cy,R,0,Math.PI*2)
-  g.fillStyle=glow; g.fill()
+  frame++
 
-  for(let i=0;i<3;i++){
-    g.beginPath()
-    g.arc(cx,cy,R*(1.012+i*0.012),0,Math.PI*2)
-    g.strokeStyle=`rgba(100,255,160,${0.04+smoothEnergy*0.05})`
-    g.lineWidth=1; g.stroke()
+  drawBG()
+
+  drawBubbleField()
+
+  if(bassSmooth > .72){
+
+    document.body.style.transform =
+
+      `translate(${
+        (Math.random()-.5)*4
+      }px,${
+        (Math.random()-.5)*4
+      }px)`
+
+  }else{
+
+    document.body.style.transform =
+      "translate(0,0)"
   }
+
+  subs.style.transform =
+    `scaleY(${1 + bassSmooth*0.04})`
+
+  subs.style.opacity =
+    `${0.72 + bassSmooth*0.28}`
+
+  requestAnimationFrame(loop)
 }
 
-/* ── stars ── */
-function drawStars(t){
-  const n=Math.floor(SIZE*SIZE/4200)
-  g.save()
-  for(let i=0;i<n;i++){
-    const hx=Math.sin(i*91.7+1.1)*43758.54
-    const hy=Math.sin(i*57.3+2.9+t*0.00003)*21781.13
-    const x=(hx-Math.floor(hx))*SIZE
-    const y=(hy-Math.floor(hy))*SIZE
-    const z=0.4+((Math.sin(i*12.9+0.7)*9182.33%1+1)%1)*0.6
-    g.fillStyle=`rgba(130,255,170,${(0.14+z*0.3).toFixed(2)})`
-    g.fillRect(x,y,z>0.85?2:1,z>0.85?2:1)
-  }
-  g.restore()
-}
+loop()
 
-/* ── render loop ── */
-let t=0
-function draw(){
-  updateEnergy()
-  t++
-  yaw+=0.0012
-
-  g.fillStyle='rgba(0,0,0,0.18)'
-  g.fillRect(0,0,SIZE,SIZE)
-
-  drawStars(t)
-  drawSphere()
-  drawGrid()
-  drawContinents()
-  drawClouds(t)
-
-  requestAnimationFrame(draw)
-}
-draw()
 </script>
 </body>
 </html>

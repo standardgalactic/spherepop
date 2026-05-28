@@ -1,5 +1,11 @@
 # Spherepop
 
+[Recursive Containment and Deferred Closure](https://standardgalactic.github.io/spherepop/dynamics/spherepop_scope_dynamics.pdf)
+
+* [Cognitive Topology](https://standardgalactic.github.io/spherepop/dynamics/Cognitive_Topology.pdf) — *Notes*
+
+* [The Geometry of Nested Mental Bubbles](https://standardgalactic.github.io/spherepop/dynamics/) — *Audio Overview*
+
 [Geometry, Cognition, and the Transparency of Computation](https://standardgalactic.github.io/spherepop/admissibility/spherepop-monograph.pdf)
 
 * [The Geometry of Computation](https://standardgalactic.github.io/spherepop/admissibility/The_Geometry_of_Computation.pdf) — *Notes*
