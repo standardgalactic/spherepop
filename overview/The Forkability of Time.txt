@@ -1,0 +1,573 @@
+The Forkability of Time
+Flyxion
+January 19, 2026
+Abstract
+This paper proposes a constitutional rearchitecture of digital reality grounded in the concept
+of forkable time. We argue that the dominant form of power exercised by contemporary digital
+platforms is not control over content, markets, or code, but monopoly over sequence: the exclu-
+sive authority to define the order, persistence, and interpretation of events. This monopolization
+of causality explains the structural failure of antitrust remedies and open-source interventions
+to arrest the progressive degradation of digital systems.
+We introduce Spherepop as a history-first computational substrate in which semantic state
+is a deterministic derivative of event history.
+By making histories portable, verifiable, and
+mechanically replayable, Spherepop transforms causality itself into a public object. We formalize
+this transformation through a constitutional design consisting of a negative-rights Arbiter-Client
+Contract, a mandatory Exit Protocol, and a canonical Portable History Format. Together these
+mechanisms ensure that no institution may monopolize temporal authority, rendering causal
+governance replaceable rather than sovereign.
+This architecture inverts the political economy of the platform era.
+Deception becomes
+structurally expensive, exit ceases to imply social death, and digital reality is no longer pri-
+vately owned by infrastructure providers. Instead, causal continuity becomes a common good
+governed by mathematical invariants rather than corporate policy. We argue that forkable time
+constitutes a new civilizational primitive, enabling a post-platform order in which digital worlds
+are not rented from institutions but carried intact by their participants.
+1
+
+Introduction
+The digital world is governed today by institutions whose power is widely felt but poorly under-
+stood. Public debate has framed this power in terms of market concentration, content moderation,
+surveillance, or algorithmic manipulation. Yet these phenomena are secondary effects. They arise
+from a deeper and largely untheorized monopoly: the control of temporal sequence. Contemporary
+platforms do not merely host interaction; they define the order in which events occur, persist, and
+are remembered. They are not neutral intermediaries of information but private authorities over
+causality itself.
+This monopolization of sequence explains a central puzzle of the platform era. Neither antitrust
+law nor open-source software has succeeded in arresting systemic platform decay. Antitrust attacks
+market share but leaves untouched the infrastructure of time. Open source liberates code but not
+history. A platform may permit competition in applications and transparency in software while
+retaining absolute authority over the authoritative record of interaction. As long as the platform
+controls the timeline, it governs reality regardless of surface openness.
+Spherepop reframes this problem by treating digital systems not primarily as computational
+engines but as causal regimes. In a history-first substrate, semantic state is not a primitive object
+stored by institutions but a deterministic function of an event sequence. Whoever controls the
+authoritative history controls the world. Political economy thus collapses into distributed systems
+theory: power is a property of causal topology.
+The central thesis of this paper is that platform domination is structurally identical to monopoly
+over time. Platforms rule because histories are non-portable. Users cannot leave without abandon-
+ing their past. Exit implies social death because reality itself is institution-bound. This condition,
+rather than any particular policy failure, is the deep source of mute compulsion in digital life.
+Spherepop proposes a constitutional remedy rather than a regulatory one. By making histories
+mechanically portable and replayable, it removes temporal authority from institutions and embeds
+it in public structure. Causality becomes a common good rather than a proprietary asset. This
+transformation cannot be achieved through norms or governance alone. It must be enforced at the
+level of system physics.
+The remainder of this paper therefore develops a constitutional architecture for causal sovereignty.
+We formalize the conditions under which temporal authority can be rendered non-capturable, begin-
+ning with a negative-rights Arbiter-Client Contract and culminating in a mandatory Exit Protocol.
+These mechanisms define the right of emigration between causal regimes and establish the condi-
+tions under which digital reality itself becomes portable.
+Only by securing the freedom to carry one's past intact into the future can a post-platform order
+become possible. The following sections specify the machinery by which this freedom is made real.
+The Exit Protocol: Constitutional Specification of Causal Emigration
+This section specifies the Exit Protocol: the mechanism by which an agent transfers an authoritative
+event history from one Arbiter to another without loss of causal continuity. The protocol is defined
+2
+
+normatively. Any implementation claiming Spherepop compliance must satisfy these requirements.
+Definitions
+A Log is an append-only sequence of events {𝑒0, 𝑒1, ... , 𝑒𝑛} associated with a log identifier LID.
+A Proposal is a client-authored intent submitted to an Arbiter for sequencing.
+An Event is a sequenced proposal together with Arbiter-attested ordering metadata.
+An Arbiter is a sequence provider that assigns a total order and timestamps to proposals,
+producing events.
+A Portable History is a serialized representation of a log sufficient to deterministically replay
+the semantic state.
+A Checkpoint is an optional state snapshot derived from replay, included only as an optimiza-
+tion and never as authority.
+Arbiter-Client Contract (Negative Rights)
+To prevent the Arbiter from becoming a sovereign, Spherepop defines trust in terms of negative
+rights: properties the Arbiter is forbidden to violate.
+Axiom C.1 (Causal Monotonicity).
+For a given LID, the Arbiter shall never produce two
+conflicting authoritative sequences.
+Any detected fork at the same sequence index constitutes
+breach.
+Axiom C.2 (Informational Non-Interference).
+The Arbiter may sequence a proposal but
+shall not modify its semantic payload.
+The mapping Proposal →Event must preserve payload
+identity byte-for-byte under a canonical encoding.
+Axiom C.3 (Deterministic Latency / Heartbeat).
+The Arbiter shall provide verifiable se-
+quencing acknowledgement for received proposals within a bounded and publicly stated policy, and
+shall provide an explicit failure certificate if it refuses sequencing. Indefinite silence is prohibited.
+Replay Invariant
+Spherepop treats state as a derivative of history. For any deterministic evaluator ℰ,
+State𝑛= ℰ(𝑒0, 𝑒1, ... , 𝑒𝑛).
+Thus, portability is achieved by portability of events, not by portability of opaque state.
+Protocol Overview
+The Exit Protocol is organized as a sequence of three constitutionally mandatory phases that
+together ensure continuity of causal authority across institutional boundaries. These phases define
+a complete transfer of temporal sovereignty rather than a mere exchange of data.
+3
+
+The first phase, total export, obligates the incumbent Arbiter to produce a cryptographically
+attested portable history containing the full authoritative event sequence for the log in question.
+This phase secures the integrity of the past by making the entire causal trajectory available as a
+public object independent of the provider.
+The second phase, verification, requires that the receiving Arbiter or the client itself validate
+the exported history for internal consistency, cryptographic authenticity, and causal continuity.
+Through deterministic replay and signature verification, the imported past is mechanically con-
+firmed to be identical to the original world rather than a reinterpretation of it.
+The third phase, resumption, establishes the future. Upon successful verification, the receiving
+Arbiter assumes responsibility for sequencing subsequent events beginning from the verified terminal
+state of the imported history. Causal authority is thereby transferred without rupture, preserving
+the identity of the world across institutional change.
+Together these phases define a lawful process of causal emigration. They ensure that exit from
+a provider constitutes preservation of reality rather than abandonment of it.
+Phase I: Total Log Export
+The client issues an export request for LID.
+Requirement E.1 (Completeness).
+The exported history shall include all events from genesis
+𝑒0 through the latest committed event 𝑒𝑛known to the Arbiter at export time.
+Requirement E.2 (Order Preservation).
+Events shall be exported in canonical sequence order
+and shall include their sequence index.
+Requirement E.3 (Verifiable Attestation).
+The export shall be accompanied by an Arbiter
+signature over a digest of the entire exported payload, plus a manifest that commits to: (i) LID,
+(ii) the final sequence index 𝑛, (iii) a hash chain or Merkle root.
+Requirement E.4 (Non-Withholding).
+Withholding export, truncating history, or selectively
+omitting events constitutes constitutional breach. The ability to export is a right of the client, not
+a feature of the provider.
+Phase II: Verification and Continuity
+The receiving Arbiter (or the client) validates the exported history.
+Requirement V.1 (Integrity).
+The exported manifest signature shall verify under the incum-
+bent Arbiter's advertised verification key.
+4
+
+Requirement V.2 (Causal Continuity).
+The history must be internally consistent: sequence
+indices contiguous, hash-chain/Merkle consistency valid, no duplicate indices with differing pay-
+loads.
+Requirement V.3 (Replay Determinism).
+A reference evaluator ℰref must compute the same
+terminal digest of semantic state when replaying the exported history. If a checkpoint is supplied,
+it must match the replayed state digest.
+Phase III: Resumption of Reality
+Upon successful verification, the new Arbiter becomes authoritative for subsequent events.
+Requirement R.1 (Tip Agreement).
+The new Arbiter shall declare the accepted tip (LID, 𝑛, TipHash)
+and shall reject any proposals that claim an earlier or conflicting tip for the same LID unless an
+explicit fork is declared by the client.
+Requirement R.2 (Continuation).
+New events begin at 𝑒𝑛+1, and must reference the accepted
+tip hash. This binds the new future to the verified past.
+Requirement R.3 (Fork Declaration).
+If the client intentionally wishes to branch, it must
+declare a new LID′ or an explicit fork marker. Silent forks are disallowed.
+Portable History Format (Normative Requirements)
+The Exit Protocol requires a portable representation whose semantics are independent of imple-
+mentation language.
+Requirement F.1 (Canonical Encoding).
+All fields must have a canonical encoding. If two
+correct implementations serialize the same history, they must produce identical bytes.
+Requirement F.2 (Stable Identifiers).
+Logs, events, authors, and arbiters must be identified
+by stable identifiers that survive migration.
+Requirement F.3 (Deterministic Replay Inputs).
+The portable format must include all
+data necessary to replay semantics. No hidden server-side state may be required.
+Requirement F.4 (Incremental Verification).
+The format must support streaming validation
+(hash chain or Merkle proofs) without requiring full materialization.
+Minimal Format Sketch (Record Types)
+A portable history is structured as a formally specified sequence of records whose semantics are
+fixed by the Spherepop standard rather than by any particular implementation. The representation
+5
+
+begins with a header that identifies the version of the format in use, the log identifier LID to
+which the history pertains, and the cryptographic primitives required for verification. This header
+establishes the interpretive context within which all subsequent records must be read and ensures
+forward compatibility as the specification evolves.
+Following the header, the history contains a manifest that commits to the terminal state of the
+log at the moment of export. The manifest records the index 𝑛of the final event, the cryptographic
+hash of that event, and a global commitment over the entire history, such as a Merkle root or
+equivalent hash-chain digest. This commitment is attested by the exporting Arbiter through a
+digital signature bound to its public key identifier.
+The manifest thereby binds the exported
+sequence to a unique causal trajectory and prevents undetected truncation, insertion, or reordering
+of events.
+The body of the portable history consists of a totally ordered sequence of event records. Each
+record specifies its position in the sequence, a cryptographic commitment to its immediate predeces-
+sor, a verifiable timestamp, and a stable identifier for the proposing agent. The semantic payload
+of the event is encoded in canonical byte form so that its meaning is invariant across implemen-
+tations. Where appropriate, the record may include a client-side signature attesting authorship,
+together with the Arbiter's signature attesting lawful sequencing. These records jointly constitute
+the authoritative history from which all semantic state is deterministically derived.
+For efficiency of replay, the history may additionally include checkpoint records containing state
+digests and serialized snapshots. These checkpoints are constitutionally subordinate to the event
+sequence. They possess no independent authority and are valid only insofar as they are reproducible
+by deterministic replay of the preceding events. Their inclusion serves solely as an optimization
+and does not alter the primacy of history as the root of truth.
+This structure ensures that a portable history is both mechanically verifiable and semantically
+self-sufficient.
+It encodes not merely a sequence of actions, but a complete and transportable
+representation of a world.
+This structure is sufficient to ensure replay, portability, and verification, while forbidding the
+Arbiter from owning the client's causal past.
+The Portable History Format as a Constitutional Object
+The Exit Protocol requires more than a right to export data. It requires a representation of history
+whose authority is independent of any particular implementation. A portable history is therefore
+not a convenience feature but a constitutional object: it is the medium through which causal
+sovereignty is exercised. If histories are not mechanically fungible across arbiters, then sovereignty
+collapses back into infrastructure control.
+For this reason, the Spherepop specification must define a canonical portable history format
+whose semantics are invariant across languages, platforms, and implementations. This format does
+not merely encode events; it encodes the conditions under which a world may lawfully persist across
+institutional boundaries.
+6
+
+The guiding principle is that history, not state, is the primary object of preservation. Because
+all semantic state is a deterministic function of the event sequence, portability of reality is achieved
+by portability of events alone. Any representation that requires server-side interpretation, opaque
+reconstruction rules, or hidden auxiliary state violates the replay invariant and therefore violates
+causal sovereignty.
+A portable history must therefore satisfy four structural conditions.
+First, it must be canonically encodable. Two correct implementations serializing the same history
+must produce identical byte streams. Without canonicalization, portability degrades into proba-
+bilistic compatibility, and verification becomes social rather than mechanical. Canonical encoding
+is the condition under which histories become fungible across institutions.
+Second, it must preserve stable identity. Log identifiers, event identifiers, proposers, and arbiters
+must be represented by persistent identifiers that remain meaningful outside their original hosting
+environment. Identity must not be scoped to a provider namespace. Otherwise, emigration would
+require translation rather than replay, reintroducing institutional dependence at the substrate level.
+Third, it must be semantically complete. All information required for deterministic replay must
+be contained within the exported history. No interpretation may depend on hidden server state,
+proprietary indexes, or external metadata. The history must be self-sufficient. If a replay requires
+consultation with the original arbiter, then the original arbiter remains sovereign.
+Fourth, it must admit incremental verification. A client must be able to validate causal continuity
+while streaming the history, without trusting the exporter and without materializing the entire log in
+advance. This requires that histories be chained or merklized such that each event cryptographically
+commits to its predecessors. Incremental verifiability ensures that portability scales with long-lived
+worlds.
+These constraints jointly transform the portable history from a file format into a constitutional
+mechanism.
+They ensure that history is not merely copied but is provably identical in all se-
+mantically relevant respects. Portability thus becomes a physical property of the system, not a
+contractual promise.
+Concretely, a portable history consists of a formally defined sequence of records whose meaning
+is fixed by the specification rather than by any implementation. The history begins with a header
+identifying the format version, cryptographic primitives, and log identifier. This is followed by a
+manifest that commits to the terminal state of the log through a cryptographic digest, binding the
+exported history to a unique causal trajectory. The body consists of a totally ordered sequence
+of event records, each of which includes its position in the sequence, a cryptographic commitment
+to the previous event, the canonical payload representing the client's proposal, and attestations
+sufficient to verify that the event was lawfully sequenced.
+Optional checkpoints may be included for performance, but they are constitutionally subordinate.
+A checkpoint has authority only insofar as it is derivable from the event sequence. The log, not the
+snapshot, remains the root of truth. This asymmetry ensures that no arbiter may smuggle power
+back into state representation.
+7
+
+By fixing a portable history format at the level of constitutional law rather than engineering
+convenience, Spherepop ensures that causal continuity is not hostage to infrastructure choice. A
+world encoded in this form is not stored by an arbiter; it is merely witnessed. The log remains a
+public causal object whose authority derives from its structure, not its host.
+In this way, the format completes the transition from platform governance to causal governance.
+Where platforms control users by monopolizing servers, Spherepop protects users by making histo-
+ries mechanically migratable. The format is therefore not ancillary to freedom but constitutive of
+it. Forkable time is impossible without fungible histories.
+Canonical Encoding and Deterministic Replay
+Causal sovereignty depends not merely on the existence of portable histories, but on their unam-
+biguous interpretation. A history that admits multiple serializations, multiple parses, or multiple
+semantic reconstructions is not a stable object of law but an unstable object of negotiation. For
+forkable time to function as a civilizational primitive, histories must possess a single, invariant
+physical form and a single, invariant semantic evolution.
+Canonical encoding therefore plays the same role in causal systems that standardized weights
+and measures play in physical commerce. Without a fixed representation, verification collapses into
+trust. With a fixed representation, trust collapses into arithmetic.
+A canonical encoding is one in which the mapping from abstract history to concrete byte sequence
+is injective and total. Every valid history corresponds to exactly one byte string, and every valid
+byte string corresponds to exactly one history. Any ambiguity in field ordering, whitespace, numeric
+representation, string normalization, or cryptographic encoding reintroduces interpretive power at
+the infrastructure layer and thus reconstitutes sovereignty.
+This requirement is not stylistic but constitutional. If two arbiters can serialize the same history
+differently, then equivalence of realities becomes a matter of institutional discretion. Canonical
+encoding instead makes equivalence decidable by computation alone.
+Deterministic replay completes this invariance. Because Spherepop semantics are history-first,
+the meaning of a world is defined entirely by the ordered sequence of events. A correct evaluator
+must therefore satisfy the following condition: given a portable history 𝐻= (𝑒0, ... , 𝑒𝑛), the seman-
+tic state produced by replay is a pure function of 𝐻, independent of time, place, or implementation.
+Formally, for any two correct evaluators ℰ1 and ℰ2 implementing the Spherepop semantics,
+ℰ1(𝐻) = ℰ2(𝐻).
+If this equality fails, then histories are not sovereign objects; they are merely suggestions interpreted
+by software authorities.
+Canonical encoding and deterministic replay therefore form a coupled invariant. Encoding fixes
+the physical identity of a history. Replay fixes its semantic identity. Together they ensure that a
+world may be transmitted across institutions without transformation, reinterpretation, or loss of
+8
+
+meaning.
+This is the precise point at which political economy becomes a branch of formal semantics.
+Monopoly power arises when institutions control interpretation. It dissolves when interpretation is
+mechanically fixed.
+In Spherepop, causality is not trusted to policy but bound by mathematics. A portable history
+is not portable because a provider permits it. It is portable because its form and meaning are fixed
+by law-like constraints. The arbiter cannot redefine the past any more than a mint can redefine
+the kilogram.
+This is the deepest inversion of the platform paradigm. Where platforms govern by mutability,
+Spherepop governs by invariance. Where platforms rule by obscuring sequence, Spherepop liberates
+by freezing it into a public object. Time becomes forkable precisely because it becomes precise.
+Forkable Time and the End of Platform Sovereignty
+The architecture developed in this paper reveals that the central political struggle of the digital age
+has been consistently misidentified. Platforms are not primarily monopolies over markets, content,
+or code. They are monopolies over sequence. They rule not by owning speech, but by owning the
+order in which events become real. Control of causality is the deepest form of power.
+This explains why traditional remedies have failed. Antitrust law attacks market share, while
+open source attacks intellectual property. Neither addresses the substrate on which domination
+is enacted. A platform can permit open code and competitive markets while retaining absolute
+authority over time itself. As long as the platform controls the authoritative history of interaction,
+it governs reality regardless of surface openness.
+Spherepop introduces a different axis of political design. By making histories portable, verifiable,
+and mechanically sovereign, it relocates power from institutions to structure. Authority no longer
+arises from ownership of infrastructure but from adherence to invariant rules of causality. The
+arbiter becomes replaceable because it no longer defines the world. It merely witnesses it.
+Forkable time therefore marks a constitutional transformation comparable to the invention of
+monetary standards, written law, or distributed scientific method. In each case, a domain once
+governed by institutional fiat was transferred to public structure. Just as law replaced decree and
+measurement replaced tribute, causal sovereignty replaces platform rule.
+Under this regime, digital reality ceases to be private property. A user's world is no longer stored
+inside a company's servers as a captive state. It becomes a public causal object whose continuity
+is guaranteed by mathematics rather than by contract. Exit is no longer rebellion but routine.
+Migration ceases to be rupture and becomes preservation.
+This transformation dissolves the foundational mechanism of platform power. When histories
+are portable, lock-in evaporates.
+When replay is deterministic, deception becomes structurally
+expensive. When causality is public, manipulation must reveal itself as physics. Governance shifts
+from policy enforcement to protocol compliance.
+The deeper consequence is cultural as well as technical. A society organized around forkable time
+9
+
+no longer experiences digital life as submission to opaque systems. Individuals become custodians
+of their own causal trajectories. Agency is restored not by interface design alone but by ontological
+reengineering.
+Spherepop thus reframes freedom for the computational age. Freedom is not merely the right
+to speak or to code. It is the right to carry one's past intact into the future. It is continuity of self
+across institutional boundaries. It is sovereignty over sequence.
+By transforming time itself into a common good, Spherepop makes possible what platforms
+structurally prohibit: a digital civilization in which reality is not rented from corporations but
+owned by its participants. The platform era ends not with regulation, but with a change in physics.
+10
+
+Appendices
+Formal Model of Causal Histories
+This appendix provides a minimal mathematical formalization of causal histories sufficient to sup-
+port the constitutional claims made in the main text.
+Let ℰbe a countable set of event payloads. A history is a finite or countably infinite sequence
+𝐻= (𝑒0, 𝑒1, 𝑒2, ...)
+with 𝑒𝑖∈ℰ.
+A history is not merely an ordered list but a causal object. We therefore equip 𝐻with a successor
+relation ≺such that
+𝑒𝑖≺𝑒𝑖+1.
+This defines a total order isomorphic to (ℕ, <).
+A state is not primitive. Let Σ be a space of semantic states and let
+𝒰∶Σ × ℰ→Σ
+be a deterministic update operator.
+Then the semantic interpretation of a history is defined recursively by
+𝜎0 ∈Σ,
+𝜎𝑛+1 = 𝒰(𝜎𝑛, 𝑒𝑛).
+The induced evaluation functional is therefore
+ℰ𝒱𝒜ℒ(𝐻) = 𝜎𝑛= 𝒰(𝒰(... 𝒰(𝜎0, 𝑒0), 𝑒1) ... , 𝑒𝑛−1).
+This expresses the replay invariant formally:
+𝜎𝑛= ℰ𝒱𝒜ℒ(𝑒0, ... , 𝑒𝑛−1).
+State is thus a derived quantity. All authority resides in 𝐻.
+Prefix Order and World Continuity
+Define a prefix relation ⊑on histories by
+𝐻⊑𝐻′ ⟺𝐻′ = (𝑒0, ... , 𝑒𝑛, ... , 𝑒𝑚)
+for some 𝑚≥𝑛.
+Then (ℋ, ⊑) forms a prefix-ordered set. World continuity under migration requires preservation
+of this order.
+11
+
+If 𝐻is exported at length 𝑛and resumed under a new arbiter, the future history must satisfy
+𝐻⊑𝐻new.
+Silent violation of this relation constitutes causal breach.
+Forks and Identity
+Two histories 𝐻and 𝐻′ share identity up to time 𝑛if
+𝐻[0 ∶𝑛] = 𝐻′[0 ∶𝑛].
+They diverge at 𝑛+ 1 if
+𝑒𝑛+1 ≠𝑒′
+𝑛+1.
+This defines a branching structure equivalent to a rooted tree of histories. Identity of a world is
+therefore path-dependent, not state-dependent.
+This formalizes the claim that identity is historical rather than extensional.
+Causal Objects
+A world in Spherepop is the equivalence class
+[𝐻] = {𝐻′ ∣𝐻′ = 𝐻}.
+Since canonical encoding enforces uniqueness of representation, histories are rigid objects: equal-
+ity is decidable and not interpretive. This rigidity is the mathematical basis of causal sovereignty.
+Formalization of Arbiters and Causal Authority
+This appendix formalizes the role of the Arbiter as a sequencing function rather than a sovereign
+authority.
+Let 𝒫denote the set of client proposals. A proposal is an unordered intent that has not yet
+entered causal reality.
+An Arbiter is defined as a partial function
+𝒜∶ℋ× 𝒫→ℋ
+mapping a history and a proposal to an extended history.
+For a given history
+𝐻= (𝑒0, ... , 𝑒𝑛),
+and proposal 𝑝∈𝒫, the Arbiter produces
+𝒜(𝐻, 𝑝) = (𝑒0, ... , 𝑒𝑛, 𝑒𝑛+1),
+12
+
+where 𝑒𝑛+1 is the event corresponding to 𝑝together with ordering metadata.
+The Arbiter is therefore not a source of semantics but a source of sequence. It may select order,
+but not meaning.
+Causal Monotonicity
+The Arbiter must satisfy the following functional constraint.
+For fixed LID, if
+𝒜(𝐻, 𝑝) = 𝐻1,
+𝒜(𝐻, 𝑝′) = 𝐻2,
+then 𝐻1 ≠𝐻2 implies that at most one of these histories may be declared authoritative.
+Formally, for any two authoritative histories 𝐻1, 𝐻2 associated with the same log identifier,
+𝐻1 ⊑𝐻2
+or
+𝐻2 ⊑𝐻1.
+This prevents the Arbiter from issuing conflicting futures for the same past.
+Informational Non-Interference
+Let 𝜋∶ℰ→𝒫extract the payload of an event.
+Then for all 𝐻and 𝑝,
+𝜋(𝑒𝑛+1) = 𝑝
+where
+𝒜(𝐻, 𝑝) = 𝐻′.
+This formalizes that the Arbiter may append but may not transform content.
+Temporal Liveness
+Define a sequencing acknowledgment function
+𝒯∶ℋ× 𝒫→ℕ∪{⊥},
+where 𝒯(𝐻, 𝑝) = 𝑘indicates that 𝑝was sequenced at position 𝑘, and ⊥indicates explicit refusal.
+Temporal liveness requires that for all (𝐻, 𝑝), 𝒯(𝐻, 𝑝) is defined within a bounded time window.
+Undefined silence is prohibited.
+This constraint prevents temporal censorship by indefinite delay.
+Authority as a Derived Property
+An Arbiter is authoritative for a history 𝐻if and only if its outputs satisfy the monotonicity and
+non-interference constraints and are verifiable by signature.
+Authority is therefore not a primitive role but a property of lawful behavior.
+This inverts the traditional platform model. Institutions do not own causality. They temporarily
+satisfy its constraints.
+13
+
+Portability, Replay, and World Equivalence
+This appendix formalizes the conditions under which two computational worlds may be considered
+the same world under different institutional authorities.
+Deterministic Replay
+Let ℰ𝒱𝒜ℒbe the deterministic evaluation functional defined in Appendix A. For any history
+𝐻= (𝑒0, ... , 𝑒𝑛),
+the associated semantic state is
+𝜎𝑛= ℰ𝒱𝒜ℒ(𝐻).
+Determinism requires that ℰ𝒱𝒜ℒbe a pure function.
+For any two correct implementations
+ℰ𝒱𝒜ℒ1 and ℰ𝒱𝒜ℒ2,
+ℰ𝒱𝒜ℒ1(𝐻) = ℰ𝒱𝒜ℒ2(𝐻).
+This guarantees that semantic state is invariant under migration across implementations.
+Replay Equivalence
+Two histories 𝐻and 𝐻′ are replay-equivalent, written
+𝐻≡replay 𝐻′,
+if and only if
+𝐻= 𝐻′.
+Because canonical encoding enforces unique representation, replay equivalence reduces to syn-
+tactic equality. There is no interpretive margin in which two different histories may define the same
+world.
+This rigidity is essential. If equivalence were extensional rather than historical, institutions could
+rewrite the past while preserving surface state.
+World Identity Across Arbiters
+Let 𝐻𝐴be a history exported from Arbiter 𝐴and 𝐻𝐵be the history accepted by Arbiter 𝐵.
+World identity is preserved if and only if
+𝐻𝐴= 𝐻𝐵.
+No translation, normalization, or reinterpretation is permitted. Causal continuity is defined as
+identity of history, not similarity of state.
+14
+
+Migration as an Isomorphism
+Migration between arbiters is therefore an isomorphism in the category of histories.
+Define a category Hist whose objects are histories and whose morphisms are prefix extensions.
+An exit operation induces the identity morphism
+id𝐻∶𝐻→𝐻,
+followed by a change in sequencing authority.
+Thus migration alters governance without altering ontology.
+The Impossibility of Covert Sovereignty
+Any system in which two distinct histories may be declared equivalent reintroduces interpretive
+authority at the institutional layer.
+By fixing identity to history equality, Spherepop eliminates this possibility. Institutions may
+witness reality, but they may not redefine it.
+Portability is therefore not a matter of convenience but a logical necessity for causal sovereignty.
+Fork Semantics and the Geometry of Time
+This appendix formalizes the notion of forkable time as a geometric property of causal space.
+The Space of Histories
+Let ℋdenote the set of all finite histories over the event alphabet ℰ. Equipped with the prefix
+order ⊑defined in Appendix A, (ℋ, ⊑) forms a rooted tree.
+The root 𝜖is the empty history. Each history 𝐻has children
+Succ(𝐻) = {𝐻⋅𝑒∣𝑒∈ℰ},
+where 𝐻⋅𝑒denotes concatenation.
+Time in Spherepop is therefore not a line but a branching structure. Linear time is not funda-
+mental; it is a path through a tree.
+Forks as Bifurcations
+A fork occurs at history 𝐻when two extensions exist:
+𝐻1 = 𝐻⋅𝑒,
+𝐻2 = 𝐻⋅𝑒′,
+with 𝑒≠𝑒′.
+Then 𝐻1 and 𝐻2 share a common past but define distinct futures. This is the formal meaning
+of causal divergence.
+15
+
+Forking is not a failure of consistency. It is a structural property of time once history is treated
+as primary.
+Arbiter Authority as Path Selection
+An Arbiter does not create the tree. It selects a path through it.
+At each history 𝐻, the Arbiter chooses one successor from Succ(𝐻) to become authoritative.
+This is a selection function
+𝒮∶ℋ→ℋ
+such that
+𝐻⊏𝒮(𝐻).
+Authority therefore consists in choosing a branch, not in defining the space of possibilities.
+Forkability of Time
+Time is forkable if and only if no Arbiter is permitted to collapse the tree into a single irreversible
+trunk.
+Formally, forkability requires that for any history 𝐻and any successor 𝐻′ ∈Succ(𝐻), there
+exists a lawful world in which 𝐻′ is authoritative under some Arbiter.
+No institution may permanently foreclose the space of continuations.
+Exit as Path Rebinding
+Let 𝐻be the current authoritative history under Arbiter 𝐴.
+Exit does not alter the path. It alters the selector.
+The path 𝐻remains fixed while the authority function 𝒮𝐴is replaced by 𝒮𝐵.
+Thus migration changes governance, not geometry.
+Time as a Public Manifold
+Under platform systems, time is a private line owned by an institution.
+Under Spherepop, time is a public branching manifold traversed by agents.
+This is the precise mathematical sense in which causality becomes a commons.
+Forkable time is not metaphorical. It is a topological property of the space of histories.
+16
+
+References
+[1] C. Doctorow. The Enshittification of TikTok. Pluralistic, 2023.
+[2] S. Zuboff. The Age of Surveillance Capitalism. PublicAffairs, 2019.
+[3] H. Varian. Market structure in the network age. Journal of Economic Perspectives, 33(2):51-68,
+2019.
+[4] G. Akerlof. The market for "lemons": Quality uncertainty and the market mechanism. Quar-
+terly Journal of Economics, 84(3):488-500, 1970.
+[5] L. Lessig. Code: Version 2.0. Basic Books, 2006.
+[6] L. Winner. Do artifacts have politics? Daedalus, 109(1):121-136, 1980.
+[7] M. Heidegger. The Question Concerning Technology and Other Essays. Harper & Row, 1977.
+[8] B. Latour. Reassembling the Social. Oxford University Press, 2005.
+[9] Y. Benkler. The Wealth of Networks. Yale University Press, 2006.
+[10] A. R. Galloway. Protocol: How Control Exists After Decentralization. MIT Press, 2004.
+[11] G. Deleuze. Postscript on the societies of control. October, 59:3-7, 1992.
+[12] A.-L. Barabási. Network Science. Cambridge University Press, 2016.
+[13] L. Lamport. Time, clocks, and the ordering of events in a distributed system. Communications
+of the ACM, 21(7):558-565, 1978.
+[14] M. Herlihy. Wait-free synchronization. ACM Transactions on Programming Languages and
+Systems, 13(1):124-149, 1991.
+[15] M. Fischer, N. Lynch, and M. Paterson. Impossibility of distributed consensus with one faulty
+process. Journal of the ACM, 32(2):374-382, 1985.
+[16] T. Needham. Visual Complex Analysis. Oxford University Press, 1997.
+[17] E. Meijer. Your mouse is a database. Communications of the ACM, 54(5):66-73, 2011.
+[18] H. Rollins. Psychocinema. Polity Press, Cambridge, 2024.
+[19] L. Floridi. The Fourth Revolution. Oxford University Press, 2014.
+[20] J. Barbour. The End of Time. Oxford University Press, 1999.
+[21] P. Ricoeur. Time and Narrative, Vol. 1. University of Chicago Press, 1984.
+17
+
