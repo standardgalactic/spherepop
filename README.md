@@ -1,5 +1,7 @@
 # Spherepop
 
+[Formal Logic](textbook/README.md)
+
 [Recursive Containment and Deferred Closure](https://standardgalactic.github.io/spherepop/dynamics/spherepop_scope_dynamics.pdf)
 
 * [Cognitive Topology](https://standardgalactic.github.io/spherepop/dynamics/Cognitive_Topology.pdf) — *Notes*
@@ -141,6 +143,152 @@ By making commitment, exclusion, synthesis, and abstraction explicit, Spherepop 
 - **Demos and visuals:**  
   See the animations and screenshots in this repository for interactive examples of nested scopes, popping, and collapse.
 
+
+---
+
+# ░▒▓ SPHEREPOP AT A GLANCE ▓▒░
+
+```
+Traditional                 Spherepop
+─────────────────────────────────────────────────────
+State                  →    History
+Context Γ              →    Ordered Event History H
+Assignment             →    Constructive Event
+Mutation               →    Monotone Growth
+Delete                 →    Refuse
+Equality               →    Collapse
+Substitution           →    Historical Substitution
+Function               →    History Transformer
+Type                   →    Refusal Structure
+Proof                  →    Replayable History
+Compilation            →    History Construction
+Verification           →    Deterministic Replay
+Concurrency            →    Meld Compatible Histories
+```
+
+## The Five Primitive Operations
+
+```
+            ○ Pop
+             │
+             ▼
+        Choose History
+             │
+      ┌──────┴──────┐
+      ▼             ▼
+ Refuse ✕      Bind ○──────► Dependency
+      │
+      ▼
+ Collapse ◎────► Equivalent Histories
+      │
+      ▼
+ Meld ⊕───────► Unified History
+```
+
+## Historical Type Theory
+
+```
+Traditional
+
+Γ ⊢ t : A
+
+Static assumptions
+        │
+        ▼
+Type checking
+
+
+Spherepop
+
+H ⊢ t : A
+
+Historical replay
+        │
+        ▼
+Admissible continuation
+        │
+        ▼
+Extended history
+```
+
+## Types are Refusal Structures
+
+```
+Candidate Continuation
+
+        │
+        ▼
+
+   ┌──────────────┐
+   │ Refusal Type │
+   └──────────────┘
+
+      │     │     │
+      │     │     │
+      ▼     ▼     ▼
+
+   Admit  Defer  Refuse
+     │              │
+     ▼              ▼
+
+ Continue      Stop History
+```
+
+## Historical Identity
+
+```
+History A ─────────────┐
+                       │
+                       ▼
+                  Collapse
+                       ▲
+                       │
+History B ─────────────┘
+
+Equality is discovered,
+not assumed.
+```
+
+## The Kernel
+
+```
+Parse
+  │
+  ▼
+Elaborate
+  │
+  ▼
+Replay
+  │
+  ▼
+Normalize
+  │
+  ▼
+Verify
+  │
+  ▼
+Commit
+```
+
+---
+
+```
+Programs  = Histories
+
+Types     = Refusal Structures
+
+Proofs    = Replayable Histories
+
+Functions = History Transformers
+
+Computation = Admissible Growth
+
+Truth = Verified Construction
+```
+
+> **Spherepop:** *Computation is not the transformation of state, but the irreversible growth of an admissible history.*
+
+<!--
 ## See also
 
 [Circles of Evaluation](https://youtu.be/QXvExdthXkg) 
@@ -157,3 +305,4 @@ Spherepop is an active research and design project exploring:
 - and new models of generative computation.
 
 It is intentionally experimental, conceptual, and executable.
+-->
