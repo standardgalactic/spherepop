@@ -1,0 +1,2318 @@
+WEBVTT
+
+00:00.000 --> 00:13.660
+You know, usually when we think about solving a math problem or really any kind of logic puzzle, there is this underlying expectation of absolute crystalline permanence.
+
+00:13.980 --> 00:15.020
+Right, like it's written in stone.
+
+00:15.360 --> 00:16.160
+Yeah, exactly.
+
+00:16.480 --> 00:16.640
+Yeah.
+
+00:16.700 --> 00:18.580
+Think about, you know, being back in a classroom.
+
+00:18.840 --> 00:29.060
+You stand at a whiteboard, you uncap a dry erase marker, you write out a long, complicated equation, and in that moment, those numbers feel like solid objects.
+
+00:29.060 --> 00:30.640
+They feel like facts on a board.
+
+00:31.200 --> 00:34.080
+But think about what actually happens physically when you solve it.
+
+00:34.440 --> 00:41.380
+You write down a step, you do some mental math, and then you literally take your hand or an eraser and wipe away a chunk of that equation.
+
+00:41.540 --> 00:43.020
+You just smudge it out.
+
+00:43.100 --> 00:43.280
+Right.
+
+00:43.460 --> 00:47.320
+You smudge it out, you write the newly calculated number right over the smudge, and you move on.
+
+00:47.880 --> 00:54.920
+By the time you get to the bottom and proudly circle your final answer, that whiteboard is completely wiped clean of the journey.
+
+00:55.540 --> 00:58.280
+The history is, well, it's completely gone.
+
+00:58.280 --> 00:59.820
+It is entirely ephemeral.
+
+00:59.960 --> 01:05.680
+I mean, we have this collective cognitive bias where we treat the final answer as the only thing of actual value.
+
+01:05.920 --> 01:06.620
+Yeah, exactly.
+
+01:06.860 --> 01:14.260
+The steps we took, the temporary variables we held in our heads, the intermediate calculations, they're just scaffolding.
+
+01:14.340 --> 01:19.040
+And once the building is finished, we just tear the scaffolding down and sweep it into the trash.
+
+01:19.200 --> 01:21.380
+And it's comforting in a way, you know.
+
+01:21.480 --> 01:24.360
+We like the clean simplicity of a single final answer.
+
+01:24.900 --> 01:25.980
+It feels tidy.
+
+01:26.220 --> 01:26.720
+It does.
+
+01:26.720 --> 01:34.220
+But then you take that exact same human habit and you step into the world of computer science, formal logic, software engineering.
+
+01:34.720 --> 01:45.460
+Suddenly, that deeply ingrained habit of erasing our tracks starts to look less like a convenient shortcut and more like a profound systemic structural flaw.
+
+01:45.600 --> 01:46.120
+Oh, absolutely.
+
+01:46.120 --> 01:52.600
+When you really look at it, we're relying on a computational landscape that is, quite honestly, suffering from collective amnesia.
+
+01:52.840 --> 01:58.460
+Yeah, systemic amnesia is probably the most accurate way to describe the last 70 years of computer engineering.
+
+01:58.740 --> 02:01.480
+It is an absolute structural memory loss.
+
+02:01.660 --> 02:01.880
+Wow.
+
+02:02.120 --> 02:02.220
+Yeah.
+
+02:02.220 --> 02:04.220
+And it's not just a software quirk, you know.
+
+02:04.220 --> 02:13.460
+It is a habit we have baked into the physical silicon of every single device we own, from the smartphone in your pocket to the servers running the global financial system.
+
+02:13.720 --> 02:14.900
+Which is wild to think about.
+
+02:14.960 --> 02:16.920
+But anyway, welcome to today's Deep Dive.
+
+02:16.960 --> 02:19.300
+We are going to challenge that exact amnesia today.
+
+02:19.540 --> 02:20.200
+We really are.
+
+02:20.200 --> 02:34.680
+Our mission is to tackle a truly massive, incredibly dense stack of source material, specifically a 224-page monograph from the year 2026 by an author named Flyxion.
+
+02:35.240 --> 02:44.140
+It is titled, let me get this right, Beyond Parentheses, A Geometric Foundation for Concurrent Computation Through the Sphere Pop Calculus.
+
+02:44.280 --> 02:45.120
+It's quite a mouthful.
+
+02:45.260 --> 02:45.980
+It really is.
+
+02:45.980 --> 02:53.040
+Now, if you are listening to that title and thinking, you know, wow, I need a degree in advanced mathematics just to get through the introduction, do not worry.
+
+02:53.140 --> 02:55.080
+That is exactly why we are here.
+
+02:55.200 --> 02:55.300
+Right.
+
+02:55.400 --> 02:56.700
+We're doing the heavy lifting for you.
+
+02:56.780 --> 02:57.140
+Exactly.
+
+02:57.700 --> 03:10.260
+Our goal on this Deep Dive is to shortcut the heavy, impenetrable mathematics, bypass the dense academic theorems, and extract the profound, perspective-shifting aha moment sitting right at the center of this text.
+
+03:10.300 --> 03:12.140
+And it is a massive aha moment.
+
+03:12.520 --> 03:13.520
+It really is.
+
+03:13.520 --> 03:16.260
+We are exploring a radical proposition here.
+
+03:16.900 --> 03:27.320
+What if the way we've been writing, running, and understanding computer code since the dawn of the digital age is based on a fundamental illusion about how math actually works?
+
+03:27.680 --> 03:29.740
+It's a wildly compelling premise.
+
+03:30.400 --> 03:36.580
+What Flyxion is essentially arguing in this monograph is that our foundational assumptions about code...
+
+03:36.580 --> 03:38.340
+Like how a program executes, right?
+
+03:38.380 --> 03:38.540
+Right.
+
+03:38.620 --> 03:45.580
+How it executes, how it manages memory, how it handles time and errors, all of it, they are all built on a syntactic trick.
+
+03:45.700 --> 03:46.080
+A trick.
+
+03:46.200 --> 03:46.380
+Yeah.
+
+03:46.460 --> 03:50.260
+A parlor trick of text that we inherited from how we write on paper.
+
+03:50.840 --> 03:55.320
+And that trick has severely limited what computers are actually capable of doing.
+
+03:55.460 --> 03:55.640
+Okay.
+
+03:55.680 --> 03:56.420
+Let's unpack this.
+
+03:56.480 --> 03:58.040
+I want to ground this in something we all know.
+
+03:58.040 --> 04:03.180
+I want you to picture a simple math problem, the kind you might see in a middle school arithmetic class.
+
+04:03.360 --> 04:03.380
+Okay.
+
+04:03.440 --> 04:04.080
+I'm picturing it.
+
+04:04.200 --> 04:05.640
+Imagine it written out on that whiteboard.
+
+04:05.760 --> 04:06.320
+Three times.
+
+04:06.460 --> 04:07.180
+Open parenthesis.
+
+04:07.320 --> 04:07.780
+Two plus.
+
+04:07.940 --> 04:08.660
+Open parenthesis.
+
+04:08.780 --> 04:09.460
+Five times four.
+
+04:09.900 --> 04:10.640
+Close parenthesis.
+
+04:10.780 --> 04:11.480
+Close parenthesis.
+
+04:11.840 --> 04:12.520
+Minus seven.
+
+04:12.780 --> 04:14.740
+Classic order of operations problem.
+
+04:15.200 --> 04:15.640
+Exactly.
+
+04:16.080 --> 04:19.080
+We have all been taught the exact same algorithm to solve this, right?
+
+04:19.580 --> 04:20.740
+The order of operations.
+
+04:21.560 --> 04:24.100
+PEMDIS or BODMIS, depending on where you went to school.
+
+04:24.500 --> 04:26.100
+Please excuse my dear Aunt Sally.
+
+04:26.100 --> 04:26.460
+Yes.
+
+04:27.260 --> 04:29.580
+You scan the equation from left to right.
+
+04:30.080 --> 04:35.060
+You look for the innermost parentheses, which in this specific case is the five times four.
+
+04:35.500 --> 04:40.860
+You evaluate that tiny piece to 20, and then you replace that whole chunk of text with the new number.
+
+04:41.140 --> 04:44.940
+And then you step outward to the next set of parentheses, and you do it again.
+
+04:45.080 --> 04:45.300
+Right.
+
+04:45.440 --> 04:54.500
+But this text argues that this simple, mundane, everyday algorithm, locating a scope, evaluating the math inside it, and replacing it,
+
+04:54.500 --> 04:56.660
+is not just a trick for kids learning arithmetic.
+
+04:56.940 --> 04:58.240
+No, it's much bigger than that.
+
+04:58.240 --> 05:03.420
+Fuchsian claims this is the true, underlying, primitive operation of all computation.
+
+05:03.780 --> 05:06.660
+What's fascinating here is how we normally treat those parentheses.
+
+05:07.420 --> 05:11.360
+I mean, in traditional computer science, parentheses are viewed merely as temporary syntax.
+
+05:11.480 --> 05:12.240
+Like punctuation.
+
+05:12.240 --> 05:12.960
+Exactly.
+
+05:13.160 --> 05:14.360
+They are punctuation marks.
+
+05:14.500 --> 05:18.740
+They are just there to tell the compiler or the human reader what to do first.
+
+05:19.220 --> 05:24.640
+But once the math inside them is finished, the parentheses themselves simply disappear.
+
+05:24.760 --> 05:25.360
+They just vanish.
+
+05:25.360 --> 05:28.440
+The steps are completely forgotten, and the boundary vanishes.
+
+05:29.240 --> 05:35.520
+But the sphere pop calculus, which Flyxion abbreviates throughout the paper as SPC, by the way,
+
+05:35.760 --> 05:43.320
+it argues that real computation is not about manipulating these temporary textual symbols on a flat, two-dimensional page.
+
+05:43.620 --> 05:44.400
+So what is it about?
+
+05:44.680 --> 05:48.340
+It's about creating persistent geometric regions of history.
+
+05:48.580 --> 05:49.800
+Geometric regions of history.
+
+05:49.800 --> 05:55.760
+I remember reading that line in the abstract and thinking it sounded like a concept from, I don't know, a hard sci-fi novel.
+
+05:55.920 --> 05:57.000
+It does sound a bit sci-fi.
+
+05:57.160 --> 06:01.120
+But as you dig into the pages, it is incredibly tangibly practical.
+
+06:01.480 --> 06:06.700
+We're going to take a journey today, moving step-by-step from that simple grade school math problem
+
+06:06.700 --> 06:12.820
+into a radical new geometry of computing made up of what the text calls spheres and pops.
+
+06:13.040 --> 06:13.860
+Spheres and pops, yep.
+
+06:13.860 --> 06:19.700
+We're going to explore how this new geometry handles things that would normally crash our computers.
+
+06:19.800 --> 06:26.300
+How it unleashes true concurrency without the multi-threading nightmares software developers usually face.
+
+06:26.920 --> 06:28.920
+And, you know, how it deals with probability.
+
+06:29.240 --> 06:30.200
+Which is a huge deal.
+
+06:30.960 --> 06:35.200
+And finally, we will uncover the theoretical universal operator machine,
+
+06:35.680 --> 06:44.060
+which is an engine that could completely redefine how future compilers and artificial intelligence runtimes actually operate under the hood.
+
+06:44.260 --> 06:45.960
+It is a complete paradigm shift.
+
+06:45.960 --> 06:51.280
+To really grasp it, we have to willingly suspend our current understanding of programming.
+
+06:51.480 --> 06:52.820
+We have to kind of unlearn everything.
+
+06:52.920 --> 06:53.520
+Yeah, exactly.
+
+06:53.660 --> 06:59.860
+We have to stop looking at code as a sequential list of instructions that ruthlessly overwrite each other
+
+06:59.860 --> 07:04.180
+and start looking at it as an irreversible, geometrically growing structure.
+
+07:04.420 --> 07:05.780
+Okay, let's start with that shift.
+
+07:06.160 --> 07:09.280
+Specifically looking at what the text calls the parenthesis illusion.
+
+07:09.280 --> 07:13.440
+There's a surprising fact pointed out early in the monograph that blew my mind a little bit
+
+07:13.440 --> 07:18.780
+simply because it is so obvious yet completely invisible until someone points it out.
+
+07:18.940 --> 07:20.420
+I know exactly the part you mean.
+
+07:20.800 --> 07:26.440
+Take the expression 2 plus 3 times 4 and compare it to, in parentheses, 2 plus 3 times 4.
+
+07:26.800 --> 07:28.800
+They contain the exact same mathematical symbols.
+
+07:28.960 --> 07:30.060
+The numbers are identical.
+
+07:30.480 --> 07:33.320
+The plus sign and the multiplication sign are identical.
+
+07:33.500 --> 07:34.880
+Yep, the raw materials are the same.
+
+07:34.880 --> 07:41.340
+But adding those two curved lines, the parentheses, fundamentally changes the reality and the outcome of the computation.
+
+07:42.040 --> 07:45.400
+And yet, the parentheses themselves don't actually do any math.
+
+07:45.540 --> 07:47.100
+Right, a parenthesis doesn't add.
+
+07:47.160 --> 07:49.080
+No, it doesn't multiply, it doesn't divide.
+
+07:49.180 --> 07:51.080
+What it does is pure organization.
+
+07:51.520 --> 07:52.040
+Precisely.
+
+07:52.280 --> 07:55.400
+They establish a temporary computational environment.
+
+07:55.960 --> 07:58.880
+If you think about traditional computing paradigms,
+
+07:58.880 --> 08:02.940
+whether you are looking at something as old and foundational as the lambda calculus,
+
+08:03.220 --> 08:08.800
+or a modern programming language like Python, Java, or C++ Suite.
+
+08:08.920 --> 08:10.400
+We use those brackets all the time.
+
+08:10.540 --> 08:13.760
+Yeah, we use brackets, braces, and parentheses to create these boundaries.
+
+08:14.300 --> 08:17.120
+For the listener who might not be a computer science major,
+
+08:17.320 --> 08:22.700
+the lambda calculus is basically a mathematical framework developed in the 1930s by Alonzo Church.
+
+08:22.780 --> 08:23.620
+So, one of the pioneers.
+
+08:23.620 --> 08:24.100
+Exactly.
+
+08:25.180 --> 08:30.060
+It treats all computation as just plugging variables into functions over and over,
+
+08:30.360 --> 08:31.700
+replacing terms with new terms.
+
+08:32.380 --> 08:35.480
+And in all these systems, from the 30s to today,
+
+08:35.820 --> 08:41.640
+we use these textual markers to define a boundary where certain rules or operations take priority.
+
+08:41.820 --> 08:47.920
+But the illusion, Affliction points out, is that we have tricked ourselves into thinking the computation is entirely about the symbols.
+
+08:48.120 --> 08:48.280
+Right.
+
+08:48.280 --> 08:53.640
+The numbers and the operators, rather than the spaces those symbols inhabit.
+
+08:53.900 --> 08:54.080
+Right.
+
+08:54.180 --> 08:55.900
+If I go back to that student at the whiteboard,
+
+08:56.660 --> 08:58.700
+you write 2 plus 3, you calculate 5,
+
+08:58.860 --> 09:03.120
+and you literally take an eraser, wipe away the 2 plus 3, and write 5 in its place.
+
+09:03.660 --> 09:05.460
+The history of that addition is gone.
+
+09:05.700 --> 09:06.660
+Completely erased.
+
+09:06.840 --> 09:12.420
+The computational boundary that held the 2 plus 3 together existed for a brief, fleeting second to serve a purpose,
+
+09:12.840 --> 09:15.280
+and then it was utterly destroyed to make room for the present.
+
+09:15.280 --> 09:17.980
+And, you know, to be fair to 70 years of computer science,
+
+09:18.100 --> 09:21.400
+that amnesiac approach works perfectly fine for simple arithmetic.
+
+09:21.780 --> 09:22.860
+It saves space.
+
+09:22.940 --> 09:23.160
+Yeah.
+
+09:23.300 --> 09:26.940
+But the SpherePop calculus asks a critical what-if question.
+
+09:28.000 --> 09:33.340
+What if we stop interpreting these parentheses as textual delimiters on a flat page?
+
+09:33.700 --> 09:35.980
+What if we stop seeing them as ink on paper,
+
+09:36.180 --> 09:39.620
+and instead view them as explicit geometric objects?
+
+09:39.800 --> 09:41.200
+And this is where it gets visual.
+
+09:41.460 --> 09:41.740
+Right.
+
+09:42.520 --> 09:44.820
+Affliction introduces a term for these objects.
+
+09:45.380 --> 09:45.780
+Spheres.
+
+09:46.600 --> 09:51.460
+In STC, a sphere creates a literal, mathematically bounded region of computation.
+
+09:52.140 --> 09:53.520
+It is not just punctuation.
+
+09:53.880 --> 09:55.580
+It is a topological space.
+
+09:55.720 --> 09:56.860
+A topological space.
+
+09:56.900 --> 09:57.060
+Yeah.
+
+09:57.120 --> 10:01.180
+It has a definite impermeable inside and a definite separate outside.
+
+10:01.560 --> 10:01.780
+Wait.
+
+10:01.860 --> 10:04.300
+So instead of just reading a line of text left to right,
+
+10:04.440 --> 10:06.920
+I need to visualize bubbles,
+
+10:07.300 --> 10:10.900
+like physical bubbles floating in space and sometimes nested inside of each other.
+
+10:10.900 --> 10:13.000
+That is exactly the right visualization.
+
+10:13.360 --> 10:15.540
+When you open a parenthesis in this new calculus,
+
+10:15.740 --> 10:19.100
+you aren't just writing a curved line on a screen to tell the computer to wait.
+
+10:19.300 --> 10:20.040
+What are you doing then?
+
+10:20.200 --> 10:24.180
+You are geometrically inflating a new computational workspace, a sphere.
+
+10:24.180 --> 10:30.000
+Inside this boundary, local variables can be born, intermediate mathematical values can be created,
+
+10:30.320 --> 10:32.980
+and dependencies can interact with one another.
+
+10:33.060 --> 10:33.640
+Okay, I see.
+
+10:33.640 --> 10:42.740
+But crucially, everything happening inside that sphere is completely, perfectly isolated from the outside computational world
+
+10:42.740 --> 10:45.560
+until the work inside is completely finished.
+
+10:45.560 --> 10:47.560
+I'm trying to picture this.
+
+10:47.860 --> 10:52.080
+If I have a sphere for five times four, all the multiplying happens in that bubble.
+
+10:52.240 --> 10:57.280
+The rest of the equation, the three times on the outside, has absolutely no idea what is going on inside the bubble.
+
+10:57.400 --> 10:57.920
+None at all.
+
+10:57.980 --> 11:00.060
+It just sees the opaque surface of the bubble.
+
+11:00.260 --> 11:04.440
+And when the math inside is finally finished, that brings us to the core mechanism,
+
+11:04.620 --> 11:08.440
+and frankly, my favorite term in this whole dense paper, the pop.
+
+11:08.840 --> 11:09.700
+It's a great term.
+
+11:09.700 --> 11:15.660
+When a sphere's internal dependencies are totally resolved, when it's done all the logic it was asked to do
+
+11:15.660 --> 11:19.300
+and holds a final value, it reaches a state the text calls ready.
+
+11:20.000 --> 11:21.800
+And when it is ready, it pops.
+
+11:22.000 --> 11:25.440
+The underlying mechanics of that pop are absolutely vital to understand
+
+11:25.440 --> 11:28.040
+if we want to see why this is different from traditional cod.
+
+11:28.260 --> 11:29.120
+So how is it different?
+
+11:29.420 --> 11:33.100
+Well, in traditional programming, evaluation is essentially a string rewrite rule.
+
+11:33.220 --> 11:37.940
+You find a string of text, like five times four, and you substitute it with a new string of text, 20.
+
+11:37.940 --> 11:39.940
+It is a textual replacement.
+
+11:40.340 --> 11:42.660
+Right, like crossing out a word and writing a new one above it.
+
+11:42.720 --> 11:43.220
+Exactly.
+
+11:44.000 --> 11:47.780
+But a pop in the sphere pop calculus is a geometric event.
+
+11:48.340 --> 11:51.840
+It is the literal mathematical dissolution of a boundary.
+
+11:52.520 --> 11:58.780
+The sphere has fulfilled its purpose, so the membrane separating the inside from the outside vanishes,
+
+11:59.440 --> 12:03.820
+exposing the interior result to the surrounding computational landscape.
+
+12:04.140 --> 12:05.400
+Like a biological cell.
+
+12:05.520 --> 12:06.800
+Oh, that's a good comparison.
+
+12:06.800 --> 12:10.500
+Yeah, think of a cell membrane dissolving to release a protein it just manufactured.
+
+12:10.980 --> 12:15.740
+The outside environment couldn't touch or interfere with what was happening inside the cell while it was working,
+
+12:16.200 --> 12:23.080
+but the exact moment it pops, the finished protein is suddenly available for the next larger biological process to use.
+
+12:23.320 --> 12:27.040
+If we connect this to the bigger picture, this exact moment, the pop,
+
+12:27.120 --> 12:31.800
+is where the narrative of traditional computation and the sphere pop calculus diverge completely.
+
+12:32.040 --> 12:32.420
+How so?
+
+12:32.420 --> 12:36.280
+In traditional computing, when that expression evaluates and the boundary vanishes,
+
+12:36.760 --> 12:39.260
+the memory of the boundary vanishes right along with it.
+
+12:39.600 --> 12:42.640
+The computer sweeps the discarded scope into the trash.
+
+12:43.100 --> 12:44.460
+It reclaims the memory.
+
+12:44.640 --> 12:45.620
+Right, to free up RAM.
+
+12:46.020 --> 12:49.020
+As we noted, it is an incredibly efficient way to save RAM,
+
+12:49.020 --> 12:53.640
+but Flyxion argues it comes at a massive, often catastrophic semantic cost.
+
+12:53.640 --> 12:57.340
+Which is the perfect bridge to our next major realization.
+
+12:58.140 --> 13:04.200
+Because if computation is just a series of geometric spherepopping, what actually happens to the popped sphere?
+
+13:04.520 --> 13:05.960
+That is the million dollar question.
+
+13:05.960 --> 13:14.220
+Because SBC's absolute stubborn refusal to forget the past fundamentally changes the nature of what data even is.
+
+13:14.340 --> 13:19.700
+This brings us to what the monograph calls the missing object of traditional computer science.
+
+13:19.800 --> 13:20.580
+The missing object.
+
+13:20.800 --> 13:21.020
+Right.
+
+13:21.520 --> 13:25.940
+In historical systems, again, going back to Turing machines or the lambda calculus,
+
+13:26.300 --> 13:29.020
+the current state of the machine is the only thing that matters.
+
+13:29.020 --> 13:36.600
+A Turing machine, conceptualized by Alan Turing, is basically a theoretical machine that reads a long tape of ones and zeros.
+
+13:36.720 --> 13:37.700
+Right, moving back and forth.
+
+13:37.800 --> 13:38.160
+Exactly.
+
+13:38.560 --> 13:42.220
+It moves left or right, it reads a symbol, it overwrites it with a new symbol, and moves on.
+
+13:42.700 --> 13:46.360
+The machine lives entirely exclusively in the present tense.
+
+13:46.520 --> 13:48.460
+It only knows what is on the tape right now.
+
+13:48.760 --> 13:50.820
+The text calls this out so aggressively.
+
+13:51.440 --> 13:54.420
+It says traditional languages preserve only the current state.
+
+13:54.420 --> 13:59.400
+Once 2 plus 3 becomes 5, the fact that it used to be 2 plus 3 is gone.
+
+13:59.660 --> 14:00.140
+Vanished.
+
+14:00.340 --> 14:05.220
+But SBC argues that the current state is not the most fundamental object of computing.
+
+14:05.820 --> 14:13.100
+The fundamental primitive, the basic building block of all logic, is the irreversible history of how that state came to be.
+
+14:13.320 --> 14:15.660
+Think about the magnitude of that shift for a moment.
+
+14:16.200 --> 14:21.140
+The program is no longer a sequence of isolated, transient states replacing each other.
+
+14:21.140 --> 14:26.000
+It is the construction of a permanent, ever-expanding historical record.
+
+14:26.160 --> 14:27.120
+A permanent record.
+
+14:27.220 --> 14:27.540
+Yes.
+
+14:28.020 --> 14:34.840
+Every single sphere that inflates, every dependency that resolves inside it, every pop that dissolves a boundary, all of it is recorded.
+
+14:35.300 --> 14:36.820
+The computation only grows.
+
+14:37.040 --> 14:38.860
+It never, ever overwrites.
+
+14:38.920 --> 14:40.260
+Okay, wait, I have to push back here.
+
+14:40.340 --> 14:40.520
+Sure.
+
+14:40.720 --> 14:49.080
+I am putting myself in the shoes of a software engineer listening to this, or really anyone who has ever had their web browser crash because it used up too much memory.
+
+14:49.100 --> 14:50.100
+The very common experience.
+
+14:50.100 --> 14:50.480
+Right.
+
+14:51.220 --> 14:53.200
+Alarm bells are ringing loudly in my head.
+
+14:53.580 --> 15:07.780
+If we never forget a single step, if every tiny addition, every subtraction, every pixel color calculation is logged forever in an irreversible history, doesn't the computer just instantly run out of RAM?
+
+15:07.960 --> 15:09.000
+It seems like it would.
+
+15:09.080 --> 15:12.320
+I mean, modern programs execute billions of operations a second.
+
+15:12.580 --> 15:17.000
+This sounds like an incredibly quick, surefire way to completely brick a system.
+
+15:17.000 --> 15:22.940
+That is the natural, immediate reaction from anyone who works with hardware, and Flyxion anticipates it beautifully.
+
+15:23.720 --> 15:27.320
+The text provides a crucial, non-negotiable clarification.
+
+15:27.580 --> 15:28.480
+Okay, what's the clarification?
+
+15:28.860 --> 15:33.360
+To make this work, we must rigidly separate semantic persistence from physical storage.
+
+15:33.480 --> 15:34.100
+Okay, hold on.
+
+15:34.220 --> 15:35.080
+Break that down for me.
+
+15:35.340 --> 15:38.600
+What is the difference between semantic persistence and physical storage?
+
+15:38.740 --> 15:43.560
+Physical storage is the literal hardware, the RAM ships in your computer, the solid-state drive.
+
+15:43.560 --> 15:47.080
+Semantic persistence is the mathematical truth of the program.
+
+15:47.280 --> 15:47.880
+Okay, I'm following.
+
+15:48.220 --> 15:55.720
+Just because an object or a step remains part of the mathematical history doesn't mean it has to sit in active, high-speed RAM forever.
+
+15:56.540 --> 15:58.720
+Let's say an intermediate value pops.
+
+15:58.940 --> 16:00.200
+It finishes its job.
+
+16:00.340 --> 16:00.520
+Okay.
+
+16:00.520 --> 16:09.280
+Once no future calculations directly depend on that specific intermediate value anymore, it ceases to be operationally active.
+
+16:09.760 --> 16:10.660
+It is in the past.
+
+16:10.760 --> 16:12.260
+So it's basically dead weight at that point.
+
+16:12.380 --> 16:12.540
+Right.
+
+16:12.960 --> 16:23.800
+Modern compilers that would implement this calculus are still allowed to compress, archive, or even garbage collect the physical bits of that history off the active RAM chips, just like they do today to save space.
+
+16:23.800 --> 16:25.400
+Wait, I'm losing the thread here.
+
+16:25.640 --> 16:32.120
+If the compiler garbage collects the physical bits and deletes them from RAM, hasn't it just forgotten the history?
+
+16:32.240 --> 16:33.780
+Didn't we just reinvent amnesia?
+
+16:33.940 --> 16:35.060
+Ah, that's the brilliance of it.
+
+16:35.180 --> 16:40.740
+It deletes the raw expanded data from active memory, but it keeps the provenance graph.
+
+16:40.940 --> 16:41.940
+The provenance graph.
+
+16:42.020 --> 16:44.920
+Yes, the mathematical blueprint of how that data was made.
+
+16:45.620 --> 16:49.040
+Mathematically, the history can always be perfectly reconstructed if needed.
+
+16:49.040 --> 16:54.060
+The compiler knows exactly what rules and inputs were used to generate that deleted data.
+
+16:54.300 --> 16:56.540
+So the computer doesn't crash from memory overload.
+
+16:56.760 --> 17:05.700
+It just intelligently manages how it remembers, shifting the heavy raw data out, but keeping the irrefutable mathematical proof of the journey.
+
+17:06.160 --> 17:14.740
+So it's the difference between throwing away all your tax receipts into a fire, because you already filed your return, versus putting them in a highly organized filing cabinet in the basement.
+
+17:14.980 --> 17:15.360
+Yes.
+
+17:15.360 --> 17:25.840
+You don't keep them cluttered on your physical desk, which is your RAM, but if the IRS audits you, you can go downstairs and prove exactly, to the penny, where that final number came from.
+
+17:25.960 --> 17:27.500
+That is a perfect analogy.
+
+17:27.800 --> 17:34.340
+And that exact ability to prove where a number came from introduces one of the most powerful concepts in the entire monograph.
+
+17:34.840 --> 17:35.320
+Provenance.
+
+17:35.520 --> 17:36.000
+Provenance.
+
+17:36.080 --> 17:36.740
+I like that word.
+
+17:36.740 --> 17:40.920
+In the SpherePop calculus, a value isn't just its raw data payload.
+
+17:41.380 --> 17:43.720
+The number 5 isn't just the integer 5.
+
+17:44.300 --> 17:47.540
+Its true identity includes its entire provenance.
+
+17:48.360 --> 17:54.480
+Provenance is the exact, unbroken sequence of admitted computational events that brought it into existence.
+
+17:54.580 --> 17:56.140
+This is huge for the real world.
+
+17:56.360 --> 17:56.540
+Yeah.
+
+17:56.660 --> 17:58.980
+Imagine two identical numbers on the screen.
+
+17:59.360 --> 18:02.320
+Let's say you were looking at a dashboard, and both numbers are 42.
+
+18:02.320 --> 18:05.680
+In traditional code, 42 equals 42.
+
+18:06.100 --> 18:07.920
+They're the same binary string in memory.
+
+18:08.340 --> 18:08.560
+Done.
+
+18:09.300 --> 18:17.140
+But in this geometry of histories, what if the first 42 was typed in manually by a human user who just slammed their hand on a keyboard,
+
+18:17.480 --> 18:26.740
+and the second 42 was the final output of a highly complex probabilistic AI model analyzing thousands of real-time temperature sensors?
+
+18:26.740 --> 18:33.520
+Traditionally, the very millisecond, those two different processes resolve to the final number 42,
+
+18:33.940 --> 18:37.840
+the computer loses the ability to tell them apart at the semantic level.
+
+18:37.980 --> 18:39.020
+A 42 is a 42.
+
+18:39.280 --> 18:39.500
+Right.
+
+18:39.740 --> 18:44.340
+But in the SpherePop calculus, those two numbers have completely fundamentally different identities
+
+18:44.340 --> 18:46.860
+because they have completely different histories attached to them.
+
+18:46.940 --> 18:47.920
+Yeah, it makes so much sense.
+
+18:47.960 --> 18:49.280
+One history is incredibly short.
+
+18:49.800 --> 18:51.900
+Human user typed 42 at this timestamp.
+
+18:51.900 --> 18:56.920
+The other history is vast, mapping the entire tree of AI node weights and sensor inputs.
+
+18:57.220 --> 19:00.660
+And preserving that provenance automatically, right at the foundation of the language,
+
+19:01.060 --> 19:04.020
+solves massive expensive issues we currently face in the tech industry.
+
+19:04.100 --> 19:04.620
+Oh, absolutely.
+
+19:04.760 --> 19:05.800
+Think about software debugging.
+
+19:05.880 --> 19:06.840
+Or security audits.
+
+19:07.280 --> 19:07.580
+Yes.
+
+19:08.040 --> 19:11.160
+Or the massive push right now for explainable AI.
+
+19:11.720 --> 19:15.360
+When an AI denies someone a bank loan, people want to know why.
+
+19:15.360 --> 19:22.000
+In traditional systems, we have to build elaborate secondary monitoring tools to guess why.
+
+19:22.280 --> 19:24.380
+Because the original reasoning was overwritten.
+
+19:24.680 --> 19:25.060
+Exactly.
+
+19:25.600 --> 19:28.700
+In SBC, the explanation isn't a secondary add-on.
+
+19:28.820 --> 19:31.080
+The explanation is the data itself.
+
+19:31.240 --> 19:32.820
+Because the history is never discarded.
+
+19:33.540 --> 19:39.180
+But wait, if history is never discarded, it means the entire way we update variables has to completely change.
+
+19:39.340 --> 19:39.900
+It does.
+
+19:39.900 --> 19:46.380
+If I have a variable x that equals 3 and I want it to equal 4, I literally cannot just overwrite it anymore.
+
+19:46.920 --> 19:47.880
+Substitution is dead.
+
+19:48.500 --> 19:52.020
+And that forces us to rethink how computation physically moves forward.
+
+19:52.320 --> 19:54.800
+Which brings us to the mechanics of replay and refusal.
+
+19:55.060 --> 19:55.260
+Right.
+
+19:55.500 --> 19:58.380
+Substitution is the bedrock of classical computation.
+
+19:58.760 --> 19:59.560
+It's how we're taught math.
+
+19:59.820 --> 20:02.340
+You have an equation like fx equals x plus x.
+
+20:02.420 --> 20:06.560
+If x is 3, you just plug 3 into the equation, substituting the letter for the number.
+
+20:06.740 --> 20:07.960
+It becomes 3 plus 3.
+
+20:08.040 --> 20:08.220
+Right.
+
+20:08.220 --> 20:15.340
+But as we just discussed, substitution is fundamentally flawed under this new paradigm because replacing the x with a 3 erases how you got the 3.
+
+20:15.700 --> 20:16.100
+Exactly.
+
+20:16.500 --> 20:20.840
+So instead of substitution, the SPC uses a primitive action called replay.
+
+20:22.080 --> 20:23.880
+I was trying to think about how to visualize this.
+
+20:24.240 --> 20:25.940
+Because it's a very abstract shift.
+
+20:26.080 --> 20:26.800
+It is abstract.
+
+20:27.380 --> 20:32.680
+Substitution is like someone handing you a beautiful, fully baked cake and you just drop it on a dining table.
+
+20:32.940 --> 20:37.180
+You don't know who baked it, what ingredients are inside it, or how long it was in the oven.
+
+20:37.180 --> 20:39.880
+It is just a static object, a cake.
+
+20:40.260 --> 20:41.260
+Okay, I like where this is going.
+
+20:41.560 --> 20:52.040
+Replay, on the other hand, is someone handing you the entire recipe, the grocery store receipts for the ingredients, the video footage of the baker mixing the batter, and the memory of baking it.
+
+20:52.480 --> 20:55.960
+It extends your current timeline with that entire rich experience.
+
+20:55.960 --> 20:57.940
+That's a very vivid way to put it.
+
+20:58.380 --> 21:06.580
+And if we connect this concept of replay to the bigger picture of software development, it is absolutely vital for the efficiency of modern systems.
+
+21:06.740 --> 21:07.160
+How so?
+
+21:07.160 --> 21:10.880
+Let's look at something like reactive programming or incremental builds.
+
+21:11.620 --> 21:14.140
+Imagine a massive computational task.
+
+21:14.740 --> 21:22.080
+Say, rendering a highly complex 3D animated movie scene, or a compiler trying to build a massive video game code base.
+
+21:22.160 --> 21:22.880
+Huge task.
+
+21:22.880 --> 21:23.320
+Right.
+
+21:23.720 --> 21:36.540
+In those scenarios, if a developer makes one tiny, localized tweak to an early input, like changing the lighting angle by one degree, a traditional system often has to throw its hands up and start the entire render over from scratch.
+
+21:36.600 --> 21:37.660
+Which takes hours.
+
+21:37.660 --> 21:46.080
+Or, developers have to build incredibly complex ad hoc caching systems to try and save time, which, you know, often break.
+
+21:46.180 --> 21:50.500
+And they have to start over, because the system forgot the path it took to get to the end.
+
+21:51.060 --> 21:55.960
+It only knows the final state, so it has to recalculate everything to find the new final state.
+
+21:56.680 --> 22:04.020
+Think about every time you waited 10 minutes for a massive Excel spreadsheet to recalculate just because you changed one cell in the corner.
+
+22:04.360 --> 22:05.620
+That is the pain of amnesia.
+
+22:05.780 --> 22:06.200
+Exactly.
+
+22:06.200 --> 22:09.040
+But with replay, the system functions entirely differently.
+
+22:09.280 --> 22:18.720
+The system looks at the mathematical history and identifies exactly which historical continuation, which future paths actually depend on that specific changed input.
+
+22:19.000 --> 22:20.280
+So it doesn't do the whole thing again?
+
+22:20.580 --> 22:22.420
+No, it doesn't rerun the whole program.
+
+22:22.720 --> 22:31.860
+It literally replays the history, reconstructing only the specific branches of the dependency graph that need to change based on that new lighting angle.
+
+22:31.860 --> 22:37.120
+And it leaves the rest of the vast, unaffected history perfectly intact.
+
+22:37.440 --> 22:38.720
+That is incredibly smart.
+
+22:38.880 --> 22:42.560
+Replay isn't just some philosophical purity concept about memory.
+
+22:42.820 --> 22:47.000
+It is an incredibly powerful native optimization tool.
+
+22:47.000 --> 22:50.120
+It eliminates redundant work by default.
+
+22:50.120 --> 22:52.840
+It respects the history and leverages it.
+
+22:53.420 --> 22:55.000
+But that leads to an obvious question.
+
+22:55.840 --> 22:58.320
+What happens when the history tries to do something bad?
+
+22:58.600 --> 22:59.440
+Ugh, errors.
+
+22:59.800 --> 22:59.980
+Yeah.
+
+23:00.200 --> 23:03.060
+We've talked about how it successfully grows, but what about errors?
+
+23:03.580 --> 23:06.240
+In normal code, a program tries to do something illegal.
+
+23:06.780 --> 23:12.740
+It tries to divide a number by zero, or it tries to access a restricted sector of memory it doesn't have permission for.
+
+23:13.280 --> 23:14.020
+What happens?
+
+23:14.100 --> 23:15.140
+The program panics.
+
+23:15.140 --> 23:15.620
+It crashes.
+
+23:15.820 --> 23:19.320
+It throws a fatal exception, the app closes out, and you get an error code on your screen.
+
+23:19.580 --> 23:21.000
+And we just accept that as normal.
+
+23:21.160 --> 23:21.300
+Right.
+
+23:21.440 --> 23:22.940
+But think about why that happens.
+
+23:23.200 --> 23:29.060
+That fatal crash occurs because traditional failure happens after the bad action has already been attempted.
+
+23:29.160 --> 23:29.960
+Right. It's reactive.
+
+23:30.080 --> 23:30.240
+Right.
+
+23:30.320 --> 23:40.820
+The runtime engine blindly tries to execute the instruction, suddenly realizes it has corrupted the machine's state, or violated a core math rule, and then it pulls the fire alarm.
+
+23:40.820 --> 23:45.800
+The damage, logically speaking, has already been done. The state is corrupted.
+
+23:46.100 --> 23:47.420
+And then it has to clean up the mess.
+
+23:47.680 --> 23:55.240
+Exactly. The system then has to desperately scramble to roll back the database, run recovery protocols, or just die.
+
+23:55.380 --> 24:01.740
+It's like letting a bull into a china shop, waiting for it to smash a vase, and then saying, hey, no bulls allowed.
+
+24:02.000 --> 24:03.820
+A bit too late for the vase.
+
+24:03.980 --> 24:09.060
+Right. But the SBC handles this completely differently through a concept called refusal.
+
+24:09.060 --> 24:15.180
+In my notes, I initially called refusal the ultimate bouncer at the club of computational history.
+
+24:15.500 --> 24:18.260
+But honestly, a bouncer still implies someone getting to the door.
+
+24:19.100 --> 24:20.560
+Let's use a game of chess instead.
+
+24:21.240 --> 24:27.680
+Traditional computing is like playing chess, where a player physically picks up their rook, moves it diagonally across the board, which is an illegal move,
+
+24:28.060 --> 24:31.360
+knocks over three pieces, and then the referee blows a whistle, yells, error.
+
+24:32.080 --> 24:35.940
+And everyone has to try and remember where the pieces used to be to reset the board.
+
+24:35.940 --> 24:41.020
+That is a much better analogy. It highlights the chaos of traditional error handling.
+
+24:41.380 --> 24:45.300
+Right. But refusal in the sphere pop calculus is different.
+
+24:46.080 --> 24:51.020
+Refusal evaluates the geometry of the move before you even lift your finger off the piece.
+
+24:51.180 --> 24:54.280
+This raises an important point about the timeline of execution.
+
+24:54.980 --> 24:57.640
+Refusal is absolutely not a runtime error.
+
+24:58.160 --> 25:04.380
+It is a computational boundary that evaluates the admissibility of an action before it becomes part of the permanent history.
+
+25:04.380 --> 25:06.700
+So the program proposes an action.
+
+25:06.920 --> 25:11.760
+It says, hey, I'd like to extend this historical timeline by dividing this specific number by zero.
+
+25:12.320 --> 25:17.400
+And the geometry of the system looks at the rules and says, no, that is an inadmissible continuation.
+
+25:17.680 --> 25:19.480
+It violates the logic of the space.
+
+25:19.780 --> 25:21.480
+And here's the magic of that mechanism.
+
+25:21.820 --> 25:28.820
+Because the action was refused before it was admitted, the history itself remains perfectly coherent, uncorrupted, and intact.
+
+25:29.040 --> 25:29.740
+Nothing broke.
+
+25:30.000 --> 25:33.420
+Exactly. Nothing illegal was ever admitted into the computational record.
+
+25:33.420 --> 25:35.240
+The program doesn't crash or panic.
+
+25:35.660 --> 25:40.840
+It just safely records a refusal note in the history and moves on to alternative valid paths.
+
+25:41.500 --> 25:42.140
+That is brilliant.
+
+25:42.440 --> 25:44.580
+The text states a profound rule.
+
+25:45.680 --> 25:53.940
+Programs in SPC evolve not merely by producing values, but by selectively admitting or refusing historical continuations.
+
+25:53.940 --> 25:59.220
+It's a mechanism of maintaining absolute, unbroken, logical purity.
+
+25:59.220 --> 26:00.160
+It's so elegant.
+
+26:00.300 --> 26:06.800
+You never have to roll back a database or try to catch a panicked exception because the bad math will stop before it ever became reality.
+
+26:07.160 --> 26:07.540
+Precisely.
+
+26:07.540 --> 26:19.840
+So now that we have this incredibly robust system of histories, histories that can safely extend themselves efficiently through replay or protect themselves flawlessly through refusal, we have to ask what happens when things get complicated.
+
+26:19.920 --> 26:20.760
+And they always do.
+
+26:21.020 --> 26:24.000
+What happens when two histories try to grow at the exact same time?
+
+26:24.500 --> 26:27.520
+Or what happens when a history isn't sure which path to take?
+
+26:27.520 --> 26:34.880
+This leads us into the concepts of merge and choice, which is really about unleashing true concurrency and dealing with uncertainty.
+
+26:34.880 --> 26:41.480
+This section of the monograph addresses one of the most massive headache-inducing pain points in modern software engineering.
+
+26:42.220 --> 26:44.020
+Concurrency. Doing two things at once.
+
+26:44.040 --> 26:45.040
+This is notoriously difficult.
+
+26:45.400 --> 26:49.420
+In traditional languages, concurrency is almost always bolted on as an afterthought.
+
+26:50.180 --> 26:53.920
+We started with single-core processors that could only do one thing at a time.
+
+26:53.920 --> 27:00.160
+As hardware got better, we got multi-core processors, but the software languages were still fundamentally linear.
+
+27:00.400 --> 27:00.500
+Right.
+
+27:00.840 --> 27:11.560
+So we invented things like threads, locks, mutexes, asyncle weight patterns, all these highly complex, extremely error-prone mechanisms layered over a sequential core.
+
+27:11.860 --> 27:13.680
+And it causes so many problems.
+
+27:14.160 --> 27:19.900
+For the listener, if you've never coded multi-threading, imagine you have two pieces of code, thread A and thread B,
+
+27:19.900 --> 27:25.160
+and they are both trying to update your bank account balance at the exact same millisecond.
+
+27:25.400 --> 27:27.120
+A classic race condition example.
+
+27:27.220 --> 27:29.600
+Exactly. Thread A reads your balance is $100.
+
+27:30.360 --> 27:32.320
+Thread B also reads your balance is $100.
+
+27:33.140 --> 27:36.140
+Thread A adds $50, making it $150, and saves it.
+
+27:36.660 --> 27:44.720
+A microsecond later, thread B subtracts $20 for a coffee, making it $80, and saves it, overriding thread A's save.
+
+27:44.800 --> 27:46.500
+And just like that, money disappears.
+
+27:46.500 --> 27:51.300
+Your $50 deposit just vanished into thin air because of a race condition.
+
+27:52.140 --> 28:00.120
+Developers have to write incredibly complex locks to stop threads from stepping on each other's toes, and if they mess up, the whole app freezes.
+
+28:00.300 --> 28:07.880
+The multi-threading nightmare exists because we are so deeply trained to read and execute text sequentially, left to right.
+
+28:08.340 --> 28:12.240
+But let's go back to our math problem from the beginning, or rather a slightly different one.
+
+28:12.500 --> 28:15.840
+Two plus three, in parentheses, times four plus five, in parentheses.
+
+28:15.840 --> 28:16.380
+Okay, money.
+
+28:16.720 --> 28:21.680
+When you read it on a page, your eye sees two plus three first, and then it moves over to see four plus five.
+
+28:22.180 --> 28:27.800
+But geometrically, if you view them as spheres, what is the relationship between those two bubbles?
+
+28:28.120 --> 28:29.060
+There is no relationship.
+
+28:29.740 --> 28:33.540
+The sphere for two plus three and the sphere for four plus five are entirely independent.
+
+28:33.740 --> 28:34.860
+They don't share any variables.
+
+28:35.280 --> 28:36.720
+They don't rely on each other's answers.
+
+28:37.140 --> 28:38.860
+The plus signs are trapped in their own bubbles.
+
+28:38.860 --> 28:41.660
+And therefore, mathematically, they can pop simultaneously.
+
+28:42.140 --> 28:46.700
+The SpherePop calculus introduces the merge operator to handle this exact scenario.
+
+28:46.820 --> 28:48.180
+The merge operator.
+
+28:48.400 --> 28:50.620
+But we have to be very careful with our terms here.
+
+28:51.280 --> 28:54.560
+Merge doesn't mean interleaving software threads on a CPU core.
+
+28:55.100 --> 28:58.860
+It denotes the safe coexistence of independent mathematical histories.
+
+28:58.860 --> 29:06.820
+Because they share no dependencies, their histories can evolve at the exact same time without ever causing a race condition.
+
+29:07.060 --> 29:11.980
+Wait, meaning concurrency isn't a special plugin or a separate library you have to manually code?
+
+29:12.200 --> 29:12.980
+Not at all.
+
+29:13.040 --> 29:16.180
+It emerges automatically from the geometry of the dependency graph.
+
+29:16.960 --> 29:20.060
+If the spheres don't overlap, they can run parallel by default.
+
+29:20.420 --> 29:25.220
+The execution engine just looks at the spheres, sees which ones are independent, and runs them all at once.
+
+29:25.220 --> 29:25.800
+Exactly.
+
+29:26.060 --> 29:28.740
+That removes so much human error from parallel programming.
+
+29:29.060 --> 29:30.040
+You don't have to write locks.
+
+29:30.580 --> 29:32.580
+The geometry itself proves they won't interfere.
+
+29:32.860 --> 29:36.600
+It brilliantly separates logical independence from hardware execution.
+
+29:37.020 --> 29:40.000
+The code just defines the truth of what depends on what.
+
+29:40.500 --> 29:46.580
+Whether the runtime engine executes those independent spheres on a single processor core, or across 10 cores,
+
+29:46.880 --> 29:53.320
+or distributed across a cluster of thousands of servers in a data center is entirely an implementation detail.
+
+29:53.560 --> 29:54.800
+The logic stays the same.
+
+29:54.800 --> 29:59.480
+The semantic meaning and the safety of the program remain flawlessly consistent.
+
+30:00.140 --> 30:02.900
+You don't have to rewrite your app to scale it to a supercomputer.
+
+30:03.420 --> 30:07.680
+Okay, so merge is about doing multiple certain things at once, safely.
+
+30:08.220 --> 30:10.280
+But what about when things aren't certain?
+
+30:10.580 --> 30:11.760
+Here's where it gets really interesting.
+
+30:11.960 --> 30:12.300
+Oh, yeah.
+
+30:12.560 --> 30:15.160
+The text shifts to the choice operator.
+
+30:15.960 --> 30:20.840
+Traditional code deals with choices using rigid binary if-then statements.
+
+30:20.840 --> 30:23.520
+If X is true, go down path Y.
+
+30:23.720 --> 30:26.080
+If X is false, go down path Z.
+
+30:26.580 --> 30:29.160
+It demands an immediate black-and-white answer.
+
+30:29.500 --> 30:29.900
+Very rigid.
+
+30:30.100 --> 30:36.960
+But SPC introduces probability and uncertainty as first-class citizens right in the very foundation of the language.
+
+30:37.360 --> 30:39.840
+Think about how transformative that is for modern computing.
+
+30:39.840 --> 30:49.300
+Traditional systems treat uncertainty like random number generators or complex Bayesian inference or fuzzy neural networks as external heavy libraries you have to import.
+
+30:49.400 --> 30:50.100
+Right, there are add-ons.
+
+30:50.300 --> 30:57.400
+But in SPC, the choice operator allows multiple mutually exclusive admissible futures to coexist before a strict commitment is made.
+
+30:57.400 --> 30:59.880
+Wait, wait, wait. Let me pause you there because that sounds wild.
+
+31:00.580 --> 31:04.860
+Are you saying a program can just hold off on making a decision indefinitely?
+
+31:05.360 --> 31:10.760
+It just holds a bunch of possible contradictory futures in its hands at once and keeps running?
+
+31:10.960 --> 31:11.300
+Yes.
+
+31:11.900 --> 31:18.300
+The text vehemently argues that computational commitment should be delayed until absolutely mathematically necessary.
+
+31:18.520 --> 31:18.820
+Really?
+
+31:18.920 --> 31:22.740
+Why force the computer to make a binary decision before you have to?
+
+31:22.740 --> 31:25.620
+The choice operator can function in two ways.
+
+31:25.880 --> 31:34.360
+It can be sampled immediately, which is a fast collapse, to a single value if the program absolutely needs a hard number right now to draw a pixel on a screen.
+
+31:34.440 --> 31:35.160
+Okay, that makes sense.
+
+31:35.200 --> 31:40.240
+But more powerfully, it can be passed along as an explicit probability distribution.
+
+31:40.780 --> 31:45.680
+It preserves the uncertainty as a real, tangible object that flows through the history.
+
+31:45.680 --> 31:54.200
+So instead of flipping a digital coin and forcing it to record heads, it records a state of 50% heads, 50% tails.
+
+31:54.480 --> 32:03.000
+And it actually keeps doing subsequent math on that superposition state until the very end of the program when it absolutely must provide a final answer to the user.
+
+32:03.180 --> 32:03.620
+Exactly.
+
+32:03.900 --> 32:06.280
+It maximizes flexibility and preserves nuance.
+
+32:06.820 --> 32:08.480
+It's honestly like quantum computing.
+
+32:08.960 --> 32:13.960
+In quantum mechanics, a quibit exists in a superposition of states until it is observed.
+
+32:13.960 --> 32:16.520
+It sounds exactly like that, but in software.
+
+32:17.360 --> 32:23.800
+It's logical superposition without needing incredibly expensive sub-zero quantum hardware.
+
+32:24.320 --> 32:25.900
+That is a very apt comparison.
+
+32:26.320 --> 32:32.220
+You don't lose the mathematical nuance of the probability until the very last possible moment of observation.
+
+32:32.220 --> 32:38.220
+By redefining execution as the growth of independent, parallel, and sometimes probabilistic histories,
+
+32:38.760 --> 32:44.240
+Flyxion forces us to completely rethink the rigid traditional structures of programming.
+
+32:44.360 --> 32:45.400
+We have to rethink everything.
+
+32:45.520 --> 32:50.760
+We have to reconsider how we define context, how we define types, and how we define equality.
+
+32:51.000 --> 32:57.520
+Which brings us to the most theoretically dense part of the monograph, where we reimagine context, types, and equality.
+
+32:57.520 --> 33:01.540
+Let's start with context, because the text uses a term here we need to define clearly.
+
+33:01.760 --> 33:02.000
+Dig.
+
+33:02.480 --> 33:02.600
+Right.
+
+33:02.800 --> 33:08.640
+In traditional formal logic or type theory, a context is just a linear list of assumptions that the program knows about.
+
+33:08.980 --> 33:10.400
+Let variable x equal 5.
+
+33:10.500 --> 33:11.860
+Let variable y equal 10.
+
+33:12.160 --> 33:14.400
+It's basically an environment you look up values in.
+
+33:14.620 --> 33:15.300
+Like a dictionary.
+
+33:15.600 --> 33:19.040
+If I need to know what x is, I open the context dictionary and see it says 5.
+
+33:19.440 --> 33:20.320
+Historically, yes.
+
+33:20.780 --> 33:23.520
+But in SBC, a context is a history.
+
+33:24.100 --> 33:27.520
+It is a directed acyclic graph, or DAG, of construction.
+
+33:28.040 --> 33:30.760
+Okay, before we move on, let's make sure everyone is on the same page.
+
+33:31.080 --> 33:33.560
+What exactly makes it a directed acyclic graph?
+
+33:33.560 --> 33:38.440
+I mean, why all those specific words, instead of just calling it a regular list or a web?
+
+33:38.820 --> 33:39.260
+Great question.
+
+33:39.420 --> 33:43.480
+A graph just means a collection of points or nodes connected by lines or edges.
+
+33:44.740 --> 33:47.120
+Directed means those lines have arrows on them.
+
+33:47.160 --> 33:48.620
+They point in a specific direction.
+
+33:48.620 --> 33:50.340
+Okay, directed like one-way streets.
+
+33:50.520 --> 33:50.940
+Exactly.
+
+33:51.780 --> 33:53.640
+In this case, the direction is time.
+
+33:54.060 --> 33:55.800
+Time moves strictly forward.
+
+33:56.440 --> 33:59.620
+x equals 5 isn't just a static fact floating in space.
+
+33:59.800 --> 34:02.480
+It is an event that occurred before y equaled 10.
+
+34:03.040 --> 34:08.440
+And acyclic means there are no cycles, no loops, you cannot follow the arrows and end up back where you started.
+
+34:08.680 --> 34:10.880
+So no time-traveling paradoxes in the code.
+
+34:11.020 --> 34:14.500
+You can't have an event in the future loop back and change the past.
+
+34:14.760 --> 34:15.240
+Exactly.
+
+34:15.240 --> 34:20.620
+The tag records the strict chronological order of how knowledge became available to the system.
+
+34:20.620 --> 34:26.180
+The context remembers the exact timeline, which is essential for replay and refusal to work.
+
+34:26.180 --> 34:27.360
+That makes perfect sense.
+
+34:27.840 --> 34:28.860
+And then there are types.
+
+34:29.500 --> 34:33.620
+I really marveled at this part of the text because it upends something so fundamental.
+
+34:34.200 --> 34:37.660
+In normal coding, a type is just a descriptive label.
+
+34:38.000 --> 34:39.020
+Right, like a tag.
+
+34:39.020 --> 34:49.300
+If you are coding in Java or Python, you label a variable as an integer, which is a whole number, or a boolean, which is true or false, or a string, which is text.
+
+34:49.460 --> 34:53.860
+It's essentially the computer asking what kind of data shape is this so I know how much memory to allocate.
+
+34:54.120 --> 34:54.400
+Right.
+
+34:54.600 --> 34:56.180
+It's static categorization.
+
+34:56.180 --> 35:02.760
+But once we view computation as an irreversible history, a type becomes something much more profound and active.
+
+35:03.440 --> 35:05.840
+In SBC, a type is an operational boundary.
+
+35:06.480 --> 35:08.720
+Flyxion defines it as a structured refusal.
+
+35:09.000 --> 35:10.020
+A structured refusal.
+
+35:10.640 --> 35:11.780
+We are back to the chessboard.
+
+35:11.840 --> 35:12.160
+We are.
+
+35:12.680 --> 35:15.260
+A type doesn't just passively ask, what is this object?
+
+35:15.700 --> 35:19.920
+It actively interrogates the timeline, asking, may this history logically continue?
+
+35:20.380 --> 35:24.360
+A type becomes the actual active gatekeeper of historical admissibility.
+
+35:24.360 --> 35:26.640
+Give me an example of how that works in practice.
+
+35:27.200 --> 35:28.100
+Let's take networking.
+
+35:28.660 --> 35:39.880
+If you have a type in your program that defines an open network connection, that type requires the connection-established event to exist in the history before any data can be sent.
+
+35:40.100 --> 35:40.360
+Okay.
+
+35:40.480 --> 35:41.340
+That seems logical.
+
+35:41.480 --> 35:42.460
+It's not just a label.
+
+35:42.620 --> 35:43.260
+It's a rule.
+
+35:43.480 --> 35:51.180
+It refuses any historical continuation where a send data command tries to execute before the open connection event exists in the day.
+
+35:51.320 --> 35:51.760
+Wow.
+
+35:51.760 --> 35:58.040
+It changes typing from a passive sticky note into an active, aggressive guardian of the timeline.
+
+35:58.600 --> 36:04.520
+And then, rounding out this trio of redefined concepts, we get to equality or identity types.
+
+36:04.680 --> 36:05.660
+This is a tricky one.
+
+36:05.740 --> 36:09.940
+And this is where I really need you to sell me on this because it feels like a massive waste of computing power.
+
+36:10.600 --> 36:14.320
+If two numbers are both 42, traditional code says they are equal.
+
+36:14.780 --> 36:15.240
+Full stop.
+
+36:15.240 --> 36:19.920
+This raises a very important philosophical question about what equality actually means.
+
+36:19.920 --> 36:32.000
+As we discussed earlier with provenance, what if 142 was calculated via a massive neural network over three days of intense GPU processing, and another 42 was typed in by a human in three seconds?
+
+36:32.140 --> 36:33.360
+They arrived at the same place.
+
+36:33.360 --> 36:37.700
+They have the exact same current value, but profoundly different histories.
+
+36:37.860 --> 36:38.060
+Right.
+
+36:38.220 --> 36:41.060
+But practically speaking, why does the system care?
+
+36:41.720 --> 36:47.000
+If they both equal 42, why do we need to waste compute cycles tracking their distinct identities?
+
+36:47.720 --> 36:49.440
+Isn't ignorance bliss for the CPU?
+
+36:49.940 --> 36:53.720
+It seems like an incredible amount of overhead just to be philosophically pure.
+
+36:53.720 --> 36:59.520
+It seems like overhead until you realize what traditional equality blindness costs us.
+
+37:00.020 --> 37:04.700
+Traditional equality is completely blind to history, which is why hackers can exploit systems.
+
+37:04.820 --> 37:05.520
+Help security.
+
+37:05.840 --> 37:06.080
+Yes.
+
+37:06.440 --> 37:11.160
+A hacker can inject a piece of code that says user is admin equals true.
+
+37:11.860 --> 37:15.300
+The system looks at it, sees the Boolean value is true, and lets them in.
+
+37:16.000 --> 37:18.260
+It doesn't check how that true is generated.
+
+37:18.340 --> 37:19.800
+It just checks the final state.
+
+37:19.800 --> 37:28.180
+Oh, so if identity requires matching histories, the system would say, wait, this tree didn't come from the secure login server authentication tree.
+
+37:28.280 --> 37:29.400
+It just appeared out of nowhere.
+
+37:29.720 --> 37:31.000
+Therefore, it is not the same true.
+
+37:31.260 --> 37:31.980
+Access denied.
+
+37:32.140 --> 37:32.500
+Exactly.
+
+37:32.780 --> 37:38.180
+SBC treats identity not as a static check of binary values, but as a process of historical repair.
+
+37:38.340 --> 37:38.960
+Historical repair.
+
+37:39.300 --> 37:41.640
+It asks a complex geometric question.
+
+37:42.300 --> 37:48.700
+Is there a sequence of mathematically admissible transformations that can reconcile these two divergent histories?
+
+37:48.700 --> 37:57.240
+Can we prove mathematically that, despite taking different paths, these two values admit the exact same future continuations safely?
+
+37:57.760 --> 37:58.620
+Historical repair.
+
+37:58.800 --> 37:59.540
+I love that phrasing.
+
+37:59.800 --> 38:01.460
+It sounds like couples therapy for timelines.
+
+38:01.900 --> 38:09.560
+Look, you took the complex neural net path, and I took the manual input path, but can we sit down and formally prove that our futures are compatible?
+
+38:09.820 --> 38:11.560
+That's a funny way to look at it, but yes.
+
+38:11.620 --> 38:17.260
+If the system can map a valid repair path between them, then and only then are they truly identical.
+
+38:17.260 --> 38:27.620
+It means that identity is an active process of proving substitutability, rather than just passively checking if two strings of ones and zeros happen to temporarily match in memory.
+
+38:28.160 --> 38:31.040
+It makes the system inherently secure against spoofing.
+
+38:31.040 --> 38:36.260
+So, if we zoom out, we now have all these incredible theoretical building blocks laid out on the table.
+
+38:36.480 --> 38:41.640
+We have geometric spheres and pops replacing basic parentheses and textual substitution.
+
+38:42.160 --> 38:45.600
+We have an ever-growing DAG of history replacing systemic amnesia.
+
+38:46.260 --> 38:50.620
+We have replay for efficiency and refusal for bulletproof error handling.
+
+38:51.120 --> 38:58.860
+We have merge handling our multi-threading concurrency, choice dealing with quantum-like probability, and types acting as historical guardians.
+
+38:58.860 --> 39:02.800
+It is a beautifully constructed, mathematically sound universe.
+
+39:03.000 --> 39:08.000
+But it inevitably leads to the ultimate practical question for any computer scientist.
+
+39:08.280 --> 39:08.440
+Yeah.
+
+39:08.500 --> 39:13.680
+How does this entirely new geometry of computation actually run on hardware in the real world?
+
+39:13.880 --> 39:15.540
+How do you build a machine for this?
+
+39:15.640 --> 39:16.960
+Which is the climax in the paper.
+
+39:17.120 --> 39:17.320
+Right.
+
+39:17.640 --> 39:20.480
+This brings us to the universal operator machine, or the UOM.
+
+39:20.880 --> 39:25.460
+The UOM is essentially the holy grail of compiler and hardware architecture.
+
+39:25.460 --> 39:32.460
+Normally, if you are building a complex, modern software system, you need entirely different execution engines for different paradigms.
+
+39:33.240 --> 39:34.440
+Because they speak different languages.
+
+39:34.920 --> 39:35.520
+Basically, yeah.
+
+39:35.800 --> 39:41.780
+You need a standard, basic, like a bi-86 CPU architecture for normal sequential logic.
+
+39:42.100 --> 39:45.480
+You need a separate engine for probabilistic Bayesian inference.
+
+39:46.020 --> 39:55.060
+You need a completely different, highly specialized framework like PyTorch or TensorFlow running on specialized GPUs for calculating machine learning gradients and neural networks.
+
+39:55.060 --> 39:56.040
+It is a total mess.
+
+39:56.120 --> 40:00.320
+You have all these different engines built by different companies trying to talk to each other.
+
+40:00.720 --> 40:08.100
+They are constantly translating data back and forth, losing context in the translation, losing history, and creating massive bottlenecks.
+
+40:08.300 --> 40:14.040
+The profound genius of the universal operator machine is that it executes just one thing.
+
+40:14.440 --> 40:18.040
+The composition graph of historical dependencies, the D-Jack we talked about.
+
+40:18.240 --> 40:19.180
+So it only runs the graph.
+
+40:19.180 --> 40:19.500
+Yes.
+
+40:19.940 --> 40:25.380
+The execution engine itself is completely, entirely blind to what kind of math it is actually doing.
+
+40:25.740 --> 40:31.660
+It doesn't know if it's executing fuzzy logic, Boolean algebra, or a deep neural network for a self-driving car.
+
+40:31.900 --> 40:38.320
+It only knows how to track geometric spheres, evaluate when dependencies are resolved, replay history, and pop boundaries.
+
+40:38.760 --> 40:40.740
+I thought of an analogy for this to make it visual.
+
+40:41.480 --> 40:45.020
+It's like having a universal blank tabletop game board.
+
+40:45.020 --> 40:48.700
+The board itself just provides a grid and some generic pieces.
+
+40:48.860 --> 40:50.320
+You can sit down and play chess on it.
+
+40:50.880 --> 40:56.640
+Or, without changing the physical board at all, you can swap out the paper rulebook and suddenly play checkers.
+
+40:56.940 --> 41:01.340
+Or swap the rulebook again and play a complex tabletop role-playing game.
+
+41:01.440 --> 41:02.120
+I like this.
+
+41:02.280 --> 41:03.760
+The physical board doesn't change.
+
+41:04.180 --> 41:08.600
+The mechanics of physically moving a piece from square A to square B don't change.
+
+41:08.600 --> 41:15.120
+But the mathematical meaning of those moves completely changes based entirely on which rulebook you have open.
+
+41:15.920 --> 41:22.020
+That is exactly, perfectly how the UOM handles what Flyxion calls the operator library.
+
+41:22.540 --> 41:26.340
+The historical graph tells the machine the topology, the physical board.
+
+41:26.460 --> 41:28.480
+It says node A depends on node B.
+
+41:28.980 --> 41:34.680
+But the operator library, the rulebook, tells the machine what the nodes actually do mathematically when they interact.
+
+41:34.800 --> 41:36.720
+So walk me through how that physically works.
+
+41:36.720 --> 41:40.740
+If I have a normal program and I want to make it an AI program, what actually happens?
+
+41:41.220 --> 41:49.740
+Let's say you take a standard true-false Boolean logic circuit diagram, just a basic computer chip layout of A and D and OR gates.
+
+41:49.980 --> 41:52.360
+You feed that geometry into the UOM.
+
+41:52.560 --> 41:54.320
+The UOM builds the history.
+
+41:54.560 --> 41:55.480
+Okay. History build.
+
+41:55.680 --> 41:58.800
+Then you tell the UOM, hey, swap the operator library.
+
+41:59.280 --> 42:05.560
+Stop interpreting these connections as Boolean logic gates and start interpreting them as continuous activation functions.
+
+42:05.560 --> 42:07.160
+And what does that mean practically?
+
+42:07.480 --> 42:12.920
+It means the geometric shape of the dependencies node A feeds into node B is perfectly preserved.
+
+42:13.260 --> 42:21.960
+But the mathematical interpretation of that exact same connection changes from a simple true-false gate to a fractional weight, like 0.75.
+
+42:22.420 --> 42:22.980
+Instantly.
+
+42:22.980 --> 42:32.380
+Instantly, without rewriting a single line of your structural code, that exact same dependency graph becomes a differentiable neural network capable of machine learning.
+
+42:32.800 --> 42:34.360
+You didn't change the execution engine.
+
+42:34.660 --> 42:38.820
+You just swapped the rulebook, and the UOM applies the new math to the existing geometry.
+
+42:39.240 --> 42:40.420
+That is staggering.
+
+42:40.980 --> 42:43.840
+It is a stunning unification of computer science.
+
+42:44.020 --> 42:47.360
+It bridges the gap between traditional software and AI completely.
+
+42:47.360 --> 42:55.020
+But wait, if the UOM is trapping all this history and running all these complex math libraries, how does it stay fast?
+
+42:55.600 --> 42:56.860
+You mentioned compilers earlier.
+
+42:57.240 --> 43:00.780
+How does compiling work in a system that refuses to forget?
+
+43:01.280 --> 43:04.140
+It completely changes how we think about compiling code.
+
+43:04.900 --> 43:08.660
+In traditional systems, compiling code is about stripping away abstractions.
+
+43:08.660 --> 43:18.000
+You take human-readable code, and you crush it down to bare-metal binary instructions, dropping as much human context as possible so the processor can go as fast as possible.
+
+43:18.080 --> 43:19.280
+Right, making it lean and mean.
+
+43:19.460 --> 43:22.440
+But in the UOM, compilation isn't about dropping instructions.
+
+43:22.640 --> 43:24.300
+It's about simplifying history.
+
+43:24.620 --> 43:25.100
+How so?
+
+43:25.280 --> 43:27.000
+What does simplifying history look like?
+
+43:27.120 --> 43:30.080
+The compiler performs operations like dead history elimination.
+
+43:30.780 --> 43:34.160
+Let's say a computational sphere popped, and it produced a value.
+
+43:34.160 --> 43:43.240
+But the compiler can mathematically prove, by looking at the geometry of the DAG, that this specific result will never be needed by any future admissible continuation.
+
+43:43.480 --> 43:44.260
+So it's a dead end.
+
+43:44.580 --> 43:45.080
+Exactly.
+
+43:45.340 --> 43:46.320
+It is a dead end.
+
+43:46.860 --> 43:53.620
+Because it has mathematical proof, the compiler can safely prune that specific branch of history from the active record.
+
+43:54.020 --> 43:56.580
+It also performs replay compression.
+
+43:57.100 --> 43:57.480
+What's that?
+
+43:57.480 --> 44:07.240
+It analyzes the history graph and finds more mathematically elegant, shorter ways to represent the exact same history, so it takes up minimal physical memory.
+
+44:07.340 --> 44:15.600
+It makes the history as lightweight and streamlined as possible, but crucially, it does so without changing the potential futures that history supports.
+
+44:15.900 --> 44:18.720
+It trims the fat, but it keeps the DNA perfectly intact.
+
+44:18.960 --> 44:24.500
+It preserves the exact observational equivalence of the program, just in a tighter geometric package.
+
+44:25.040 --> 44:25.740
+It is breathtaking.
+
+44:25.740 --> 44:28.520
+It really is an incredible piece of theoretical engineering.
+
+44:28.880 --> 44:39.540
+So if we take a step back and synthesize this entire incredible journey, we started with a simple, mundane math problem wrapped in parentheses, written on a dry erase whiteboard.
+
+44:39.720 --> 44:41.720
+Please excuse my dear Aunt Sally problem.
+
+44:41.960 --> 44:42.200
+Right.
+
+44:42.200 --> 44:46.260
+We discovered that by simply refusing to wipe the whiteboard clean.
+
+44:46.260 --> 44:57.620
+By treating those parentheses not as temporary text, but as geometric spheres that pop and leave a permanent, ever-growing historical record, we unlock a completely new universe of computing.
+
+44:57.820 --> 44:59.700
+A universe without amnesia.
+
+44:59.840 --> 45:04.960
+We replace the systemic amnesia of the Turing machine with rich, auditable provenance.
+
+45:04.960 --> 45:11.980
+We replace fatal, catastrophic system crashes with elegant geometric historical refusal.
+
+45:12.660 --> 45:16.000
+We replace the nightmare of multi-threading with independent merging.
+
+45:16.520 --> 45:18.620
+And we replace rigid logic with choice.
+
+45:18.620 --> 45:19.020
+Yes.
+
+45:19.340 --> 45:28.940
+And we replace rigid linear logic engines with a universal operator machine that can adapt to concurrent, probabilistic, or neural computation just by swathing a mathematical rulebook.
+
+45:29.120 --> 45:36.760
+It is a profound foundational shift from viewing code as temporary text to viewing it as the irreversible geometric evolution of histories.
+
+45:36.760 --> 45:43.100
+It truly is, and honestly, studying this calculus leaves us with something quite profound to ponder, not just about computers, but about ourselves.
+
+45:43.600 --> 46:02.560
+If the sphere-pop calculus proves mathematically that computation is richer, vastly safer, concurrent by default, and infinitely more flexible when it stubbornly remembers the history of how a conclusion was reached, rather than just storing the final output state, how does that apply to human reasoning?
+
+46:02.980 --> 46:05.120
+Oh, wow. I never thought of it that way.
+
+46:05.120 --> 46:18.900
+Think about it. When we read a controversial news headline, or when we make a complex business decision under pressure, or when we form a deep personal belief about the world, are we acting like a traditional 1950s Turing machine?
+
+46:19.100 --> 46:20.500
+Are we just overwriting the tape?
+
+46:20.720 --> 46:30.860
+Are we quickly erasing the nuanced steps, forgetting the sources, dropping the doubts, and ignoring the contexts, just to store a single, rigid, binary output in our brains?
+
+46:30.860 --> 46:42.060
+We absolutely do that all the time. It's cognitive compression. It's so much easier and takes so much less mental energy just to remember the final opinion, rather than remembering the ten contradictory articles we read to form it.
+
+46:42.100 --> 46:47.700
+But what if we didn't? What if we treated our own intellectual lives, our own minds, as sphere-pop histories?
+
+46:47.920 --> 46:48.600
+I love that idea.
+
+46:48.600 --> 46:59.280
+What if the provenance of an idea, where it originally came from, who told it to us, what emotional biases influenced it at the time, was preserved aggressively alongside the idea itself?
+
+46:59.680 --> 47:09.680
+What if we tested the admissibility of our own logic before accepting a conclusion, refusing cognitive leaps that aren't actually supported by our own historical context?
+
+47:09.760 --> 47:10.640
+That would change everything.
+
+47:10.640 --> 47:21.360
+If preserving the steps makes a silicon machine infinitely more robust and capable of complex nuance, perhaps preserving our own mental steps would make us fundamentally better, more adaptable thinkers?
+
+47:21.720 --> 47:24.480
+That is a genuinely fascinating question to end on.
+
+47:24.820 --> 47:30.660
+If we stop erasing the whiteboard of our own minds, maybe we'd finally understand how we actually got to our own answers.
+
+47:31.320 --> 47:34.540
+To you listening, whether you're commuting, working, or just relaxing,
+
+47:34.940 --> 47:39.820
+thank you for joining us on this deep dive into the geometry of computation and the death of amnesia.
+
+47:39.820 --> 47:47.040
+We invite you to keep questioning the invisible foundations of the digital world around you, and maybe the foundations of your own mental whiteboard.
+
+47:47.400 --> 47:48.300
+Until next time.
+

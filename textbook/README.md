@@ -4,9 +4,20 @@
 
 [Types as Refusal Structures](https://standardgalactic.github.io/spherepop/textbook/refusal-structures.pdf)
 
+[Persistence Before Truth](https://standardgalactic.github.io/spherepop/textbook/persistence-before-truth.pdf)
+
+[Repairing Futures](https://standardgalactic.github.io/spherepop/textbook/repairing-futures.pdf)
+
+[Memory Before Representation](https://standardgalactic.github.io/spherepop/textbook/memory-before-representation.pdf)
+
+[The Economy of Forgotten Things](https://standardgalactic.github.io/spherepop/textbook/economy-of-forgotten-things.pdf)
+
 ![](spherepop-infographic.png)
 
 ![](beyond-parentheses.png)
+<!--
+![](forgotten-memory.png)
+-->
 
 # The Ecology of Thought
 
@@ -33,3 +44,6 @@ This repository explores the idea that workspaces, libraries, and digital enviro
 * Knowledge systems should preserve processes as well as results.
 
 > *The central proposal is simple: future knowledge systems should remember not only what we know, but how we came to know it.*
+
+See also:
+[Flyxion Research Program](research.md)

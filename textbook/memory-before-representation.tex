@@ -1,0 +1,2517 @@
+% ============================================================
+%  MEM|8: Memory Before Representation
+%  Recoverability, Continuation, and the Geometry of
+%  Persistent Structure
+%
+%  Nate Guimond (Flyxion)
+%  Independent Research
+% ============================================================
+
+\documentclass[12pt, oneside]{book}
+
+% ---- packages -----------------------------------------------
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+%\usepackage{lmodern}
+%\usepackage{microtype}
+\usepackage{geometry}
+\geometry{
+  paper=letterpaper,
+  top=1.25in, bottom=1.25in,
+  inner=1.4in, outer=1.1in,
+  marginparwidth=0pt
+}
+\usepackage{setspace}
+\onehalfspacing
+
+% math
+\usepackage{amsmath, amsthm, amssymb, mathtools}
+\usepackage{bm}
+
+% figures, tables
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+
+% hyperlinks
+\usepackage[colorlinks=true,
+            linkcolor=black,
+            citecolor=black,
+            urlcolor=black]{hyperref}
+\usepackage{url}
+
+% headers / footers
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[LE]{\small\leftmark}
+\fancyhead[RO]{\small\rightmark}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0pt}
+
+% chapter style
+\usepackage{titlesec}
+\titleformat{\chapter}[display]
+  {\normalfont\Large\bfseries}
+  {\chaptertitlename\ \thechapter}{12pt}{\Huge}
+\titlespacing*{\chapter}{0pt}{40pt}{30pt}
+
+% theorem environments
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[chapter]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{assumption}[theorem]{Assumption}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{remark}[theorem]{Remark}
+
+\theoremstyle{remark}
+\newtheorem*{notation}{Notation}
+
+% custom operators
+\DeclareMathOperator{\Rec}{Rec}
+\DeclareMathOperator{\dist}{dist}
+\DeclareMathOperator{\sgn}{sgn}
+\newcommand{\calH}{\mathcal{H}}
+\newcommand{\calQ}{\mathcal{Q}}
+\newcommand{\calC}{\mathcal{C}}
+\newcommand{\calE}{\mathcal{E}}
+\newcommand{\RR}{\mathbb{R}}
+\newcommand{\CC}{\mathbb{C}}
+\newcommand{\NN}{\mathbb{N}}
+\newcommand{\ZZ}{\mathbb{Z}}
+
+% ============================================================
+\begin{document}
+
+% ---- title page ---------------------------------------------
+\begin{titlepage}
+  \centering
+  \vspace*{2cm}
+  {\Huge\bfseries MEM|8\par}
+  \vspace{0.8cm}
+  {\LARGE Memory Before Representation\par}
+  \vspace{0.5cm}
+  {\large Recoverability, Continuation, and the\\
+         Geometry of Persistent Structure\par}
+  \vspace{2cm}
+  \vspace{1cm}
+  {\large Flyxion\par}
+  \vspace{0.3cm}
+  {\normalsize Independent Research\par}
+  \vspace{0.3cm}
+  {\normalsize Canada\par}
+  \vspace{2cm}
+  {\small Draft --- \today\par}
+  \vfill
+\end{titlepage}
+
+% ---- front matter -------------------------------------------
+\frontmatter
+
+% Epigraph
+\clearpage
+\vspace*{5cm}
+\begin{center}
+\itshape
+A memory is not a preserved past.\\[4pt]
+A memory is the continued ability\\
+to regenerate distinctions from transformation.
+\end{center}
+\vfill
+\clearpage
+
+\tableofcontents
+
+% ---- Preface ------------------------------------------------
+\chapter*{Preface}
+\addcontentsline{toc}{chapter}{Preface}
+
+This monograph develops the MEM|8 framework from first principles.
+The central claim is simple but has far-reaching consequences:
+\emph{memory is not storage; memory is recoverable continuation}.
+
+No physical system preserves a past state unchanged.
+Every substrate undergoes continual transformation at every timescale.
+The question is therefore never whether a state remains, but
+whether the distinctions that once were present can be reconstructed
+from the state that now exists.
+
+That shift from storage to recoverability is not a minor
+revision of memory theory.
+It is a change of ontological category.
+Traditional accounts place representation first and derive
+memory as its persistence.
+MEM|8 reverses the order:
+recoverable distinctions are primary, and representations emerge
+from stable patterns of recoverability.
+
+The formal architecture rests on three empirical anchors
+drawn from contemporary physics, neuroscience, and cell biology.
+The topological acoustic synapse (TAS) provides a
+physical demonstration that a small substrate can generate
+a large high-dimensional space of reconstructive witnesses.
+Intrinsic macroscale oscillatory modes in fMRI data provide
+the dynamical picture: memory states are resonances of
+a latent modal basis, and recall is thresholded excitation
+rather than lookup.
+Synaptic vesicle trafficking provides the maintenance picture:
+persistence is not component preservation but flux balance,
+a continuous renewal that conserves reconstructive organization
+while replacing every material carrier.
+
+Together these three anchors yield the MEM|8 synthesis:
+
+\[
+  \boxed{\;
+    \text{Memory}
+    =
+    \text{recoverable resonant structure maintained by flux}.
+  \;}
+\]
+
+The monograph is arranged in eight parts.
+Parts~I--III build the mathematical foundations.
+Parts~IV--V treat ecological and social memory.
+Part~VI connects MEM|8 to computation.
+Part~VII extends the theory to civilization scale.
+Part~VIII addresses the foundational inversions:
+representation, identity, and time all emerge from memory
+rather than preceding it.
+
+Mathematical prerequisites are a first course in real analysis,
+linear algebra, and ordinary differential equations.
+Familiarity with Hilbert spaces is helpful but not assumed;
+the necessary functional analysis is developed inline.
+
+\bigskip
+\noindent
+Flyxion\\
+Canada, \today
+
+% ---- main matter --------------------------------------------
+\mainmatter
+
+% ============================================================
+\part{The Failure of Storage Metaphors}
+% ============================================================
+
+\chapter{The Storage Illusion}
+
+\section{Why Storage Cannot Be Primitive}
+
+The dominant picture of memory inherited from computer science
+treats memory as a container: states are written in, preserved,
+and read out.
+This picture is useful as an engineering abstraction, but it
+misrepresents the physical situation.
+
+\begin{proposition}[No Physical Substrate Is Stably Inert]
+\label{prop:no-inert}
+No physical substrate under realistic conditions preserves
+an exact microstate indefinitely.
+More precisely, for any substrate $S$ at finite temperature
+$T > 0$, the probability that $S(t) = S(t_0)$ exactly
+decays to zero as $t \to \infty$.
+\end{proposition}
+
+\begin{proof}
+Under Hamiltonian dynamics a substrate may return
+arbitrarily close to an earlier state (Poincaré recurrence),
+but exact microstate equality $S(t) = S(t_0)$ for $t > t_0$
+is measure-zero in phase space.
+At finite temperature, coupling to a thermal bath introduces
+stochastic forcing $\eta(t)$; the Fokker--Planck equation
+for the state distribution has no point-mass stationary
+solution at $S(t_0)$, so the probability of exact
+preservation decays strictly with time.
+Under dissipative dynamics without thermal noise a fixed
+point may exist, but biological and cognitive substrates
+operate far from equilibrium and are therefore excluded
+from this case.
+In all realistic conditions, exact microstate preservation
+is either measure-zero or dynamically unstable under
+perturbation.
+\end{proof}
+
+\begin{remark}
+The proposition is not that states never recur approximately
+--- they may, as harmonic oscillators demonstrate.
+The point is that exact preservation is not a stable property:
+any perturbation, however small, eventually destroys it.
+Memory therefore cannot be grounded in exact preservation;
+it must be grounded in something more robust.
+\end{remark}
+
+The consequence is immediate: if memory required exact preservation
+of a past state, no physical system could be said to remember
+anything.
+Since manifestly some systems do remember, the storage account
+must be wrong.
+
+\begin{definition}[Storage Account]
+A \emph{storage account} of memory holds that a system $S$
+remembers $x$ at time $t$ if and only if there exists a
+subsystem $\sigma \subseteq S$ such that
+\[
+  \sigma(t) = \sigma(t_0)
+  \quad\text{and}\quad
+  \sigma(t_0) \text{ encodes } x.
+\]
+\end{definition}
+
+Proposition~\ref{prop:no-inert} shows that the antecedent
+of the storage account is never physically satisfied.
+The account must therefore be abandoned or radically revised.
+
+\section{What Survives Change}
+
+Something clearly does survive.
+A person remembers their childhood; a city retains the imprint
+of its construction; a document preserves the intent of its
+author.
+The question is what kind of thing survives when no state
+literally persists.
+
+The answer proposed here is a \emph{capacity}:
+the capacity to regenerate, from the current state, the
+distinctions that were once present.
+
+\begin{definition}[Reconstructive Capacity]
+\label{def:recon-capacity}
+A system $S$ has \emph{reconstructive capacity} for
+a distinction $\delta$ at time $t$ if there exists a
+physically realizable process
+$\mathcal{R}$
+such that
+\[
+  \mathcal{R}(S(t)) \;\approx_\varepsilon\; \delta,
+\]
+where $\approx_\varepsilon$ denotes approximate recovery
+within tolerance $\varepsilon > 0$.
+\end{definition}
+
+This shifts the question from ``what is stored?'' to
+``what can be reconstructed?''
+The shift is more than terminological.
+It opens the way to a theory in which memory is graded,
+ecological, and dynamical rather than binary, internal,
+and static.
+
+\chapter{Memory as Reconstruction}
+
+\section{Reconstruction Operators}
+
+\begin{definition}[Reconstruction Operator]
+Let $\calH$ be the space of admissible states of a system
+and let $\calQ$ be a space of distinctions (queries, labels,
+categories).
+A \emph{reconstruction operator} is a map
+\[
+  R_t : \calH \;\longrightarrow\; \calQ,
+\]
+indexed by current time $t$, whose intended action is to
+recover, from the present state $S(t) \in \calH$, the
+distinction that was present at the target time $t_0$.
+\end{definition}
+
+\begin{definition}[Memory Strength]
+\label{def:mem-strength}
+Given a metric $d_{\calQ}$ on the distinction space,
+the \emph{memory strength} of a system for distinction
+$q_0 = R_{t_0}(S(t_0))$ at current time $t$ is
+\[
+  M(t_0, t)
+  \;=\;
+  1 - d_{\calQ}\!\bigl(R_t(S(t)),\; q_0\bigr).
+\]
+Perfect memory corresponds to $M = 1$; complete forgetting
+to $M = 0$ (or below some operational threshold).
+\end{definition}
+
+\begin{remark}
+Memory strength is not a property of the substrate alone.
+It depends jointly on the current state $S(t)$,
+the reconstruction operator $R_t$,
+and the target distinction $q_0$.
+This three-way dependence is absent from storage accounts,
+which locate memory entirely in the substrate.
+\end{remark}
+
+\section{Admissible Recovery}
+
+Not every reconstruction is admissible.
+A system that produces an arbitrary output trivially
+achieves ``reconstruction'' in a vacuous sense.
+Admissibility constrains which outputs count.
+
+\begin{definition}[Admissibility Metric]
+\label{def:admissibility-metric}
+An \emph{admissibility metric} on $\calQ$ is a metric
+$d_{\calQ}$ such that two distinctions $q, q'$
+are considered the same recovered memory if and only if
+$d_{\calQ}(q, q') \leq \varepsilon$ for a contextually
+fixed tolerance $\varepsilon$.
+\end{definition}
+
+\begin{proposition}[Memory Is a Pseudometric]
+Define
+\[
+  \rho(t_0, t)
+  = d_{\calQ}\!\bigl(R_t(S(t)),\; R_{t_0}(S(t_0))\bigr).
+\]
+Then $\rho$ is a pseudometric on the space of
+$(t_0, t)$ pairs.
+\end{proposition}
+
+\begin{proof}
+\begin{enumerate}
+\item \emph{Non-negativity.} $\rho \geq 0$ because $d_{\calQ}$
+      is a metric.
+\item \emph{Identity.} $\rho(t_0, t_0) = 0$ because
+      $R_{t_0}(S(t_0)) = R_{t_0}(S(t_0))$.
+\item \emph{Symmetry.} $\rho(t_0,t) = \rho(t, t_0)$ by
+      symmetry of $d_{\calQ}$.
+\item \emph{Triangle inequality.}
+      \begin{align*}
+        \rho(t_0, t_2)
+        &= d_{\calQ}(R_{t_2}(S(t_2)),\, R_{t_0}(S(t_0)))\\
+        &\leq d_{\calQ}(R_{t_2}(S(t_2)),\, R_{t_1}(S(t_1)))
+           + d_{\calQ}(R_{t_1}(S(t_1)),\, R_{t_0}(S(t_0)))\\
+        &= \rho(t_1, t_2) + \rho(t_0, t_1).
+      \end{align*}
+\end{enumerate}
+Therefore $\rho$ satisfies all pseudometric axioms.
+(It fails to be a metric because two states with identical
+reconstructive outputs may differ as physical states.)
+\end{proof}
+
+\chapter{The Epistemic Necessity of Memory}
+
+\begin{definition}[Distinction Capacity]
+Write $\delta_R(t)$ for the number of distinct outputs
+a reconstruction operator $R_t$ can discriminate among
+at time $t$.
+\end{definition}
+
+\begin{theorem}[Collapse of Temporal Comparison]
+\label{thm:collapse}
+If $\delta_R(t) = 0$ for all $t$, then no temporal
+comparison, learning, or reference is possible.
+\end{theorem}
+
+\begin{proof}
+Temporal comparison requires distinguishing the state
+at $t_0$ from the state at $t_1$.
+If $\delta_R = 0$, every reconstruction is identical,
+so no pair $(t_0, t_1)$ is distinguishable by any query.
+Learning requires detecting a change between an initial
+state and a later state; if no states are distinguishable,
+no change is detectable.
+Reference requires identifying a past target; with
+$\delta_R = 0$ every past target maps to the same output.
+All three capacities therefore collapse to zero.
+\end{proof}
+
+\begin{corollary}
+Cognition, science, and language are only possible
+in systems that maintain nonzero reconstructive capacity.
+Memory, in the sense of Definition~\ref{def:recon-capacity},
+is a necessary condition for any epistemic activity.
+\end{corollary}
+
+% ============================================================
+\part{Event Memory}
+% ============================================================
+
+\chapter{Events Before Objects}
+
+\section{The Primacy of Events}
+
+The storage account places objects first: there are things
+that exist, and memory stores facts about them.
+MEM|8 inverts this order.
+Objects are not given; they are reconstructed.
+What is given are events, and objects are the stable patterns
+that emerge from reconstruction across event sequences.
+
+\begin{definition}[Event Sequence]
+An \emph{event sequence} is a finite or countably infinite
+ordered collection
+\[
+  E = (e_1, e_2, \ldots, e_n, \ldots)
+\]
+where each $e_i$ belongs to an event space $\mathcal{E}$.
+\end{definition}
+
+\begin{definition}[Object as Compressed History]
+An \emph{object identity} $\mathcal{O}$ relative to an
+event sequence $E$ and reconstruction operator $R$ is
+an equivalence class
+\[
+  \mathcal{O} = \{e_i \in E : R(H_i) \approx_\varepsilon R(H_j)
+  \text{ for all } i, j\}
+\]
+where $H_i = \{e_k : k \leq i\}$ is the history up to
+event $i$.
+\end{definition}
+
+In words: an object is whatever a reconstruction operator
+assigns consistently the same answer across a stretch of
+the event sequence.
+Object identity is derived, not primitive.
+
+\chapter{Histories as Computational Structures}
+
+\begin{definition}[Historical State]
+The \emph{historical state} at time $t$ is
+\[
+  H_t = \{e_i \mid i \leq t\},
+\]
+the complete record of events up to and including $t$.
+\end{definition}
+
+\begin{definition}[Compression Ratio]
+Let $K(H_t)$ denote the Kolmogorov complexity of $H_t$.
+The \emph{compression ratio} of the present state $S(t)$
+as a witness to $H_t$ is
+\[
+  \chi(t) = \frac{K(H_t)}{|S(t)|},
+\]
+where $|S(t)|$ is the description length of the current
+physical state.
+A system is an \emph{efficient witness} of its history when
+$\chi(t) \gg 1$.
+\end{definition}
+
+\begin{proposition}[Present State as Compressed Witness]
+The present physical state of a system is a lossy compression
+of its historical trajectory.
+Memory is the capacity to partially decompress this compression
+on demand.
+\end{proposition}
+
+\begin{proof}[Sketch]
+The present state $S(t)$ is a function of all past states
+via the dynamics: $S(t) = F(S(0), e_1, \ldots, e_t)$.
+The map $F$ is generally not injective; many distinct
+histories $H_t$ can produce the same $S(t)$.
+Therefore $S(t)$ is a compression of $H_t$, and
+$R_t$ is the corresponding decompression applied selectively
+to the query at hand.
+\end{proof}
+
+\chapter{The Event-Log Ontology}
+
+\begin{definition}[Event-Log System]
+A system $\Sigma$ is an \emph{event-log system} if its
+current state can be interpreted as a compressed summary
+of an event log and if that summary supports
+at least partial reconstruction of historical distinctions.
+\end{definition}
+
+\begin{example}
+The following are event-log systems under this definition:
+\begin{enumerate}
+\item \emph{Biological cells.} The epigenetic state summarizes
+      developmental and environmental event history.
+\item \emph{Brains.} Synaptic weights compress a lifetime
+      of sensorimotor events.
+\item \emph{Documents.} Text preserves the communicative
+      acts that produced it.
+\item \emph{Institutions.} Policies, procedures, and
+      personnel encode accumulated decisions.
+\item \emph{Languages.} Phonological and grammatical structures
+      reflect historical contact events across centuries.
+\item \emph{Ecosystems.} Species composition records
+      evolutionary and climatic history.
+\end{enumerate}
+\end{example}
+
+The event-log ontology unifies these diverse systems under
+a single memory-theoretic description.
+Memory is not a special faculty of minds; it is a property
+of any system whose present state is a compressed witness
+of past events.
+
+% ============================================================
+\part{The Mathematical Architecture of Recall}
+% ============================================================
+
+\chapter{Memory as Recoverable Modal Structure}
+
+\section{The Memory Field}
+
+\begin{definition}[Memory Field]
+\label{def:memory-field}
+Let $\Omega$ be a cognitive or physical domain and let
+\[
+  \calH = L^2(\Omega;\CC)
+\]
+be the Hilbert space of admissible memory states.
+A \emph{memory field} is a time-indexed section
+\[
+  M : \RR_{\geq 0} \;\longrightarrow\; \calH,
+  \qquad t \mapsto M(t),
+\]
+whose instantaneous state admits a modal expansion
+\[
+  M(t) = \sum_{i \in I} a_i(t)\,\psi_i,
+\]
+where $\{\psi_i\}_{i \in I}$ is an orthonormal family
+of \emph{reconstructive modes} and $a_i(t) \in \CC$
+are time-dependent excitation coefficients.
+\end{definition}
+
+The modes $\{\psi_i\}$ are latent structures of the memory
+system; they are determined by the physical or cognitive
+substrate, not by the content of any individual memory.
+Individual memories are patterns of excitation over this
+fixed modal basis.
+
+\section{Memory Is Not Substrate Identity}
+
+\begin{definition}[Memory Equivalence]
+\label{def:mem-equiv}
+Given a reconstruction functional $R : \calH \to \calQ$,
+two states $M, N \in \calH$ are
+\emph{memory-equivalent relative to $R$} if
+\[
+  M \sim_R N
+  \;\;\Longleftrightarrow\;\;
+  d_{\calQ}(R(M),\, R(N)) \leq \varepsilon.
+\]
+A memory \emph{persists} over $[t_0, t_1]$ when
+$M(t) \sim_R M(t_0)$ for all $t \in [t_0, t_1]$,
+regardless of whether the coefficients $a_i(t)$ or
+the material carriers of $M(t)$ change.
+\end{definition}
+
+\begin{proposition}[Memory Is Not Substrate Identity]
+\label{prop:not-substrate}
+If $M(t) = \sum_i a_i(t)\psi_i$ and
+$N(t) = \sum_i b_i(t)\psi_i$ satisfy
+$d_{\calQ}(R(M(t)), R(N(t))) \leq \varepsilon$,
+then $M(t)$ and $N(t)$ instantiate the same recoverable
+memory relative to $R$, even if
+$a_i(t) \neq b_i(t)$ for every mode $i$.
+\end{proposition}
+
+\begin{proof}
+Memory equivalence (Definition~\ref{def:mem-equiv}) depends
+only on the image under $R$ in $\calQ$, not on equality
+in $\calH$.
+Since $d_{\calQ}(R(M(t)), R(N(t))) \leq \varepsilon$
+holds by hypothesis, the two field states are
+memory-equivalent for every query stable under tolerance
+$\varepsilon$.
+Therefore memory persists as a recoverable distinction
+rather than as a conserved material or modal configuration.
+\end{proof}
+
+\chapter{Spectral Decomposition of Memory Fields}
+\label{ch:spectral}
+
+\section{The Memory Operator}
+
+The modal expansion $M(t) = \sum_i a_i(t)\psi_i$
+introduced in the previous chapter requires justification.
+The modes $\{\psi_i\}$ do not simply appear; they are
+eigenfunctions of a natural operator associated with the
+memory system.
+This chapter derives the modal basis from spectral theory,
+so that all subsequent modal machinery rests on a firm
+functional-analytic foundation.
+
+\begin{definition}[Memory Operator]
+Let $\calH = L^2(\Omega;\CC)$ be the memory field Hilbert space.
+A \emph{memory operator} is a bounded, self-adjoint linear
+operator
+\[
+  \mathcal{L} : \calH \;\longrightarrow\; \calH
+\]
+that encodes the intrinsic reconstructive structure of the
+cognitive domain $\Omega$.
+Physically, $\mathcal{L}$ captures how the system propagates
+distinctions across space and frequency: high eigenvalues
+correspond to modes that are strongly supported by the substrate;
+low eigenvalues correspond to modes that are weakly supported
+and therefore easily overdamped.
+\end{definition}
+
+\begin{theorem}[Spectral Decomposition of $\mathcal{L}$]
+\label{thm:spectral}
+Let $\mathcal{L}$ be a compact, self-adjoint operator on
+$\calH$.
+Then there exists a countable orthonormal family
+$\{\psi_i\}_{i \in \NN} \subset \calH$ and a sequence of
+real eigenvalues $\mu_1 \geq \mu_2 \geq \cdots \to 0$
+such that
+\[
+  \mathcal{L}\psi_i = \mu_i\,\psi_i
+  \qquad \text{for all } i \in \NN,
+\]
+and every $M \in \calH$ admits the expansion
+\[
+  M = \sum_{i=1}^\infty \langle M, \psi_i\rangle\,\psi_i,
+\]
+convergent in the $\calH$-norm.
+\end{theorem}
+
+\begin{proof}
+By the spectral theorem for compact self-adjoint operators
+on a Hilbert space (see, e.g., Reed and Simon \cite{ReedSimon1972},
+Theorem VI.16), any compact self-adjoint operator admits a
+countable orthonormal eigenbasis with real eigenvalues
+accumulating only at zero.
+The expansion of $M$ then follows from completeness of
+the eigenbasis.
+\end{proof}
+
+\begin{definition}[Reconstructive Modes]
+The eigenfunctions $\{\psi_i\}$ of $\mathcal{L}$ are the
+\emph{reconstructive modes} of the memory system.
+The eigenvalue $\mu_i$ measures the \emph{modal support}:
+the degree to which the substrate amplifies or sustains
+mode $\psi_i$.
+Modes with large $\mu_i$ are intrinsically stable;
+modes with small $\mu_i$ are weakly sustained and
+vulnerable to overdamping.
+\end{definition}
+
+\section{Time Evolution in the Modal Basis}
+
+Once the spectral basis is established, the dynamics of
+the memory field are naturally expressed modally.
+
+\begin{proposition}[Modal Coefficient Dynamics]
+\label{prop:modal-dyn}
+Let $M(t) = \sum_i a_i(t)\psi_i$ be the modal expansion
+of the memory field, and suppose the field evolves by
+\[
+  \frac{\partial M}{\partial t}
+  = -\mathcal{L}^\dagger M + F(t),
+\]
+where $\mathcal{L}^\dagger$ is a damping operator diagonal
+in the modal basis with entries $(\lambda_i + i\omega_i)$,
+and $F(t)$ is an external forcing term.
+Then each coefficient satisfies
+\[
+  \frac{d a_i}{dt}
+  = -(\lambda_i + i\omega_i)\,a_i + f_i(t),
+\]
+where $f_i(t) = \langle F(t), \psi_i\rangle$.
+\end{proposition}
+
+\begin{proof}
+Project the field equation onto mode $\psi_i$ by taking
+the inner product with $\psi_i$:
+\[
+  \frac{d}{dt}\langle M(t), \psi_i\rangle
+  = -\langle \mathcal{L}^\dagger M(t), \psi_i\rangle
+    + \langle F(t), \psi_i\rangle.
+\]
+Since $\mathcal{L}^\dagger$ is diagonal in the $\{\psi_i\}$
+basis, $\langle \mathcal{L}^\dagger M, \psi_i\rangle
+= (\lambda_i + i\omega_i)\langle M, \psi_i\rangle
+= (\lambda_i + i\omega_i)a_i$.
+Substituting $a_i(t) = \langle M(t), \psi_i\rangle$ gives
+the stated ODE.
+\end{proof}
+
+This proposition retroactively justifies the
+``Damped Memory Mode'' definition of Chapter~9: each
+coefficient ODE is not an assumption but a consequence of
+projecting the field equation onto the spectral basis
+supplied by Theorem~\ref{thm:spectral}.
+
+\section{The Modal Persistence Theorem}
+
+The spectral framework now enables a theorem that connects
+Part~III directly to Part~V.
+Persistence-through-flux (Chapter~13) shows that
+reconstructive density is conserved under balanced renewal.
+The following theorem shows that memory persists under
+arbitrary drift of modal coefficients, provided the
+reconstruction functional remains stable.
+
+\begin{theorem}[Modal Persistence]
+\label{thm:modal-persistence}
+Suppose $M(t) = \sum_i a_i(t)\psi_i$ and let
+$R : \calH \to \calQ$ be a reconstruction functional
+that is continuous with respect to the $\calH$-norm.
+If
+\[
+  \|R(M(t)) - R(M(t_0))\|_{\calQ} < \varepsilon
+\]
+for all $t \in [t_0, t_1]$, then memory persists over
+$[t_0, t_1]$ despite arbitrary variation of the
+individual coefficients $a_i(t)$.
+\end{theorem}
+
+\begin{proof}
+Memory persistence is defined by memory equivalence
+(Definition~\ref{def:mem-equiv}): $M(t) \sim_R M(t_0)$
+whenever $d_{\calQ}(R(M(t)), R(M(t_0))) \leq \varepsilon$.
+The hypothesis states exactly this condition.
+Therefore, regardless of how the coefficients $a_i(t)$
+vary --- they may oscillate, drift, grow, or shrink ---
+the memory persists as long as the reconstruction
+functional's output remains within tolerance $\varepsilon$
+of its initial value.
+The coefficients are implementation details of the field;
+the reconstruction output is what constitutes the memory.
+\end{proof}
+
+\begin{corollary}[Robustness of Memory to Substrate Fluctuation]
+Under the conditions of Theorem~\ref{thm:modal-persistence},
+a memory survives arbitrary fluctuation of the modal
+coefficients $a_i(t)$ provided the fluctuations collectively
+preserve the output of $R$.
+In particular, memory is robust to any transformation
+$a_i \mapsto a_i + \delta_i$ satisfying
+\[
+  \left\|R\!\left(\sum_i (a_i + \delta_i)\psi_i\right)
+        - R\!\left(\sum_i a_i\psi_i\right)\right\|_{\calQ}
+  < \varepsilon.
+\]
+\end{corollary}
+
+\begin{proof}
+Substitute the perturbed coefficients into the condition
+of Theorem~\ref{thm:modal-persistence} and apply the
+definition of memory equivalence.
+\end{proof}
+
+The Modal Persistence Theorem is the bridge between the
+dynamical picture (modes oscillate and damp) and the
+ecological picture (memories survive through flux renewal):
+what matters is not the trajectory of any individual
+coefficient but the collective stability of what the
+reconstruction functional can recover.
+
+\chapter{Dimensional Amplification and Witness Coordinates}
+
+\section{Witness Expansion}
+
+Empirical work on the topological acoustic synapse (TAS)
+demonstrates that a small physical substrate driven by
+$k$ input frequencies can generate an exponentially larger
+family of nonlinear interaction states --- a
+\emph{phi-bit lattice} --- whose effective dimensionality
+far exceeds the input dimension \cite{Chen2026TAS}.
+This section formalizes the general principle as the
+\emph{Dimensional Amplification Theorem}.
+
+\begin{definition}[Witness Expansion]
+\label{def:witness-expansion}
+Let $X$ be an input space of events, cues, or sensory
+fragments.
+A \emph{witness expansion} is a map
+\[
+  \Phi : X \;\longrightarrow\; \CC^n,
+  \qquad x \mapsto (\phi_1(x), \ldots, \phi_n(x)),
+\]
+where each coordinate $\phi_j$ is a \emph{reconstructive
+witness}.
+The expansion is \emph{memory-useful} when there exists
+a low-complexity readout
+\[
+  L : \CC^n \;\longrightarrow\; \calQ
+\]
+such that $L(\Phi(x)) \approx Q(x)$ for the relevant
+query $Q : X \to \calQ$.
+\end{definition}
+
+\begin{definition}[Reconstructive Separability]
+Two event classes $A, B \subset X$ are
+\emph{reconstructively separable} by $\Phi$ when there
+exists a hyperplane vector $h \in \CC^n$ such that
+\[
+  \operatorname{Re}\langle h, \Phi(a)\rangle > 0
+  \quad\text{and}\quad
+  \operatorname{Re}\langle h, \Phi(b)\rangle < 0
+\]
+for all $a \in A$ and $b \in B$ outside an admissible
+error set of measure zero.
+\end{definition}
+
+\begin{theorem}[Dimensional Amplification Theorem]
+\label{thm:dim-amp}
+Let $\Phi : X \to \CC^n$ be a nonlinear witness expansion.
+If two classes $A, B \subset X$ are not linearly separable
+in $X$ but become linearly separable in $\Phi(X)$,
+then memory retrieval may be implemented by a simpler
+readout in witness space than in the original event space.
+\end{theorem}
+
+\begin{proof}
+Assume $A, B \subset X$ are not linearly separable in
+the original event coordinates.
+Suppose that under $\Phi$ there exists $h \in \CC^n$
+such that
+\[
+  \sgn\!\operatorname{Re}\langle h, \Phi(x)\rangle
+\]
+correctly distinguishes $A$ from $B$.
+Then the decision boundary in $X$ is the pullback
+\[
+  \Phi^{-1}\{z : \operatorname{Re}\langle h, z\rangle = 0\},
+\]
+which may be a nonlinear hypersurface in $X$ while remaining
+a hyperplane in $\Phi(X)$.
+The classification complexity has therefore been absorbed
+into the structure of the expansion $\Phi$ rather than
+the readout $L$.
+Retrieval is easier because the memory system searches
+the amplified witness space, not the original event space.
+\end{proof}
+
+\begin{corollary}[Memory as Witness Redundancy]
+\label{cor:witness-redundancy}
+If a memory is represented by $n$ witnesses and
+reconstruction requires only $k < n$ witnesses,
+then the memory is robust to the loss of any $n - k$
+witness coordinates, provided the remaining $k$
+coordinates determine the same query answer.
+\end{corollary}
+
+\begin{proof}
+Let $W = \{\phi_1, \ldots, \phi_n\}$ be the full witness
+set and $W' \subseteq W$ with $|W'| = k$.
+If $R_W(M) = R_{W'}(M)$ within tolerance $\varepsilon$,
+then deletion of the $n - k$ unused witnesses does not
+alter the recoverable distinction.
+Therefore the memory persists under partial witness loss
+whenever the remaining witnesses form a sufficient set
+for the query.
+\end{proof}
+
+\chapter{Resonant Modal Recall}
+
+\section{Cue Coupling and Modal Dynamics}
+
+Functional MRI studies of intrinsic oscillatory modes
+reveal that large-scale brain activity decomposes as
+$\Psi(n, t) = \sum_\alpha \psi_\alpha(n)\tau_\alpha(t)$,
+where a small family of spatial modes $\psi_\alpha$
+accounts for the majority of observed long-range
+connectivity \cite{Cabral2023OscillatoryModes}.
+MEM|8 reinterprets this finding: the modes are not
+incidental features of neural anatomy but the latent
+basis of a reconstructive memory field.
+Recall is resonance with that basis, not retrieval
+from a store.
+
+\begin{definition}[Cue Coupling]
+A cue $c$ \emph{couples} to memory mode $\psi_i$ with
+strength
+\[
+  \gamma_i(c) = |\langle C(c),\, \psi_i\rangle|,
+\]
+where $C(c) \in \calH$ is the field representation
+of the cue.
+\end{definition}
+
+\begin{definition}[Damped Memory Mode]
+A memory mode has activation $a_i(t) \in \CC$ governed by
+\[
+  \frac{d a_i}{dt}
+  = -(\lambda_i + i\omega_i)\,a_i
+    + \gamma_i(c(t))
+    + \eta_i(t),
+\]
+where $\lambda_i \geq 0$ is the \emph{damping coefficient},
+$\omega_i$ the \emph{modal frequency},
+$\gamma_i(c(t))$ is cue forcing, and
+$\eta_i(t)$ is background excitation (noise).
+\end{definition}
+
+\section{The Recall Threshold}
+
+\begin{definition}[Ecphoric Threshold]
+The \emph{ecphoric threshold} $\theta_i > 0$ is the
+minimum activation magnitude required for mode $\psi_i$
+to contribute to conscious recall:
+\[
+  \text{mode } \psi_i \text{ is recall-active}
+  \;\;\Longleftrightarrow\;\;
+  |a_i(t)| \geq \theta_i.
+\]
+\end{definition}
+
+\begin{theorem}[Resonant Recall Criterion]
+\label{thm:resonant-recall}
+For constant cue forcing $\gamma_i$ and negligible noise,
+the steady-state amplitude satisfies
+\[
+  |a_i^*| = \frac{|\gamma_i|}{\sqrt{\lambda_i^2 + \omega_i^2}}.
+\]
+Recall occurs precisely when
+\[
+  |\gamma_i| \;\geq\; \theta_i\sqrt{\lambda_i^2 + \omega_i^2}.
+\]
+\end{theorem}
+
+\begin{proof}
+For constant forcing the ODE reduces to
+\[
+  \frac{d a_i}{dt} = -(\lambda_i + i\omega_i)\,a_i + \gamma_i.
+\]
+The unique equilibrium is
+\[
+  a_i^* = \frac{\gamma_i}{\lambda_i + i\omega_i}.
+\]
+Taking magnitudes:
+\[
+  |a_i^*|
+  = \frac{|\gamma_i|}{|\lambda_i + i\omega_i|}
+  = \frac{|\gamma_i|}{\sqrt{\lambda_i^2 + \omega_i^2}}.
+\]
+Recall requires $|a_i^*| \geq \theta_i$, which gives
+\[
+  |\gamma_i| \geq \theta_i\sqrt{\lambda_i^2 + \omega_i^2},
+\]
+establishing the threshold condition.
+\end{proof}
+
+\begin{remark}
+Recall is not lookup.
+It is thresholded resonant excitation.
+Two factors govern whether a cue triggers recall:
+cue-mode overlap (the numerator $|\gamma_i|$)
+and modal impedance (the denominator
+$\sqrt{\lambda_i^2 + \omega_i^2}$).
+Strong cues with high coupling always recall;
+weak or mismatched cues fail, even when the mode itself
+is intact.
+\end{remark}
+
+\chapter{Forgetting as Overdamping, Repair as Resonance Restoration}
+
+\section{Overdamped Modes}
+
+\begin{definition}[Overdamped Memory]
+A memory mode $\psi_i$ is \emph{overdamped relative to a
+cue class} $\mathcal{C}$ when
+\[
+  \sup_{c \in \mathcal{C}}
+  \frac{|\gamma_i(c)|}{\sqrt{\lambda_i^2 + \omega_i^2}}
+  < \theta_i.
+\]
+\end{definition}
+
+\begin{proposition}[Forgetting Is Loss of Excitability]
+\label{prop:forgetting}
+If a mode is overdamped relative to all admissible cues,
+the corresponding memory is operationally forgotten
+but structurally latent.
+\end{proposition}
+
+\begin{proof}
+The mode $\psi_i$ remains an element of the modal basis
+$\{\psi_i\}$; it is not removed from $\calH$.
+However, for every $c \in \mathcal{C}$,
+\[
+  |a_i^*(c)| < \theta_i,
+\]
+so the mode cannot become recall-active.
+Forgetting is therefore a failure of excitability,
+not an erasure of the structural possibility of the memory.
+\end{proof}
+
+This distinction is philosophically important.
+A forgotten memory is not destroyed; it is unreachable.
+The distinction between erasure and overdamping generates
+the possibility of recovery through repair.
+
+\section{Repair as Damping Reduction}
+
+\begin{theorem}[Repair by Reducing Damping]
+\label{thm:repair}
+Let $\psi_i$ be overdamped under forcing $\gamma_i$.
+If repair changes the damping coefficient from $\lambda_i$
+to $\lambda_i'$ with
+\[
+  \lambda_i' < \sqrt{\left(\frac{|\gamma_i|}{\theta_i}\right)^2
+                     - \omega_i^2},
+\]
+then the memory becomes recall-active under the same cue forcing.
+\end{theorem}
+
+\begin{proof}
+The repaired steady-state amplitude is
+\[
+  |a_i^{*\prime}| = \frac{|\gamma_i|}{\sqrt{(\lambda_i')^2 + \omega_i^2}}.
+\]
+The stated inequality on $\lambda_i'$ is equivalent to
+\[
+  (\lambda_i')^2 + \omega_i^2
+  < \left(\frac{|\gamma_i|}{\theta_i}\right)^2.
+\]
+Taking square roots and rearranging:
+\[
+  \frac{|\gamma_i|}{\sqrt{(\lambda_i')^2 + \omega_i^2}} > \theta_i.
+\]
+Therefore $|a_i^{*\prime}| > \theta_i$,
+meaning the repaired mode is recall-active.
+\end{proof}
+
+\begin{corollary}
+Therapeutic, environmental, and social interventions
+that restore memory do not reconstruct stored content.
+They reduce the effective damping coefficient of
+overdamped modes, allowing existing latent structure
+to become resonant.
+\end{corollary}
+
+% ============================================================
+\part{Ecological Memory}
+% ============================================================
+
+\chapter{Memory Outside the Brain}
+
+\section{The Ecological Extension}
+
+The neural interpretation of MEM|8 is a special case,
+not the general case.
+Any system whose present state is a compressed witness
+of its event history satisfies the axioms of the
+MEM|8 framework.
+Memory is therefore not confined to neural tissue.
+
+\begin{definition}[Environmental Memory Field]
+\label{def:env-mem}
+An \emph{environmental memory field} is a spatial
+distribution
+\[
+  \Phi_M : \Omega \;\longrightarrow\; \RR_{\geq 0}
+\]
+representing the \emph{local reconstructive support}
+at each point $x \in \Omega$.
+High values of $\Phi_M(x)$ indicate regions where
+distinction reconstruction is strongly supported;
+low values indicate reconstructive poverty.
+\end{definition}
+
+\begin{example}[Workspace as Memory Architecture]
+Consider a knowledge worker's physical desk.
+Let $\Omega$ be the desk surface.
+Notes, open books, pinned diagrams, and unfinished
+drafts each instantiate a locally high $\Phi_M$.
+The workspace as a whole is a distributed memory architecture
+in which cognitive load is partially offloaded into the
+environmental field.
+\end{example}
+
+\begin{proposition}[Ecological Extension of the Memory Field]
+Let a cognitive domain extend across an agent $A$ and
+an environment $\mathrm{Env}$.
+The composite memory field is
+\[
+  M_{\text{total}}(t) = M_A(t) + M_{\mathrm{Env}}(t),
+\]
+and the composite modal decomposition is
+\[
+  M_{\text{total}}(t) = \sum_i a_i^A(t)\psi_i^A
+                        + \sum_j a_j^{\mathrm{Env}}(t)\psi_j^{\mathrm{Env}}.
+\]
+Recall can be triggered by cue coupling to either
+component.
+\end{proposition}
+
+\begin{proof}
+Both components are elements of the same Hilbert space
+$\calH$ (extended to the composite domain).
+Their sum is again an element of $\calH$,
+with coefficients summing over the two mode families.
+Recall via Theorem~\ref{thm:resonant-recall} applies
+to any mode in the combined basis.
+\end{proof}
+
+\chapter{Habitat Versus Archive}
+
+\begin{definition}[Archive]
+An \emph{archive} is a system designed to preserve
+the information content of representations across time.
+Its memory metric is storage fidelity:
+$d_{\calQ}(R_t(S(t)),\, q_0)$ should remain small as $t$
+increases.
+\end{definition}
+
+\begin{definition}[Habitat]
+A \emph{habitat} is a system designed to preserve and
+support the \emph{reconstruction pathways} through which
+distinctions can be regenerated.
+Its memory metric is reconstructive accessibility:
+the probability that a randomly sampled cue activates
+a recall-active mode.
+\end{definition}
+
+\begin{proposition}[Archives Can Fail as Habitats]
+An archive may preserve complete information while
+failing as a memory habitat if the reconstruction
+pathways required to use that information are lost.
+\end{proposition}
+
+\begin{proof}
+Consider a text perfectly preserved in a dead language.
+Every symbol is retained; $d_{\calQ}$ of the stored
+content is zero.
+Yet if no agent can execute the reconstruction operator
+$R_t$ that maps the symbols to their distinctions,
+the memory is operationally inaccessible.
+The archive is intact; the habitat is broken.
+\end{proof}
+
+This distinction has consequences for the design of
+libraries, databases, scientific journals, and institutional
+knowledge systems.
+Preservation of content is necessary but insufficient.
+Preservation of the reconstruction community, the
+interpretive tradition, and the cue structures that
+trigger recall is equally essential.
+
+% ============================================================
+\part{Memory and Repair}
+% ============================================================
+
+\chapter{Memory as Flux Maintenance}
+
+\section{Persistence Through Replacement}
+
+Synaptic proteins mediating vesicle exocytosis have
+average lifetimes of one to two days, yet the memories
+they support persist for decades \cite{Parkes2023}.
+This is the biological instance of the ship-of-Theseus
+problem: how can identity persist when every component
+is replaced?
+
+MEM|8 resolves the paradox by locating memory identity
+in reconstructive organization rather than material
+constitution.
+The mathematical expression is a flux-balance equation.
+
+\begin{definition}[Memory Flux Balance]
+\label{def:flux}
+Let $\rho(x, t)$ be the local \emph{reconstructive density}
+at point $x \in \Omega$.
+Let $J(x, t)$ be the flux of reconstructive carriers,
+$S_{\mathrm{renew}}$ a renewal source term, and
+$S_{\mathrm{decay}}$ a degradation sink term.
+The \emph{memory balance equation} is
+\[
+  \frac{\partial \rho}{\partial t}
+  + \nabla \cdot J
+  = S_{\mathrm{renew}} - S_{\mathrm{decay}}.
+\]
+\end{definition}
+
+\begin{theorem}[Persistence Through Replacement]
+\label{thm:ptr}
+A memory region $U \subset \Omega$ preserves its
+reconstructive density over time if
+\[
+  \int_U (S_{\mathrm{renew}} - S_{\mathrm{decay}})\,dx
+  = \int_{\partial U} J \cdot \hat{n}\,dS,
+\]
+in which case $\dfrac{d}{dt}\displaystyle\int_U \rho\,dx = 0$.
+\end{theorem}
+
+\begin{proof}
+Integrate the balance equation over $U$:
+\[
+  \frac{d}{dt}\int_U \rho\,dx
+  = -\int_{\partial U} J \cdot \hat{n}\,dS
+    + \int_U (S_{\mathrm{renew}} - S_{\mathrm{decay}})\,dx.
+\]
+By the stated equality, the two terms on the right cancel,
+giving $\dfrac{d}{dt}\displaystyle\int_U \rho\,dx = 0$.
+\end{proof}
+
+\begin{corollary}[Ship-of-Theseus Memory]
+If every material carrier in $U$ is replaced over the
+interval $[0, T]$ but the flux-balance condition holds
+throughout, then the memory persists as a stable
+reconstructive organization.
+\end{corollary}
+
+\begin{proof}
+Theorem~\ref{thm:ptr} guarantees that total reconstructive
+density in $U$ is conserved.
+Memory identity is defined by recoverability
+(Definition~\ref{def:mem-equiv}), not by carrier identity.
+Therefore wholesale replacement of carriers is compatible
+with persistent memory.
+\end{proof}
+
+\section{Two Transport Modes: Circulation and Capture}
+
+\begin{definition}[Two-State Memory Transport]
+Memory carriers occupy either a \emph{circulating state}
+$C$ (preserving global availability) or a
+\emph{captured state} $K$ (stabilizing local reconstruction).
+Let $p_K(v, d)$ be the probability that a carrier of
+speed $v$ moving in direction
+$d \in \{+, -\}$ is captured by a local memory site.
+\end{definition}
+
+\begin{assumption}[Speed-Dependent Capture]
+\label{assump:speed-capture}
+There exists a threshold $v_c$ such that
+\[
+  v < v_c \;\Rightarrow\; p_K(v, d) \approx p_{\mathrm{slow}},
+  \qquad
+  v > v_c \;\Rightarrow\; p_K(v, d) \approx p_{\mathrm{fast}},
+\]
+with $p_{\mathrm{slow}} > p_{\mathrm{fast}}$.
+\end{assumption}
+
+\begin{theorem}[Capture-Stabilization Principle]
+Under Assumption~\ref{assump:speed-capture},
+slow carriers preferentially stabilize local memory sites
+while fast carriers preferentially maintain global
+circulation.
+\end{theorem}
+
+\begin{proof}
+Let $N = N_{\mathrm{slow}} + N_{\mathrm{fast}}$.
+Expected capture counts are
+\[
+  \mathbb{E}[K]
+  = p_{\mathrm{slow}} N_{\mathrm{slow}}
+  + p_{\mathrm{fast}} N_{\mathrm{fast}},
+\]
+\[
+  \mathbb{E}[C]
+  = (1 - p_{\mathrm{slow}}) N_{\mathrm{slow}}
+  + (1 - p_{\mathrm{fast}}) N_{\mathrm{fast}}.
+\]
+Since $p_{\mathrm{slow}} > p_{\mathrm{fast}}$,
+slow carriers contribute disproportionately to $\mathbb{E}[K]$
+and fast carriers to $\mathbb{E}[C]$.
+The two velocity classes therefore separate into
+local stabilization and global circulation roles.
+\end{proof}
+
+\begin{theorem}[Retrograde Renewal Bias]
+\label{thm:retrograde}
+Suppose carriers moving retrograde have lower
+capture probability than anterograde carriers:
+$p_K(v,-) < p_K(v,+)$.
+Then, even when initial directional populations are equal,
+the surviving traversing flux has a retrograde bias.
+\end{theorem}
+
+\begin{proof}
+Assume $N_+ = N_-$.
+Expected traversing populations are
+\[
+  T_+ = (1 - p_K(v,+))N_+,
+  \qquad
+  T_- = (1 - p_K(v,-))N_-.
+\]
+Since $p_K(v,-) < p_K(v,+)$ implies
+$1 - p_K(v,-) > 1 - p_K(v,+)$,
+and $N_+ = N_-$, we obtain $T_- > T_+$.
+Retrograde bias in the traversing flux arises from
+differential capture probability, not from directional
+motor asymmetry.
+\end{proof}
+
+Theorem~\ref{thm:retrograde} gives MEM|8 a mechanism for
+automatic renewal: old material is preferentially returned
+for replacement without requiring explicit deletion or
+directed degradation signals.
+
+\chapter{Forgetting as Structural Deformation}
+
+\begin{definition}[Deformation Cost]
+The \emph{deformation cost} of the memory field over
+the interval $[t, t + \Delta]$ is
+\[
+  D(H_t, H_{t+\Delta})
+  = \sum_{i \in I}
+    \left|a_i(t+\Delta) - a_i(t)\right|^2 \cdot \mathbf{1}[|a_i(t)| \geq \theta_i].
+\]
+The indicator selects only modes that were recall-active
+at time $t$: only the deformation of active memories
+contributes.
+\end{definition}
+
+\begin{proposition}[Forgetting Rate Bounds Deformation Cost]
+Let $\Lambda = \sup_i \sqrt{\lambda_i^2 + \omega_i^2}$
+be the maximum modal impedance over all recall-active modes,
+and suppose no cue forcing is present.
+Then
+\[
+  D(H_t, H_{t+\Delta}) \leq \Lambda^2 \cdot \Delta^2 \cdot \|M(t)\|_{\mathrm{active}}^2,
+\]
+where $\|M(t)\|_{\mathrm{active}}^2 = \sum_{i:\,|a_i|\geq\theta_i} |a_i(t)|^2$.
+\end{proposition}
+
+\begin{proof}
+Without cue forcing and noise, $a_i(t) = a_i(0)e^{-(\lambda_i + i\omega_i)t}$.
+Over a short interval $\Delta$, differentiating gives
+$\dot{a}_i = -(\lambda_i + i\omega_i)a_i$, so
+\[
+  |a_i(t+\Delta) - a_i(t)|
+  \approx |\dot{a}_i(t)|\,\Delta
+  = |\lambda_i + i\omega_i|\,|a_i(t)|\,\Delta
+  = \sqrt{\lambda_i^2 + \omega_i^2}\,|a_i(t)|\,\Delta
+  \leq \Lambda\,|a_i(t)|\,\Delta,
+\]
+using the definition $\Lambda = \sup_i\sqrt{\lambda_i^2+\omega_i^2}$.
+Squaring and summing over recall-active modes:
+\[
+  D(H_t,H_{t+\Delta})
+  = \sum_{i:\,|a_i|\geq\theta_i} |a_i(t+\Delta)-a_i(t)|^2
+  \leq \Lambda^2\Delta^2 \sum_{i:\,|a_i|\geq\theta_i} |a_i(t)|^2
+  = \Lambda^2\Delta^2 \|M(t)\|_{\mathrm{active}}^2. \qedhere
+\]
+\end{proof}
+
+\chapter{Persistent Anomalies and Scientific Memory}
+
+\begin{definition}[Anomaly Persistence]
+An anomaly $\mathcal{A}$ in a knowledge system is
+\emph{persistent} if its associated memory mode $\psi_{\mathcal{A}}$
+has low damping coefficient $\lambda_{\mathcal{A}} \approx 0$
+and strong coupling to routine cues:
+$\gamma_{\mathcal{A}}(c) \gg \theta_{\mathcal{A}} \sqrt{\lambda_{\mathcal{A}}^2 + \omega_{\mathcal{A}}^2}$
+for most $c$ in the standard repertoire.
+\end{definition}
+
+\begin{proposition}[Anomaly Survives Paradigm Shift]
+If an anomaly has low damping and strong cue coupling,
+it remains recall-active across theoretical transitions
+that alter other modes.
+\end{proposition}
+
+\begin{proof}
+Theoretical transitions change the modal basis
+$\{\psi_i\} \to \{\psi_i'\}$ and alter the damping
+landscape for most modes.
+But if $\lambda_{\mathcal{A}} \approx 0$, the anomaly mode
+remains below the recall threshold even under strong
+perturbation of the remaining basis.
+Its cue coupling $\gamma_{\mathcal{A}}$ ensures routine
+re-excitation.
+Therefore the anomaly persists: it is the memory
+mode most resistant to paradigm-induced overdamping.
+\end{proof}
+
+Science accumulates not because it stores truths,
+but because the anomaly modes of the scientific community
+are collectively maintained at low damping through
+continual cue excitation: publication, teaching,
+replication, and debate.
+
+% ============================================================
+\part{Computation and MEM|8}
+% ============================================================
+
+\chapter{Memory Machines}
+
+\begin{definition}[Reconstruction Capacity]
+The \emph{reconstruction capacity} of a computational
+memory system is the maximum number of
+distinct distinctions recoverable from the system's
+current state, measured in bits:
+\[
+  \mathcal{RC}(S) = \log_2 |\{q \in \calQ : \exists R,\, R(S) = q\}|.
+\]
+\end{definition}
+
+\begin{remark}
+Classical RAM measures memory in storage capacity
+(bits of information stored).
+MEM|8 measures memory in reconstruction capacity
+(bits of information recoverable).
+The two coincide for perfect-fidelity storage;
+they diverge for systems with compression, degradation,
+and reconstruction.
+\end{remark}
+
+\begin{theorem}[Reconstruction Dominates Storage]
+For a system implementing witness expansion $\Phi : X \to \CC^n$
+with $n$ independent binary witnesses,
+the reconstruction capacity satisfies
+\[
+  \mathcal{RC}(S) \;\geq\; n,
+\]
+independently of the physical storage capacity of the
+input representation.
+\end{theorem}
+
+\begin{proof}
+Each witness coordinate $\phi_j : X \to \CC$ contributes
+at least one bit of distinguishing power: whether
+$\operatorname{Re}(\phi_j(x)) > 0$ or not partitions $X$
+into two classes.
+With $n$ independent witnesses, the number of jointly
+distinguishable classes is at least $2^n$.
+The reconstruction capacity is defined as
+$\mathcal{RC}(S) = \log_2 |\{q \in \calQ : \exists R,\, R(S) = q\}|$,
+so having at least $2^n$ distinguishable outputs gives
+\[
+  \mathcal{RC}(S) \;\geq\; \log_2 2^n = n.
+\]
+This lower bound is determined by the expansion dimension
+$n$, not the input dimension $\dim(X)$.
+\end{proof}
+
+\chapter{Event-Log Computation and Spherepop}
+
+Programs in the event-log interpretation are not state
+machines; they are history machines.
+A program execution is a sequence of events
+$E = (e_1, \ldots, e_n)$ and the result is a recovered
+distinction from the terminal historical state $H_n$.
+
+This connects directly to the Spherepop calculus,
+in which computation proceeds through irreversible
+events (Pop, Refuse, Collapse, Bind) and the
+computational state is the history of those events
+rather than a mutable store.
+
+\begin{definition}[Event-Log Program]
+An \emph{event-log program} is a pair $(\mathcal{E}, R)$
+where $\mathcal{E}$ is an event alphabet and
+$R : \calH_{\mathcal{E}} \to \calQ$ is a reconstruction
+functional over histories in $\calH_{\mathcal{E}}$.
+Execution consists of generating a history $H$;
+the result is $R(H)$.
+\end{definition}
+
+\begin{proposition}[Spherepop as Event-Log Computation]
+The Spherepop calculus, with its irreversible event
+operators, is an event-log program in the sense above,
+where the history $H$ is the sequence of sphere-state
+transitions and $R$ maps terminal histories to
+denotational values.
+\end{proposition}
+
+\begin{proof}[Sketch]
+Each Spherepop operator (Pop, Refuse, Collapse, Bind)
+modifies the global sphere configuration irreversibly,
+generating a new event in the history.
+The operational semantics assigns meaning to terminal
+histories.
+This is precisely the structure of an event-log program.
+\end{proof}
+
+\chapter{A Concrete Instantiation: The MEM|8 Rust Backend}
+\label{ch:rust}
+
+\section{From Theory to Implementation}
+
+The preceding chapters developed MEM|8 as an abstract mathematical
+framework: memory fields in $L^2(\Omega;\CC)$, modal expansions,
+resonant recall, and flux-balanced persistence.
+This chapter examines a working Rust implementation of MEM|8's
+storage layer \cite{Chenoweth2025MEM8} and shows precisely where the abstract constructions
+land in code.
+The implementation is instructive not only as an existence proof
+but because it makes visible one residual tension: the
+\texttt{VolatileBackend}/\texttt{PersistentBackend} split still
+carries traces of the storage illusion that MEM|8 theoretically
+supersedes.
+
+\section{Wave Coordinates as Witness Expansion}
+
+The core type is
+
+\begin{verbatim}
+pub type WaveCoord = (u8, u8, u16);
+\end{verbatim}
+
+\noindent
+a triple $(x, y, f)$ where $x, y \in \{0,\ldots,255\}$ specify
+a position in the $256 \times 256$ spatial grid and
+$f \in \{0,\ldots,65535\}$ specifies a frequency band.
+The full coordinate space has cardinality
+\[
+  256 \times 256 \times 65536 = 2^{32} \approx 4.3 \times 10^9
+\]
+distinct positions, each capable of holding a complex amplitude
+
+\begin{verbatim}
+pub type Wave = Complex64;
+\end{verbatim}
+
+This is a concrete realization of the witness expansion
+(Definition~\ref{def:witness-expansion}).
+Each coordinate $\phi_{(x,y,f)}$ is a reconstructive witness,
+and the full lattice
+\[
+  \Lambda = \{(x, y, f) : x,y \in [0,255],\; f \in [0,65535]\}
+\]
+is the high-dimensional witness space into which events are
+expanded.
+Theorem~\ref{thm:dim-amp} applies directly: input events that are
+not linearly separable in raw sensory space may become separable
+in $\Lambda$ under a nonlinear embedding, and
+Corollary~\ref{cor:witness-redundancy} guarantees robustness to
+the loss of individual witness coordinates.
+
+The choice of \texttt{u8} for spatial axes and \texttt{u16} for
+frequency is itself a statement about the relative grain of
+spatial versus spectral resolution in the intended cognitive
+domain, an architectural commitment to the
+\emph{type-specific encoding} principle: different kinds of
+distinctions (spatial vs.\ spectral) occupy different regions
+of the witness lattice.
+
+\section{\texttt{query\_region} as Ecphoric Activation}
+
+The central method of the \texttt{WaveStorageBackend} trait is
+
+\begin{verbatim}
+fn query_region(&self, bounds: BoundingBox)
+    -> Result<Vec<(WaveCoord, Wave)>>;
+\end{verbatim}
+
+\noindent
+where \texttt{BoundingBox} specifies spatial extent:
+
+\begin{verbatim}
+pub struct BoundingBox {
+    pub min_x: u8, pub min_y: u8,
+    pub max_x: u8, pub max_y: u8,
+}
+\end{verbatim}
+
+\noindent
+The implementation comment reads: ``This is the foundation of
+resonance. The backend returns all waves within the spatial
+bounds, which the cognitive layer then uses to calculate
+interference patterns.''
+
+This maps precisely onto the ecphoric activation operator
+of Chapter~7.
+A cue $c$ is encoded as a bounding box
+$B_c \subset \Lambda$.
+The cue coupling of $c$ to mode $\psi_i$ is
+\[
+  \gamma_i(c) = \bigl|\langle C(c),\, \psi_i \rangle\bigr|,
+\]
+where $C(c)$ is the field representation of the bounding-box
+query: the indicator function of $B_c$ in the wave lattice.
+The backend computes, for each coordinate $(x,y,f) \in B_c$,
+the stored complex amplitude $a_{(x,y,f)}$.
+These are exactly the excitation coefficients $a_i(t)$
+of Definition~\ref{def:memory-field}, restricted to the modes
+whose spatial support intersects the cue region.
+
+Resonant recall (Theorem~\ref{thm:resonant-recall}) then
+operates in the cognitive layer above the backend.
+The cognitive core receives the amplitudes returned by
+\texttt{query\_region}, computes interference patterns, and
+applies a threshold: a mode contributes to recall if and only if
+\[
+  |a_i^*| \;\geq\; \theta_i.
+\]
+The separation of concerns is therefore: the backend handles
+wave retrieval (which modes are active in the cue region);
+the cognitive layer handles thresholding and interference
+(which of those modes cross the recall boundary).
+This is the correct factoring --- the storage substrate should
+not know the ecphoric threshold, just as a physical medium
+should not know which patterns are meaningful to the organism
+reading from it.
+
+\begin{proposition}[\texttt{query\_region} Instantiates Ecphory]
+\label{prop:query-ecphory}
+Let $B_c$ be a bounding box encoding cue $c$,
+and let $\mathcal{W}(B_c)$ denote the set of wave amplitudes
+returned by \texttt{query\_region}$(B_c)$.
+Then recall of memory $m$ from cue $c$ is equivalent to
+\[
+  \left|
+    \sum_{(x,y,f)\,\in\, B_c}
+    a_{(x,y,f)}\,\psi_{(x,y,f)}
+  \right|
+  \;\geq\; \theta_m,
+\]
+where $\psi_{(x,y,f)}$ are the lattice basis modes and
+$\theta_m$ is the ecphoric threshold for $m$.
+\end{proposition}
+
+\begin{proof}
+\texttt{query\_region} returns exactly the set
+$\{(\mathit{coord},\, a_{\mathit{coord}})\}$
+for $\mathit{coord} \in B_c \cap \Lambda$.
+The cognitive layer forms the superposition
+\[
+  \hat{M}(c)
+  = \sum_{\mathit{coord}\,\in\, B_c} a_{\mathit{coord}}\,\psi_{\mathit{coord}},
+\]
+which is the restriction of the memory field $M(t)$ to the cue
+region --- the ecphoric activation $\mathcal{E}(c,H) \to \hat{H}$
+of Chapter~7, with the bounding box selecting the relevant
+historical submanifold.
+Recall fires when $|\hat{M}(c)| \geq \theta_m$,
+matching Theorem~\ref{thm:resonant-recall}.
+\end{proof}
+
+\section{The Storage Illusion Residue}
+
+The \texttt{flush()} method and the deprecated
+\texttt{WaveStorage} trait reveal a residual tension between
+the implementation and the theory.
+
+\texttt{flush()} is described as ensuring durability by
+flushing write buffers to persistent storage, and as a no-op
+for volatile backends.
+This treats persistence as a property of the backend type
+(volatile vs.\ persistent) rather than as a property of the
+maintenance dynamics.
+
+The MEM|8 theory says something different.
+Persistence is not a function of where data sits
+(RAM versus disk) but of whether the flux-balance condition
+of Theorem~\ref{thm:ptr} is satisfied:
+\[
+  \frac{\partial \rho}{\partial t} + \nabla \cdot J
+  = S_{\mathrm{renew}} - S_{\mathrm{decay}}.
+\]
+A ``persistent'' backend that is never re-excited by cue
+queries will accumulate overdamped modes and lose memory in
+the operational sense, even though every byte is preserved.
+Conversely, a ``volatile'' backend continually re-queried and
+refreshed is maintaining its reconstructive density through
+active use --- a form of the renewal flux $S_{\mathrm{renew}}$
+demonstrated in the synaptic-vesicle trafficking model of
+Chapter~13.
+
+The deprecated \texttt{WaveStorage} / \texttt{WaveGrid} pair
+is a clean example of the storage illusion at the
+implementation level.
+\texttt{store\_wave\_grid} writes a static grid and returns;
+there is no provision for re-excitation, ecphoric thresholds,
+or flux maintenance.
+Its deprecation in favor of \texttt{WaveStorageBackend} with
+\texttt{query\_region} at the center is, in miniature, the same
+conceptual transition that MEM|8 makes at the theoretical level:
+from storage as the primitive operation to reconstruction as
+the primitive operation.
+
+\section{Toward a Fully Theory-Conformant Backend}
+
+A backend fully aligned with MEM|8 theory would augment
+\texttt{WaveStorageBackend} with three additional mechanisms.
+
+\paragraph{Damping and renewal.}
+A method \texttt{decay\_step(\&mut self, dt: f64)} would apply
+\[
+  a_i(t+\Delta t) = a_i(t)\,e^{-(\lambda_i + i\omega_i)\Delta t}
+\]
+to every stored coefficient, and a companion
+\texttt{renew(\&mut self, flux: \&[(WaveCoord, Wave)])} would
+add renewal input $S_{\mathrm{renew}}$ to specified coordinates,
+making persistence a dynamic equilibrium rather than a backend
+attribute.
+
+\paragraph{Damping coefficient registry.}
+Each coordinate $(x, y, f)$ should carry $\lambda_{(x,y,f)}$
+and $\omega_{(x,y,f)}$, so the cognitive layer can evaluate
+the recall threshold condition
+\[
+  |\gamma_i| \;\geq\; \theta_i\sqrt{\lambda_i^2 + \omega_i^2}
+\]
+without embedding modal parameters in the storage layer.
+
+\paragraph{Retrograde sweep.}
+A scheduled low-priority process implementing
+Theorem~\ref{thm:retrograde} would flag low-activity
+coordinates for renewal before they become overdamped,
+maintaining the maintenance current that keeps long-term
+memories recoverable without explicit refresh commands.
+
+These three additions close the gap between the current
+implementation and the theoretical architecture.
+The implementation already has the right shape at the
+\texttt{query\_region} level; what remains is to make the
+temporal dynamics --- damping, renewal, retrograde sweep ---
+first-class citizens of the backend interface rather than
+implicit assumptions about the environment.
+
+% ============================================================
+
+\chapter{The Halting Problem and Historical Persistence}
+
+\begin{theorem}[Undecidability as Future Reconstructability Failure]
+The halting problem expresses a fundamental limit on
+future reconstructability: there is no finite procedure
+that determines, for an arbitrary event-log program and
+initial condition, whether the history will eventually
+produce a terminal reconstruction.
+\end{theorem}
+
+\begin{proof}[Reduction to Rice's Theorem]
+Any property of the language recognized by a Turing machine
+(including whether the machine halts on a given input)
+is a property of the reconstruction functional
+$R : \calH \to \calQ$ over all possible histories.
+By Rice's theorem, every nontrivial such property is
+undecidable.
+Therefore the question ``will the reconstruction eventually
+succeed?'' is undecidable for arbitrary programs.
+\end{proof}
+
+The interpretation is important: undecidability is not
+a failure of storage but a failure of
+\emph{future reconstructability}.
+We cannot predict whether the event-log will eventually
+support the desired reconstruction.
+This gives the halting problem a MEM|8 reading entirely
+consistent with the general framework.
+
+% ============================================================
+\part{Society and Civilization}
+% ============================================================
+
+\chapter{Institutional Memory}
+
+\begin{definition}[Organizational Memory Field]
+The \emph{organizational memory field} of an institution
+is the composite memory field
+\[
+  M_{\mathrm{org}}(t)
+  = \sum_{a \in A} M_a(t) + M_{\mathrm{doc}}(t) + M_{\mathrm{proc}}(t),
+\]
+where the sum is over individual agents $a \in A$,
+plus document repositories $M_{\mathrm{doc}}$ and
+procedural structures $M_{\mathrm{proc}}$.
+\end{definition}
+
+\begin{proposition}[Personnel Change Does Not Destroy Memory]
+A personnel change (departure of agent $a$) destroys
+organizational memory if and only if the modes
+$\{\psi_i^a\}$ carried by agent $a$ are not
+decodable from the remaining composite field
+$M_{\mathrm{org}} - M_a$.
+\end{proposition}
+
+\begin{proof}
+By Corollary~\ref{cor:witness-redundancy},
+a memory survives the loss of witness coordinates
+provided sufficient redundant witnesses remain.
+If $M_{\mathrm{doc}}$ or $M_{\mathrm{proc}}$ supply
+alternative cue paths to the same modal distinctions,
+the reconstruction persists.
+Memory loss occurs precisely when no such redundant
+pathway exists.
+\end{proof}
+
+\chapter{Scientific Memory}
+
+Science is a civilization-scale memory architecture.
+Its function is to maintain, across generations and
+institutional boundaries, a reconstructive field
+rich enough to support cumulative inquiry.
+
+\begin{definition}[Scientific Paper as Reconstruction Operator]
+A scientific paper $P$ is a reconstruction operator
+$R_P : \calH_{\mathrm{reader}} \to \calQ_{\mathrm{science}}$
+that maps the reader's current cognitive state to a
+set of distinctions about the natural world.
+\end{definition}
+
+\begin{proposition}[Citation Network as Modal Coupling]
+The citation network of the scientific literature
+implements a system of modal couplings $\gamma_{ij}$
+between papers $P_i$ and $P_j$:
+a citation from $P_j$ to $P_i$ provides a coupling
+channel that keeps the modes of $P_i$ excitable
+via engagement with $P_j$.
+\end{proposition}
+
+\begin{proof}
+Reading $P_j$ generates cue coupling to the modes
+encoded in $P_i$ through the citation-link
+(references, shared terminology, shared problems).
+This is cue forcing $\gamma_i$ in the sense of
+Definition~\ref{def:mem-equiv}, applied to the
+scientific memory field.
+\end{proof}
+
+\chapter{Cultural Memory}
+
+Languages, traditions, norms, and rituals are long-lived
+repair structures.
+They persist by maintaining the reconstructive conditions
+under which the distinctions they encode can be
+regenerated.
+
+\begin{theorem}[Cultural Memory Survival Condition]
+A cultural form $\mathcal{F}$ survives across generations
+if and only if the flux-balance condition of
+Theorem~\ref{thm:ptr} is maintained for the reconstructive
+density of $\mathcal{F}$: renewal (teaching, practice,
+performance, reenactment) balances decay (mortality,
+forgetting, disuse).
+\end{theorem}
+
+\begin{proof}
+Cultural forms are event-log systems (Chapter~6).
+Their memory field satisfies the balance equation
+(Definition~\ref{def:flux}).
+Survival of the form over time corresponds to
+$\dfrac{d}{dt}\displaystyle\int \rho\,dx = 0$,
+which by Theorem~\ref{thm:ptr} holds if and only if
+the balance condition holds.
+\end{proof}
+
+% ============================================================
+\part{Foundations}
+% ============================================================
+
+\chapter{Memory Before Representation}
+
+The standard order of explanation places representation
+first.
+There are things; representations encode them; memory
+stores the encodings.
+
+MEM|8 reverses this order at every level.
+
+\begin{theorem}[Representation Is Derived]
+A representation $r$ of a distinction $\delta$ exists
+precisely when there is a reconstruction operator $R$
+and a substrate $S$ such that $R(S) = \delta$.
+Representations are not primitive; they are the outputs
+of reconstruction.
+\end{theorem}
+
+\begin{proof}
+By Definition~\ref{def:recon-capacity}, reconstructive
+capacity is defined without appeal to representations.
+A representation can then be defined as a naming of the
+output of a reconstruction operator: $r \equiv R(S)$.
+This makes representation derivable from recoverability,
+not the reverse.
+\end{proof}
+
+\noindent The inversion is therefore:
+
+\[
+  \text{Traditional:}\quad
+  \text{Representation} \to \text{Storage} \to \text{Memory}
+\]
+
+\[
+  \text{MEM|8:}\quad
+  \text{Events} \to \text{Recoverability} \to \text{Memory} \to \text{Representation}
+\]
+
+\chapter{Memory Before Identity}
+
+\begin{definition}[Identity as Stable Reconstruction]
+The \emph{identity} of a system $\Sigma$ over an interval
+$[t_0, t_1]$ is the equivalence class of states
+under memory-equivalence relative to a canonical
+reconstruction operator $R_\Sigma$:
+\[
+  \mathrm{Id}(\Sigma, [t_0, t_1])
+  = [S(t_0)]_{\sim_{R_\Sigma}}.
+\]
+Identity persists over the interval if $S(t) \sim_{R_\Sigma} S(t_0)$
+for all $t \in [t_0, t_1]$.
+\end{definition}
+
+\begin{proposition}[The Self as Persistent Memory Process]
+Personal identity over a lifetime is the persistence of
+a memory field under continual flux, satisfying the
+balance condition of Theorem~\ref{thm:ptr}.
+\end{proposition}
+
+\begin{proof}
+Personal identity is a special case of system identity.
+The canonical reconstruction operator $R_\mathrm{self}$
+maps current neural and embodied state to autobiographical
+distinctions.
+Persistence requires only that the flux-balance condition
+hold for the reconstructive density of the autobiographical
+memory field --- not that any neural substrate remain
+unchanged.
+This is consistent with the empirical observation that
+virtually every molecule in the human body is replaced
+over a decade, while autobiographical memory persists.
+\end{proof}
+
+
+\chapter{Memory Before Prediction}
+\label{ch:prediction}
+
+This chapter addresses an implication the preceding chapters
+repeatedly approach but never state outright.
+If memory is recoverable continuation, then prediction ---
+the anticipation of future distinctions --- is a special
+case of reconstruction applied forward rather than backward.
+Prediction presupposes memory, not the reverse.
+
+\section{Prediction as Forward Reconstruction}
+
+\begin{definition}[Predictive Reconstruction]
+A \emph{predictive reconstruction} is a reconstruction
+operator $R_+$ that maps the current memory field $M(t)$
+to an anticipated future distinction:
+\[
+  R_+ : \calH \;\longrightarrow\; \calQ,
+  \qquad
+  M(t) \;\mapsto\; \hat{q}(t + \tau),
+\]
+where $\tau > 0$ is the prediction horizon and
+$\hat{q}(t+\tau)$ is the anticipated state of the
+distinction space at time $t + \tau$.
+\end{definition}
+
+\begin{theorem}[Prediction Presupposes Memory]
+\label{thm:pred-mem}
+A system capable of predictive reconstruction
+$R_+$ must have nonzero reconstructive capacity
+$\mathcal{RC}(S) > 0$.
+\end{theorem}
+
+\begin{proof}
+Predictive reconstruction $R_+$ maps $M(t)$ to a future
+distinction $\hat{q}(t+\tau)$.
+For $R_+$ to be non-trivial (i.e., better than chance),
+it must discriminate among distinct current states:
+if $\mathcal{RC}(S) = 0$, every state maps to the same
+reconstruction output (Theorem~\ref{thm:collapse}), so
+no state-dependent prediction is possible.
+Therefore non-trivial prediction requires
+$\mathcal{RC}(S) > 0$, i.e., genuine reconstructive
+capacity over the current memory field.
+Prediction is downstream of memory, not independent of it.
+\end{proof}
+
+\begin{corollary}[No Prediction Without Historical State]
+A memoryless system --- one with $H_t = \varnothing$ for
+all $t$ --- cannot predict.
+\end{corollary}
+
+\begin{proof}
+Without historical state there is no compression to unpack
+(Chapter~5), no modal basis to excite (Chapter~9), and
+no reconstruction functional to apply.
+Theorem~\ref{thm:pred-mem} then gives $\mathcal{RC}(S) = 0$,
+so no non-trivial prediction is possible.
+\end{proof}
+
+\section{Predictive Coding as Memory Resonance}
+
+The predictive processing framework (Friston \cite{Friston2010})
+treats perception and action as continuous minimization of
+prediction error: the brain maintains a generative model
+and updates it when predictions fail.
+
+Under MEM|8 this has a natural modal reading.
+The generative model is the current modal excitation pattern
+$\{a_i(t)\}$.
+A prediction is a projection of that pattern forward:
+\[
+  \hat{a}_i(t+\tau) = a_i(t)\,e^{-(\lambda_i + i\omega_i)\tau}.
+\]
+Prediction error is the discrepancy between the predicted
+field $\hat{M}(t+\tau) = \sum_i \hat{a}_i(t+\tau)\psi_i$
+and the actual field $M(t+\tau)$:
+\[
+  \mathcal{E}_{\mathrm{pred}}(t,\tau)
+  = \|M(t+\tau) - \hat{M}(t+\tau)\|_{\calH}^2
+  = \sum_i |a_i(t+\tau) - \hat{a}_i(t+\tau)|^2.
+\]
+
+\begin{proposition}[Prediction Error Bounds Surprise]
+Let $\mathcal{E}_{\mathrm{pred}}(t,\tau)$ be the prediction
+error defined above.
+Then
+\[
+  \mathcal{E}_{\mathrm{pred}}(t,\tau)
+  \leq \sum_i |\eta_i(t,\tau)|^2
+       + \sum_i |\gamma_i(c)|^2,
+\]
+where $\eta_i(t,\tau)$ is background noise accumulated
+over $[t, t+\tau]$ and $\gamma_i(c)$ is the cue forcing
+from unexpected environmental input over the same interval.
+\end{proposition}
+
+\begin{proof}
+The actual coefficient satisfies
+$a_i(t+\tau) = \hat{a}_i(t+\tau) + \delta_i$,
+where $\delta_i$ arises from noise $\eta_i$ and
+unexpected forcing $\gamma_i(c)$ not already encoded
+in the current modal state.
+Therefore
+$|a_i(t+\tau) - \hat{a}_i(t+\tau)|^2 = |\delta_i|^2
+\leq |\eta_i|^2 + |\gamma_i(c)|^2$,
+and summing over modes gives the bound.
+\end{proof}
+
+Prediction error is thus bounded by noise plus
+unencoded surprise.
+A system with richer memory (higher-dimensional modal
+basis, lower damping) encodes more of its environment
+and therefore anticipates more accurately --- connecting
+MEM|8 directly to the Bayesian brain hypothesis and
+active inference.
+
+\section{Reservoir Computing as MEM|8 Instantiation}
+
+Reservoir computing \cite{Friston2023} treats a
+high-dimensional dynamical system (the reservoir) as a
+fixed feature expander: inputs drive the reservoir,
+and a simple linear readout is trained on the reservoir
+state to perform prediction and classification tasks.
+
+This is precisely the MEM|8 architecture of
+Theorem~\ref{thm:dim-amp}:
+
+\begin{align*}
+  \text{Reservoir state} &\;\longleftrightarrow\; \text{Witness expansion } \Phi(x) \in \CC^n \\
+  \text{Linear readout}  &\;\longleftrightarrow\; \text{Reconstruction functional } L : \CC^n \to \calQ \\
+  \text{Prediction task} &\;\longleftrightarrow\; \text{Predictive reconstruction } R_+
+\end{align*}
+
+The reservoir's memory of past inputs (its ``echo state'')
+is the historical state $H_t$; the readout extracts
+distinctions from that compressed history.
+Theorem~\ref{thm:pred-mem} explains why reservoir memory
+capacity directly governs prediction accuracy: without
+sufficient $\mathcal{RC}(S)$, the readout cannot form
+useful predictions.
+
+The TAS phi-bit lattice of Chapter~8 is a physical
+instantiation of a reservoir operating in the MEM|8 regime:
+a small substrate generates a large witness space, and
+classification (prediction) becomes linearly separable
+in witness coordinates.
+
+\section{The Inversion}
+
+The standard order places prediction first:
+a system makes predictions; successful prediction
+constitutes understanding; memory is the residue of
+past understanding.
+
+MEM|8 inverts this:
+
+\[
+  \text{Traditional:}\quad
+  \text{Prediction} \to \text{Model} \to \text{Memory}
+\]
+
+\[
+  \text{MEM|8:}\quad
+  \text{Memory} \to \text{Modal Structure} \to \text{Prediction}
+\]
+
+Prediction is reconstruction applied in the forward
+temporal direction.
+It inherits all the properties of reconstruction:
+it is approximate rather than exact, threshold-gated
+rather than continuous, and ecologically extended across
+agent and environment rather than confined to a brain.
+
+The arrow of prediction points forward in time;
+the arrow of memory points backward; both are
+instantiated by the same reconstructive mechanism
+applied to a recoverable event ordering.
+The next chapter derives that ordering itself.
+
+\chapter{Memory Before Time}
+
+This is the most radical inversion.
+Standard accounts place time first and locate memory
+within time.
+The MEM|8 position is that temporal structure is itself
+derived from recoverable event orderings.
+
+\begin{definition}[Recoverable Event Ordering]
+A \emph{recoverable event ordering} over a set of events
+$\mathcal{E}$ is a partial order $\prec$ on $\mathcal{E}$
+such that, for any admissible reconstruction operator $R$
+and any $e_i \prec e_j$, the distinction associated with
+$e_i$ can be recovered from the historical state
+$H_{e_j} = \{e_k : e_k \prec e_j\}$.
+\end{definition}
+
+\begin{theorem}[Time Emerges from Recoverable Order]
+\label{thm:time}
+Temporal structure, in the operational sense relevant to
+memory, learning, and cognition, is equivalent to
+recoverable event ordering.
+Without reconstructable event relations, temporal
+distinctions are operationally undefined.
+\end{theorem}
+
+\begin{proof}
+The direction \emph{temporal order implies recoverable order}:
+if $e_i$ causally precedes $e_j$ in Minkowski spacetime,
+then $H_{e_j}$ contains information traceable to $e_i$,
+and an admissible $R$ can in principle recover the
+relevant distinction.
+
+The direction \emph{recoverable order implies temporal structure}:
+if for all $e_i \prec e_j$ the distinction of $e_i$ is
+recoverable from $H_{e_j}$, then $\prec$ constitutes a
+causal precedence relation.
+The set $(\mathcal{E}, \prec)$ with this property is a
+\emph{causal set} in the sense of Bombelli et al.;
+causal sets are known to encode the topological and
+differential structure of spacetime in the continuum limit.
+Therefore recoverable event ordering is sufficient to
+reconstruct operational temporal structure.
+\end{proof}
+
+\begin{corollary}
+Memory does not occur \emph{in} time as a background stage.
+Time is the structure that emerges from the recoverable
+ordering of events in a memory field.
+The arrow of time is the direction in which reconstruction
+of earlier events from later states is possible.
+\end{corollary}
+
+\bigskip
+
+\noindent We arrive at the foundational statements of MEM|8:
+
+\[
+  \boxed{\;
+    \text{A memory is not a preserved past.}
+  \;}
+\]
+
+\[
+  \boxed{\;
+    \text{A memory is the continued ability to regenerate distinctions
+    from transformation.}
+  \;}
+\]
+
+\[
+  \boxed{\;
+    \text{Memory} = \text{recoverable resonant structure maintained by flux.}
+  \;}
+\]
+
+% ============================================================
+% Bibliographies
+% ============================================================
+
+\backmatter
+
+\chapter*{Bibliography: Neuroscience, Biology, and Cognitive Science}
+\addcontentsline{toc}{chapter}{Bibliography: Neuroscience, Biology, and Cognitive Science}
+
+\begin{thebibliography}{99}
+
+\bibitem{Anderson1983}
+Anderson, J.~R. (1983).
+\textit{The Architecture of Cognition}.
+Harvard University Press.
+
+\bibitem{Anderson2004}
+Anderson, J.~R., Bothell, D., Byrne, M.~D., Douglass, S.,
+Lebiere, C., \& Qin, Y. (2004).
+An integrated theory of the mind.
+\textit{Psychological Review}, 111(4), 1036--1060.
+
+\bibitem{Amit1989}
+Amit, D.~J. (1989).
+\textit{Modeling Brain Function: The World of Attractor Neural Networks}.
+Cambridge University Press.
+
+\bibitem{Buzsaki2006}
+Buzsáki, G. (2006).
+\textit{Rhythms of the Brain}.
+Oxford University Press.
+
+\bibitem{Cabral2023OscillatoryModes}
+Cabral, J., Fernandes, F.~F., \& Shemesh, N. (2023).
+Intrinsic macroscale oscillatory modes driving long range
+functional connectivity in female rat brains detected by ultrafast fMRI.
+\textit{Nature Communications}, 14, 375.
+
+\bibitem{Chen2026TAS}
+Chen, J., Ige, A.~S., Runge, K., Deymier, P.~A., \& Yan, X. (2026).
+Topological acoustic synapse for high-dimensional neuromorphic computing.
+\textit{Science Advances}, 12(24), eaec6633.
+
+\bibitem{Cohen2013}
+Cohen, L.~D., et al. (2013).
+Metabolic turnover of synaptic proteins.
+\textit{Science}, 342(6161), 1094--1097.
+
+\bibitem{Dayan2001}
+Dayan, P., \& Abbott, L.~F. (2001).
+\textit{Theoretical Neuroscience}.
+MIT Press.
+
+\bibitem{Deco2011}
+Deco, G., Jirsa, V.~K., \& McIntosh, A.~R. (2011).
+Emerging concepts for brain dynamics.
+\textit{Nature Reviews Neuroscience}, 12(1), 43--56.
+
+\bibitem{Fornasiero2018}
+Fornasiero, E.~F., et al. (2018).
+Precisely measured protein lifetimes.
+\textit{Nature Communications}, 9, 4741.
+
+\bibitem{Friston2010}
+Friston, K. (2010).
+The free-energy principle.
+\textit{Nature Reviews Neuroscience}, 11(2), 127--138.
+
+\bibitem{Gramlich2021}
+Gramlich, M.~W., \& Klyachko, V.~A. (2021).
+Motor-mediated regulation of synaptic vesicle mobility.
+\textit{Biophysical Journal}, 120(4), 567--582.
+
+\bibitem{Hebb1949}
+Hebb, D.~O. (1949).
+\textit{The Organization of Behavior}.
+Wiley.
+
+\bibitem{Hirokawa2009}
+Hirokawa, N., Noda, Y., Tanaka, Y., \& Niwa, S. (2009).
+Kinesin superfamily motors.
+\textit{Nature Reviews Molecular Cell Biology}, 10(10), 682--696.
+
+\bibitem{Hopfield1982}
+Hopfield, J.~J. (1982).
+Neural networks and physical systems.
+\textit{Proceedings of the National Academy of Sciences}, 79(8), 2554--2558.
+
+\bibitem{Joensuu2016}
+Joensuu, M., et al. (2016).
+Subdiffractional tracking of synaptic vesicles.
+\textit{Nature Communications}, 7, 11714.
+
+\bibitem{Kelso1995}
+Kelso, J.~A.~S. (1995).
+\textit{Dynamic Patterns}.
+MIT Press.
+
+\bibitem{Parkes2023}
+Parkes, M., Landers, N.~L., \& Gramlich, M.~W. (2023).
+Recently recycled synaptic vesicles use multi-cytoskeletal transport
+and differential presynaptic capture probability to establish a
+retrograde net flux during ISVE in central neurons.
+\textit{Frontiers in Cell and Developmental Biology}, 11, 1286915.
+
+\bibitem{Rizzoli2014}
+Rizzoli, S.~O. (2014).
+Synaptic vesicle recycling.
+\textit{Nature Reviews Neuroscience}, 15(10), 658--673.
+
+\bibitem{Rolls2016}
+Rolls, E.~T. (2016).
+\textit{Cerebral Cortex: Principles of Operation}.
+Oxford University Press.
+
+\bibitem{Sporns2011}
+Sporns, O. (2011).
+\textit{Networks of the Brain}.
+MIT Press.
+
+\bibitem{Truckenbrodt2018}
+Truckenbrodt, S., et al. (2018).
+Newly produced synaptic vesicle proteins.
+\textit{Science}, 359(6371), 157--161.
+
+\bibitem{Tononi2008}
+Tononi, G. (2008).
+Consciousness as integrated information.
+\textit{Biological Bulletin}, 215(3), 216--242.
+
+\bibitem{Chenoweth2025MEM8}
+Chenoweth, C., \& Chenoweth, A. (2025).
+\textit{MEM|8: A wave-based cognitive architecture for multimodal
+memory integration and consciousness simulation}.
+Zenodo.
+\url{https://doi.org/10.5281/zenodo.16436297}
+
+\end{thebibliography}
+
+\chapter*{Bibliography: Mathematics, Physics, and Dynamical Systems}
+\addcontentsline{toc}{chapter}{Bibliography: Mathematics, Physics, and Dynamical Systems}
+
+\begin{thebibliography}{99}
+
+\bibitem{Arnold1989}
+Arnold, V.~I. (1989).
+\textit{Mathematical Methods of Classical Mechanics} (2nd ed.).
+Springer.
+
+\bibitem{Arnold2006}
+Arnold, V.~I. (2006).
+\textit{Ordinary Differential Equations}.
+Springer.
+
+\bibitem{Ash1965}
+Ash, R.~B. (1965).
+\textit{Information Theory}.
+Dover.
+
+\bibitem{Billingsley1995}
+Billingsley, P. (1995).
+\textit{Probability and Measure} (3rd ed.).
+Wiley.
+
+\bibitem{Bowen1978}
+Bowen, R. (1978).
+\textit{Entropy for Group Endomorphisms and Homogeneous Spaces}.
+Springer.
+
+\bibitem{CoverThomas2006}
+Cover, T.~M., \& Thomas, J.~A. (2006).
+\textit{Elements of Information Theory} (2nd ed.).
+Wiley.
+
+\bibitem{Crutchfield1994}
+Crutchfield, J.~P. (1994).
+The calculi of emergence.
+\textit{Physica D}, 75(1--3), 11--54.
+
+\bibitem{Evans2010}
+Evans, L.~C. (2010).
+\textit{Partial Differential Equations} (2nd ed.).
+American Mathematical Society.
+
+\bibitem{Ghrist2014}
+Ghrist, R. (2014).
+\textit{Elementary Applied Topology}.
+Createspace.
+
+\bibitem{GuckenheimerHolmes1983}
+Guckenheimer, J., \& Holmes, P. (1983).
+\textit{Nonlinear Oscillations, Dynamical Systems, and
+Bifurcations of Vector Fields}.
+Springer.
+
+\bibitem{Hatcher2002}
+Hatcher, A. (2002).
+\textit{Algebraic Topology}.
+Cambridge University Press.
+
+\bibitem{HornJohnson2013}
+Horn, R.~A., \& Johnson, C.~R. (2013).
+\textit{Matrix Analysis} (2nd ed.).
+Cambridge University Press.
+
+\bibitem{Jaynes2003}
+Jaynes, E.~T. (2003).
+\textit{Probability Theory: The Logic of Science}.
+Cambridge University Press.
+
+\bibitem{KatokHasselblatt1995}
+Katok, A., \& Hasselblatt, B. (1995).
+\textit{Introduction to the Modern Theory of Dynamical Systems}.
+Cambridge University Press.
+
+\bibitem{Kreyszig1989}
+Kreyszig, E. (1989).
+\textit{Introductory Functional Analysis with Applications}.
+Wiley.
+
+\bibitem{MacLane1998}
+Mac Lane, S. (1998).
+\textit{Categories for the Working Mathematician} (2nd ed.).
+Springer.
+
+\bibitem{MezardMontanari2009}
+Mézard, M., \& Montanari, A. (2009).
+\textit{Information, Physics, and Computation}.
+Oxford University Press.
+
+\bibitem{Nakahara2003}
+Nakahara, M. (2003).
+\textit{Geometry, Topology and Physics} (2nd ed.).
+Taylor \& Francis.
+
+\bibitem{Pikovsky2001}
+Pikovsky, A., Rosenblum, M., \& Kurths, J. (2001).
+\textit{Synchronization: A Universal Concept in Nonlinear Sciences}.
+Cambridge University Press.
+
+\bibitem{ReedSimon1972}
+Reed, M., \& Simon, B. (1972).
+\textit{Methods of Modern Mathematical Physics I: Functional Analysis}.
+Academic Press.
+
+\bibitem{ReedSimon1975}
+Reed, M., \& Simon, B. (1975).
+\textit{Methods of Modern Mathematical Physics II: Fourier Analysis,
+Self-Adjointness}.
+Academic Press.
+
+\bibitem{Rudin1991}
+Rudin, W. (1991).
+\textit{Functional Analysis} (2nd ed.).
+McGraw-Hill.
+
+\bibitem{Ruelle1989}
+Ruelle, D. (1989).
+\textit{Chaotic Evolution and Strange Attractors}.
+Cambridge University Press.
+
+\bibitem{Shannon1948}
+Shannon, C.~E. (1948).
+A mathematical theory of communication.
+\textit{Bell System Technical Journal}, 27(3), 379--423.
+
+\bibitem{Smale1967}
+Smale, S. (1967).
+Differentiable dynamical systems.
+\textit{Bulletin of the American Mathematical Society}, 73(6), 747--817.
+
+\bibitem{Strogatz2018}
+Strogatz, S.~H. (2018).
+\textit{Nonlinear Dynamics and Chaos} (2nd ed.).
+Westview Press.
+
+\bibitem{Takens1981}
+Takens, F. (1981).
+Detecting strange attractors in turbulence.
+In D.~Rand \& L.-S. Young (Eds.),
+\textit{Dynamical Systems and Turbulence}.
+Springer.
+
+\bibitem{Temam1997}
+Temam, R. (1997).
+\textit{Infinite-Dimensional Dynamical Systems in Mechanics and Physics}
+(2nd ed.).
+Springer.
+
+\bibitem{Tu2011}
+Tu, L.~W. (2011).
+\textit{An Introduction to Manifolds} (2nd ed.).
+Springer.
+
+\bibitem{vonNeumann1955}
+von Neumann, J. (1955).
+\textit{Mathematical Foundations of Quantum Mechanics}.
+Princeton University Press.
+
+\bibitem{Wiggins2003}
+Wiggins, S. (2003).
+\textit{Introduction to Applied Nonlinear Dynamical Systems and Chaos}
+(2nd ed.).
+Springer.
+
+\bibitem{Zeidler1990}
+Zeidler, E. (1990).
+\textit{Applied Functional Analysis}.
+Springer.
+
+\end{thebibliography}
+
+\end{document}
