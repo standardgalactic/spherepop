@@ -4,11 +4,23 @@
 
 [Types as Refusal Structures](https://standardgalactic.github.io/spherepop/textbook/refusal-structures.pdf)
 
+--- 
 [Persistence Before Truth](https://standardgalactic.github.io/spherepop/textbook/persistence-before-truth.pdf)
 
+[The Fate of Distinguishability](https://standardgalactic.github.io/spherepop/textbook/fate-of-distinguishability.pdf)
+
+[The Ecology of Distinctions](https://standardgalactic.github.io/spherepop/textbook/The_Ecology_of_Distinctions.pdf)
+
+---
 [Repairing Futures](https://standardgalactic.github.io/spherepop/textbook/repairing-futures.pdf)
 
+[Rotation Before Number](https://standardgalactic.github.io/spherepop/textbook/rotation_admissibility.pdf)
+
 [Memory Before Representation](https://standardgalactic.github.io/spherepop/textbook/memory-before-representation.pdf)
+
+[Language as Generator](https://standardgalactic.github.io/spherepop/textbook/language_as_generator.pdf)
+
+[Negation Before Logic](https://standardgalactic.github.io/spherepop/textbook/negation-before-logic.pdf)
 
 [The Economy of Forgotten Things](https://standardgalactic.github.io/spherepop/textbook/economy-of-forgotten-things.pdf)
 
