@@ -14,19 +14,11 @@
 
 * [How Nested Bubbles Fix Flat Math](https://standardgalactic.github.io/spherepop/admissibility/) — *Audio Overview*
 
---- 
+---
 [Music](https://standardgalactic.github.io/spherepop/music/)
-
 
 [Implementation in C](compiler/README.md)
 
-<!--
-[Globally Persistent Recomposable Thought](https://standardgalactic.github.io/spherepop/intelligence-explosion.pdf)
-
-* [Github Is the Real Intelligence Explosion](https://standardgalactic.github.io/spherepop/processing/) — *Audio Overview*
-
-Visit the [Facebook Page](https://facebook.com/spherepop)
--->
 ---
 
 [History as Identity](https://standardgalactic.github.io/spherepop/History%20as%20Identity.pdf)
@@ -45,7 +37,6 @@ Play the [Spellpop mini-game](https://standardgalactic.github.io/spherepop/spell
 
 [Spherepop Game Engine](https://standardgalactic.github.io/spherepop/game-engine.html) — *Playable Demo*
 
-
 ---
 
 ## What Spherepop Is
@@ -53,7 +44,7 @@ Play the [Spellpop mini-game](https://standardgalactic.github.io/spherepop/spell
 Spherepop is simultaneously:
 
 - a **formal calculus** for event-sourced structure,
-- a **visual programming model** based on nested scopes (“bubbles”),
+- a **visual programming model** based on nested scopes ("bubbles"),
 - and a **foundational alternative** to set-theoretic thinking.
 
 Meaning, identity, and computation arise from *what has been done*, not from timeless axioms.
@@ -70,19 +61,22 @@ Nothing exists by assumption. Objects, relations, and identities exist **only if
 ### 2. Part–whole instead of membership
 Spherepop replaces set membership (`∈`) with a **time-indexed part-of relation**, built incrementally from events.
 
-### 3. Event-sourced semantics
-All structure arises from a replayable log of irreversible operations:
+### 3. Four primitive events, nothing else
+All structure arises from a replayable log of irreversible operations built from exactly four primitives:
 
-- **Pop** — eliminate an option by resolving it  
-- **Refuse** — exclude an option by commitment  
-- **Bind** — impose dependency without elimination  
-- **Collapse** — identify distinctions to simplify history  
-- **Meld** — synthesize parallel histories into one future  
+- **Pop** — commit to a specific option, removing it from what remains possible
+- **Refuse** — document that an option is inadmissible, *without* removing it from what remains possible
+- **Bind** — couple two elements as dependent, without identifying them
+- **Collapse** — observe the history under a chosen rule, projecting it onto that rule's quotient space
+
+Everything else — Sphere, Merge, Choice, Link, Unlink, Nest, SetMeta — is derived: each is a fixed composition of the four above, not an independent primitive. Merge, for instance, is nothing more than a Collapse of a Bind under a rule that identifies its two ends.
+
+Two independently-generated histories can also be combined structurally via **Meld**, the free monoidal composition of histories — but this is a fact about how the history monoid composes, not a fifth primitive. Ordinary concurrency is already expressible through Bind alone.
 
 Existence is historical, not axiomatic.
 
 ### 4. Identity is historical
-Two things are the same if they have the same event history.  
+Two things are the same if they have the same event history.
 There is no notion of identity independent of construction.
 
 ### 5. No classical paradoxes
@@ -95,7 +89,7 @@ Russell-style paradoxes cannot arise because Spherepop has:
 If something exists, you can point to the event that made it.
 
 ### 6. Scales with reality, not hypotheticals
-Spherepop replaces power sets and hypothetical infinity with **linear event logs**.  
+Spherepop replaces power sets and hypothetical infinity with **linear event logs**.
 Complexity grows with *what actually happens*, not with what could have happened.
 
 ---
@@ -117,10 +111,10 @@ This makes scope, order of evaluation, and dependency *visible*.
 
 Spherepop is motivated by a simple observation:
 
-> Real systems—cognitive, computational, social—are not defined by states.  
+> Real systems—cognitive, computational, social—are not defined by states.
 > They are defined by **irreversible history**.
 
-By making commitment, exclusion, synthesis, and abstraction explicit, Spherepop provides:
+By making commitment, exclusion, coupling, and observation explicit, Spherepop provides:
 
 - a clearer model of computation,
 - a more faithful account of agency,
@@ -140,9 +134,8 @@ By making commitment, exclusion, synthesis, and abstraction explicit, Spherepop 
 
 - [Platform Dynamics](analysis/README.md)
 
-- **Demos and visuals:**  
+- **Demos and visuals:**
   See the animations and screenshots in this repository for interactive examples of nested scopes, popping, and collapse.
-
 
 ---
 
@@ -163,10 +156,12 @@ Type                   →    Refusal Structure
 Proof                  →    Replayable History
 Compilation            →    History Construction
 Verification           →    Deterministic Replay
-Concurrency            →    Meld Compatible Histories
+Concurrency            →    Bind-Coupled Proposal Streams
+                             (Meld: structural composition
+                              of independent histories)
 ```
 
-## The Five Primitive Operations
+## The Four Primitive Operations
 
 ```
             ○ Pop
@@ -177,13 +172,16 @@ Concurrency            →    Meld Compatible Histories
       ┌──────┴──────┐
       ▼             ▼
  Refuse ✕      Bind ○──────► Dependency
-      │
-      ▼
- Collapse ◎────► Equivalent Histories
-      │
-      ▼
- Meld ⊕───────► Unified History
+      │             │
+      └──────┬──────┘
+             ▼
+       Collapse ◎────► Observed Quotient
+                        (identification / Merge is the
+                         special case where the rule
+                         quotients bound elements together)
 ```
+
+Meld — the structural, monoidal composition of two independent histories — sits outside this diagram: it combines logs rather than transforming one, and is not required to derive concurrency, which already follows from Bind.
 
 ## Historical Type Theory
 
@@ -287,22 +285,3 @@ Truth = Verified Construction
 ```
 
 > **Spherepop:** *Computation is not the transformation of state, but the irreversible growth of an admissible history.*
-
-<!--
-## See also
-
-[Circles of Evaluation](https://youtu.be/QXvExdthXkg) 
-
----
-
-## Status
-
-Spherepop is an active research and design project exploring:
-
-- formal foundations,
-- visual programming,
-- semantic merging and abstraction,
-- and new models of generative computation.
-
-It is intentionally experimental, conceptual, and executable.
--->

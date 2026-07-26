@@ -1,0 +1,865 @@
+\documentclass[12pt]{article}
+
+% === Packages ===
+\usepackage[a4paper,margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{bm}
+\usepackage{mathrsfs}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+
+% ============================================================
+% Spherepop Calculus — Macros and Symbol Definitions
+% ============================================================
+
+% --- Logical symbols and quantifiers ---
+\newcommand{\To}{\Rightarrow}
+\newcommand{\Implies}{\;\Rightarrow\;}
+\newcommand{\Iff}{\;\Leftrightarrow\;}
+\newcommand{\Entails}{\;\vdash\;}
+\newcommand{\Proves}{\;\vdash\;}
+\newcommand{\Types}{\;:\;}
+\newcommand{\Subst}[2]{[#1/#2]}
+\newcommand{\Eval}{\;\Downarrow\;}
+
+% --- Spherepop Core Operators ---
+\newcommand{\Sphere}{\mathsf{Sphere}}
+\newcommand{\Pop}{\mathsf{Pop}}
+\newcommand{\Merge}{\mathsf{Merge}}
+\newcommand{\Choice}{\mathsf{Choice}}
+\newcommand{\Nest}{\mathsf{Nest}}
+
+% --- Typing and environments ---
+\newcommand{\Ctx}{\Gamma}
+\newcommand{\Ty}{\mathcal{T}}
+\newcommand{\Term}{\mathcal{E}}
+\newcommand{\Env}{\Delta}
+
+% --- Type constructors ---
+\newcommand{\PiT}[3]{\Pi #1 : #2.\; #3}
+\newcommand{\SigT}[3]{\Sigma #1 : #2.\; #3}
+\newcommand{\Dist}[1]{\mathsf{Dist}(#1)}
+\newcommand{\Rel}[2]{\mathsf{Rel}(#1,#2)}
+\newcommand{\Refused}[1]{\mathsf{Refused}(#1)}
+
+% --- Common sets and primitives ---
+\newcommand{\Nat}{\mathbb{N}}
+\newcommand{\Real}{\mathbb{R}}
+\newcommand{\Bool}{\mathbb{B}}
+\newcommand{\Unit}{\mathbf{1}}
+\newcommand{\Pair}[2]{\langle #1, #2 \rangle}
+
+% --- Semantic mappings ---
+\newcommand{\Interp}[1]{\llbracket #1 \rrbracket}
+\newcommand{\Evalsto}{\;\longrightarrow\;}
+\newcommand{\ReducesTo}{\;\longrightarrow\;}
+\newcommand{\Equiv}{\;\equiv\;}
+\newcommand{\Beta}{\boldsymbol{\beta}}
+
+% --- Category-theoretic notation ---
+\newcommand{\Obj}{\mathsf{Obj}}
+\newcommand{\Hom}{\mathsf{Hom}}
+\newcommand{\Cat}{\mathcal{C}}
+\newcommand{\SphereCat}{\mathcal{S}}
+\newcommand{\Funct}{\mathsf{F}}
+\newcommand{\ToPos}{\mathbf{Set}^{\SphereCat^{\mathrm{op}}}}
+
+% --- Miscellaneous ---
+\newcommand{\Prob}{\mathbb{P}}
+\newcommand{\Entropy}{\mathcal{S}}
+\newcommand{\Flow}{\mathbf{v}}
+\newcommand{\Field}{\Phi}
+
+% --- Values and constants ---
+\newcommand{\Val}{\mathsf{Val}}
+\newcommand{\Var}{\mathsf{Var}}
+
+% --- Judgements ---
+\newcommand{\Judgement}[3]{#1 \Entails #2 \Types #3}
+\newcommand{\Typing}[2]{#1 \Types #2}
+\newcommand{\Reduce}[2]{#1 \ReducesTo #2}
+\newcommand{\ReduceStar}[2]{#1 \ReducesTo^{*} #2}
+
+% === Theorem Environments ===
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem{proposition}{Proposition}
+\newtheorem{corollary}{Corollary}
+\newtheorem{example}{Example}
+\newtheorem{remark}{Remark}
+\newtheorem{invariant}{Invariant}
+\newtheorem{requirement}{Requirement}
+\newtheorem{conformance}{Conformance Criterion}
+
+% --- Event algebra / kernel macros ---
+\newcommand{\Hist}{H}
+\newcommand{\Replay}{R}
+\newcommand{\Proposals}{P}
+\newcommand{\View}{V}
+\newcommand{\Lower}{\mathcal{L}}
+\newcommand{\EventStar}{\mathrm{Event}^{*}}
+\newcommand{\LinkOp}{\mathsf{Link}}
+\newcommand{\UnlinkOp}{\mathsf{Unlink}}
+\newcommand{\RefuseOp}{\mathsf{Refuse}}
+\newcommand{\CollapseOp}{\mathsf{Collapse}}
+\newcommand{\SetMetaOp}{\mathsf{SetMeta}}
+\newcommand{\BindOp}{\mathsf{Bind}}
+\newcommand{\CalH}{\mathcal{H}}
+\newcommand{\CalA}{\mathcal{A}}
+\newcommand{\Adm}[1]{\mathsf{Adm}(#1)}
+\newcommand{\OptZero}{\Omega_0}
+\newcommand{\Meld}{\otimes}
+
+% === Metadata ===
+\title{\textbf{Spherepop: A Language for Geometric Computation}\\
+\large Unified Specification}
+\author{Flyxion}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Spherepop is a formal calculus and computational architecture in which transformation is represented through explicit structural operations rather than hidden mutation. Its central objects are bounded semantic regions, relations among those regions, and operations that introduce, transform, identify, compose, or refuse structure.
+
+This specification develops Spherepop at several related levels. It defines a human-facing notation for expressing geometric constructions; a typed Spherepop Calculus (SPC) in which the primitive operations receive formal semantics; and an operational interpretation in which computations may be represented as explicit, replayable transformations. Derived representations, implementations, and user-facing utilities are distinguished from the authoritative semantic structure they inspect or propose to modify.
+
+The aim is not merely to replace textual syntax with spatial notation. Spherepop treats geometry, causality, equivalence, and transformation as aspects of the computational substrate itself. This makes the history of a computation available for inspection while permitting higher-level geometric and semantic interpretations to be reconstructed from the same underlying structure.
+\end{abstract}
+
+\tableofcontents
+
+\section{Overview}
+
+Spherepop begins from the observation that conventional programming languages encode much of their structure indirectly. Scope, adjacency, dependency, identity, evaluation order, and transformation history are represented through combinations of textual position, naming conventions, mutable state, and implicit runtime mechanisms. Spherepop instead investigates how much of this structure can be made explicit within the computational representation itself.
+
+The basic intuition is geometric, but ``geometry'' is used here in a structural rather than merely graphical sense. A sphere denotes a bounded region of admissible structure. A pop denotes an explicit transformation or passage across such a boundary. Merge expresses an identification or equivalence operation whose precise admissibility must be specified by the calculus. Relations may connect otherwise distinct objects without thereby identifying them. More elaborate operations are constructed from, or constrained by, these primitive structural transformations.
+
+This distinction is important because Spherepop is not simply a visual syntax for an underlying conventional language. The surface notation is replaceable. The semantic operations are not. A conforming implementation may therefore expose Spherepop through textual, graphical, interactive, or programmatic interfaces provided that these interfaces preserve the same underlying calculus.
+
+The architecture consequently distinguishes three questions that an implementation must not conflate. The first is what transformation has been proposed or performed. The second is what semantic structure follows from that transformation. The third is how that structure is presented to an observer. A rendering, summary, query result, serialization, or visualization may be recomputed or discarded without changing the structure from which it was derived.
+
+Where Spherepop is implemented through an authoritative event history, this distinction becomes operational. Semantic changes are represented explicitly as events or proposals rather than hidden mutations. Replaying the same admissible history must reconstruct the same semantic state. Speculative transformations may be represented separately from authoritative history and inspected before commitment. These implementation constraints provide one concrete realization of the more general Spherepop principle that transformation history should remain distinguishable from derived representation.
+
+The remainder of this specification develops these layers separately. It first defines the authoring notation, then gives the syntax and typing discipline of the core calculus, then specifies its operational behavior. Subsequent sections relate the calculus to replayable computation, geometric interpretation, implementation, and higher-level utilities. Mathematical interpretations are introduced only where the corresponding algebraic properties have been explicitly established.
+
+\section{The Primitive Operators}
+\label{sec:primitives}
+
+This section is the foundation on which every later layer of this specification is built, and it supersedes the primitive vocabulary of earlier Spherepop documents. \textbf{Pop, Refuse, Bind, and Collapse are the only primitive operators.} Sphere, Merge, Choice, Link, Unlink, Nest, and SetMeta — all of which appear as primitives somewhere in the prior Spherepop literature — are second-order syntactic sugar, each expressible as a composition of these four. This is not a stylistic preference; it is a completeness claim, argued below in the same spirit as functional completeness for Boolean connectives or Church-style encodings in the untyped $\lambda$-calculus: a small basis is shown sufficient, and everything built on a larger, historically-accreted vocabulary is shown reducible to it.
+
+\begin{definition}[Spherepop World]
+A \emph{Spherepop world} is a pair $W = (H, \Omega)$ where $H \in \CalH$ is a history — a finite sequence of events over a fixed alphabet $E$ — and $\Omega \subseteq \OptZero$ is the current option space, drawn from a finite initial option space $\OptZero$.
+\end{definition}
+
+\begin{definition}[Event Alphabet]
+$E = \{\Pop\} \cup \{\RefuseOp\} \cup \{\BindOp\} \cup \{\CollapseOp\}$.
+\end{definition}
+
+\begin{definition}[The Four Operators]
+\begin{align*}
+P_x &: (H,\Omega) \mapsto (H \mathbin{{+}\!+} [\Pop(x)],\; \Omega\setminus\{x\}) & &\text{(Pop: commitment)}\\
+R_{x,r} &: (H,\Omega) \mapsto (H \mathbin{{+}\!+} [\RefuseOp(x,r)],\; \Omega) & &\text{(Refuse: documented inadmissibility)}\\
+B_{a,b} &: (H,\Omega) \mapsto (H \mathbin{{+}\!+} [\BindOp(a,b)],\; \Omega) & &\text{(Bind: dependency declaration)}\\
+C_{x,c} &: (H,\Omega) \mapsto (H \mathbin{{+}\!+} [\CollapseOp(x,c)],\; \Omega) & &\text{(Collapse: observation under rule $c$)}
+\end{align*}
+$P_x$ is defined only for $x \in \Omega$ and forecloses every future in which $x$ takes a different value. $R_{x,r}$ leaves $\Omega$ untouched — a refusal documents that a path was considered and rejected, for reason $r$, without foreclosing structural availability; a refusal without a reason documents nothing. $B_{a,b}$ records that two elements are coupled without consuming either — in particular $\BindOp(a,b)$ never identifies $a$ and $b$: \emph{relatedness is not identity}. $C_{x,c}$ requires an admissibility certificate, $\Gamma \vdash t : \Adm(T)$; a term whose type is not $\Adm(\cdot)$ cannot be collapsed, and this is a type error rather than a runtime failure.
+\end{definition}
+
+\begin{remark}[Collapse is not the roadmap's COLLAPSE]
+An earlier kernel-facing document (the December 2025 utility roadmap) uses \texttt{COLLAPSE} to name \emph{bulk equivalence} — a batched identification of objects, essentially Merge at scale. That is a different operation from the primitive $\CollapseOp$ defined here, which is \emph{observation under a rule}: a functor from histories to a quotient space $O_c = \CalH/{\sim_c}$ (\S\ref{sec:collapse-quotient}), gated by an admissibility certificate. The two senses must not be conflated, exactly as calculus-$\Pop$ (application, in the original 2025 specification) must not be conflated with kernel-\texttt{POP} (object introduction, in the roadmap). Where this specification needs the roadmap's bulk-equivalence notion, it is written as \emph{batch identification} and is derived sugar (\S\ref{sec:desugar}, Def.~\ref{def:merge-sugar}), not a primitive.
+\end{remark}
+
+\begin{theorem}[Completeness of the Four Operators]
+\label{thm:completeness}
+$\{P_x, R_{x,r}, B_{a,b}, C_{x,c}\}$ suffice to express variable assignment, conditional branching, function application, exception handling, memory deallocation, and concurrent event recording.
+\end{theorem}
+
+\begin{proof}[Proof sketch]
+\emph{Assignment $x := v$}: initial assignment is $P_v$ followed by $B_{x,v}$ — commit to the value, then bind the name to it. \emph{Reassignment} $x := v'$ against an existing binding is $R_{B_{x,v},\,\mathsf{Reassigned}}$ followed by $P_{v'}$ then $B_{x,v'}$: the prior binding is refused (documented as superseded, not deleted — Corollary~\ref{cor:irrev}) before the new one is committed.\\
+\emph{Conditional on $\phi$}: $P_{\phi^+}$ if $\phi$ holds; otherwise $R_{\phi^+,\,\mathsf{ConstraintViolation}(\phi)}$ followed by $P_{\phi^-}$ — the refusal records \emph{why} the positive branch was not taken. Choice (\S\ref{sec:desugar}) is the special case where \emph{both} the taken and rejected branches are always recorded: $P_A \parallel R_{B}$.\\
+\emph{Function application $f(a)$}: $\CollapseOp_{c_\mathrm{subst}}(B_{a,x})$ — no separate lambda-specific event kind is needed (\S\ref{sec:desugar}); binding the argument to the parameter and collapsing under the substitution rule both performs substitution and forces the commitment.\\
+\emph{Exceptions}: $R_{t,r}$ — documented inadmissibility rather than system destruction; the reason $r$ is a first-class certificate.\\
+\emph{Deallocation}: $R_{p,\mathsf{Deallocated}}$ for pointer symbol $p$, followed by $C_{p,\,c_\mathrm{reclaim}}$ — a quotient collapse that recovers option-space bounds for future allocation without releasing the historical trace itself. Use-after-free becomes a type error rather than a runtime fault, and the deallocation remains auditable rather than erased.\\
+\emph{Concurrency}: two proposal streams over a shared $\Omega$ are unified via $B_{a,b}$, coupling their results as dependent rather than by any separate synchronization primitive.
+\end{proof}
+
+\begin{remark}[Meld is structural, not part of the concurrency proof]
+Independently of the derivation above, $(\CalH, \mathbin{{+}\!+}, \varepsilon)$ together with a tensor $\Meld$ is a free strict monoidal category on histories — $H_1 \Meld H_2$ is the parallel composition of two independently-generated histories at the structural level. This is a true fact about $\CalH$'s algebra, but it is not needed to prove Theorem~\ref{thm:completeness}'s concurrency clause, which goes through $\BindOp$ alone.
+\end{remark}
+
+\begin{theorem}[Conservation of Possibility]
+\label{thm:conservation}
+Define $w:E\to\Nat$ by $w(\Pop(x))=1$, $w(\RefuseOp)=w(\BindOp)=w(\CollapseOp)=0$, and $\Pi(H,\Omega) = |\Omega| + \sum_{e\in H} w(e)$. For any legal execution sequence, $\Pi(H_t,\Omega_t) = |\OptZero|$ for all $t$: possibility is conserved, never created or destroyed — only consumed by Pop or documented as inadmissible by Refuse. Bind and Collapse affect neither $|\Omega|$ nor $w$.
+\end{theorem}
+
+\begin{corollary}[Irreversibility]
+\label{cor:irrev}
+$|H_{t+1}| > |H_t|$ for every step, since every operator appends exactly one event. No legal execution can return to a prior world state.
+\end{corollary}
+
+\begin{remark}
+This is the formal correlate of the history-first ontology stated in the Overview: a world that could return to a prior state would be one in which the intervening history was undone, which is not computation but its negation.
+\end{remark}
+
+\section{Geometric DSL (Front-End)}
+\subsection{Grammar (EBNF)}
+\begin{verbatim}
+program         ::= { scene | comment } ;
+scene           ::= "@scene" "{" { stmt } "}" ;
+
+stmt            ::= sphere_decl | link_decl | unlink_decl | refuse_decl
+                  | spin_decl | burst_decl | pop_decl | choose_decl
+                  | let_decl | comment ;
+
+sphere_decl     ::= "sphere" IDENT "(" { attr ("," attr)* } ")" ;
+attr            ::= IDENT ":" value ;
+let_decl        ::= "let" IDENT "=" expr ;
+
+link_decl       ::= "link" IDENT op IDENT [ "[" IDENT "]" ] ;
+op              ::= "->" | "∇" | "⊗" | "⊕" | "∘" ;
+
+unlink_decl     ::= "unlink" IDENT op IDENT ;
+refuse_decl     ::= "refuse" expr [ "because" STRING ] ;
+
+spin_decl       ::= "spin" IDENT "(" { attr ("," attr)* } ")" ;
+burst_decl      ::= "burst" IDENT "(" { arg ("," arg)* } ")" ;
+pop_decl        ::= "pop" IDENT [ "with" IDENT ] [ "when" condition ] ;
+choose_decl     ::= "choose" NUMBER ":" expr "|" expr ;
+
+condition       ::= expr ;
+expr            ::= term { ("+"|"-") term } ;
+term            ::= factor { ("*"|"/") factor } ;
+factor          ::= IDENT | NUMBER | STRING | "(" expr ")" ;
+
+arg             ::= value ;
+value           ::= NUMBER | STRING | IDENT | vector | tuple ;
+vector          ::= "(" NUMBER "," NUMBER "," NUMBER ")" ;
+tuple           ::= "(" { value ("," value)* } ")" ;
+
+comment         ::= "#" { ANY_CHAR except newline } ;
+IDENT           ::= (letter | "_") { letter | digit | "_" } ;
+NUMBER          ::= digit { digit | "." digit } ;
+STRING          ::= '"' { ANY_CHAR except '"' } '"' ;
+letter          ::= "A".."Z" | "a".."z" ;
+digit           ::= "0".."9" ;
+\end{verbatim}
+
+\subsection{Semantics-by-surface}
+\begin{center}
+\begin{tabular}{ll}
+\textsf{Construct} & \textsf{Compilation to SPC}\\\hline
+\verb|sphere f(type: Πx:A.B, body: T)| & $\Sphere(x\!:\!A.\,T)$\\
+\verb|sphere c(type: A, value: v)| & $c := v : A$\\
+\verb|link a -> b|             & $\LinkOp(a,b)$ (typed relation, no identification)\\
+\verb|link a ⊗ b| & $\Merge(a,b)$\\
+\verb|link a ⊕ b| & $(a,b) : \SigT{x}{A}{B(x)}$ (pairing mode)\\
+\verb|link a ∇ b| & $\Pop(\nabla, \Pair{a}{b})$\\
+\verb|link a ∘ b|             & macro: composition of two $\Pop$-chains\\
+\verb|unlink a -> b|          & $\UnlinkOp(a,b)$\\
+\verb|refuse e because "..."| & $\RefuseOp(e)$\\
+\verb|pop f with u| & $\Pop(f,u)$\\
+\verb|burst g(a,b,...)| & nested $\Pop$\\
+\verb|choose p: t | u| & proposal-level combinator over $t,u$ (see \S\ref{sec:kernel})\\
+\verb|spin x(ω,limit)| & macro: \verb|fix F| or \verb|iterate n F(x)|\\
+\verb|@scene {...}| & program root $\Ctx$ of declarations/terms\\
+\end{tabular}
+\end{center}
+
+\paragraph{Explanation.}
+The DSL is only notation.
+All meaning is inherited from the SPC core.
+The overloaded \verb|link| keyword lowers to different primitives depending on its operator: \verb|⊗| identifies (Merge), \verb|⊕| pairs (Σ-introduction), \verb|∇| applies over a pair (Pop), \verb|∘| composes without introducing a new primitive, and the previously unassigned \verb|->| now denotes $\LinkOp$, a typed relation that connects two objects \emph{without} identifying them. $\UnlinkOp$ is the structural dual of $\LinkOp$, and $\RefuseOp$ records that a proposed transformation was rejected as inadmissible rather than silently discarded. Merging requires type equality; $\LinkOp$ requires only that the relation's type is declared, not that its endpoints share a type. Choice is deferred to the kernel section: at the DSL/SPC level it names a proposal over two candidate continuations, not a term that itself reduces to a value.
+
+\section{The Derived Surface Calculus}
+\label{sec:surface-calculus}
+
+Everything in this section is sugar. None of the operators below — $\Sphere$, application-$\Pop$ (in its \emph{term-calculus} sense, as opposed to the primitive commitment operator of \S\ref{sec:primitives}), $\Merge$, $\Choice$, $\LinkOp$, $\UnlinkOp$, $\SetMetaOp$, $\Nest$ — is primitive. Each is shown below to reduce to a composition of $\Pop$, $\RefuseOp$, $\BindOp$, $\CollapseOp$. Retaining this layer's typed term syntax is useful precisely because it gives programmers the familiar shapes (abstraction, application, identification, probabilistic branching) without requiring every program to be written directly against the possibility-space primitives — the same relationship NAND-complete Boolean circuits bear to AND/OR/NOT, or Church encodings bear to the untyped $\lambda$-calculus: a convenient vocabulary built entirely from a minimal basis.
+
+\subsection{Syntax}
+\begin{definition}[Terms]
+\begin{align*}
+t,u ::=~& x \mid a \mid \Sphere(x\!:\!A.\,t) \mid \Pop(t,u) \mid \Merge(t,u) \mid \Choice(p,t,u)\\
+\mid~& \LinkOp(t,u) \mid \UnlinkOp(t,u) \mid \RefuseOp(t).
+\end{align*}
+\end{definition}
+
+\subsection{Typing Rules}
+\begin{definition}[Typing]
+\begin{align*}
+&\text{Var} & \dfrac{(x\!:\!A)\in \Ctx}{\Judgement{\Ctx}{x}{A}} \qquad
+&&\text{Atom} & \dfrac{}{\Judgement{\Ctx}{a}{A}}\\[1ex]
+&\Pi\text{-intro} & \dfrac{\Judgement{\Ctx,x\!:\!A}{t}{B}}{\Judgement{\Ctx}{\Sphere(x\!:\!A.\,t)}{\PiT{x}{A}{B}}} \qquad
+&&\Pi\text{-elim} & \dfrac{\Judgement{\Ctx}{f}{\PiT{x}{A}{B}} \quad \Judgement{\Ctx}{u}{A}}{\Judgement{\Ctx}{\Pop(f,u)}{B\Subst{u}{x}}}\\[1ex]
+&\text{Merge} & \dfrac{\Judgement{\Ctx}{t}{A}\quad \Judgement{\Ctx}{u}{A}}{\Judgement{\Ctx}{\Merge(t,u)}{A}} \qquad
+&&\text{Choice} & \dfrac{\Judgement{\Ctx}{t}{A}\quad \Judgement{\Ctx}{u}{A}}{\Judgement{\Ctx}{\Choice(p,t,u)}{A}}\\[1ex]
+&\Sigma\text{-intro} & \dfrac{\Judgement{\Ctx}{t}{A}\quad \Judgement{\Ctx}{u}{B(t)}}{\Judgement{\Ctx}{\Pair{t}{u}}{\SigT{x}{A}{B(x)}}}\\[1ex]
+&\text{Link} & \dfrac{\Judgement{\Ctx}{t}{A}\quad \Judgement{\Ctx}{u}{B}}{\Judgement{\Ctx}{\LinkOp(t,u)}{\Rel{A}{B}}} \qquad
+&&\text{Unlink} & \dfrac{\Judgement{\Ctx}{\LinkOp(t,u)}{\Rel{A}{B}}}{\Judgement{\Ctx}{\UnlinkOp(t,u)}{\Unit}}\\[1ex]
+&\text{Refuse} & \dfrac{\Judgement{\Ctx}{t}{A}}{\Judgement{\Ctx}{\RefuseOp(t)}{\Refused{A}}}
+\end{align*}
+\end{definition}
+
+These rules govern the \emph{surface} type system that programmers see. They are consistent, but they are not foundational: \S\ref{sec:desugar} gives each construct's reduction to $\Pop/\RefuseOp/\BindOp/\CollapseOp$, and the primitive-level guarantees (Theorem~\ref{thm:completeness}, Theorem~\ref{thm:conservation}) are what actually back these surface types, not the other way around.
+
+\subsection{Collapse Rules and the Quotient Construction}
+\label{sec:collapse-quotient}
+
+The Merge- and SetMeta-sugar below both depend on the primitive $\CollapseOp$'s parameterization by a \emph{collapse rule}.
+
+\begin{definition}[Collapse Rule and Observational Equivalence]
+A collapse rule is a function $c : \CalH \to O_c$ from histories to an observational space. Histories $H_1, H_2$ are observationally equivalent under $c$, written $H_1 \sim_c H_2$, iff $c(H_1) = c(H_2)$.
+\end{definition}
+
+\begin{definition}[Observable State as Quotient]
+The observable state space under $c$ is $O_c = \CalH / {\sim_c}$: an observable state is an equivalence class of histories, not a history itself.
+\end{definition}
+
+\begin{remark}
+Different rules make different distinctions relevant. The identity rule $c_I(H) = H$ makes every event visible; coarser rules discard information deliberately. Merge, defined below, is what happens when the chosen rule identifies two bound elements.
+\end{remark}
+
+\subsection{Desugaring into the Four Primitives}
+\label{sec:desugar}
+
+\begin{definition}[Abstraction and Application]
+$\Sphere(x\!:\!A.\,t) := \BindOp(x, \Omega)$: abstraction freezes/scopes the option space relative to $x$ by binding $x$ to it, rather than by any separate lambda-specific event. Application is
+\[
+\Pop(f,u) := \CollapseOp_{c_\mathrm{subst}}\big(\BindOp(u, x)\big),
+\]
+where $c_\mathrm{subst}$ is the substitution rule identifying the bound variable $x$ with the argument $u$: the bind couples argument to parameter, and the collapse under $c_\mathrm{subst}$ both performs the substitution and forces the commitment $P_u$. There is no separate $E_\lambda$ fragment: abstraction and application compile to $\BindOp$ and $\CollapseOp$ alone, with no third event kind smuggled in for functions.
+\end{definition}
+
+\begin{definition}[Choice]
+$\Choice(A,B) := \Pop(A) \parallel \RefuseOp(B)$: choosing $A$ over $B$ is the parallel composition of committing to $A$ \emph{and} explicitly, auditably refusing $B$. Both events land in $H$. This is stronger than treating the untaken branch as simply absent from history: Choice is a special case of conditional branching (Theorem~\ref{thm:completeness}) in which the rejected alternative is always documented, never silently dropped.
+\end{definition}
+
+\begin{definition}[Link]
+$\LinkOp(t,u) := \BindOp(t,u)$, exactly. Link is not a distinct operator: it is the name this surface calculus gives to $\BindOp$ when the DSL author is thinking in terms of "relations" rather than "dependencies." The $\Rel{A}{B}$ surface type is bookkeeping, not evidence of a different underlying primitive.
+\end{definition}
+
+\begin{definition}[Unlink]
+$\UnlinkOp(t,u) := \RefuseOp(\BindOp(t,u))$. Withdrawing a relation is documented inadmissibility of continued reliance on a prior bind, following exactly the pattern Theorem~\ref{thm:completeness} already uses for deallocation ($R_{p,\mathsf{Deallocated}}$). This does not remove the original $\BindOp$ event from $H$ — consistent with Irreversibility (Corollary~\ref{cor:irrev}) — it only adds a refusal that later collapse rules may honor by excluding withdrawn bindings from their observable state.
+\end{definition}
+
+\begin{remark}[Refuse graduates]
+$\RefuseOp(t)$ as written in the surface grammar above is not sugar for anything further — it \emph{is} the primitive $\RefuseOp$, wrapped only in enough surface typing ($\Refused{A}$) to keep it inside the term calculus's bookkeeping.
+\end{remark}
+
+\begin{definition}[Merge]
+\label{def:merge-sugar}
+$\Merge_c(a,b) := \CollapseOp_c(\BindOp(a,b))$: Merge is the projection of a Bind under an identification-quotient rule $c$. Idempotence ($\Merge_c(t,t)\equiv t$) and commutativity follow from $c$'s equivalence-relation structure rather than being posited as separate axioms. Batch identification (the roadmap's \texttt{COLLAPSE}) is the same construction generalized to $n$ bound elements under one $c$, confirming that sense was never a primitive.
+\end{definition}
+
+\begin{definition}[SetMeta, proposed]
+$\SetMetaOp(o, k, v) := B_{o,\,(k,v)}$ under a distinguished collapse rule $c_\mathrm{meta}$ that every other collapse rule is defined to ignore by convention: ordinary observation is blind to metadata bindings unless a rule explicitly opts in. This is the one construct in this section still marked proposed rather than confirmed against an external derivation.
+\end{definition}
+
+\begin{definition}[Nest]
+$\Nest$ is sugar for a chain of $\BindOp/\CollapseOp_{c_\mathrm{subst}}$ pairs — nested abstraction/application — matching its treatment as ``nested Pop'' in the DSL table above.
+\end{definition}
+
+\subsection{Functional Completeness}
+
+\begin{theorem}[NOR is representable]
+Represent Boolean values as commitments to canonical option handles $\omega_T,\omega_F\in\Omega$. Then $\mathrm{NOR}(A,B)$ is representable in $\mathcal{P}$.
+\end{theorem}
+\begin{proof}
+If neither $A$ nor $B$ committed $\omega_T$, then $\RefuseOp(A)$ and $\RefuseOp(B)$ both succeed without conflict and $\Pop(\omega_T)$ executes: output $\mathrm{True}$. If either committed $\omega_T$, the corresponding refusal guard detects that $\omega_T$ was already committed and is itself inadmissible, so execution falls back to $\Pop(\omega_F)$: output $\mathrm{False}$. Since $\{\mathrm{NOR}\}$ is functionally complete for Boolean logic, all Boolean connectives are representable in $\mathcal{P}$.
+\end{proof}
+
+\begin{theorem}[$\beta$-reduction equivalence]
+For terms $M, A$: evaluating $\Pop(\Sphere(x\!:\!A.\,M), A)$ under the desugaring above yields the same result as $M[x \mapsto A]$.
+\end{theorem}
+\begin{proof}
+By the Abstraction/Application definition, $\Pop(\Sphere(x.M),A) = \CollapseOp_{c_\mathrm{subst}}(\BindOp(A,x))$. The bind couples $A$ to $x$; $c_\mathrm{subst}$'s quotient identifies $x$ with $A$ throughout $M$'s bound option space and the resulting collapse performs exactly the substitution $M[x\mapsto A]$, discharging the commitment in the same step.
+\end{proof}
+
+\subsection{Operational Semantics of the Surface Calculus}
+\begin{definition}[Reduction]
+\begin{align*}
+\text{(β)}\quad & \Pop(\Sphere(x\!:\!A.\,t), u) \ReducesTo t\Subst{u}{x}\\
+\text{(Idem)}\quad & \Merge(t,t) \ReducesTo t \qquad \text{(inherited from $c_\sim$, see Def.~\ref{def:merge-sugar})}\\
+\text{(Prob)}\quad & \Choice(p,t,u) \text{ resolves to } t \text{ w.p.\ } p,\ u \text{ w.p.\ } 1-p.
+\end{align*}
+\end{definition}
+\begin{remark}
+There is no separate (Cancel) axiom for Unlink: since $\UnlinkOp(t,u)$ is just $\RefuseOp(\BindOp(t,u),\cdot)$, and $\RefuseOp$-terms are normal forms at the primitive level (\S\ref{sec:primitives}), unlinking simply does not reduce further — it sits in $H$ as a durable, queryable record, exactly like any other refusal.
+\end{remark}
+
+\paragraph{Explanation.}
+Every reduction rule here is a restatement, at the surface level, of something already guaranteed by the primitive layer: $\beta$-reduction is deferred commitment discharging; Merge's idempotence is quotienting under $c_\sim$; Choice's branching is proposal-time resolution that never touches $H$ until a branch is taken.
+
+\section{Type-Theoretic Layer}
+\paragraph{Judgements and Meta-Theory.}
+We assume a standard cumulative hierarchy of universes, admissible substitution, and the usual structural rules. 
+Subject reduction (preservation) and progress hold for the deterministic fragment; the stochastic fragment preserves types in expectation.
+
+\begin{theorem}[Preservation]
+If $\Judgement{\Ctx}{t}{A}$ and $t \ReducesTo t'$, then $\Judgement{\Ctx}{t'}{A}$.
+\end{theorem}
+
+\begin{theorem}[Progress]
+If $\Judgement{\Ctx}{t}{A}$ then $t$ is a value or there exists $t'$ with $t \ReducesTo t'$.
+\end{theorem}
+
+\paragraph{Explanation.}
+Well-typed programs do not ``go wrong'': reduction does not change types, and every non-value advances. 
+$\,\Choice$ introduces stochastic steps but not type ambiguity.
+
+\section{From Calculus to Event Algebra}
+\label{sec:kernel}
+
+Where \S\ref{sec:primitives} gives the possibility-space semantics of $\Pop,\RefuseOp,\BindOp,\CollapseOp$ and \S\ref{sec:surface-calculus} shows every other operator reducing to them, this section states what an implementation must actually persist and replay. Because the surface calculus is now \emph{fully} desugared into the primitive alphabet, this section is considerably simpler than earlier drafts of this specification: there is no longer a separate kernel vocabulary to reconcile against a calculus vocabulary. Kernel-$\Pop$ and calculus-$\Pop$ are the same operator, by construction, because the primitive layer was built first and the surface layer was derived from it rather than the reverse.
+
+\subsection{Authoritative History, Replay, Proposals, Observation}
+
+\begin{definition}[Authoritative history]
+An authoritative history is a finite sequence $\Hist \in \CalH$ of events drawn from the fixed alphabet $E = \{\Pop,\RefuseOp,\BindOp,\CollapseOp\}$ (\S\ref{sec:primitives}), totally ordered by sequence position.
+\end{definition}
+
+\begin{definition}[Replay function]
+$\Replay : \EventStar \to (\mathrm{State}\times\wp(\OptZero))$ maps a history to the world it denotes, by folding the four operators exactly as defined in \S\ref{sec:primitives}: $\Replay(\varepsilon) = (s_0,\OptZero)$ and $\Replay(\Hist \frown e) = \delta(\Replay(\Hist), e)$.
+\end{definition}
+
+\begin{definition}[Proposals]
+A proposal is an event sequence $p \in \EventStar$ not yet appended to $\Hist$.
+\end{definition}
+
+\begin{definition}[Observation as Collapse invocation]
+Observing $\Hist$ under rule $c$ \emph{is} invoking the primitive $C_{x,c}$ (\S\ref{sec:collapse-quotient}); there is no separate, non-authoritative ``view'' operator. Invoking Collapse both (a) appends a $\CollapseOp$ event to $\Hist$, recording that an observation under $c$ occurred, and (b) yields the observable value $c(\Hist) \in O_c$.
+\end{definition}
+
+\begin{invariant}[Deterministic replay]
+\label{inv:replay}
+$\Hist_1 = \Hist_2 \implies \Replay(\Hist_1) = \Replay(\Hist_2)$.
+\end{invariant}
+
+\begin{invariant}[Total causal order]
+Every $e_i \in \Hist$ has a well-defined position $i$; $\delta$ may depend on $\Replay(e_0,\dots,e_{i-1})$ but never on later positions or wall-clock time.
+\end{invariant}
+
+\begin{requirement}[Authoritative discipline]
+No utility computes $\delta$ against $\Hist$ directly. Authoritative changes are submitted as proposals to an arbiter, which alone decides whether a proposal is appended.
+\end{requirement}
+
+\begin{requirement}[Observation non-interference]
+\label{req:view}
+The arbiter's acceptance decision for any proposal must not depend on the \emph{observable value} $c(\Hist)$ produced by any prior Collapse — only on $(\Hist,\Omega)$ directly. The fact that a Collapse occurred, and under which rule, is an ordinary recorded event like any other; what must never happen is a later acceptance decision being a function of \emph{what was seen}, only of what was done.
+\end{requirement}
+
+\begin{conformance}
+An implementation conforms only if Invariant~\ref{inv:replay} is empirically falsifiable (replay $\Hist$ twice, compare) and Requirement~\ref{req:view} is enforced structurally: the arbiter's validation function must have no parameter through which $c(\Hist)$ for any $c$ can be passed in, even though $\CollapseOp$ events are visible to it as history.
+\end{conformance}
+
+\begin{remark}[Two collisions, both now resolved]
+Earlier drafts of this specification carried two unresolved terminological collisions. First, the roadmap's kernel event \texttt{POP} (``introduce a semantic object handle'') versus calculus-$\Pop$ (application) — resolved because application is now sugar (Def.\ of Abstraction and Application, \S\ref{sec:desugar}) for a deferred instance of the one true primitive $\Pop$. Second, the roadmap's \texttt{COLLAPSE} (bulk equivalence) versus the primitive $\CollapseOp$ (observation under a rule) — resolved because bulk equivalence is Merge-sugar generalized to $n$ elements (Def.~\ref{def:merge-sugar}), not a primitive event at all. Neither collision required renaming anything; both were dissolved by correctly identifying which side of each pair was primitive.
+\end{remark}
+
+\subsection{Utility Taxonomy}
+
+\begin{definition}[Utility classes]
+Relative to $\Hist$ and $\Replay$, a utility is exactly one of:
+\begin{itemize}
+\item a \emph{proposal generator}: produces $p \in \EventStar$ without appending it;
+\item an \emph{observer}: invokes $\CollapseOp$ under some rule $c$ and returns $c(\Hist)$, producing no further proposal;
+\item an \emph{overlay manager}: creates, rebases, or discards a proposal $p$ held outside $\Hist$, without itself deciding acceptance.
+\end{itemize}
+\end{definition}
+
+\begin{requirement}[Preview-commit]
+An overlay manager exposing a preview-then-commit workflow must never commit by default; commitment requires a separate, explicit call that routes through the arbiter as an ordinary proposal.
+\end{requirement}
+
+\section{Reference Implementation (Haskell)}
+\subsection{Core AST}
+\begin{verbatim}
+data Tm
+  = Var Name
+  | Atom Name
+  | Sphere Name Ty Tm
+  | Pop Tm Tm
+  | Merge Tm Tm
+  | Choice Double Tm Tm
+  | Link Tm Tm
+  | Unlink Tm Tm
+  | Refuse Tm
+\end{verbatim}
+
+\subsection{Typing (Sketch)}
+\begin{verbatim}
+infer Γ (Sphere x A t) = Pi x A (infer (Γ,x:A) t)
+infer Γ (Pop f u)      = case infer Γ f of
+  Pi x A B | infer Γ u == A -> subst x u B
+  _ -> error "Not a function"
+infer Γ (Merge t u)    = mustEqual (infer Γ t) (infer Γ u)
+infer Γ (Choice p t u) = mustEqual (infer Γ t) (infer Γ u)
+infer Γ (Link t u)     = Rel (infer Γ t) (infer Γ u)
+infer Γ (Unlink t u)   = case infer Γ (Link t u) of
+  Rel _ _ -> Unit
+  _       -> error "Not a link"
+infer Γ (Refuse t)     = Refused (infer Γ t)
+\end{verbatim}
+
+\paragraph{Explanation.}
+The implementation follows the rules verbatim. 
+$\Sphere$ synthesizes a $\Pi$-type; $\Pop$ eliminates it. 
+$\Merge$ and $\Choice$ check branch types for equality. $\mathtt{Link}$ produces a relation type from two independently-typed terms; $\mathtt{Unlink}$ only type-checks against a term that is itself a well-typed $\mathtt{Link}$; $\mathtt{Refuse}$ wraps a type in $\mathtt{Refused}$ rather than discarding it. This Haskell model is deliberately scoped to SPC alone — it has no event log, no replay, and no notion of an arbiter. Those belong to the kernel, given a separate implementation in \S\ref{sec:rust-kernel} because they are not properties of the term calculus but of how an authoritative history is engineered around it.
+
+\section{Kernel Reference Implementation (Rust)}
+\label{sec:rust-kernel}
+
+Where \S\ref{sec:kernel} gives the authoritative-history apparatus its formal shape, this section gives it an executable one. The Haskell model above demonstrates that SPC has an intelligible reduction semantics; this Rust sketch demonstrates that the surrounding kernel — event log, replay, arbiter, overlays — can be engineered to the invariants and requirements stated above. The two implementations are not alternative encodings of the same thing: Haskell has no event log, and this Rust sketch performs no $\beta$-reduction of its own — it persists and replays events, and treats calculus-level reduction as something a proposal generator does before it ever emits an event.
+
+\subsection{Event Types and ABI Layout}
+\label{sec:rust-abi}
+
+Every event carries a stable discriminant, a logical position, and a payload whose layout must not change without a version bump. There are exactly four kinds now — no \texttt{Merge}, \texttt{Link}, \texttt{Unlink}, or \texttt{SetMeta} variant exists at this layer, since \S\ref{sec:desugar} shows all four to be sugar. \texttt{Pop} here is unambiguously the primitive commitment operator; the earlier homonym with a distinct ``object introduction'' kernel event no longer arises; abstraction and application (\S\ref{sec:desugar}) both compile to it.
+
+\begin{verbatim}
+#[repr(u8)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum EventKind {
+    Pop      = 0,  // commitment: remove x from Omega
+    Refuse   = 1,  // documented inadmissibility of x, with reason
+    Bind     = 2,  // coupling of (a, b), optionally tagged with a relation label
+    Collapse = 3,  // observation of H under a named collapse rule
+}
+
+pub type ObjectId = u64;
+pub type LogPos    = u64;
+pub type RuleId    = &'static str;   // identifies a registered collapse rule c
+
+#[derive(Clone, Debug)]
+pub struct Event {
+    pub kind:   EventKind,
+    pub pos:    LogPos,             // position in H; assigned only at commit time
+    pub a:      Option<ObjectId>,   // Pop's x; Bind's first element; Refuse's target
+    pub b:      Option<ObjectId>,   // Bind's second element
+    pub tag:    Option<String>,     // Bind's relation label (Link-sugar uses this)
+    pub reason: Option<String>,     // Refuse's rationale — required, never optional in practice
+    pub rule:   Option<RuleId>,     // Collapse's rule c
+}
+\end{verbatim}
+
+\begin{remark}
+ABI stability means: no field above may be removed, reordered, or reinterpreted in a released version. New fields are additive; a decoder must skip unrecognized fields rather than fail closed. Because the alphabet is now fixed at four kinds by Theorem~\ref{thm:completeness} rather than accreted from an evolving roadmap, this layout is expected to be far more stable across versions than the seven-variant enum an earlier draft of this specification carried.
+\end{remark}
+
+\subsection{History, Option Space, and Replay}
+
+\begin{verbatim}
+#[derive(Default, Clone)]
+pub struct State {
+    pub option_space: std::collections::HashSet<ObjectId>,  // Omega
+    pub committed:    std::collections::HashSet<ObjectId>,  // popped symbols
+    pub bound:        std::collections::HashSet<(ObjectId, ObjectId, String)>,
+    pub refused:      Vec<(LogPos, ObjectId, String)>,
+    pub observed:     Vec<(LogPos, RuleId)>,  // audit trail of Collapse invocations only
+}
+
+pub struct History {
+    events: Vec<Event>,
+}
+
+impl History {
+    pub fn replay(&self, omega_0: &std::collections::HashSet<ObjectId>) -> State {
+        let mut s = State { option_space: omega_0.clone(), ..State::default() };
+        for e in &self.events {
+            apply(&mut s, e);
+        }
+        s
+    }
+}
+
+fn apply(s: &mut State, e: &Event) {
+    match e.kind {
+        EventKind::Pop => {
+            let x = e.a.unwrap();
+            s.option_space.remove(&x);   // |Omega| decreases by exactly one
+            s.committed.insert(x);
+        }
+        EventKind::Refuse => {
+            s.refused.push((e.pos, e.a.unwrap(), e.reason.clone().unwrap_or_default()));
+            // Omega is untouched: refusal documents, it does not foreclose structurally.
+        }
+        EventKind::Bind => {
+            s.bound.insert((e.a.unwrap(), e.b.unwrap(), e.tag.clone().unwrap_or_default()));
+        }
+        EventKind::Collapse => {
+            // Collapse does not mutate committed/bound/refused: it only records that
+            // an observation occurred. The observable value c(H) is computed separately
+            // (see collapse rules below), never stored in State itself.
+            s.observed.push((e.pos, e.rule.unwrap()));
+        }
+    }
+}
+\end{verbatim}
+
+\begin{remark}
+\texttt{apply} is a pure function of \texttt{(State, Event)} — no wall-clock reads, no ambient globals — which is what makes Invariant~\ref{inv:replay} checkable rather than merely asserted. Note that \texttt{Collapse}'s branch deliberately records \emph{that} an observation happened and \emph{under which rule}, but never the observed value itself: that keeps Requirement~\ref{req:view} satisfiable, since nothing in \texttt{State} — the thing \texttt{apply} and validation ever see — carries $c(\Hist)$.
+\end{remark}
+
+\subsection{Collapse Rules}
+
+Collapse rules are pure functions of \texttt{History}, external to \texttt{apply}, matching \S\ref{sec:collapse-quotient}. Merge-sugar (Def.~\ref{def:merge-sugar}) is realized as one such rule.
+
+\begin{verbatim}
+/// c_~ : identifies objects connected by a Bind, realizing Merge-sugar.
+pub fn collapse_quotient(h: &History) -> UnionFind {
+    let mut uf = UnionFind::new();
+    for e in h.events_of_kind(EventKind::Bind) {
+        uf.union(e.a.unwrap(), e.b.unwrap());
+    }
+    uf   // O_c for this rule: the partition of ObjectId into Merge-equivalence classes
+}
+
+/// c_meta : the distinguished rule other rules are defined to ignore (SetMeta-sugar).
+pub fn collapse_meta(h: &History) -> std::collections::HashMap<ObjectId, Vec<(String, String)>> {
+    h.events_of_kind(EventKind::Bind)
+     .filter(|e| e.tag.as_deref() == Some("__meta__"))
+     .fold(Default::default(), |mut acc, e| {
+         acc.entry(e.a.unwrap()).or_insert_with(Vec::new)
+            .push((e.tag.clone().unwrap(), String::new()));
+         acc
+     })
+}
+
+/// c_I : the identity/finest rule — every event visible, nothing quotiented.
+pub fn collapse_identity(h: &History) -> &[Event] { h.as_slice() }
+\end{verbatim}
+
+\begin{remark}
+Only Collapse events with a registered, admissibility-certified rule may be committed (see \texttt{Arbiter::validate} below) — an unregistered \texttt{rule} is a type error at proposal time, not a runtime panic at observation time, matching the primitive definition's precondition $\Gamma \vdash t : \Adm(T)$.
+\end{remark}
+
+\subsection{Arbiter and Proposals}
+
+\begin{verbatim}
+pub struct Proposal {
+    pub events: Vec<Event>,   // positions unassigned; filled in at commit
+}
+
+pub struct Arbiter {
+    history: History,
+    rules:   std::collections::HashSet<RuleId>,  // the admissibility-certified rule registry
+}
+
+#[derive(Debug)]
+pub enum ArbiterError {
+    Malformed(String),
+    PopOutsideOptionSpace,
+    UncertifiedCollapseRule,
+    StaleOverlay,
+}
+
+impl Arbiter {
+    pub fn state(&self, omega_0: &std::collections::HashSet<ObjectId>) -> State {
+        self.history.replay(omega_0)
+    }
+
+    /// Validates and, if accepted, appends a proposal to H. The ONLY path by
+    /// which H is ever extended.
+    pub fn submit(&mut self, p: Proposal, omega_0: &std::collections::HashSet<ObjectId>)
+        -> Result<Vec<LogPos>, ArbiterError>
+    {
+        self.validate(&p.events, omega_0)?;
+        let mut positions = Vec::new();
+        for mut e in p.events {
+            let pos = self.history.len() as LogPos;
+            e.pos = pos;
+            self.history.push(e);
+            positions.push(pos);
+        }
+        Ok(positions)
+    }
+
+    fn validate(&self, events: &[Event], omega_0: &std::collections::HashSet<ObjectId>)
+        -> Result<(), ArbiterError>
+    {
+        let s = self.history.replay(omega_0);  // structural state only — never c(H) for any c
+        for e in events {
+            match e.kind {
+                EventKind::Pop if !s.option_space.contains(&e.a.unwrap()) =>
+                    return Err(ArbiterError::PopOutsideOptionSpace),
+                EventKind::Collapse if !self.rules.contains(&e.rule.unwrap()) =>
+                    return Err(ArbiterError::UncertifiedCollapseRule),
+                _ => {}
+            }
+        }
+        Ok(())
+    }
+}
+\end{verbatim}
+
+\begin{remark}
+\texttt{validate} reads \texttt{state()}, which carries only $(\Hist,\Omega)$-level facts — never the value any collapse rule would compute. There is no parameter through which $c(\Hist)$ could be passed in, for any $c$: this is Requirement~\ref{req:view} enforced by the type signature, not by convention.
+\end{remark}
+
+\subsection{Overlay Manager and Preview-Commit}
+
+\begin{verbatim}
+pub struct Overlay {
+    base_len: usize,       // H.len() at the time the overlay was created
+    pending:  Proposal,
+}
+
+pub struct OverlayManager<'a> {
+    arbiter: &'a mut Arbiter,
+}
+
+impl<'a> OverlayManager<'a> {
+    pub fn create(&self, pending: Proposal) -> Overlay {
+        Overlay { base_len: self.arbiter.len(), pending }
+    }
+
+    /// Non-authoritative: replays H + overlay without touching H.
+    pub fn preview(&self, o: &Overlay, omega_0: &std::collections::HashSet<ObjectId>) -> State {
+        let mut speculative = self.arbiter.history_clone();
+        for e in o.pending.events.clone() {
+            speculative.push(e);
+        }
+        speculative.replay(omega_0)
+    }
+
+    /// The only call that can make an overlay authoritative — routes through
+    /// Arbiter::submit like any other proposal.
+    pub fn commit(&mut self, o: Overlay, omega_0: &std::collections::HashSet<ObjectId>)
+        -> Result<Vec<LogPos>, ArbiterError>
+    {
+        if o.base_len != self.arbiter.len() {
+            return Err(ArbiterError::StaleOverlay); // H moved since preview
+        }
+        self.arbiter.submit(o.pending, omega_0)
+    }
+}
+\end{verbatim}
+
+\begin{remark}
+There is deliberately no \texttt{auto\_commit} method and no default argument making \texttt{commit} implicit in \texttt{create} or \texttt{preview}: ``no utility may auto-commit by default'' is the absence of a code path here, not a documented convention.
+\end{remark}
+
+\subsection{Worked Trace}
+
+\begin{verbatim}
+let omega_0: HashSet<ObjectId> = [1, 2].into_iter().collect();
+let mut arb = Arbiter::new(["merge_quotient", "identity"]);
+
+arb.submit(Proposal { events: vec![pop(1), pop(2)] }, &omega_0)?;   // commit a, b
+arb.submit(Proposal { events: vec![bind(1, 2, "adjacent")] }, &omega_0)?; // Bind(a,b)
+
+// Observe under the quotient rule: this IS Merge, per Def. of Merge-sugar.
+arb.submit(Proposal { events: vec![collapse("merge_quotient")] }, &omega_0)?;
+let classes = collapse_quotient(arb.history_ref());
+assert_eq!(classes.find(1), classes.find(2));       // a and b are now one class
+
+// Withdraw reliance on the bind without deleting it (Unlink-sugar):
+arb.submit(Proposal {
+    events: vec![refuse_bind(1, 2, "adjacent", "relation withdrawn")]
+}, &omega_0)?;
+assert!(arb.state(&omega_0).bound.contains(&(1, 2, "adjacent".into()))); // H unchanged
+assert!(arb.state(&omega_0).refused.iter().any(|(_,_,r)| r == "relation withdrawn"));
+\end{verbatim}
+
+\paragraph{Explanation.} The quotient-collapse call demonstrates that Merge never needed to be a fifth event kind: identifying $a$ and $b$ is what a specific, admissibility-certified observation rule does with an ordinary $\BindOp$ event already in $H$. The final refusal demonstrates Unlink-sugar: the original bind is untouched (Irreversibility, Corollary~\ref{cor:irrev}), and a later collapse rule is free to honor the refusal by excluding withdrawn bindings from its own observable state — a policy decision for that rule, not a structural deletion.
+
+\section{Geometric Semantics}
+\paragraph{Reading the Primitives as Geometry.}
+The primary geometric reading now belongs to \S\ref{sec:primitives}, not to the surface calculus: $\Pop$ is the contraction of the option space $\Omega$ — narrowing possibility; $\RefuseOp$ marks a region of $\Omega$ as excluded without contracting it; $\BindOp$ draws an edge between two points without merging them; $\CollapseOp$ is a projection of the whole history onto an observational plane $O_c$, with different rules $c$ giving different projections of the same underlying object. The surface calculus's older reading — $\Sphere$ as a local region, $\Merge$ as entropic smoothing, $\Choice$ as bifurcation — still holds, but now derivatively: it describes what the desugared primitive events look like when composed in the specific patterns \S\ref{sec:desugar} gives for abstraction, quotienting, and proposal-time branching.
+
+\section{Pipeline}
+\begin{center}
+\begin{tabular}{lll}
+Stage & Input & Output\\\hline
+Parse & DSL Scene & AST (Scene)\\
+Desugar & AST & SPC Terms\\
+Typecheck & SPC Terms & Typed Terms in $\Ctx$\\
+Evaluate & Typed Terms & Normal Forms (β + stochastic)\\
+Interpret & Terms & Field configuration $(\Field,\Flow,\Entropy)$\\
+\end{tabular}
+\end{center}
+
+\paragraph{Explanation.}
+Authoring, compilation, and execution are strictly layered; correctness resides at the SPC level, independent of surface notation.
+
+\section{Example}
+\subsection{DSL}
+\begin{verbatim}
+@scene {
+  sphere f(type: Πx:A.B, body: pop g with x)
+  sphere g(type: Πx:A.B, value: <primitive>)
+  sphere a(type: A, value: a0)
+
+  pop f with a
+  choose 0.5: pop g with a | pop f with a
+}
+\end{verbatim}
+
+\subsection{Lowered Core}
+\begin{verbatim}
+f = Sphere(x:A. Pop(g, x))
+g = <primitive> : Πx:A.B
+a = a0 : A
+Pop(f, a)
+Choice(0.5, Pop(g, a), Pop(f, a))
+\end{verbatim}
+
+\subsection{Explanation}
+Application collapses the abstraction boundary; choice branches probabilistically. 
+Typing ensures both branches agree, and evaluation proceeds by β-reduction.
+
+\appendix
+
+\begin{remark}
+The appendices below concern the derived surface calculus of \S\ref{sec:surface-calculus}, not the primitive layer of \S\ref{sec:primitives}. Where they speak of ``Merge'' or ``Choice'' as though typing them directly, read this as shorthand for typing their desugared primitive forms.
+\end{remark}
+
+\section{Appendix A: Typing Derivations}
+\paragraph{Application.}
+\begin{align*}
+&\Judgement{\Ctx}{f}{\PiT{x}{A}{B}} \qquad \Judgement{\Ctx}{a}{A}\\
+&\text{Hence } \Judgement{\Ctx}{\Pop(f,a)}{B\Subst{a}{x}}.
+\end{align*}
+
+\paragraph{Merge.}
+\begin{align*}
+\Judgement{\Ctx}{t}{A}\wedge \Judgement{\Ctx}{u}{A} \To \Judgement{\Ctx}{\Merge(t,u)}{A}.
+\end{align*}
+
+\paragraph{Choice.}
+\begin{align*}
+\Judgement{\Ctx}{t}{A}\wedge \Judgement{\Ctx}{u}{A} \To \Judgement{\Ctx}{\Choice(p,t,u)}{A}.
+\end{align*}
+
+\section{Appendix B: Operational Semantics Proofs}
+\paragraph{Preservation (Sketch).}
+By induction on typing derivations. 
+The β-case follows from substitution; $\Merge$ and $\Choice$ are congruent and keep types equal.
+
+\paragraph{Progress (Sketch).}
+Values are atoms or $\Sphere$-forms. 
+$\Pop(\Sphere(\cdot),\cdot)$ reduces; otherwise subterms reduce. 
+Stochastic steps in $\Choice$ are admissible and type-stable.
+
+\paragraph{Confluence (Deterministic Fragment).}
+Without $\Choice$, β-reduction is confluent up to standard λ-calculus arguments adapted to $\Merge$.
+
+\section{Appendix C: Category-Theoretic Interpretation}
+\paragraph{Objects and Morphisms.}
+Types are objects; terms $t:A\to B$ are morphisms produced by $\Sphere$; application $\Pop$ is composition up to β.
+
+\paragraph{Monoidal Structure.}
+$\Merge$ is a symmetric, idempotent tensor: $(t\Merge u)\Merge v \Equiv t\Merge(u\Merge v)$, $t\Merge u \Equiv u\Merge t$, $t\Merge t \Equiv t$.
+
+\paragraph{Probabilistic Functor.}
+$\Choice$ aligns with a Giry-style monad: unit returns a degenerate choice, multiplication marginalizes nested choices.
+
+\paragraph{Topos View.}
+Interpreting $\Sphere$-scopes as objects of a site $\SphereCat$, SPC terms act as arrows in the presheaf topos $\ToPos$, explaining why abstraction/application behave functorially.
+
+\end{document}
+
