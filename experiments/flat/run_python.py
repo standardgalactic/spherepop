@@ -234,10 +234,35 @@ def events_from_op(op: dict) -> list[Event]:
 # Fixture runner.
 # ---------------------------------------------------------------------
 
+def run_meld_fixture(fixture: dict) -> list[str]:
+    """Executes a two-history Meld fixture (`history_a`/`history_b`) end-to-end:
+    each sub-history is submitted through its own Arbiter, then the two
+    resulting histories are melded (event-log concatenation, matching
+    `spherepop-kernel::History::meld`) and checked against
+    `expect_melded_history_len`."""
+    failures: list[str] = []
+    histories = []
+    for key in ("history_a", "history_b"):
+        sub = fixture[key]
+        arb = Arbiter(set(sub["initial_option_space"]), set(sub.get("certified_rules", [])))
+        for ev in sub.get("events", []):
+            arb.submit(events_from_op(ev))
+        histories.append(arb.history)
+
+    melded = histories[0] + histories[1]
+    expected_len = fixture.get("expect_melded_history_len")
+    if expected_len is not None and len(melded) != expected_len:
+        failures.append(f"expect_melded_history_len: expected {expected_len}, got {len(melded)}")
+    return failures
+
+
 def run_fixture(path: Path) -> list[str]:
     """Returns a list of failure messages; empty means the fixture passed."""
     fixture = json.loads(path.read_text())
     failures: list[str] = []
+
+    if "history_a" in fixture:
+        return run_meld_fixture(fixture)
 
     if fixture.get("manual"):
         for required in ("invariant", "explanation"):

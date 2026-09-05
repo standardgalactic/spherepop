@@ -261,6 +261,205 @@ they matched the current definitions.
 | HTML/JS demos | `demo.html`, `game-engine.html`, etc. | Visualization |
 | Lean/formal proofs | — | Unresolved / not started |
 
+## Tenth lineage, external to this repository
+
+`GRAMMAR.md` (added later, consolidating a candidate grammar for a
+sphere-expression/nested-quotient calculus) verifies its claims against
+`test_spherepop.py` and `spherepop-os.tex` — files pasted into this
+repository's root by the user, but whose actual implementation package
+(`grammar.py`, `model.py`, `semantics.py`, `parser.py`, `views.py`,
+`validation.py`, `poset.py`, plus 29 numbered experiment subdirectories)
+lives only in a separate repository, `standardgalactic/personalinks`,
+at `personalinks/spherepop/`. Confirmed via the GitHub API:
+`personalinks/tests/test_spherepop.py` is byte-identical (modulo
+formatting) to the copy pasted here, and `personalinks` has its own
+`spherepop-os.tex`/`.pdf`, Commodore tutorial files, and
+`analyze-spherepop.sh` at its repository root. This is a real,
+substantial tenth Spherepop lineage, but it is **not** an executable
+artifact of this repository and is intentionally not added to the
+inventory or summary table above (which is scoped to artifacts
+`present and running in this repository`). It uses the same four
+primitive names (`Pop`/`Refuse`/`Bind`/`Collapse`) as the canonical
+basis above but with a genuinely different semantics (nested
+sphere-path/quotient grammar vs. this repo's integer-object-id
+option-space/history model) — see `GRAMMAR.md`'s provenance note for
+the fuller account of this unreconciled conflict.
+
+## Specification lineages (the `.tex` corpus)
+
+This inventory's nine executable artifacts are matched against far more
+*specification* documents than the two ("canonical" vs. "`personalinks`")
+lineages discussed above. A full-content pass over every one of the
+repository's 115 tracked `.tex` files (112 distinct after collapsing
+byte-identical duplicates by sha256 — see `scripts/analyze_tex_corpus.py`,
+which automates the dedup and a first-pass grammar/formal-content signal
+scan so this triage doesn't rely on filenames or memory) found
+**approximately seven distinguishable specification families**, not
+merely two:
+
+1. **The canonical four-event option-space/history calculus** —
+   `Spherepop_Specifications.tex` (duplicated byte-for-byte at
+   `processing/Spherepop_Specifications.tex`). Explicitly states it
+   "supersedes the primitive vocabulary of earlier Spherepop documents";
+   fixes `Pop`/`Refuse`/`Bind`/`Collapse` as the only primitives with
+   `Sphere`/`Merge`/`Choice`/`Link`/`Unlink`/`Nest`/`SetMeta` as sugar;
+   gives an EBNF geometric DSL, typing rules, desugaring rules,
+   operational semantics, an event algebra, ABI layouts, and reference
+   Haskell/Rust material. This is the document `spherepop-kernel/`,
+   `experiments/flat/run_python.py`, and `compiler/tools/fixtures/`
+   actually implement (see "Canonical basis" above).
+2. **The OS event/state-transition layer** — `spherepop-os.tex` (kernel
+   state $\sigma=(O,U,R,M)$, an authoritative event log, transition
+   relations, deterministic replay, snapshots/non-authoritative views,
+   and reductions of OS-level events into the causal calculus above).
+   `Spherepop-OS.tex` (uppercase) is an older, much shorter ancestor with
+   the basic state/transition model but not the later reductions or
+   extended term grammar — treat these as one OS lineage with the
+   lowercase file authoritative (see `GRAMMAR.md`).
+3. **The nested-sphere/path/quotient grammar** imported from
+   `standardgalactic/personalinks` (`test_spherepop.py`, verified against
+   `spherepop-os.tex` in `GRAMMAR.md`) — see "Tenth lineage" above; not
+   implemented anywhere in this repository.
+4. **The historical Sphere–Pop–Merge–Choice calculus** —
+   `monograph/spherepop-calculus.tex`, `textbook/beyond-parentheses.tex`,
+   `essay/spherepop_calculus.tex`, `essay/draft-01/spherepop_calculus.tex`,
+   `essay/draft-01/essay.tex`, `spherepop-foundations.tex`. Grammars,
+   typing/reduction rules, probabilistic `Choice`, application-like
+   `Pop`, sometimes with Haskell or Racket listings — the conceptual
+   counterpart of the historical Haskell/Racket/Python-`Region`
+   implementations above, not the current four-event alphabet.
+5. **The geometric Merge–Collapse calculus** — `processing/essay.tex`
+   ("Spherepop: A Language for Geometric Computation — Unified Rigorous
+   Specification": lexical syntax, EBNF, operator precedence, typing,
+   translation semantics, operational and denotational semantics, an
+   implementation roadmap) and `computing-with-spherepop.tex` (a similar
+   merge/collapse language with finite-state, Boolean-circuit, and
+   lambda-calculus encodings). Substantial enough not to dismiss as
+   ordinary essays, but a different primitive ontology than family 1.
+6. **The three-event History-as-Identity algebra** — `History as
+   Identity.tex` (`Pop`/`Bind`/`Collapse` only, no autonomous `Refuse`;
+   `Bind` restricts the option space, `Pop` records commitment,
+   `Collapse` reconstructs observable state; abstract syntax and typing
+   judgments; proves this 3-operator set minimal/generating for its own
+   history algebra), with `History as Identity - v01.tex` / `- v02.tex`
+   documenting its evolution. An important precursor to family 1's
+   option-space model, but not the same operator set.
+7. **The five-constructor historical type calculus** —
+   `textbook/dependent-type-theory.tex` (`Pop`, `Refuse`, `Bind`,
+   `Collapse`, **and `Meld`** as a fifth constructor, each with typing
+   rules, plus historical contexts, dependent products, universes,
+   equality types, inductive families, normalization, and a
+   bidirectional type-checker design) — **the most extensive typed
+   specification of a Spherepop language in the repository, and
+   currently unimplemented anywhere in this repository.** It directly
+   conflicts with family 1's rule that `Meld` is history composition
+   (sugar), not a fifth primitive (`SPEC.md`; see the Meld fixture in
+   `experiments/flat/`). This should be recorded as a **specified but
+   unimplemented typed extension** — a real prospective implementation
+   target, not "just an essay." A more distant relative,
+   `dynamics/spherepop_scope_dynamics.tex`, defines its own five-operation
+   algebra (`Open`, `Pop`, `Meld`, conservative `Reframe`, expansive
+   `Reframe`) as a containment-topology/cognitive-dynamics calculus that
+   explicitly claims primitive status and completeness, but is not an
+   implementation specification for the language above.
+
+Additional documents with real formal content that support one of the
+families above rather than defining an independent one:
+`textbook/refusal-structures.tex` (a less-settled calculus-of-constructions
+proposal directly relevant to any future type checker, closely related to
+family 7); `identity_as_event_history.tex`, `Joy-of-Spherepop.tex`,
+`Structured Irreversibility.tex`, `throwing_the_game_v2.tex`,
+`Event-historical Aggregation.tex`, and `admissibility/spherepop-monograph.tex`
+(formal syntax, event semantics, reduction rules, categorical structure,
+option-space semantics, or invariants — some with locally incompatible
+meanings, e.g. `throwing_the_game_v2.tex` treats `Collapse` as uniquely
+able to expand admissibility). `history/The History of Spherepop.tex`
+includes a BNF appendix ("Appendix G") that explicitly disclaims being
+"a concrete syntax for any particular implementation," i.e. it documents
+history rather than specifying an implementation target. The remaining
+Python/Haskell/Racket-focused `.tex` tutorials describe the historical
+prototypes already listed in the inventory above rather than defining
+additional implementations.
+
+**Net effect on this manifest:** the executable-implementation count
+above remains **nine** (ten counting the external `personalinks`
+lineage) — this section does not add new executable artifacts. What it
+corrects is the impression that only two specification lineages exist;
+there are at least seven, several of them (`textbook/
+dependent-type-theory.tex` above all) substantial enough to be real
+prospective implementation targets rather than terminology-only essays.
+Reconciling or explicitly cataloguing all seven remains open work under
+issue #1.
+
+### Addendum: `scripts/tex-spec-query.sh` findings (genuine hits vs. false positives)
+
+A second, independent scanning tool, `scripts/tex-spec-query.sh` (a
+keyword/structure-scoring shell script, distinct from
+`scripts/analyze_tex_corpus.py` above), was run over the same 115
+tracked `.tex` files and ranked them by a score built from
+`\begin{definition}`/`\begin{theorem}` counts, grammar/BNF keyword
+hits, and raw counts of the words `Pop`/`Refuse`/`Bind`/`Collapse`/etc.
+Its top-ranked results were checked by hand against actual file
+content, which surfaced both real gaps in the seven-family list above
+and a scoring weakness worth recording so it isn't repeated:
+
+**Genuine additional Spherepop content the seven-family pass above did
+not mention** (none of these were previously catalogued anywhere in
+this manifest):
+- `textbook/The_Ecology_of_Distinctions.tex` — contains an actual
+  **Chapter 24, "Spherepop"** (`\chapter{Spherepop}`), which states it
+  will "define the four Spherepop primitives" and connect them to
+  operational semantics.
+- `intelligence-explosion.tex` (byte-identical duplicate at
+  `processing/intelligence-explosion.tex`) — contains a worked-example
+  section, "A Worked Example: Spherepop over [an ambient probabilistic
+  substrate language]," describing "Spherepop events" as irreversible
+  constraints and a "Quantum SpherePop" connection.
+- `Operational-Mereology.tex` — argues that "the Spherepop calculus and
+  kernel provide a viable alternative foundation grounded in
+  mereology," defining an operational containment relation
+  $x \le y$ over replayed event history.
+- `processing/geometry/monograph.tex` ("The Geometry of Spherepop") —
+  extends what it calls "the Spherepop Calculus (SPC)" and includes an
+  explicit `\begin{definition}[Spherepop event]`.
+
+None of these four appear to define a *new* competing primitive
+grammar (unlike families 4–7 above); they read as applications,
+extensions, or worked examples built on top of an existing lineage
+(most closely resembling family 1, the canonical four-primitive
+model, based on the language quoted above). They should be treated as
+supporting material for that lineage, pending a closer read, rather
+than an eighth family.
+
+**False positives — high-scoring files that are not Spherepop specs at
+all**, despite the raw `Pop`/`Bind`/`Collapse` word-count being large:
+- `textbook/persistence-before-truth.tex`, `textbook/
+  negation-before-logic.tex`, `textbook/economy-of-forgotten-things.tex`,
+  and `textbook/ecology-of-thought.tex` contain **zero** occurrences of
+  the word "spherepop." Their high scores come entirely from ordinary
+  English usage — "civilizations collapse," "error collapses,"
+  "coordination structures collapse" — plus generic
+  `definition`/`theorem` LaTeX environments unrelated to any Spherepop
+  primitive.
+- `textbook/fate-of-distinguishability.tex` contains exactly one
+  "Spherepop" occurrence (a row label in what appears to be a
+  comparison table). Its heavy `collapse`-related vocabulary
+  (`collapse indicator`, `collapse stratum`, `fate space`) belongs to
+  that document's own, unrelated "fate" framework — a false friend, not
+  the Spherepop `Collapse` primitive.
+
+**Lesson for future scans:** a keyword/structure score alone, without
+gating on how often the document actually says "spherepop," reliably
+promotes generic philosophy/math essays that happen to reuse common
+English words (`pop`, `bind`, `collapse`, `refuse`) above genuine
+Spherepop material. Every known genuine Spherepop document checked
+during this session (`monograph/spherepop-calculus.tex`, `History as
+Identity.tex`, `textbook/dependent-type-theory.tex`, `dynamics/
+spherepop_scope_dynamics.tex`) mentions "spherepop" between 5 and 92
+times — any high-scoring file with zero or a single incidental mention
+should be treated as a likely false positive and hand-checked before
+being added to this manifest, not trusted on score alone.
+
 ## Follow-up work this inventory implies
 
 1. **`compiler/`'s build is now fixed (done this session).** Two

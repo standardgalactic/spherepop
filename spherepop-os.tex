@@ -1,0 +1,1291 @@
+\documentclass[11pt]{article}
+
+% -------------------------------------------------- % Packages % --------------------------------------------------
+
+\usepackage{geometry}
+\usepackage{setspace}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{mathtools}
+\usepackage{hyperref}
+
+\usepackage{csquotes}
+\usepackage{enumitem}
+\usepackage{microtype}
+\usepackage{longtable}
+\usepackage{booktabs}
+
+\geometry{margin=1in}
+\setstretch{1.15}
+
+% -------------------------------------------------- % Theorem Environments % --------------------------------------------------
+
+\newtheorem{definition}{Definition}[section]
+\newtheorem{axiom}{Axiom}[section]
+\newtheorem{proposition}{Proposition}[section]
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[section]
+
+% -------------------------------------------------- % Title % --------------------------------------------------
+\title{Spherepop OS: A Deterministic Semantic Operating System\\ \large Formal Specification and Architectural Rationale}
+\author{Flyxion}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+% ==================================================
+\begin{abstract}
+%=================================================
+
+Spherepop OS is a semantic operating system whose primary abstraction is not the process, file, or thread, but a deterministic, append-only relational event substrate. The system is designed to support collaborative, time-aware, and introspectable computation by enforcing strict causal ordering, replayability, and separation between authoritative state transitions and derived views. This document presents a formal specification of Spherepop OS, together with the rationale for each architectural choice, and establishes that the kernel's six event types reduce to four causal primitives (Pop, Refuse, Bind, Collapse) plus a small set of structural composition rules, with one event type shown to fall genuinely outside the causal basis. Building on this reduction, the specification extends the kernel with a full complement of Linux-inspired operating-system responsibilities --- process management, scheduling, a syscall boundary, a virtual object namespace, loadable modules, and capability-based permissions --- each given as a proven or explicitly flagged-as-conditional composition over the causal basis, rather than as an architectural aspiration stated only in prose. Particular emphasis is placed on determinism, observational purity, the treatment of geometry and metadata as non-causal, and the precise conditions under which multiple observers' divergent renderings of shared state remain free of contradiction. The resulting system occupies an intermediate position between an operating system kernel, a distributed database, and a semantic field theory of computation.
+\end{abstract}
+
+% ==================================================
+\section{Motivation and Design Goals}
+% ==================================================
+
+Contemporary operating systems are historically organized around mutable global state, imperative control flow, and opaque side effects. While these designs have proven effective for single-user, single-machine computation, they exhibit deep structural limitations when extended to collaborative, distributed, or semantically rich environments. In particular, traditional systems struggle to provide strong guarantees of determinism, introspectability, and time-consistent reasoning.
+
+Spherepop OS is motivated by the following design goals:
+
+\begin{enumerate}[label=G\arabic*.]
+\item \textbf{Deterministic Replay}: Any system state must be reproducible exactly from an authoritative log.
+\item \textbf{Total Causal Order}: All state transitions must admit a global, unambiguous ordering.
+\item \textbf{View--Cause Separation}: Observations, visualizations, and speculative reasoning must not interfere with authoritative state.
+\item \textbf{Semantic Primacy}: Relations, equivalence, and meaning precede processes and files as first-class concepts.
+\item \textbf{Collaborative Introspection}: Multiple observers may join, leave, rewind, and speculate without destabilizing the system.
+\end{enumerate}
+
+These goals jointly rule out large classes of conventional kernel and database architectures, motivating a log-centric, event-sourced design with strict discipline around causality and derivation.
+
+% ==================================================
+\section{Core Ontology}
+% ==================================================
+
+\begin{definition}[Semantic Object]
+A semantic object is an abstract entity identified by a stable handle. Objects have no intrinsic meaning except insofar as they participate in relations, equivalence classes, and events.
+\end{definition}
+
+\begin{definition}[Relation]
+A relation is a typed, directed association between two semantic objects. Relations are first-class and may carry flags or metadata.
+\end{definition}
+
+\begin{definition}[Equivalence]
+An equivalence relation over objects identifies multiple handles as representing a single canonical representative. Equivalence is induced by merge events and maintained via a union--find structure.
+\end{definition}
+
+Importantly, objects, relations, and equivalence classes exist only as consequences of event replay. There is no mutable object table independent of the log.
+
+% ==================================================
+\section{Authoritative Event Log}
+%=================================================
+
+\begin{axiom}[Append-Only Authority]
+\label{ax:append-only}
+All authoritative state transitions in Spherepop OS are recorded as events in a single append-only log. No other structure is permitted to introduce or modify semantic state.
+\end{axiom}
+
+Each event is assigned a strictly increasing sequence identifier (EID) by a single authoritative arbiter. The log is therefore totally ordered.
+
+\begin{proposition}[Deterministic State]
+\label{prop:deterministic-state}
+Given an initial empty state and a prefix of the event log, the resulting semantic state is uniquely determined.
+\end{proposition}
+
+\begin{proof}
+All kernel transitions are pure functions of prior state and the next event. Since the log is totally ordered and immutable, replay is deterministic.
+\end{proof}
+
+This property elevates the log from an implementation detail to the primary artifact of the system.
+
+% ==================================================
+\section{Kernel Semantics}
+% ==================================================
+
+The Spherepop kernel is a deterministic interpreter of events. It maintains derived state such as equivalence classes and relation tables, but these structures are caches, not authorities.
+
+\begin{definition}[Kernel]
+The kernel is the minimal deterministic machine that replays events and emits derived changes (diffs). It has no external side effects and no hidden state.
+\end{definition}
+
+Kernel operations include:
+
+\begin{itemize}
+\item Object creation (POP)
+\item Merge (MERGE, inducing equivalence)
+\item Relation creation (LINK) and removal (UNLINK)
+\item Region collapse (COLLAPSE)
+\item Metadata attachment (SET\_META)
+\end{itemize}
+
+Each operation is represented as a canonical event type with a fixed binary schema.
+
+% ==================================================
+\section{Formal Execution Semantics}
+% ==================================================
+
+We now make the kernel transition function explicit by presenting a small-step operational semantics for event application. The goal is not to specify implementation details, but to provide an unambiguous mathematical description of how authoritative state evolves in response to events.
+
+\subsection{Kernel State}
+
+\begin{definition}[Kernel State]
+\label{def:kernel-state}
+A kernel state is a tuple
+\[
+\sigma = (O, U, R, M)
+\]
+\begin{itemize}
+\item $O$ is a finite set of object identifiers,
+\item $U : O \to O$ is a union--find parent map representing equivalence,
+\item $R \subseteq O \times O \times \mathcal{T}$ is a multiset of typed relations,
+\item $M : O \to \mathcal{K} \rightharpoonup \mathcal{V}$ is a partial metadata map.
+\end{itemize}
+\end{definition}
+
+We write $\mathrm{rep}_\sigma(o)$ for the canonical representative of $o$ under $U$, after path compression.
+
+\subsection{Transition Relation}
+
+Kernel execution is defined by a labeled transition relation
+\[
+\sigma \xrightarrow{e} \sigma'
+\]
+
+\subsection{POP (Object Creation)}
+
+\[
+\dfrac{ o \notin O }{ (O, U, R, M) \xrightarrow{\mathrm{POP}(o)} (O \cup \{o\},\; U[o \mapsto o],\; R,\; M) }
+\]
+
+\subsection{MERGE (Equivalence Induction)}
+
+\[
+\dfrac{ o_1, o_2 \in O }{ \sigma \xrightarrow{\mathrm{MERGE}(o_1,o_2)} \sigma' }
+\]
+
+where $\sigma'$ differs from $\sigma$ only in $U$, with
+\[
+U'(\mathrm{rep}(o_2)) = \mathrm{rep}(o_1).
+\]
+
+This rule is idempotent: merging already-equivalent objects yields no further change.
+
+\subsection{LINK (Relation Creation)}
+
+\[
+\dfrac{ (o_1,o_2,t) \notin R }{ \sigma \xrightarrow{\mathrm{LINK}(o_1,o_2,t)} (O, U, R \cup \{(\mathrm{rep}(o_1),\mathrm{rep}(o_2),t)\}, M) }
+\]
+
+\subsection{UNLINK (Relation Removal)}
+
+\[
+\dfrac{ (o_1,o_2,t) \in R }{ \sigma \xrightarrow{\mathrm{UNLINK}(o_1,o_2,t)} (O, U, R \setminus \{(\mathrm{rep}(o_1),\mathrm{rep}(o_2),t)\}, M) }
+\]
+
+\subsection{COLLAPSE (Bulk Equivalence)}
+
+Let $S \subseteq O$ be a region to be collapsed, with chosen representative $o_r \in S$.
+
+\[
+\dfrac{ S \subseteq O }{ \sigma \xrightarrow{\mathrm{COLLAPSE}(S,o_r)} \sigma' }
+\]
+
+where for all $o \in S$, $U'(\mathrm{rep}(o)) = \mathrm{rep}(o_r)$. Objects not equal to $o_r$ remain in $O$ but are no longer representatives.
+
+\subsection{SET\_META (Metadata Attachment)}
+
+\[
+\dfrac{ o \in O }{ \sigma \xrightarrow{\mathrm{SET\_META}(o,k,v)} (O, U, R, M[o \mapsto (k \mapsto v)]) }
+\]
+
+Metadata updates do not affect $O$, $U$, or $R$.
+
+\subsection{Semantic Properties}
+
+\begin{proposition}[Determinism]
+For any kernel state $\sigma$ and event $e$, there exists at most one state $\sigma'$ such that $\sigma \xrightarrow{e} \sigma'$.
+\end{proposition}
+
+\begin{proposition}[Merge Confluence]
+\label{prop:merge-confluence}
+The final equivalence relation induced by a set of MERGE events is independent of their order.
+\end{proposition}
+
+\begin{proof}
+Union--find union is associative and commutative over equivalence classes. The induced partition is given by the reflexive--transitive closure of the merge relation and therefore does not depend on merge order.
+\end{proof}
+
+\begin{proposition}[View Consistency]
+Derived views that collapse non-representative objects preserve semantic equivalence.
+\end{proposition}
+
+% ==================================================
+\subsection{MERGE-Induced Relation Normalization}
+% ==================================================
+
+We now make explicit the interaction between equivalence induction and relations.
+
+\begin{axiom}[Representative Normalization]
+All relations are stored and interpreted in representative-normalized form. That is, for any relation $(o_1,o_2,t) \in R$, it is invariant that $o_1 = \mathrm{rep}(o_1)$ and $o_2 = \mathrm{rep}(o_2)$.
+\end{axiom}
+
+\begin{proposition}[Relation Rewriting under MERGE]
+When an event $\mathrm{MERGE}(o_a,o_b)$ is applied, all relations incident to $\mathrm{rep}(o_b)$ are rewritten to reference $\mathrm{rep}(o_a)$.
+\end{proposition}
+
+\begin{proof}
+After MERGE, $\mathrm{rep}(o_b)=\mathrm{rep}(o_a)$. Any relation previously referencing $\mathrm{rep}(o_b)$ is therefore normalized to reference $\mathrm{rep}(o_a)$. No semantic information is lost, since $o_a$ and $o_b$ are equivalent by definition.
+\end{proof}
+
+% ==================================================
+\section{Replay Equivalence}
+% ==================================================
+
+We now formalize the equivalence between full replay and incremental observation.
+
+\begin{theorem}[Replay Equivalence]
+Let $\ell = e_1, e_2, \ldots, e_n$ be an event sequence. Let $\sigma_{\mathrm{replay}}$ be the state obtained by replaying $\ell$ from the initial state $\sigma_0$. Let $\sigma_{\mathrm{diff}}$ be the state obtained by applying the sequence of diffs derived from $e_1,\ldots,e_n$ to $\sigma_0$. Then $\sigma_{\mathrm{replay}}$ and $\sigma_{\mathrm{diff}}$ are semantically equivalent.
+\end{theorem}
+
+\begin{proof}
+Each diff is a deterministic function of a single event application. Since kernel transitions are deterministic and diffs are derived without side effects, incremental application of diffs reconstructs the same representative-normalized state as direct replay of the log. Equivalence follows by induction on the length of $\ell$.
+\end{proof}
+
+\begin{proposition}[Merge Confluence]
+The final equivalence relation induced by a set of MERGE events is independent of their order.
+\end{proposition}
+
+\begin{proposition}[View Consistency]
+Derived views that collapse non-representative objects preserve semantic equivalence.
+\end{proposition}
+
+% ==================================================
+\section{Meta-Theorem: Functoriality of Derived Views}
+% ==================================================
+
+The core philosophical discipline of Spherepop OS is the separation of \emph{cause} (events) from \emph{views} (snapshots, diffs, geometry). The following meta-theorem states this separation as a functoriality principle: any admissible view is a structure-preserving map out of the event-sourced semantics.
+
+\subsection{Event Prefix Category}
+
+\begin{definition}[Prefix Category]
+Fix an event log $\ell = (e_1,e_2,\ldots)$. Define the \emph{prefix category} $\mathbf{Pref}(\ell)$ as follows.
+\begin{itemize}
+\item Objects are natural numbers $n \in \mathbb{N}$, interpreted as prefixes $\ell_{\le n} := (e_1,\ldots,e_n)$.
+\item There is a unique morphism $m_{n\to n+k}: n \to n+k$ for each $k\ge 0$, representing prefix extension by $k$ events.
+\item Composition is given by addition: $m_{n\to n+k}\circ m_{n+k\to n+k+j}= m_{n\to n+k+j}$.
+\end{itemize}
+\end{definition}
+
+\subsection{State Semantics as a Functor}
+
+\begin{definition}[State Semantics]
+Let $\mathbf{State}$ be the category whose objects are kernel states $\sigma$ and whose morphisms are deterministic state updates induced by event application.
+Define the \emph{state semantics functor}
+\[
+\mathsf{S}_\ell : \mathbf{Pref}(\ell) \to \mathbf{State}
+\]
+by $\mathsf{S}_\ell(n) := \sigma_n$, the state obtained by replaying $\ell_{\le n}$ from $\sigma_0$, and by mapping each generator $m_{n\to n+1}$ to the single-step transition
+\[
+\sigma_n \xrightarrow{e_{n+1}} \sigma_{n+1}.
+\]
+\end{definition}
+
+\begin{proposition}[Functoriality of Replay]
+The assignment $\mathsf{S}_\ell$ is a functor.
+\end{proposition}
+
+\begin{proof}
+Identity morphisms correspond to applying zero events and therefore map to identity state updates. Composition in $\mathbf{Pref}(\ell)$ corresponds to sequential event application, which equals composition of deterministic transitions in $\mathbf{State}$ by definition.
+\end{proof}
+
+\subsection{Derived Views}
+
+\begin{definition}[Admissible View]
+\label{def:admissible-view}
+An \emph{admissible view} is any functor
+\[
+\mathsf{V} : \mathbf{State} \to \mathbf{View}
+\]
+into some category of observer representations $\mathbf{View}$ (e.g.\ JSON graphs, NDJSON diffs, geometric layouts), such that $\mathsf{V}$ is \emph{non-interfering}: it does not feed back into $\mathsf{S}_\ell$.
+\end{definition}
+
+\begin{theorem}[View Functoriality Meta-Theorem]
+\label{thm:view-functoriality}
+For any log $\ell$ and any admissible view functor $\mathsf{V}:\mathbf{State}\to\mathbf{View}$, the composite
+\[
+\mathsf{V}\circ\mathsf{S}_\ell : \mathbf{Pref}(\ell) \to \mathbf{View}
+\]
+exists and is a functor. In particular:
+\begin{enumerate}[label=(\roman*)]
+\item \textbf{Causal Respect:} view updates compose according to event order;
+\item \textbf{Snapshot Coherence:} $\mathsf{V}(\sigma_n)$ is uniquely determined by the prefix $\ell_{\le n}$;
+\item \textbf{Transport Independence:} any two admissible transports realizing the same $\mathsf{V}$ are observationally equivalent;
+\item \textbf{Gauge Freedom:} if $\mathsf{V}$ quotients by a metadata gauge (e.g.\ layout hints), semantic content is preserved.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+Since $\mathsf{S}_\ell$ is a functor and $\mathsf{V}$ is a functor, their composite is a functor. Items (i)--(iv) are immediate restatements: functoriality enforces respect for composition (event order), object mapping enforces prefix-determined snapshots, transport choices refine the same arrow in $\mathbf{View}$, and gauge quotienting corresponds to functoring into a category that identifies gauge-equivalent metadata.
+\end{proof}
+
+\begin{corollary}[Diffs and Snapshots as Two Views]
+Let $\mathsf{V}_{\mathrm{snap}}$ be the view that serializes full state (snapshot) and $\mathsf{V}_{\mathrm{diff}}$ be the view that serializes incremental changes. Both are admissible views, hence both factor functorially through $\mathsf{S}_\ell$. The Replay Equivalence theorem is the statement that these two views agree on semantic content up to the observer's equivalence relation.
+\end{corollary}
+
+\begin{corollary}[Late-Joiner Correctness]
+\label{cor:late-joiner}
+A late-joining observer that first receives $\mathsf{V}_{\mathrm{snap}}(\sigma_k)$ and then receives $\mathsf{V}_{\mathrm{diff}}$ for subsequent events reconstructs the same view as an observer that applied $\mathsf{V}_{\mathrm{diff}}$ from the beginning.
+\end{corollary}
+
+% ==================================================
+\section{Diffs and Incremental Observation}
+% ==================================================
+
+While the log is authoritative, clients require efficient incremental observation.
+
+\begin{definition}[Diff]
+A diff is a derived, non-authoritative description of how kernel state changes as a result of applying a single event.
+\end{definition}
+
+Diffs may include object additions, removals, relation changes, or metadata updates. They are broadcast to observers but are never logged themselves.
+
+\begin{axiom}[View Non-Interference]
+Diffs do not influence kernel state and may be dropped, reordered, or ignored by observers without affecting correctness.
+\end{axiom}
+
+This separation permits high-frequency visualization without compromising determinism.
+
+% ==================================================
+\section{Snapshots as Derived Views}
+% ==================================================
+
+\begin{definition}[Snapshot]
+A snapshot is a complete serialization of kernel state derived by replaying a prefix of the event log.
+\end{definition}
+
+Snapshots are used for bootstrapping late-joining clients and for historical inspection.
+
+\begin{proposition}[Snapshot Purity]
+\label{prop:snapshot-purity}
+Snapshots introduce no new information beyond what is contained in the log prefix they represent.
+\end{proposition}
+
+Snapshots are never logged and never assigned sequence identifiers. They are observational artifacts only.
+
+% ==================================================
+\section{Seekable Time and Historical Inspection}
+% ==================================================
+
+Spherepop OS supports time navigation by allowing clients to request snapshots at arbitrary past EIDs.
+
+\begin{definition}[Seek-to-EID Snapshot]
+A seekable snapshot is a snapshot derived by replaying the log up to a specified EID.
+\end{definition}
+
+This operation is implemented using a temporary kernel instance, ensuring isolation from live state.
+
+\begin{corollary}
+Historical inspection cannot affect the present state of the system.
+\end{corollary}
+
+% ==================================================
+\section{Speculative Branches}
+\label{sec:speculative-branches}
+% ==================================================
+
+Speculation is treated as a local, non-authoritative overlay.
+
+\begin{definition}[Speculative Branch]
+A speculative branch consists of a base EID and a client-local overlay log of hypothetical events.
+\end{definition}
+
+Branches are replayed by applying the authoritative log up to the base EID, followed by the overlay events. Branches may be discarded or rebased freely.
+
+\begin{axiom}[Speculative Isolation]
+\label{ax:speculative-isolation}
+Speculative events have no effect on authoritative state unless explicitly re-submitted as proposals.
+\end{axiom}
+
+This design permits safe exploration without timeline pollution.
+
+% ==================================================
+\section{Layout and Geometry as Metadata}
+%=================================================
+
+Spherepop OS distinguishes sharply between semantic structure and geometric presentation.
+
+\begin{definition}[Layout Hint]
+A layout hint is non-causal metadata attached to an object, expressing advisory geometric information such as position, scale, or clustering intent.
+\end{definition}
+
+Layout hints may be modified freely by clients and are never interpreted by the kernel as semantic operations.
+
+\begin{proposition}
+Geometry in Spherepop OS is a gauge choice, not a semantic constraint.
+\end{proposition}
+
+This permits rich visualization while preserving semantic invariants.
+
+% ==================================================
+\section{Arbiter and Collaboration Model}
+% ==================================================
+
+The arbiter is responsible for assigning sequence identifiers and appending events to the log.
+
+\begin{definition}[Arbiter]
+The arbiter is the sole authority permitted to commit events to the log.
+\end{definition}
+
+Clients submit proposals, which are either accepted and sequenced or rejected. Accepted proposals are broadcast as diffs to all observers, including the originator.
+
+\begin{axiom}[Single Sequencer]
+\label{ax:single-sequencer}
+There exists exactly one arbiter per authoritative log.
+\end{axiom}
+
+This ensures total causal order.
+
+% ==================================================
+\section{Reduction of OS Events to the Causal Calculus}
+\label{sec:reduction}
+%=================================================
+
+The preceding sections specified six kernel event types --- POP, MERGE, LINK, UNLINK, COLLAPSE, SET\_META --- as primitive to the operational semantics of Section~5. This section establishes that only two of them, POP and COLLAPSE, are primitive in the stronger sense of corresponding directly to Spherepop's underlying causal calculus, whose four operators are Pop, Refuse, Bind, and Collapse. The remaining four kernel events are typed compositions over that calculus, and one of them, SET\_META, is not a composition over it at all. Stating this precisely narrows the completeness claim this specification has been informally trading on: the four-operator calculus is complete for causal history transformation, not for every event the kernel exposes.
+
+\subsection{The Term Grammar, Extended}
+
+The causal calculus's term grammar types judgments of the form $\Gamma \vdash t : \mathsf{State}$ under rules for state-introduction, $\mathrm{Bind}$, $\mathrm{Pop}$, $\mathrm{Refuse}$, $\mathrm{Collapse}$, and sequential composition. That grammar is single-history throughout: no rule combines two independently constructed terms $t_1, t_2$ into one. LINK and MERGE both require exactly this, and the calculus's own framing --- histories compose via the tensor product of a strict monoidal category --- already asserts the operation exists without supplying its typing rule. We supply it here.
+
+\begin{axiom}[Tensor Composition]
+\label{ax:tensor}
+For $\Gamma \vdash t_1 : \mathsf{State}$ and $\Gamma \vdash t_2 : \mathsf{State}$,
+\[
+\dfrac{\Gamma \vdash t_1 : \mathsf{State} \qquad \Gamma \vdash t_2 : \mathsf{State}}
+{\Gamma \vdash t_1 \otimes t_2 : \mathsf{State}}
+\quad \text{(tensor)}
+\]
+$t_1 \otimes t_2$ denotes the joint state whose option space and history are the monoidal composition of $t_1$'s and $t_2$'s, in the sense already named, but not formalized, in the companion essay's discussion of concurrency as composition of histories.
+\end{axiom}
+
+\begin{proposition}[Tensor Is Structural, Not Causal]
+\label{prop:tensor-structural}
+$\otimes$ is not a fifth causal operator alongside Pop, Refuse, Bind, and Collapse. It performs no selection, rejection, narrowing, or projection on any option space; it constructs the multi-history term on which those four operators subsequently act. Its addition to the grammar does not enlarge the causal algebra, in the same sense that the pre-existing sequence rule does not.
+\end{proposition}
+\begin{proof}
+Immediate from Axiom~\ref{ax:tensor}'s premises and conclusion sharing the same type $\mathsf{State}$: $\otimes$ introduces no new judgment form, no new observable type, and no rule targeting $\mathsf{Opt}$ or $H$ directly. It is a structural rule in the same sense sequence is, differing only in combining two terms rather than ordering one term after another.
+\end{proof}
+
+\subsection{POP and COLLAPSE as Already Primitive}
+
+\begin{proposition}[POP Reduces Trivially]
+\label{prop:pop-trivial}
+Kernel event $\mathrm{POP}(o)$, object creation, is the causal term $\mathrm{Pop}_{\mathrm{exists}}\big(\mathrm{Bind}_{\mathrm{true}}(\{\mathrm{exists}_o, \mathrm{absent}_o\})\big)$: a trivial Bind over the unconditionally admissible two-element option space \{exists, absent\}, followed by a Pop committing existence. No structural composition is required, since object creation concerns a single new identity rather than a relation between existing ones.
+\end{proposition}
+
+\begin{proposition}[COLLAPSE Reduces to Collapse Plus an Identity-Designation Step]
+\label{prop:collapse-already}
+Kernel event $\mathrm{COLLAPSE}(S, o_r)$ is $\mathrm{Collapse}\big(\bigotimes_{o \in S} H_o\big)$ --- an instance of the causal $\mathrm{Collapse}$ operator applied to a tensor-composed region history --- together with an external identity-designation step selecting $o_r$ as the representative for every $o \in S$, recorded in the kernel-state update $U'(\mathrm{rep}(o)) = \mathrm{rep}(o_r)$ (Section~5.7).
+\end{proposition}
+\begin{proof}
+The projection $\mathrm{Collapse}(\bigotimes_{o\in S} H_o)$ accounts for the observable value produced by bulk collapse, exactly as the causal Collapse operator is defined. It does not account for $U'$'s reassignment of every $o \in S$'s representative to $o_r$: by Proposition~\ref{prop:tensor-structural}, $\otimes$ is silent on identity, and nothing in the causal Collapse operator's own definition (Definition~\ref{def:state-extended}, Axiom~\ref{ax:frame}) specifies which of several composed objects' identities should be designated canonical afterward. Choosing $o_r$ is therefore an external policy decision, structurally identical to the one Proposition~\ref{prop:merge-identity} already found necessary for MERGE, here generalized from a pair to an arbitrary finite $S$.
+\end{proof}
+
+\begin{corollary}[COLLAPSE Is Hybrid, Not Directly Primitive]
+\label{cor:collapse-hybrid}
+Kernel event $\mathrm{COLLAPSE}(S,o_r)$ is not directly primitive in the sense Proposition~\ref{prop:pop-trivial} shows POP to be. It is derived, combining the causal Collapse operator, the structural tensor rule, and an identity-designation policy external to both --- the same three-part hybrid structure Proposition~\ref{prop:merge-identity} established for MERGE, not a clean single-primitive reduction.
+\end{corollary}
+\begin{proof}
+Immediate from Proposition~\ref{prop:collapse-already}: the kernel event's full behavior requires the identity-designation step in addition to the causal Collapse operator and tensor composition, so no single causal primitive alone accounts for it, unlike POP (Proposition~\ref{prop:pop-trivial}).
+\end{proof}
+
+This corrects a classification error in an earlier draft of this reduction table, which treated kernel COLLAPSE as directly primitive alongside POP. It is not: only POP is primitive among the six kernel event types without further qualification.
+
+\subsection{LINK}
+
+\begin{definition}[LINK Reduction]
+\label{def:link-reduction}
+\[
+\mathrm{LINK}(a,b,r) \;:=\;
+\mathrm{Collapse}\Big(
+\mathrm{Refuse}_{r'}\big(
+\mathrm{Pop}_{r(a,b)}\big(
+\mathrm{Bind}_{C_r}(H_a \otimes H_b)
+\big)
+\big)
+\Big)
+\]
+where $C_r$ is the admissibility condition for relation type $r$, and $r'$ ranges over any relation candidates excluded from the current option space by the choice of $r(a,b)$ (empty when $r$ is not exclusive with any sibling relation type).
+\end{definition}
+
+\begin{proposition}[LINK Well-Typedness]
+\label{prop:link-typed}
+$\mathrm{LINK}(a,b,r)$ is well-typed under Axiom~\ref{ax:tensor} and the bind, pop, refuse, and collapse rules of the causal calculus, given $\Gamma \vdash H_a : \mathsf{State}$ and $\Gamma \vdash H_b : \mathsf{State}$.
+\end{proposition}
+\begin{proof}
+By Axiom~\ref{ax:tensor}, $H_a \otimes H_b : \mathsf{State}$. Bind applies $C_r$ to the resulting option space, typed by the bind rule. Pop commits $r(a,b)$ from the filtered space, typed by the pop rule provided $r(a,b)$ is admissible under $C_r$. Refuse discharges any excluded sibling $r'$ against the original unfiltered option space, per the causal calculus's stated division between Bind's filtering and Refuse's recording. Collapse projects the result to $\mathsf{Obs}$, typed by the collapse rule. Each step is licensed by an existing or newly supplied grammar rule; no untyped step occurs.
+\end{proof}
+
+\subsection{UNLINK}
+
+\begin{definition}[UNLINK Reduction]
+\label{def:unlink-reduction}
+\[
+\mathrm{UNLINK}(a,b,r) \;:=\;
+\mathrm{Collapse}\Big(
+\mathrm{Pop}_{\mathrm{revoke}_r}\big(
+\mathrm{Bind}_{f_{\mathrm{valid}}}\big(
+H_{a,b} \oplus \{\mathrm{revoke}_r, \mathrm{retain}_r\}
+\big)
+\big)
+\Big)
+\]
+where $H_{a,b}$ is the joint history already containing the prior $\mathrm{Pop}_{r(a,b)}$ from a previous LINK, and $\{\mathrm{revoke}_r, \mathrm{retain}_r\}$ is a freshly opened option space concerning the relation's continued standing.
+\end{definition}
+
+\begin{proposition}[UNLINK Does Not Erase]
+\label{prop:unlink-nonerasure}
+$\mathrm{UNLINK}(a,b,r)$ never removes, rewrites, or targets the earlier $\mathrm{Pop}_{r(a,b)}$ event. $H_{a,b}$ after $\mathrm{UNLINK}$ strictly contains every event it contained before, plus $\mathrm{Pop}_{\mathrm{revoke}_r}$.
+\end{proposition}
+\begin{proof}
+$\mathrm{Refuse}$'s typing rule requires its target to lie in the \emph{current} option space $\mathrm{Opt}_t$; an event already committed via Pop has left $\mathrm{Opt}_t$ and entered $H_t$, and is therefore not a legal target for Refuse under the grammar as given. Definition~\ref{def:unlink-reduction} accordingly does not attempt to Refuse the original Pop; it opens a disjoint, freshly introduced option space and commits within that. No rule in the grammar permits deletion from or rewriting of $H_t$; append is the only operation the grammar exposes on history.
+\end{proof}
+
+Which of two conflicting Pop events concerning the same relation slot is reported in the operational (i.e. Collapsed) state is a modeling choice, not a fact forced by the four primitives --- exactly as the companion essay's own worked example leaves the collapse rule uninstantiated at the level of the core grammar. This specification adopts \emph{most-recent-event precedence} as its collapse rule for relation slots: a $\mathrm{Collapse}$ over $H_{a,b}$ reports the relation as active if the most recent event tagged $r(a,b)$ or $\mathrm{revoke}_r$ in $H_{a,b}$ is a Pop of the former, and inactive if it is a Pop of the latter. This rule is stated here as an explicit application-layer choice, not derived from Pop/Refuse/Bind/Collapse themselves.
+
+\subsection{MERGE}
+
+\begin{definition}[MERGE Reduction]
+\label{def:merge-reduction}
+\[
+\mathrm{MERGE}(o_1,o_2) \;:=\;
+\mathrm{Collapse}\Big(
+\mathrm{Refuse}_{\mathrm{distinct}}\big(
+\mathrm{Bind}_{f_{\mathrm{compat}}}(H_{o_1} \otimes H_{o_2})
+\big)
+\Big)
+\]
+where $f_{\mathrm{compat}}$ filters the composed option space to continuations consistent with treating $o_1$ and $o_2$ as identical, and $\mathrm{Refuse}_{\mathrm{distinct}}$ records the elimination of the alternative in which they remain separate.
+\end{definition}
+
+\begin{proposition}[MERGE Requires Identity Absorption Beyond Tensor]
+\label{prop:merge-identity}
+Definition~\ref{def:merge-reduction} alone is insufficient to specify $\mathrm{MERGE}$'s effect on kernel state, because $\otimes$ (Axiom~\ref{ax:tensor}) composes two histories without asserting anything about the immutable identities $I(o_1)$ and $I(o_2)$ underlying them. $\mathrm{MERGE}$ additionally requires that one representative's identity be designated to resolve future references to both, matching the union--find update $U'(\mathrm{rep}(o_2)) = \mathrm{rep}(o_1)$ already given for the MERGE rule in Section~5.4.
+\end{proposition}
+\begin{proof}
+By Axiom~\ref{ax:tensor}, $H_{o_1} \otimes H_{o_2}$ is well-typed and yields a single composed $\mathsf{State}$, but tensor's definition places no constraint on $I$; it is silent on identity by construction, since it is a structural rule (Proposition~\ref{prop:tensor-structural}) rather than a causal one. A term satisfying Definition~\ref{def:merge-reduction} can therefore be well-typed while leaving unresolved which of $I(o_1)$, $I(o_2)$ a future LINK or query should resolve through. Some additional assignment, external to the four primitives and to $\otimes$, is required to designate the surviving representative --- precisely the role Section~5.4's union--find update already plays operationally, here made explicit as a necessary supplement to, not a consequence of, the causal reduction.
+\end{proof}
+
+\subsection{SET\_META}
+
+\begin{proposition}[SET\_META Is Outside the Causal Algebra]
+\label{prop:setmeta-boundary}
+$\mathrm{SET\_META}(o,k,v)$ admits no well-typed reduction to a composition of Pop, Refuse, Bind, Collapse, and $\otimes$.
+\end{proposition}
+\begin{proof}
+Every rule in the causal grammar --- bind, pop, refuse, collapse, sequence, and tensor (Axiom~\ref{ax:tensor}) --- is defined over $\mathsf{State}$ terms whose meaning is given in terms of an option space and a history. By Section~5's own kernel semantics, $\mathrm{SET\_META}(o,k,v)$ updates $M$ alone and leaves $O$, $U$, and $R$ unchanged, meaning it modifies no option space and appends nothing causally observable to any $H_o$. Forcing a reduction would require introducing a fictitious option space with a single admissible candidate purely to give the event a place in the grammar, which is exactly the ``hidden state or new semantics'' the completeness claim is required not to smuggle in. No such reduction is therefore given, and none should be.
+\end{proof}
+
+This is consistent with, rather than a defect of, the kernel state definition $\sigma = (O,U,R,M)$ given in Section~5.1: $M$ was already kept structurally separate from $(O,U,R)$, and Section~13's treatment of Layout Hints as ``a gauge choice, not a semantic constraint'' already anticipates exactly this exclusion for a different class of metadata.
+
+\subsection{The Boundary, Stated}
+
+\begin{theorem}[Scope of the Four-Primitive Completeness Claim]
+\label{thm:completeness-scope}
+Spherepop OS has four primitive causal operators: Pop, Refuse, Bind, and Collapse. Of the six kernel event types, only POP is directly primitive without qualification. LINK and UNLINK are typed compositions over histories constructed using structural rules --- sequence and tensor --- that are not themselves causal operators (Proposition~\ref{prop:tensor-structural}). MERGE and kernel COLLAPSE are hybrid: each requires that same structural composition \emph{plus} an identity-designation step external to the four primitives and to tensor alike (Propositions~\ref{prop:merge-identity}, \ref{prop:collapse-already}) --- kernel COLLAPSE, despite sharing a name with the causal Collapse primitive, is not a direct instance of it, but the $n$-ary generalization of MERGE. SET\_META is not derived from the four primitives at all, because it operates on the non-causal annotation channel $M$, outside the option-space algebra (Proposition~\ref{prop:setmeta-boundary}). The four-primitive completeness claim therefore applies to causal history transformation, not to every operation exposed by the operating-system interface, and applies without qualification to only one of the six kernel event types.
+\end{theorem}
+\begin{proof}
+Immediate from Propositions~\ref{prop:pop-trivial}, \ref{prop:collapse-already} and its Corollary~\ref{cor:collapse-hybrid}, \ref{prop:link-typed}, \ref{prop:unlink-nonerasure}, \ref{prop:merge-identity}, and \ref{prop:setmeta-boundary}, which jointly classify all six kernel event types: one primitive without further qualification (POP); two derived via structural composition alone (LINK, UNLINK); two hybrid, requiring structural composition plus an identity-designation step external to the causal algebra proper (MERGE, COLLAPSE); and one excluded outright (SET\_META).
+\end{proof}
+
+% ==================================================
+\section{Branch as a Structural Rule}
+\label{sec:branch}
+%=================================================
+
+Section~\ref{sec:reduction} supplied tensor (Axiom~\ref{ax:tensor}) as the structural rule composing independently constructed histories into one term. fork and speculative execution both need the reverse relationship: one existing history giving rise to two, sharing an immutable prefix and diverging afterward. Nothing in the grammar as extended so far supplies this. This section adds it as its own structural rule, Branch, deliberately not reusing tensor and deliberately not typed as an unconstrained Cartesian pair.
+
+\subsection{The Branch Judgment}
+
+\begin{definition}[Branch]
+\label{def:branch-judgment}
+Branch introduces a distinguished judgment form rather than an ordinary product type:
+\[
+\dfrac{\Gamma \vdash t : \mathsf{State}}
+{\Gamma \vdash t \Longrightarrow_e (t_p, t_c) : \mathsf{Branch}}
+\quad \text{(branch)}
+\]
+with elimination rules recovering each projection as an ordinary state term:
+\[
+\dfrac{\Gamma \vdash (t_p,t_c) : \mathsf{Branch}}{\Gamma \vdash \pi_p(t_p,t_c) : \mathsf{State}}
+\qquad
+\dfrac{\Gamma \vdash (t_p,t_c) : \mathsf{Branch}}{\Gamma \vdash \pi_c(t_p,t_c) : \mathsf{State}}
+\]
+The subscript $e$ names the branch event distinguishing this application of the rule from any other branching of the same $t$.
+\end{definition}
+
+The judgment form exists precisely so that $\mathsf{Branch}$ can carry an invariant $\mathsf{State}\times\mathsf{State}$ cannot: that $t_p$ and $t_c$ are not an arbitrary pair of states but two continuations of one prior history. The typing rules alone do not yet enforce this --- they only give the pair a place to be typed correctly. The enforcement is a separate axiom.
+
+\begin{axiom}[Branch Prefix Coherence]
+\label{ax:branch-coherence}
+If $\Gamma \vdash t \Longrightarrow_e (t_p,t_c) : \mathsf{Branch}$, then
+\[
+H_{t_p}\!\restriction_{|H_t|} \;=\; H_{t_c}\!\restriction_{|H_t|} \;=\; H_t.
+\]
+Both projections' histories, truncated to the length $H_t$ had at the moment of branching, equal $H_t$ exactly. Events appended after the branch point are unconstrained by this axiom and may differ freely between $t_p$ and $t_c$.
+\end{axiom}
+
+Without Axiom~\ref{ax:branch-coherence}, Definition~\ref{def:branch-judgment} would license exactly the unconstrained pairing this section exists to avoid, merely relocated behind a new type name. With it, ``$\mathsf{Branch}$'' names a real invariant rather than asserting one.
+
+\subsection{Identity Is Left Open by Branch}
+
+\begin{proposition}[Branch Does Not Resolve Identity]
+\label{prop:branch-identity-open}
+Definition~\ref{def:branch-judgment} and Axiom~\ref{ax:branch-coherence} impose no constraint on $I(t_p)$ or $I(t_c)$ relative to $I(t)$.
+\end{proposition}
+\begin{proof}
+Neither the branch rule nor the coherence axiom mentions $I$; both are stated entirely in terms of $\mathsf{State}$ typing and $H$. This is the same gap Proposition~\ref{prop:merge-identity} identified for tensor: a structural rule concerning histories is silent on identity by construction, and silence is not a default value.
+\end{proof}
+
+This silence is deliberate rather than an oversight to be patched uniformly, because Branch serves two consumers with opposite identity requirements. fork (Section~\ref{sec:process-management}) needs $\pi_p$ to inherit $I(t)$ unchanged --- the parent continues under its existing identity --- while $\pi_c$ receives a freshly minted identity distinct from every identity currently in scope, since the child is a new process. Speculative execution needs the opposite policy: both $\pi_p$ and $\pi_c$ retain $I(t)$, because a speculative branch is an alternative continuation of the \emph{same} object under consideration, not the creation of a second one. A single Branch Identity Axiom fixed at this level of generality would be wrong for one of these two consumers no matter which policy it chose. Identity policy is therefore supplied at each use site, not by Branch itself; Section~\ref{sec:process-management} states fork's policy explicitly when fork is defined.
+
+\subsection{Branch and Tensor Are Not Inverse}
+
+\begin{proposition}[Non-Invertibility]
+\label{prop:branch-tensor-noninverse}
+For $\Gamma \vdash t \Longrightarrow_e (t_p,t_c) : \mathsf{Branch}$, $t_p \otimes t_c \neq t$ in general.
+\end{proposition}
+\begin{proof}
+By Axiom~\ref{ax:branch-coherence}, $H_{t_p}$ and $H_{t_c}$ agree with $H_t$ only up to $|H_t|$; each may accumulate independent events beyond that point once $\pi_p(t_p,t_c)$ and $\pi_c(t_p,t_c)$ are used separately. Tensor (Axiom~\ref{ax:tensor}) composes $t_p$ and $t_c$ into a joint state whose history is their monoidal composition, containing both post-branch extensions rather than discarding either. Whenever either projection has accumulated at least one event beyond the branch point, $H_{t_p \otimes t_c}$ strictly contains $H_t$, so $t_p \otimes t_c \neq t$. Equality holds only in the degenerate case where neither projection has yet been extended, which is not the general case this proposition concerns.
+\end{proof}
+
+Branch and tensor have opposite arities --- $\mathrm{Branch}: 1 \to 2$ against $\otimes : 2 \to 1$ --- and it is tempting on that basis alone to call them inverse. Proposition~\ref{prop:branch-tensor-noninverse} shows this is the wrong reading. Composing two branches back together does not undo the branch; it produces a new state recording both continuations, their shared ancestry, and their divergence, which is a richer object than the pre-branch $t$, not a return to it. wait (Section~\ref{sec:process-management}) depends on exactly this: it recomposes parent and child via $\otimes$ specifically \emph{because} that recomposition preserves what each side did independently, rather than erasing it to reconstruct a single prior state that no longer corresponds to what either process has since done.
+
+\subsection{Relation to Speculative Branches}
+
+The Speculative Branch mechanism specified in Section~\ref{sec:speculative-branches} --- a base EID plus a client-local overlay log, retained until explicitly resubmitted or discarded --- is Definition~\ref{def:branch-judgment} under a different name, arrived at operationally before this section gave it a typing discipline. The base EID is the branch point at which Axiom~\ref{ax:branch-coherence} anchors agreement; the authoritative continuation and the speculative overlay are $\pi_p$ and $\pi_c$; and Axiom~\ref{ax:speculative-isolation} (Speculative Isolation) --- no effect on authoritative state unless resubmitted --- is the statement that $\pi_c$ remains an unresolved projection of an unresolved $\mathsf{Branch}$ term until some later event promotes it. Nothing in this section changes that mechanism's behavior; it gives the mechanism a place in the calculus rather than leaving it as a kernel-level convenience with no corresponding causal term.
+
+% ==================================================
+\section{Process Management as Derived Kernel Functions}
+\label{sec:process-management}
+%=================================================
+
+Process management is the first derived-function layer to draw on both structural rules established so far: tensor (Section~\ref{sec:reduction}) for wait, and Branch (Section~\ref{sec:branch}) for fork. Per Theorem~\ref{thm:completeness-scope}'s stated boundary, nothing in this section enlarges the causal basis; every operation defined here is a typed composition over Pop, Refuse, Bind, Collapse, sequence, and tensor/Branch.
+
+\subsection{Process}
+
+\begin{definition}[Process]
+\label{def:process}
+A process is a tuple $\pi = (I_\pi, H_\pi, \mathrm{Opt}_\pi, \mathrm{Res}_\pi)$: an immutable identity $I_\pi$, a causal history $H_\pi$, a current admissible option space $\mathrm{Opt}_\pi$, and a set of owned resource objects $\mathrm{Res}_\pi \subseteq O$. The process's current observable state is $\mathrm{Collapse}(H_\pi)$.
+\end{definition}
+
+This is Definition~\ref{def:namespace-renderer-v2}'s object of study given a concrete inhabitant: a process is exactly the kind of continuing $\mathsf{State}$ term the causal calculus was built to describe, with $\mathrm{Res}_\pi$ naming which objects in $O$ the process's subsequent Binds and Pops are entitled to act on.
+
+\subsection{fork}
+
+\begin{axiom}[Fork Identity]
+\label{ax:fork-identity}
+For $H_\pi \Longrightarrow_e (t_p, t_c) : \mathsf{Branch}$ invoked by fork, $I(\pi_p(t_p,t_c)) = I_\pi$ unchanged, and $I(\pi_c(t_p,t_c)) = I_{\mathrm{new}}$, a freshly assigned identity distinct from every identity currently in scope.
+\end{axiom}
+
+This is the use-site policy Proposition~\ref{prop:branch-identity-open} left open: fork is the consumer of Branch for which the parent continues under its existing identity and the child is genuinely new.
+
+\begin{definition}[fork]
+\label{def:fork}
+$\mathrm{fork}(\pi)$ invokes $H_\pi \Longrightarrow_e (t_p,t_c) : \mathsf{Branch}$, and produces two process records:
+\[
+\pi' = (I_\pi, \pi_p(t_p,t_c), \mathrm{Opt}_\pi, \mathrm{Res}_\pi), \qquad
+\pi_{\mathrm{child}} = (I_{\mathrm{new}}, \pi_c(t_p,t_c), \mathrm{Opt}_\pi, \mathrm{Res}_\pi)
+\]
+per Axiom~\ref{ax:fork-identity}, both option spaces and resource sets initialized identically at the branch point.
+\end{definition}
+
+\begin{proposition}[Resource Visibility at the Branch Point]
+\label{prop:fork-resource-visibility}
+Every $o \in \mathrm{Res}_\pi$ at the moment of $\mathrm{fork}$ is visible, with identical history, to both $\pi'$ and $\pi_{\mathrm{child}}$ immediately after forking; subsequent Binds or Pops asserting exclusive ownership over any such $o$ may diverge independently between the two.
+\end{proposition}
+\begin{proof}
+Immediate from Axiom~\ref{ax:branch-coherence}: $H_{t_p}$ and $H_{t_c}$ agree with $H_\pi$ up to $|H_\pi|$, and every $o \in \mathrm{Res}_\pi$ has its history up to the branch point recorded within $H_\pi$ by Definition~\ref{def:process}. Divergence after the branch point follows from Proposition~\ref{prop:branch-tensor-noninverse}, which places no constraint on events appended past $|H_\pi|$.
+\end{proof}
+
+Resource \emph{reconciliation} after divergent post-fork ownership claims --- what happens if both $\pi'$ and $\pi_{\mathrm{child}}$ independently Bind exclusive access to the same $o \in \mathrm{Res}_\pi$ --- is not resolved by this proposition and is left to the scheduler's arbitration (Section~\ref{sec:scheduling}), which is the general mechanism for adjudicating competing Binds regardless of whether the competitors arose from a common fork.
+
+\subsection{exec}
+
+\begin{definition}[exec]
+\label{def:exec}
+$\mathrm{exec}(\pi, \mathit{img}) := (I_\pi,\; \mathrm{Pop}_{\mathrm{image}=\mathit{img}}(H_\pi),\; \mathrm{Opt}_{\mathit{img}},\; \mathrm{Res}_\pi)$, replacing $\pi$'s option space with the one appropriate to the new image while appending, not replacing, its history.
+\end{definition}
+
+\begin{proposition}[exec Does Not Erase Prior Image History]
+\label{prop:exec-nonerasure}
+$H_\pi$ after $\mathrm{exec}$ strictly contains $H_\pi$ before it.
+\end{proposition}
+\begin{proof}
+Immediate from the pop rule: $\mathrm{Pop}_a(t)$ appends $a$ to $H_t$ and does not modify or remove any existing entry, by the same argument as Proposition~\ref{prop:unlink-nonerasure}.
+\end{proof}
+
+$I_\pi$ is unchanged by exec, matching the POSIX convention that exec preserves process identity while replacing the executing image --- here made structurally forced rather than a convention the implementation happens to follow, since nothing in the grammar permits $I$ to be reassigned mid-history.
+
+\subsection{exit}
+
+\begin{definition}[exit]
+\label{def:exit}
+$\mathrm{exit}(\pi, \mathit{code}) := \mathrm{Collapse}\Big(
+\mathrm{Pop}_{\mathrm{terminate}(\mathit{code})}\big(
+\mathrm{Bind}_{f_{\mathrm{valid}}}(H_\pi \oplus \{\mathrm{continue}, \mathrm{terminate}\})
+\big)\Big)$
+\end{definition}
+
+This is exit modeled exactly on the UNLINK reduction (Definition~\ref{def:unlink-reduction}): a freshly opened option space concerning $\pi$'s own continued standing, rather than an external relation's. It inherits UNLINK's non-erasure property by the same proof, and inherits UNLINK's honesty about the collapse rule being an application-layer choice: whether a namespace renderer treats a terminated process as absent, zombie, or reapable is governed by $\mathcal{R}$ (Definition~\ref{def:version-pinned}), not fixed by exit itself.
+
+\subsection{wait}
+
+\begin{definition}[wait]
+\label{def:wait}
+\[
+\mathrm{wait}(\pi_{\mathrm{parent}}, \pi_{\mathrm{child}}) :=
+\mathrm{Collapse}\Big(
+\mathrm{Pop}_{\mathrm{resume}}\big(
+\mathrm{Bind}_{f_{\mathrm{terminated}}}(H_{\pi_{\mathrm{parent}}} \otimes H_{\pi_{\mathrm{child}}})
+\big)
+\Big)
+\]
+where $f_{\mathrm{terminated}}(\mathrm{resume}) := \big[\exists\, \mathrm{terminate}(\mathit{code}) \in H_{\pi_{\mathrm{child}}} \text{-component of the joint term}\big]$.
+\end{definition}
+
+\begin{proposition}[wait Blocks Structurally, Not Operationally]
+\label{prop:wait-blocks}
+$\mathrm{resume} \notin \mathrm{Opt}'$ after $\mathrm{Bind}_{f_{\mathrm{terminated}}}$ whenever $\pi_{\mathrm{child}}$'s history contains no $\mathrm{terminate}(\cdot)$ event, and $\mathrm{Pop}_{\mathrm{resume}}$ is therefore inadmissible under the pop rule until the child terminates.
+\end{proposition}
+\begin{proof}
+By Bind's definition (bind rule), $f_{\mathrm{terminated}}$ filters $\mathrm{resume}$ out of $\mathrm{Opt}$ exactly when the existential condition is false, since $\mathrm{Opt}' = \{o \in \mathrm{Opt} : f(o)\}$. The pop rule requires its target to lie in $\mathrm{Opt}'$; $\mathrm{resume} \notin \mathrm{Opt}'$ makes $\mathrm{Pop}_{\mathrm{resume}}$ untypeable until re-evaluation of the Bind, after further child events, admits it.
+\end{proof}
+
+\begin{corollary}[wait Recomposes Without Inverting fork]
+\label{cor:wait-recomposes}
+$\mathrm{wait}$'s use of $\otimes$ to join $H_{\pi_{\mathrm{parent}}}$ and $H_{\pi_{\mathrm{child}}}$ does not reconstruct the pre-fork $H_\pi$; by Proposition~\ref{prop:branch-tensor-noninverse}, the joint term retains both processes' independent post-branch histories in full.
+\end{corollary}
+
+Proposition~\ref{prop:wait-blocks} is the precise sense in which wait blocks: not as an operational suspension the scheduler must special-case, but as an ordinary instance of Bind narrowing an option space to empty for the option under consideration, identical in kind to the scheduler's general admissibility filtering in Section~\ref{sec:scheduling} --- wait is the special case of scheduling arbitration where the admissibility condition happens to be phrased over another process's history rather than over priority or resource availability.
+
+% ==================================================
+\section{Scheduling}
+\label{sec:scheduling}
+%=================================================
+
+Section~\ref{sec:process-management}'s wait was shown, in Proposition~\ref{prop:wait-blocks}, to be an ordinary instance of Bind narrowing an option space to exclude an inadmissible candidate --- no special blocking mechanism was needed beyond what the grammar already had. Scheduling is the general case of that same pattern, applied across every runnable process rather than a single parent-child pair, and this section is correspondingly short: it generalizes rather than introduces.
+
+\subsection{The Runnable Set}
+
+\begin{definition}[Runnable Set]
+\label{def:runnable-set}
+At kernel state $\sigma$, let $\Pi_{\mathrm{run}}(\sigma) \subseteq \{\pi : \pi \text{ a process}\}$ be the processes not currently blocked by an empty admissible continuation set (per Proposition~\ref{prop:wait-blocks} or equivalent). The scheduling option space is constructed as
+\[
+\mathrm{Opt}_{\mathrm{sched}}(\sigma) = \Big\{\, \mathrm{continue}_\pi \;:\; \pi \in \Pi_{\mathrm{run}}(\sigma) \,\Big\}
+\]
+over the joint term $\bigotimes_{\pi \in \Pi_{\mathrm{run}}(\sigma)} H_\pi$, the $\otimes$-composition (Axiom~\ref{ax:tensor}, extended associatively to more than two terms) of every runnable process's history.
+\end{definition}
+
+The joint tensor is necessary rather than cosmetic: admissibility conditions below routinely need cross-process facts (whether a resource $o$ a candidate process wants is currently held elsewhere), which are not visible from any single $H_\pi$ in isolation.
+
+\subsection{Admissibility Versus Selection}
+
+\begin{definition}[Scheduling Reduction]
+\label{def:sched-reduction}
+\[
+\mathrm{schedule}(\sigma) := \mathrm{Collapse}\Big(
+\mathrm{Refuse}_{\{\pi' : \pi' \in \mathrm{Opt}_{\mathrm{sched}} \setminus \mathrm{Opt}'_{\mathrm{sched}}\}}\big(
+\mathrm{Pop}_{\mathrm{continue}_{\pi^*}}\big(
+\mathrm{Bind}_{f_{\mathrm{elig}}}\big(\textstyle\bigotimes_\pi H_\pi\big)
+\big)
+\big)
+\Big)
+\]
+where $f_{\mathrm{elig}}$ filters $\mathrm{Opt}_{\mathrm{sched}}$ to $\mathrm{Opt}'_{\mathrm{sched}}$ by dependency satisfaction, resource availability, and hard policy constraints (quota, permission), and $\pi^*$ is selected from $\mathrm{Opt}'_{\mathrm{sched}}$ by a priority function external to the grammar.
+\end{definition}
+
+\begin{proposition}[Priority Is Not Admissibility]
+\label{prop:priority-not-admissibility}
+The choice of $\pi^*$ from among several candidates surviving $\mathrm{Bind}_{f_{\mathrm{elig}}}$ is not itself a Bind, Pop, Refuse, or Collapse operation, and requires no Refuse for the candidates in $\mathrm{Opt}'_{\mathrm{sched}}$ not chosen.
+\end{proposition}
+\begin{proof}
+By the pop rule, $\mathrm{Pop}_a(t)$ requires only $a \in \mathrm{Opt}'_t$; it does not require that every other admissible option be separately disposed of. This matches the worked arithmetic example precedent: at a step where both options remain admissible after filtering, only the chosen option is Popped, and the unchosen one remains an unresolved element of the residual option space rather than being Refused. A candidate $\pi' \in \mathrm{Opt}'_{\mathrm{sched}} \setminus \{\mathrm{continue}_{\pi^*}\}$ therefore requires no Refuse; it remains eligible and may be selected on a future scheduling reduction.
+\end{proof}
+
+\begin{corollary}[Refuse Records Exactly the Filtered Set]
+\label{cor:refuse-exact}
+Definition~\ref{def:sched-reduction}'s Refuse targets exactly $\mathrm{Opt}_{\mathrm{sched}} \setminus \mathrm{Opt}'_{\mathrm{sched}}$ --- the candidates Bind's filter removed from admissibility --- and no others. This is forced by the grammar, not a scheduling policy choice: Refuse's typing rule requires its target to be drawn from the original unfiltered option space precisely because that option is no longer available for Pop, matching the causal calculus's stated division of labor between Bind's filtering and Refuse's recording.
+\end{corollary}
+
+Corollary~\ref{cor:refuse-exact} corrects the original specification's looser phrasing --- ``Refuse could record an explicitly rejected candidate when that rejection matters.'' Whether a rejection ``matters'' is not a judgment call available to the scheduler: any process failing $f_{\mathrm{elig}}$ (dependency unmet, resource unavailable, quota exceeded, permission revoked) is Refused, always; any process merely outranked by $\pi^*$ on priority is never Refused, always. History records every enforced exclusion and no mere non-selections, avoiding both silent rejection and an unbounded history of routine priority comparisons.
+
+\subsection{Rendering the Run Queue}
+
+Reading the current run queue or CPU allocation is a Collapse over $\bigotimes_\pi H_\pi$ exactly as every current-state read a mainstream system performs silently. What a mainstream system treats as an invisible implementation detail this specification makes an explicit, namespace-mediated operation: a run queue view is a namespace renderer (Definition~\ref{def:namespace-renderer-v2}) like any other, subject to Definition~\ref{def:compatibility-v2} if more than one namespace observes scheduling state, and to Proposition~\ref{prop:shared-library-suffices} if that observation is to be trusted across namespaces rather than merely within one.
+
+\subsection{Scheduling and Log Sequencing Are the Same Arbitration Pattern}
+
+\begin{proposition}[Arbiter Generalization]
+\label{prop:arbiter-generalization}
+The Arbiter's role (Section~\ref{sec:speculative-branches} and following) --- accepting or rejecting client proposals and assigning sequence identifiers --- is an instance of Definition~\ref{def:sched-reduction} with $\mathrm{Opt}_{\mathrm{sched}}$ replaced by the set of pending proposals, $f_{\mathrm{elig}}$ replaced by well-formedness and permission checking, and $\pi^*$ replaced by whichever proposal is sequenced next.
+\end{proposition}
+\begin{proof}
+Both reduce to the same shape: Bind filters a candidate set by an admissibility condition, Pop commits one survivor, Refuse records exactly the filtered-out remainder per Corollary~\ref{cor:refuse-exact}, and Collapse projects the result --- an assigned EID in the Arbiter's case, a scheduling decision here. Axiom~\ref{ax:single-sequencer} (exactly one arbiter per log) is the further constraint that exactly one entity performs this reduction for the authoritative log, which Definition~\ref{def:sched-reduction} does not itself require for CPU scheduling, since multiple schedulers across isolated namespaces may run the same reduction independently over disjoint $\Pi_{\mathrm{run}}$.
+\end{proof}
+
+This is not merely an analogy noted in passing. It means the syscall boundary (Section~\ref{sec:syscall}) requires no new reduction pattern of its own --- a syscall is a proposal, and that section proceeds by instantiating Definition~\ref{def:sched-reduction} rather than deriving a fourth version of the same structure from scratch.
+
+% ==================================================
+\section{The Syscall Boundary}
+\label{sec:syscall}
+%=================================================
+
+The original specification described a syscall informally: ``The kernel would Bind it against permissions and current constraints, Pop the accepted transition or Refuse the proposal, and Collapse the result into the value returned to the caller.'' Proposition~\ref{prop:arbiter-generalization} already showed this shape is not novel to syscalls --- it is the same arbitration pattern proven for scheduling and for the Arbiter's own sequencing role. This section instantiates that pattern precisely rather than re-deriving it, and states the one genuinely new content: what a syscall proposal is permitted to reference, which is where privilege separation actually lives in this calculus.
+
+\subsection{Syscall as a Degenerate Scheduling Reduction}
+
+\begin{definition}[Syscall Proposal]
+\label{def:syscall-proposal}
+A syscall proposal is a tuple $p = (\pi, \mathit{op}, \mathit{args})$: the requesting process $\pi$, a requested causal operation $\mathit{op}$ (itself a Bind, Pop, Refuse, or Collapse target), and $\mathit{args}$ referencing only fact keys in $K_{\mathrm{ns}(\pi)}(\sigma)$ (Definition~\ref{def:authorized-domain}), where $\mathrm{ns}(\pi)$ is $\pi$'s namespace.
+\end{definition}
+
+The restriction to $K_{\mathrm{ns}(\pi)}(\sigma)$ is not a permission check; it is a well-formedness condition on what the proposal can even be built to say. A process cannot propose an operation over an object it is not authorized to observe, independent of whether that operation would otherwise be permitted --- the two failure modes are kept distinct below.
+
+\begin{definition}[Syscall Reduction]
+\label{def:syscall-reduction}
+Let $\mathrm{Opt}_p = \{\mathrm{admit}_p\}$ and let $f_{\mathrm{perm}}(\mathrm{admit}_p)$ hold iff $p$ is well-formed per Definition~\ref{def:syscall-proposal} and satisfies the kernel's permission and capability constraints at $\sigma$. Then
+\[
+\mathrm{syscall}(p) :=
+\begin{cases}
+\mathrm{Collapse}\big(\mathrm{Pop}_{\mathrm{admit}_p}(\mathrm{Bind}_{f_{\mathrm{perm}}}(\mathrm{Opt}_p))\big) & \text{if } \mathrm{admit}_p \in \mathrm{Opt}_p',\\[4pt]
+\mathrm{Collapse}\big(\mathrm{Refuse}_{\mathrm{admit}_p}(\mathrm{Bind}_{f_{\mathrm{perm}}}(\mathrm{Opt}_p))\big) & \text{otherwise.}
+\end{cases}
+\]
+\end{definition}
+
+\begin{proposition}[Syscall Reduction Is a Degenerate Case of Definition~\ref{def:sched-reduction}]
+\label{prop:syscall-degenerate}
+Definition~\ref{def:syscall-reduction} is Definition~\ref{def:sched-reduction} with $|\mathrm{Opt}_{\mathrm{sched}}| = 1$: a single candidate, no priority selection required, admission and denial both handled by the same Bind-then-commit shape already proven for scheduling and for the Arbiter.
+\end{proposition}
+\begin{proof}
+Immediate by comparison of the two definitions: both filter a candidate set by an admissibility predicate via Bind, commit the admissible survivor via Pop, and record the excluded alternative via Refuse per Corollary~\ref{cor:refuse-exact}. Where Definition~\ref{def:sched-reduction} additionally selects $\pi^*$ from among several survivors, Definition~\ref{def:syscall-reduction}'s $\mathrm{Opt}_p$ has cardinality one, making that selection step vacuous rather than absent.
+\end{proof}
+
+This degeneracy is why syscall denial reuses Refuse rather than introducing a distinct $\mathrm{deny}_p$ option: a rejected proposal is not a different kind of event from an accepted one, only a differently tagged entry in the same history, and Definition~\ref{def:syscall-reduction}'s case split is exactly that tagging, not a fork in the underlying mechanism.
+
+\begin{corollary}[Concurrent Syscalls Are Ordinary Scheduling]
+\label{cor:concurrent-syscall}
+When multiple processes submit proposals contending for the same resource within one scheduling quantum, the reduction is not several independent applications of Definition~\ref{def:syscall-reduction} but a single application of the general Definition~\ref{def:sched-reduction} over $\mathrm{Opt}_{\mathrm{sched}} = \{\mathrm{admit}_{p_1}, \ldots, \mathrm{admit}_{p_n}\}$, with $f_{\mathrm{elig}}$ specialized to $f_{\mathrm{perm}}$ for each candidate.
+\end{corollary}
+\begin{proof}
+Contention for a shared resource is exactly the condition under which $f_{\mathrm{perm}}$ for one proposal depends on facts affected by another's admission --- the case Definition~\ref{def:runnable-set}'s joint tensor $\bigotimes_\pi H_\pi$ was constructed to make visible. Evaluating each $p_i$ against $\mathrm{Opt}_p = \{\mathrm{admit}_{p_i}\}$ in isolation would not see this dependency; only the joint reduction does.
+\end{proof}
+
+\subsection{Privilege Separation as Namespace Asymmetry}
+
+\begin{proposition}[Syscalls Cross a Namespace Boundary, Not a New Boundary]
+\label{prop:syscall-namespace}
+The user/kernel privilege boundary is an instance of Definition~\ref{def:namespace-renderer-v2}'s authorized-domain asymmetry: the kernel namespace has $K_{\mathrm{kernel}}(\sigma) = \mathcal{K}$ (every fact key), and a user namespace $i$ has $K_i(\sigma) \subsetneq \mathcal{K}$. Evaluating $f_{\mathrm{perm}}$ may reference any fact in $K_{\mathrm{kernel}}(\sigma)$, including facts outside $K_{\mathrm{ns}(\pi)}(\sigma)$; this does not violate namespace coherence, because Definition~\ref{def:compatibility-v2} constrains agreement only over $D_{ij}(\sigma) = K_i(\sigma) \cap K_j(\sigma)$, and a fact the kernel consults but never reports back into $K_i(\sigma)$ is never part of any $D_{ij}(\sigma)$ a user namespace participates in.
+\end{proposition}
+\begin{proof}
+$f_{\mathrm{perm}}$ is evaluated kernel-side, prior to and independent of $\mathrm{Collapse}$'s projection into the caller's returned value; it is not itself a namespace renderer in the sense of Definition~\ref{def:namespace-renderer-v2} and is not subject to Definition~\ref{def:compatibility-v2}. Only $\mathrm{syscall}(p)$'s output, $\mathrm{Collapse}(\cdot)$ as rendered back through $\pi_{\mathrm{ns}(\pi)}$, is a namespace-rendered fact, and it is restricted to $K_{\mathrm{ns}(\pi)}(\sigma)$ by Definition~\ref{def:syscall-proposal}'s own well-formedness condition on what $\mathit{args}$ --- and hence what the returned value can meaningfully describe --- was permitted to reference.
+\end{proof}
+
+This is the precise content of ``privilege separation'' in this calculus: not a separate mechanism bolted onto the causal core, but the ordinary consequence of $K_{\mathrm{kernel}}(\sigma) \supsetneq K_i(\sigma)$ for every user namespace $i$, together with Proposition~\ref{prop:shared-library-suffices}'s requirement that whatever \emph{is} reported back must use the same version-pinned rule library the kernel used internally. A permission check consulting facts the caller can never see is not a special case requiring justification; it is the default shape of any renderer pair where one side's authorized domain strictly contains the other's.
+
+% ==================================================
+\section{Virtual Object Namespace}
+\label{sec:vfs}
+%=================================================
+
+The original specification's description of a Spherepop VFS --- ``a path would resolve to a history-bearing object rather than merely a mutable inode'' --- can now be made exact, with less new machinery than the previous sections needed. Naming is not a fourth kind of structure alongside objects, relations, and metadata; it is itself a relation, and path resolution, write, read, rename, deletion, and mount all reduce to instances of apparatus already proven in Sections~\ref{sec:reduction} and~\ref{sec:syscall}.
+
+\subsection{Extending the State Term}
+
+The identity-preservation proofs of prior sections argued informally from ``the definition does not mention $I$,'' which proves non-interference only given a frame property this specification has not yet stated. Fixing this requires first making $I$ an explicit component of a causal State term, which the grammar so far has left implicit.
+
+\begin{definition}[State Term, Extended]
+\label{def:state-extended}
+A State term is a triple $t = (I_t, \mathrm{Opt}_t, H_t)$: immutable identity, current admissible option space, and history. Bind, Pop, and Refuse write only to $\mathrm{Opt}_t$ and $H_t$:
+\[
+\mathrm{Bind}_f(t) = (I_t, \{o \in \mathrm{Opt}_t : f(o)\}, H_t), \quad
+\mathrm{Pop}_a(t) = (I_t, \mathrm{Opt}_t \setminus \{a\}, H_t \cdot [\mathrm{sel}\!:\!a]), \quad
+\mathrm{Refuse}_a(t) = (I_t, \mathrm{Opt}_t \setminus \{a\}, H_t \cdot [\mathrm{rej}\!:\!a]).
+\]
+Sequence composes operations on one $t$ and inherits $I_t$ trivially. $\mathrm{Collapse}(t) : \mathsf{State} \to \mathsf{Obs}$ produces no new State term, so $I$-preservation does not apply to its output.
+\end{definition}
+
+\begin{axiom}[Frame]
+\label{ax:frame}
+For $t \xrightarrow{e} t'$ where $e$ is an instance of Bind, Pop, Refuse, Collapse, or sequence, $I_{t'} = I_t$.
+\end{axiom}
+
+Tensor and Branch are deliberately excluded from Axiom~\ref{ax:frame}'s scope. Tensor's silence on identity (Proposition~\ref{prop:merge-identity}) and Branch's open identity (Proposition~\ref{prop:branch-identity-open}) are not oversights Frame should paper over; they are exactly the two places a use site must supply an explicit identity policy. Frame licenses every identity proof built entirely from Bind/Pop/Refuse/Collapse/sequence without re-deriving non-interference each time; it says nothing about tensor or Branch, by design.
+
+\subsection{Paths, Naming, and Content as Fact Keys}
+
+\begin{definition}[Path Object and Naming Relation]
+\label{def:path-object}
+A path is an object $p \in O$ of designated type $\mathsf{Path}$. Naming is a relation type $\mathrm{named} \in \mathcal{T}$: $r_{\mathrm{named}}(p,o)$ asserts that path $p$ currently designates object $o$. $C_{\mathrm{named}}$, the admissibility condition for this relation type, is exclusive on its first argument: at most one $r_{\mathrm{named}}(p,\cdot)$ may be active for a given $p$ at once, though a given $o$ may be the target of several distinct active $r_{\mathrm{named}}(\cdot,o)$ (hard links).
+\end{definition}
+
+This is not a new mechanism. $C_{\mathrm{named}}$'s exclusivity is exactly the case Definition~\ref{def:link-reduction} already anticipated --- ``empty when $r$ is not exclusive with any sibling relation type'' --- now instantiated rather than left as an unused generality.
+
+\begin{definition}[Path Resolution]
+\label{def:path-resolution}
+$\mathrm{resolve}_\sigma(p) = o$ iff $\mathrm{active}(\mathrm{named},p,o) \in D$ and $\mathcal{R}(\mathrm{active}(\mathrm{named},p,o),\sigma) = \mathrm{true}$, using the shared version-pinned rule library (Definition~\ref{def:version-pinned}) and its adopted most-recent-event precedence for relation activity (Section~\ref{sec:reduction}). $\mathrm{resolve}_\sigma(p)$ is undefined if no such $o$ exists.
+\end{definition}
+
+\begin{definition}[Fact Key, Extended]
+\label{def:fact-key-v2}
+$\mathcal{K}$ (Definition~\ref{def:fact-key}) is extended with $\mathrm{content}(o)$ alongside $\mathrm{exists}(o)$, $\mathrm{rep}(o)$, $\mathrm{active}(r,a,b)$. $\mathcal{R}(\mathrm{content}(o), \sigma)$ is evaluated by the shared version-pinned library from $H_o$'s sequence of committed content events; whether successive commits replace, append, or patch the reported value is that library's choice, exactly as UNLINK's superseding rule was --- not fixed by Pop or Bind themselves.
+\end{definition}
+
+\subsection{read}
+
+\begin{definition}[read]
+\label{def:read-v2}
+\[
+\mathrm{read}_i(p) := \pi_i\big(\mathcal{R}(\mathrm{content}(\mathrm{resolve}_\sigma(p)), \sigma)\big),
+\quad \text{defined only if } \mathrm{content}(\mathrm{resolve}_\sigma(p)) \in K_i(\sigma).
+\]
+\end{definition}
+
+read is a direct instance of Definition~\ref{def:namespace-renderer-v2}'s factorization: semantic evaluation via $\mathcal{R}$, presentation via $\pi_i$, with no intermediate $\mathsf{Obs}$ value that a state-to-view functor would need to consume after the fact. Cross-namespace read agreement is exactly Proposition~\ref{prop:shared-library-suffices}, applied to the single fact key $\mathrm{content}(o)$.
+
+\subsection{write}
+
+\begin{definition}[write]
+\label{def:write-v2}
+$\mathrm{write}(p, \Delta)$ is a syscall proposal in the sense of Definition~\ref{def:syscall-proposal}, with $\mathit{op} = \mathrm{Pop}_{\mathrm{content}=\Delta}$ and $f_{\mathrm{perm}} = f_{\mathrm{writable}}$, resolved by Definition~\ref{def:syscall-reduction}.
+\end{definition}
+
+\begin{proposition}[write Non-Erasure Holds Only on Admission]
+\label{prop:write-nonerasure-v2}
+$H_{\mathrm{resolve}_\sigma(p)}$ after $\mathrm{write}(p,\Delta)$ strictly contains $H_{\mathrm{resolve}_\sigma(p)}$ before it if $\mathrm{admit}_p \in \mathrm{Opt}_p'$; otherwise $H_{\mathrm{resolve}_\sigma(p)}$ is unchanged.
+\end{proposition}
+\begin{proof}
+By Definition~\ref{def:syscall-reduction}'s case split: the admitted branch applies $\mathrm{Pop}_{\mathrm{content}=\Delta}$, appending per Definition~\ref{def:state-extended}; the refused branch applies $\mathrm{Refuse}_{\mathrm{admit}_p}$ to $\mathrm{Opt}_p$ itself, never touching $H_{\mathrm{resolve}_\sigma(p)}$.
+\end{proof}
+
+\subsection{rename}
+
+\begin{definition}[Atomic Composition]
+\label{def:atomic}
+$\langle\!\langle t_1 ; t_2 \rangle\!\rangle$ denotes a compound term admitted to the log under a single EID: the Arbiter sequences it as one indivisible unit, and no Collapse computed against any intermediate point between $t_1$'s and $t_2$'s internal commits is possible. This is a new capability of the Arbiter (Axiom~\ref{ax:single-sequencer}), not a causal or structural rule.
+\end{definition}
+
+\begin{definition}[rename]
+\label{def:rename-v2}
+Let $o := \mathrm{resolve}_\sigma(p)$, bound once, before construction.
+\[
+\mathrm{rename}(p,p') :=
+\begin{cases}
+\langle\!\langle\, \mathrm{UNLINK}(p,o,\mathrm{named})\,;\, \mathrm{UNLINK}(p',\mathrm{resolve}_\sigma(p'),\mathrm{named})\,;\, \mathrm{LINK}(p',o,\mathrm{named}) \,\rangle\!\rangle & \text{if } \mathrm{resolve}_\sigma(p') \text{ defined} \\
+\langle\!\langle\, \mathrm{UNLINK}(p,o,\mathrm{named})\,;\, \mathrm{LINK}(p',o,\mathrm{named}) \,\rangle\!\rangle & \text{otherwise.}
+\end{cases}
+\]
+\end{definition}
+
+\begin{proposition}[rename Preserves Identity]
+\label{prop:rename-identity-v2}
+$I(o)$ is unchanged by $\mathrm{rename}(p,p')$.
+\end{proposition}
+\begin{proof}
+$o$ is bound once by Definition~\ref{def:rename-v2} and referenced, never re-resolved. Every step inside $\langle\!\langle\cdot\rangle\!\rangle$ is Bind, Pop, Refuse, or sequence (per Definitions~\ref{def:unlink-reduction}, \ref{def:link-reduction}), so Axiom~\ref{ax:frame} applies directly to each, and hence to their atomic composition.
+\end{proof}
+
+Atomicity is stated here as a capability the Arbiter must supply, not derived from anything already proven --- Definition~\ref{def:atomic} is honestly a new primitive at the interface tier (Section~\ref{sec:layering}'s ``syscalls and compatibility interfaces'' tier), sitting outside the causal/structural/derived-function stack rather than reducing into it.
+
+\subsection{Deletion}
+
+\begin{corollary}[Deletion Is Path-Named UNLINK]
+\label{cor:deletion-unlink}
+$\mathrm{delete}(p) := \mathrm{UNLINK}(p, \mathrm{resolve}_\sigma(p), \mathrm{named})$. By Proposition~\ref{prop:unlink-nonerasure} directly, $H_{\mathrm{resolve}_\sigma(p)}$ is untouched; only $r_{\mathrm{named}}(p,\cdot)$'s activity is revoked.
+\end{corollary}
+
+No new proof is required or offered --- this corollary's entire content is that deletion needed no new apparatus, which is itself the claim worth recording. An object with every naming relation revoked becomes unreachable by path resolution while its history remains addressable by $I(o)$ directly: ``revoke reachability while preserving historical existence,'' now identified as literally the same operation already proven for relation revocation generally rather than a filesystem-specific behavior.
+
+\subsection{mount}
+
+\begin{definition}[mount]
+\label{def:mount-v2}
+\[
+\mathrm{mount}(p_{\mathrm{point}}, o_{\mathrm{root}}, v) :=
+\mathrm{Collapse}\Big(
+\mathrm{Refuse}_{v'}\big(
+\mathrm{Pop}_{\mathrm{mounted}(p_{\mathrm{point}},o_{\mathrm{root}},v)}\big(
+\mathrm{Bind}_{f_{\mathrm{valid}}}(H_{\mathrm{local}} \otimes H_{o_{\mathrm{root}}})
+\big)
+\big)
+\Big)
+\]
+where $\mathrm{mounted} \in \mathcal{T}$ is exclusive on $p_{\mathrm{point}}$ (at most one active mount per mount point, matching $\mathrm{named}$'s exclusivity discipline), $f_{\mathrm{valid}}$ checks $p_{\mathrm{point}}$ is a valid, currently-unmounted directory object, and $v'$ ranges over any competing mount proposals for the same point.
+\end{definition}
+
+This follows exactly the $\otimes \to \mathrm{Bind} \to \mathrm{Pop}$ shape (with optional Refuse) that Definition~\ref{def:link-reduction} already established, differing only in operating over a whole external namespace rather than a single relation candidate.
+
+\begin{definition}[Path Resolution Under Mount]
+\label{def:resolve-mount}
+For $p = p_{\mathrm{point}} / p_{\mathrm{rest}}$ where $\mathcal{R}(\mathrm{active}(\mathrm{mounted}, p_{\mathrm{point}}, o_{\mathrm{root}}, v), \sigma) = \mathrm{true}$, $\mathrm{resolve}_\sigma(p)$ defers to the mounted namespace's own naming relations, resolving $p_{\mathrm{rest}}$ relative to $o_{\mathrm{root}}$.
+\end{definition}
+
+\begin{proposition}[mount Preserves External Identity]
+\label{prop:mount-identity-v2}
+$I(o)$ is unchanged for every $o$ reachable through the mounted subtree.
+\end{proposition}
+\begin{proof}
+$\otimes$ (Axiom~\ref{ax:tensor}) does not unify any object's identity with another's --- unlike MERGE, mount never asserts $o_1 \sim o_2$ for distinct objects, so tensor's silence on identity (Proposition~\ref{prop:merge-identity}) is inapplicable here rather than a gap: no identity question is being asked of tensor in the first place. The subsequent Bind, Pop, and Refuse steps preserve $I$ directly by Axiom~\ref{ax:frame}.
+\end{proof}
+
+% ==================================================
+\section{Modules and Drivers}
+\label{sec:modules}
+%=================================================
+
+Modules are the point at which design goal G1 (Deterministic Replay, Section~1) is genuinely at risk for the first time. Every prior section extended the causal basis's reach --- LINK, scheduling, syscalls, the VFS --- without touching what makes Proposition~\ref{prop:deterministic-state} true. Modules touch it directly, because they are the mechanism by which $\mathcal{R}$ itself becomes pluggable and upgradeable, and Proposition~\ref{prop:deterministic-state}'s proof did not account for that.
+
+\subsection{Driver as Typed Interpreter}
+
+\begin{definition}[Driver]
+\label{def:driver}
+A driver for device class $d$ is a partial function $\mathcal{D}_d : \mathrm{RawSignal} \rightharpoonup \mathsf{State}$, translating a raw device signal into a term built from Pop, Refuse, Bind, Collapse, sequence, and tensor. A driver-originated event is admitted as a syscall proposal (Definition~\ref{def:syscall-proposal}) whose requesting ``process'' is a kernel-designated device namespace rather than an ordinary user process, resolved by the existing Definition~\ref{def:syscall-reduction} without modification.
+\end{definition}
+
+Treating driver input as an ordinary syscall proposal is deliberate: it means device admission inherits Corollary~\ref{cor:concurrent-syscall} for free when multiple devices signal within one scheduling quantum, rather than needing a separate arbitration mechanism invented for hardware specifically.
+
+\subsection{Module Loading Does Not Enlarge the Causal Basis}
+
+\begin{definition}[Module]
+\label{def:module}
+A module is a pair $(id, v)$ contributing, to the shared rule library, some subset of: driver translators (Definition~\ref{def:driver}), and fact-key evaluator functions for object or relation types the module introduces.
+\end{definition}
+
+\begin{proposition}[Module Loading Is Not a Fifth Primitive]
+\label{prop:module-not-primitive}
+Loading $(id,v)$ extends $\mathrm{dom}(\mathcal{R})$ without introducing any new causal operator, judgment form, or rule schema.
+\end{proposition}
+\begin{proof}
+By Definition~\ref{def:module}, a module contributes only evaluator functions (consumed inside Definition~\ref{def:namespace-renderer-v2}'s semantic-view construction) and driver translators producing terms already built from existing operators. This is the same structural-vs-causal distinction Proposition~\ref{prop:tensor-structural} established for $\otimes$, and the same application-layer-choice pattern Section~\ref{sec:reduction} already acknowledged for collapse rules generally: modules are pluggable providers of exactly that already-licensed flexibility, extended to relation and object types beyond the kernel's built-in set, never a change to Pop/Refuse/Bind/Collapse themselves.
+\end{proof}
+
+\subsection{Module Version Attribution and Deterministic Replay}
+
+\begin{definition}[Modular Rule Library]
+\label{def:modular-library}
+$\mathcal{R} = \mathcal{R}_{\mathrm{core}} \cup \bigcup_{(id,v) \in \mathrm{Mod}(\sigma)} \mathcal{R}_{id,v}$, where $\mathrm{Mod}(\sigma)$ is the set of currently loaded module-version pairs and $\mathcal{R}_{id,v}$ is $(id,v)$'s evaluator contribution.
+\end{definition}
+
+\begin{definition}[Module-Attributed Fact Key]
+\label{def:module-attributed}
+A fact key $k$ is module-attributed to $(id,v)$ at $\sigma$ if $\mathcal{R}(k,\sigma)$ is computed by $\mathcal{R}_{id,v}$ rather than $\mathcal{R}_{\mathrm{core}}$.
+\end{definition}
+
+\begin{axiom}[Module Attribution Recording]
+\label{ax:module-attribution}
+For every event $e_k$ whose committed interpretation depended on a module-attributed fact key, the log records $\mathrm{modattr}(e_k) = (id,v)$, the specific module version whose evaluator governed that interpretation at commit time.
+\end{axiom}
+
+\begin{definition}[Module-Consistent Replay]
+\label{def:module-consistent-replay}
+A replay of $\ell_{\le n}$ is module-consistent if, for every $e_k$ with $\mathrm{modattr}(e_k)$ recorded, the replaying kernel evaluates any fact key depending on $e_k$ using exactly $\mathcal{R}_{\mathrm{modattr}(e_k)}$, regardless of which module versions the replaying kernel currently has loaded.
+\end{definition}
+
+\begin{proposition}[Replay Determinism Requires Module-Version Pinning]
+\label{prop:replay-needs-pinning}
+Without Axiom~\ref{ax:module-attribution} enforced, two replays of the same $\ell_{\le n}$ can produce different states $\sigma_n$, contradicting Proposition~\ref{prop:deterministic-state}.
+\end{proposition}
+\begin{proof}
+Let module $(\mathrm{sensor}, v_1)$ define $\mathcal{R}_{\mathrm{sensor},v_1}(\mathrm{content}(o),\sigma)$ as the raw signal value. Let event $e_k = \mathrm{Pop}_{\mathrm{content}=\mathit{raw}}$ be committed while $(\mathrm{sensor},v_1)$ is $\mathrm{Mod}(\sigma)$'s active version. Let $(\mathrm{sensor},v_2)$ later be loaded, redefining $\mathcal{R}_{\mathrm{sensor},v_2}(\mathrm{content}(o),\sigma) = \mathit{raw} \times \mathit{calibration}$. A replay performed immediately after $e_k$'s commit, under $\mathrm{Mod}(\sigma)=\{(\mathrm{sensor},v_1)\}$, computes $\mathrm{content}(o) = \mathit{raw}$. A replay of the identical prefix $\ell_{\le k}$ performed later, under $\mathrm{Mod}(\sigma)=\{(\mathrm{sensor},v_2)\}$ and without Axiom~\ref{ax:module-attribution}'s pinning enforced, computes $\mathrm{content}(o) = \mathit{raw} \times \mathit{calibration}$. Both replay the same $\ell_{\le k}$ from the same $\sigma_0$; they produce different $\sigma_k$, contradicting Proposition~\ref{prop:deterministic-state}'s claim that a log prefix uniquely determines the resulting state.
+\end{proof}
+
+Proposition~\ref{prop:deterministic-state}'s original proof --- ``all kernel transitions are pure functions of prior state and the next event... replay is deterministic'' --- is not wrong, but it is incomplete once modules exist: it implicitly assumed a fixed, unchanging $\mathcal{R}$, an assumption every prior section of this specification was free to make and modules are the first to break. Proposition~\ref{prop:replay-needs-pinning} does not weaken that proposition; it identifies the hypothesis modules must not violate for it to keep holding, and Definition~\ref{def:module-consistent-replay} states exactly what a replay implementation must do to satisfy it.
+
+\begin{corollary}[Deterministic Replay Under Modules]
+\label{cor:deterministic-under-modules}
+If every module-attributed event carries a recorded $\mathrm{modattr}$ per Axiom~\ref{ax:module-attribution}, and every replay is module-consistent per Definition~\ref{def:module-consistent-replay}, then Proposition~\ref{prop:deterministic-state} holds unconditionally, including across module upgrades.
+\end{corollary}
+\begin{proof}
+Under these two conditions, every fact-key evaluation during replay uses exactly the evaluator that was in effect at commit time, regardless of what the replaying kernel currently has loaded --- collapsing the two divergent branches of Proposition~\ref{prop:replay-needs-pinning}'s construction into one, since $\mathrm{Mod}(\sigma)$ at replay time no longer affects the evaluator selected for any already-committed module-attributed event.
+\end{proof}
+
+% ==================================================
+\section{Permissions, Capabilities, and Namespace Isolation}
+\label{sec:permissions}
+%=================================================
+
+Section~\ref{sec:syscall}'s syscall reduction referred to ``the kernel's permission and capability constraints'' without defining what a capability is. This section closes that gap, then uses it to give namespace isolation the coherence guarantee it needs and honestly cannot get for free.
+
+\subsection{Capabilities as Relations}
+
+\begin{definition}[Capability Object and Grant Relation]
+\label{def:capability-object}
+A capability is an object $c \in O$ of type $\mathsf{Capability}$, carrying a fixed description $\mathrm{authorizes}(c)$: either a fact key $k \in \mathcal{K}$ or an operation-target pair $(\mathit{op}, \mathit{target})$. $\mathrm{grants} \in \mathcal{T}$ is a relation type; $r_{\mathrm{grants}}(i,c)$ asserts subject $i$ (a process or namespace identity) currently holds $c$. $\mathrm{grants}$ is not exclusive: a subject may hold several capabilities simultaneously.
+\end{definition}
+
+\begin{definition}[Grant and Revoke]
+\label{def:grant-revoke}
+\[
+\mathrm{grant}(i,c) := \mathrm{LINK}(i,c,\mathrm{grants}), \qquad
+\mathrm{revoke}(i,c) := \mathrm{UNLINK}(i,c,\mathrm{grants}).
+\]
+\end{definition}
+
+Both are direct instantiations of Definitions~\ref{def:link-reduction} and~\ref{def:unlink-reduction}, contributing no new causal or structural machinery. $\mathrm{grant}$'s admissibility condition $C_{\mathrm{grants}}$ checks that the granting party itself holds authority to grant $c$ (an ordinary Bind filter over the granting party's own capability set); $\mathrm{revoke}$ inherits Proposition~\ref{prop:unlink-nonerasure} directly, so a revoked capability remains in history --- auditable, never erased --- while ceasing to be currently active under most-recent-event precedence, exactly as a revoked LINK does.
+
+\begin{definition}[Authorized Fact Domain]
+\label{def:authorized-domain}
+\[
+K_i(\sigma) = \big\{\, k \in \mathcal{K} \;:\; \exists\, c.\ \mathcal{R}(\mathrm{active}(\mathrm{grants},i,c),\sigma) \wedge \mathrm{authorizes}(c) = k \,\big\}.
+\]
+\end{definition}
+
+\begin{definition}[Operation Authorization]
+\label{def:op-authorization}
+$\mathrm{authorized}(i, \mathit{op}, \mathit{target}, \sigma)$ holds iff $\exists\, c$ with $\mathcal{R}(\mathrm{active}(\mathrm{grants},i,c),\sigma)$ and $\mathrm{authorizes}(c) = (\mathit{op}, \mathit{target})$.
+\end{definition}
+
+\begin{proposition}[$f_{\mathrm{perm}}$ Is Operation Authorization]
+\label{prop:fperm-is-authorized}
+Definition~\ref{def:syscall-reduction}'s $f_{\mathrm{perm}}(\mathrm{admit}_p)$, for $p=(\pi,\mathit{op},\mathit{args})$, is $\mathrm{authorized}(\mathrm{ns}(\pi), \mathit{op}, \mathit{args}, \sigma)$ conjoined with $p$'s well-formedness (Definition~\ref{def:syscall-proposal}). Similarly, write's $f_{\mathrm{writable}}$ and mount's $f_{\mathrm{valid}}$ each reduce to $\mathrm{authorized}(\cdot)$ for their respective $(\mathit{op},\mathit{target})$ pairs.
+\end{proposition}
+\begin{proof}
+Immediate by definition: every capability-gated Bind filter introduced in Sections~\ref{sec:syscall}--\ref{sec:vfs} was informally described as ``checking permissions''; each such check is, by Definition~\ref{def:op-authorization}, exactly membership of the relevant $(\mathit{op},\mathit{target})$ pair in some active capability's $\mathrm{authorizes}(c)$. No filter introduced so far required anything $\mathrm{authorized}(\cdot)$ does not already express.
+\end{proof}
+
+\subsection{Namespace as Bundled Renderer}
+
+\begin{definition}[Namespace Renderer]
+\label{def:namespace-renderer-v2}
+A namespace renderer $\mathsf{V}_i$ factors as $\mathsf{V}_i(\sigma) = \pi_i\big(\widehat{\mathsf{V}}_i(\sigma)\big)$, where the \emph{semantic view} $\widehat{\mathsf{V}}_i(\sigma) = \{(k, \mathcal{R}(k,\sigma)) : k \in K_i(\sigma)\}$ evaluates every authorized fact key against one shared $\mathcal{R}$, and $\pi_i$ is a presentation map (naming, formatting) applied afterward. A namespace $i$ is the pair $(K_i(\sigma), \pi_i)$, with $K_i(\sigma)$ constructed by Definition~\ref{def:authorized-domain}.
+\end{definition}
+
+\begin{proposition}[Isolation Is Enforced at Proposal Construction, Not Only at Rendering]
+\label{prop:isolation-double-enforced}
+A process $\pi$ in namespace $i$ cannot construct a well-formed syscall proposal referencing $\mathit{args}$ outside $K_i(\sigma)$ (Definition~\ref{def:syscall-proposal}), independent of whether $\mathrm{read}_i$'s domain restriction (Definition~\ref{def:read-v2}) would also have blocked the corresponding read.
+\end{proposition}
+\begin{proof}
+Definition~\ref{def:syscall-proposal} restricts $\mathit{args}$ to $K_{\mathrm{ns}(\pi)}(\sigma)$ as a well-formedness condition prior to and independent of $f_{\mathrm{perm}}$ evaluation; Definition~\ref{def:read-v2} restricts $\mathrm{read}_i$'s domain as a separate condition on the rendering side. Neither implies the other, and both hold simultaneously for any process operating normally within its namespace: it cannot propose what it cannot name, and cannot read what it is not authorized to have rendered, and these are two independent enforcement points rather than one mechanism described twice.
+\end{proof}
+
+\begin{corollary}[Revocation Narrows Isolation Boundaries in Real Time]
+\label{cor:revocation-narrows}
+If $\mathrm{revoke}(i,c)$ commits at $\sigma \to \sigma'$ and $\mathrm{authorizes}(c) = k$, then $k \notin K_i(\sigma')$ even though $k \in K_i(\sigma)$, and any syscall proposal from a process in namespace $i$ referencing $k$ becomes ill-formed from $\sigma'$ onward.
+\end{corollary}
+\begin{proof}
+Immediate from Definition~\ref{def:authorized-domain} under most-recent-event precedence: $\mathcal{R}(\mathrm{active}(\mathrm{grants},i,c),\sigma')$ evaluates false once $\mathrm{revoke}(i,c)$'s $\mathrm{UNLINK}$-derived supersession is the most recent event concerning $(i,c)$, by the same argument as Section~\ref{sec:reduction}'s original collapse rule for revoked relations.
+\end{proof}
+
+\subsection{Namespace Isolation Requires View Coherence}
+\label{sec:namespace-coherence}
+
+Theorem~\ref{thm:view-functoriality} guarantees that a \emph{single} admissible view $\mathsf{V}$ composes coherently with itself across time. It says nothing about two \emph{different} views, $\mathsf{V}_i$ and $\mathsf{V}_j$, applied to the same $\sigma$. Namespace isolation requires exactly this: different processes receiving different Collapses of the same underlying world. The guarantee this needs does not follow from Theorem~\ref{thm:view-functoriality} and must be established, or shown unattainable, on its own terms.
+
+\begin{definition}[Observable Fact Key]
+\label{def:fact-key}
+An observable fact key is a term of the form $\mathrm{exists}(o)$, $\mathrm{rep}(o)$, or $\mathrm{active}(r,a,b)$, for $o \in O$, $r \in \mathcal{T}$, $a,b \in O$ (extended by Definition~\ref{def:fact-key-v2}). Let $\mathcal{K}$ denote the set of all such keys.
+\end{definition}
+
+\begin{definition}[Shared Observable Domain]
+\label{def:shared-domain}
+For namespace renderers $\mathsf{V}_i, \mathsf{V}_j$, $D_{ij}(\sigma) = K_i(\sigma) \cap K_j(\sigma)$.
+\end{definition}
+
+A fact key absent from $K_i(\sigma)$ is legitimate redaction, full stop --- it is not part of $D_{ij}(\sigma)$ and imposes no agreement obligation on namespace $i$ at all, including for other facts about the same object. Only keys both namespaces are authorized to report enter the domain over which coherence is required.
+
+\begin{definition}[Version-Pinned Rule Library]
+\label{def:version-pinned}
+A rule library $\mathcal{R}$ assigns to each fact-key type a function computing its semantic value from $\sigma$. $\mathcal{R}$ is version-pinned relative to log $\ell$ if every event $e_k \in \ell$ carries a recorded library-version tag $v_k$, and evaluating any fact key at prefix $\ell_{\le n}$ uses exactly the rule definitions in effect at $v_n$ --- never a later library's reinterpretation of earlier events.
+\end{definition}
+
+\begin{definition}[Compatibility Relation]
+\label{def:compatibility-v2}
+$\mathsf{V}_i(\sigma)\!\restriction_{D_{ij}(\sigma)} \sim \mathsf{V}_j(\sigma)\!\restriction_{D_{ij}(\sigma)}$ iff $\widehat{\mathsf{V}}_i(\sigma)\!\restriction_{D_{ij}(\sigma)} = \widehat{\mathsf{V}}_j(\sigma)\!\restriction_{D_{ij}(\sigma)}$ (exact semantic equality) and $\pi_i, \pi_j$ differ, on that equal semantic content, only in naming or format.
+\end{definition}
+
+\begin{proposition}[Determinism and Shared Source Do Not Imply Coherence]
+\label{prop:determinism-insufficient-v2}
+There exist admissible namespace renderers $\mathsf{V}_i, \mathsf{V}_j$ and a state $\sigma$ with $\mathrm{active}(r,a,b) \in D_{ij}(\sigma)$ on which they disagree.
+\end{proposition}
+\begin{proof}
+$H_{a,b}$ contains $\mathrm{Pop}_{r(a,b)}$ then $\mathrm{Pop}_{\mathrm{revoke}_r}$. $\mathcal{R}_i$ evaluates $\mathrm{active}(r,a,b)$ by most-recent-event precedence (false); $\mathcal{R}_j$ by first-committed-event precedence (true). Both are functors on $\mathbf{Pref}(\ell)$, both non-interfering, hence both admissible under Definition~\ref{def:admissible-view} --- that definition fixes only functoriality and non-interference, neither a canonical current-state interpretation nor revocation-sensitivity. $\mathrm{active}(r,a,b) \in K_i(\sigma) \cap K_j(\sigma) = D_{ij}(\sigma)$ by hypothesis that both namespaces are authorized to report relation activity. The two libraries disagree on its value.
+\end{proof}
+
+This is not a pathological edge case. It is the generic situation whenever two namespace renderers are permitted to instantiate their own collapse rules independently, which nothing prior forbids. Determinism per renderer and a shared source were the only hypotheses Theorem~\ref{thm:view-functoriality} required; Proposition~\ref{prop:determinism-insufficient-v2} shows they are not enough once more than one renderer is in play.
+
+\begin{definition}[Namespace-Coherent Renderer Family]
+\label{def:namespace-coherent-family}
+A family $\{\mathsf{V}_i\}$ is namespace-coherent if, for every $i,j$ and every $\sigma$, $\mathsf{V}_i(\sigma)\!\restriction_{D_{ij}(\sigma)} \sim \mathsf{V}_j(\sigma)\!\restriction_{D_{ij}(\sigma)}$.
+\end{definition}
+
+\begin{theorem}[Conditional Namespace Isolation Safety]
+\label{thm:conditional-isolation}
+If $\{\mathsf{V}_i\}$ is namespace-coherent, then no two namespaces derive incompatible causal claims about any shared visible object.
+\end{theorem}
+\begin{proof}
+Immediate from Definition~\ref{def:namespace-coherent-family}: $\sim$ is defined to permit exactly the legitimate divergences of Definition~\ref{def:compatibility-v2} and no others, so namespace-coherence \emph{is} the absence of incompatible claims on $D_{ij}(\sigma)$, restated. The content of this theorem is not in its proof but in what it refuses to claim: it does not assert that isolation, as architecturally proposed, automatically produces a namespace-coherent family. Proposition~\ref{prop:determinism-insufficient-v2} already shows it does not, in general.
+\end{proof}
+
+\begin{proposition}[Shared-Library Divergence Suffices]
+\label{prop:shared-library-suffices}
+If every namespace renderer uses the same version-pinned $\mathcal{R}$ (Definition~\ref{def:version-pinned}) to compute every shared observable fact, and namespaces differ only in $K_i(\sigma)$ and $\pi_i$, then $\{\mathsf{V}_i\}$ is namespace-coherent, with $\widehat{\mathsf{V}}_i(\sigma)\!\restriction_{D_{ij}(\sigma)} = \widehat{\mathsf{V}}_j(\sigma)\!\restriction_{D_{ij}(\sigma)}$ exactly, prior to any presentation-level comparison via $\sim$.
+\end{proposition}
+\begin{proof}
+For $k \in D_{ij}(\sigma)$, both $\widehat{\mathsf{V}}_i(\sigma)$ and $\widehat{\mathsf{V}}_j(\sigma)$ evaluate $k$ as $\mathcal{R}(k,\sigma)$, the same function applied to the same $\sigma$ under the same pinned version, by hypothesis. Equality follows key-by-key, hence as sets over $D_{ij}(\sigma)$. $\pi_i, \pi_j$ act only afterward, on already-equal semantic content, so any resulting difference is representational, satisfying Definition~\ref{def:compatibility-v2} via $\sim$ trivially once semantic equality is established.
+\end{proof}
+
+Proposition~\ref{prop:shared-library-suffices} is the operational payoff: it turns ``coherence must be imposed as an admissibility condition'' into a concrete, enforceable design rule --- namespace renderers must share one canonical, version-pinned collapse-rule library (Section~\ref{sec:modules}) and diverge only by authorized-domain masking (Section~\ref{sec:permissions}.1--\ref{sec:permissions}.2), never by redefining what a relation or object evaluates to.
+
+% ==================================================
+\section{Architectural Layering}
+\label{sec:layering}
+%=================================================
+
+\subsection{The Five-Way Taxonomy}
+
+\begin{quote}
+Spherepop OS distinguishes causal operators, structural rules, derived kernel functions, interface operations, and non-causal annotations. Pop, Refuse, Bind, and Collapse constitute the causal basis. Sequence, tensor, and Branch construct the terms over which that basis operates. Process management, scheduling, namespace operations, messaging, and revocation are derived kernel functions. Syscalls expose those functions across the privilege boundary. Metadata remains a separate annotation channel and does not participate in causal reduction.
+\end{quote}
+
+\subsection{Where Everything Landed}
+
+\begin{center}
+\begin{tabular}{@{}p{0.22\textwidth}p{0.68\textwidth}@{}}
+\toprule
+\textbf{Tier} & \textbf{Members} \\
+\midrule
+Causal operators & Pop, Refuse, Bind, Collapse \\
+Structural rules & sequence, tensor ($\otimes$), Branch \\
+Derived kernel functions & LINK, UNLINK, fork, exec, exit, wait, schedule, write, read, rename, delete, mount, grant, revoke \\
+Hybrid (structural + external identity policy) & MERGE, bulk COLLAPSE($S,o_r$) \\
+Interface operations & syscall boundary, Atomic Composition ($\langle\!\langle\cdot\rangle\!\rangle$), driver admission \\
+Non-causal annotations & SET\_META, layout hints, debugging labels, presentation maps ($\pi_i$) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Two placements are worth flagging rather than leaving implicit in the table. Atomic Composition sits in the interface tier, not the derived tier, because Section~\ref{sec:vfs} showed it is not reducible to the causal or structural rules --- it is a new capability the Arbiter must supply, honestly placed outside the reduction rather than forced into it. Presentation maps sit in the annotation tier alongside metadata, not the derived tier, because Definition~\ref{def:namespace-renderer-v2} factored every namespace renderer into a semantic evaluation (causal, via $\mathcal{R}$) and a presentation step (non-causal, via $\pi_i$) precisely to keep these two kinds of difference from being confused with each other, per Definition~\ref{def:compatibility-v2}.
+
+\subsection{Comparative Rationale}
+
+The comparison to POSIX kernels, CRDT-based systems, and version control can now be stated against the taxonomy rather than in general terms.
+
+Unlike POSIX kernels, every derived kernel function in this specification is a typed composition traceable to four causal operators and three structural rules, rather than an opaque syscall whose internal state mutation is invisible outside a debugger; Section~\ref{sec:reduction}'s reduction table and Sections~\ref{sec:process-management}--\ref{sec:permissions}'s extensions are the traceability, not a claim about it.
+
+Unlike CRDT-based systems, a single total order is enforced at every tier --- Axiom~\ref{ax:single-sequencer} governs not only ordinary events but the Atomic Composition construct of Section~\ref{sec:vfs}, which exists specifically because even an interface-layer convenience must still resolve to one position in one total order, not a conflict-free merge of concurrent writes.
+
+Unlike version control systems, speculation is structurally identical to ordinary branching rather than a separate workflow: Section~\ref{sec:branch} showed the Speculative Branch mechanism (Section~\ref{sec:speculative-branches}) is Definition~\ref{def:branch-judgment} under a different name, meaning a Spherepop OS process's fork and a client's speculative overlay are the same term at the same tier, differing only in which identity policy (Section~\ref{sec:process-management}'s fork policy vs. speculation's identity-preserving policy) governs their two projections.
+
+\subsection{What This Specification Establishes, Assumes, and Leaves Open}
+
+\textbf{Established unconditionally.} Theorem~\ref{thm:completeness-scope} (the four-primitive causal basis is complete for causal history transformation, precisely scoped to exclude SET\_META); Proposition~\ref{prop:tensor-structural} and Proposition~\ref{prop:branch-tensor-noninverse} (tensor and Branch are structural, not causal, and are not inverse); non-erasure for UNLINK, exec, and write on its admitted branch (Propositions~\ref{prop:unlink-nonerasure}, \ref{prop:exec-nonerasure}, \ref{prop:write-nonerasure-v2}); every identity-preservation result built from Axiom~\ref{ax:frame} (rename, mount, LINK, UNLINK).
+
+\textbf{Established conditionally.} Theorem~\ref{thm:conditional-isolation} holds given a namespace-coherent renderer family --- Proposition~\ref{prop:shared-library-suffices} gives one sufficient, checkable way to satisfy that hypothesis, but does not claim it is the only way, and Proposition~\ref{prop:determinism-insufficient-v2} shows the hypothesis cannot simply be assumed. Corollary~\ref{cor:deterministic-under-modules} holds given Axiom~\ref{ax:module-attribution} is actually enforced by every module and every replay implementation --- a real deployment obligation, not a consequence of the grammar alone. rename's atomicity holds given Definition~\ref{def:atomic}'s Arbiter capability is implemented, which Section~\ref{sec:vfs} was explicit is a new primitive supplied at the interface tier, not derived from anything proven earlier.
+
+\textbf{Left open.} The priority function selecting $\pi^*$ among several admissible scheduling candidates (Proposition~\ref{prop:priority-not-admissibility} deliberately leaves this external); the concrete replace/append/patch semantics for any given $\mathrm{content}$ fact key (deferred to $\mathcal{R}$'s design per object type, exactly as UNLINK's supersession rule was deferred in Section~\ref{sec:reduction}); reclamation of history behind permanently Refused or superseded branches --- a cost the retention discipline incurs without a matching reclamation story, still unaddressed by anything in this specification; the identity-designation policy MERGE and bulk COLLAPSE both require beyond the causal-plus-structural reduction (Propositions~\ref{prop:merge-identity} and~\ref{prop:collapse-already}) --- this specification fixes one instance of that policy operationally (union--find representative assignment) but does not state the policy in general, leaving open whether a merged or collapsed identity must always be selected from among its inputs or may in principle be freshly minted; and a conflict-resolution procedure for competing LINK or mount proposals beyond ``the losing candidates are Refused,'' which says what is recorded but not how contention among several simultaneously valid candidates is adjudicated when priority, not mere admissibility, is what distinguishes them.
+
+\subsection{Conclusion}
+
+Spherepop OS presents a disciplined rethinking of operating system structure grounded in determinism, causal clarity, and semantic primacy. Sections~\ref{sec:reduction}--\ref{sec:permissions} add to the original specification not a change of ambition but a change of evidential standard: every Linux-like capability absorbed into this design --- processes, scheduling, a syscall boundary, a virtual namespace, modules, permissions --- is now either a proven composition over four causal primitives and three structural rules, or an explicitly named exception to that reduction, rather than an architectural aspiration stated in prose and left there. The system's future extensions, including richer semantic types, entropy-driven scheduling, and distributed arbitration, inherit a taxonomy precise enough to say, of any proposed addition, exactly which tier it belongs to and what obligations that placement carries.
+
+\end{document}

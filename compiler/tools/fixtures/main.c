@@ -119,6 +119,77 @@ static size_t events_from_op(const Json *ev, Event *out, size_t cap) {
 
 typedef enum { OUTCOME_PASS, OUTCOME_MANUAL_SKIP, OUTCOME_FAIL } Outcome;
 
+/* Builds and submits one sub-history (`history_a` / `history_b` of the Meld
+ * fixture) through its own Arbiter. Returns true on success (with `arb`
+ * initialized and owned by the caller, who must call arbiter_free); on
+ * failure records a failure message and leaves `arb` uninitialized. */
+static bool run_sub_history(const Json *sub, Arbiter *arb, FailureList *failures) {
+    const Json *omega_arr = json_get(sub, "initial_option_space");
+    size_t n_omega = json_array_len(omega_arr);
+    ObjectId *omega0 = malloc((n_omega ? n_omega : 1) * sizeof(ObjectId));
+    for (size_t i = 0; i < n_omega; i++) json_as_u64(json_array_get(omega_arr, i), &omega0[i]);
+
+    const Json *rules_arr = json_get(sub, "certified_rules");
+    size_t n_rules = json_array_len(rules_arr);
+    const char **rules = malloc((n_rules ? n_rules : 1) * sizeof(char *));
+    for (size_t i = 0; i < n_rules; i++) rules[i] = json_as_str(json_array_get(rules_arr, i));
+
+    arbiter_init(arb, omega0, n_omega, rules, n_rules);
+    free(omega0);
+    free(rules);
+
+    const Json *events_arr = json_get(sub, "events");
+    size_t n_events = json_array_len(events_arr);
+    for (size_t i = 0; i < n_events; i++) {
+        const Json *ev = json_array_get(events_arr, i);
+        Event batch[4];
+        size_t n = events_from_op(ev, batch, 4);
+        if (n == (size_t)-1) {
+            flist_addf(failures, "malformed sub-history event at index %zu", i);
+            arbiter_free(arb);
+            return false;
+        }
+        char err[128] = {0};
+        if (!arbiter_submit(arb, batch, n, err)) {
+            flist_addf(failures, "sub-history event at index %zu was rejected: %s", i, err);
+            for (size_t k = 0; k < n; k++) event_free(&batch[k]);
+            arbiter_free(arb);
+            return false;
+        }
+    }
+    return true;
+}
+
+/* Executes a two-history Meld fixture (`history_a`/`history_b`) end-to-end:
+ * each sub-history runs through its own Arbiter, then the two resulting
+ * histories are melded (event-log concatenation) and checked against
+ * `expect_melded_history_len`. */
+static Outcome run_meld_fixture(const Json *fixture, FailureList *failures) {
+    Arbiter arb_a, arb_b;
+    if (!run_sub_history(json_get(fixture, "history_a"), &arb_a, failures)) return OUTCOME_FAIL;
+    if (!run_sub_history(json_get(fixture, "history_b"), &arb_b, failures)) {
+        arbiter_free(&arb_a);
+        return OUTCOME_FAIL;
+    }
+
+    /* Meld: parallel composition of two independently-generated histories
+     * (the free monoidal tensor) -- concatenation of event logs, mirroring
+     * spherepop-kernel::History::meld (spherepop-kernel/src/history.rs). */
+    size_t melded_len = arbiter_len(&arb_a) + arbiter_len(&arb_b);
+
+    uint64_t expected;
+    if (json_as_u64(json_get(fixture, "expect_melded_history_len"), &expected)) {
+        if (melded_len != expected) {
+            flist_addf(failures, "expect_melded_history_len: expected %llu, got %zu",
+                       (unsigned long long)expected, melded_len);
+        }
+    }
+
+    arbiter_free(&arb_a);
+    arbiter_free(&arb_b);
+    return failures->len > 0 ? OUTCOME_FAIL : OUTCOME_PASS;
+}
+
 static Outcome run_executable_fixture(const Json *fixture, FailureList *failures) {
     const Json *omega_arr = json_get(fixture, "initial_option_space");
     size_t n_omega = json_array_len(omega_arr);
@@ -325,7 +396,9 @@ static Outcome run_fixture(const char *path, FailureList *failures) {
     }
 
     Outcome outcome;
-    if (json_get_bool(fixture, "manual", false)) {
+    if (json_get(fixture, "history_a")) {
+        outcome = run_meld_fixture(fixture, failures);
+    } else if (json_get_bool(fixture, "manual", false)) {
         outcome = OUTCOME_MANUAL_SKIP;
         const char *required[] = {"invariant", "explanation"};
         for (size_t i = 0; i < 2; i++) {

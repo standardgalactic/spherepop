@@ -318,11 +318,12 @@ Arbiter's option-space accounting at the same time. It is categorically
 different from `Bind`-based concurrency (which couples elements
 *within* a single shared history) and is **not** a fifth primitive
 event: it operates one level up, on `History` values themselves, before
-either is submitted to an Arbiter. `Meld` is intentionally the one
-fixture (`08_meld.json`) marked `"manual": true` in the flat suite —
-see that fixture and `IMPLEMENTATIONS.md`/`CONFORMANCE.md` for its
-current status (structurally validated by all three fixture runners,
-not yet executed end-to-end through the shared JSON schema).
+either is submitted to an Arbiter. `Meld` has its own two-history
+fixture schema (`08_meld.json`'s `history_a`/`history_b`/
+`expect_melded_history_len` fields, distinct from the single-Arbiter
+`initial_option_space`/`events`/`expect` schema the other fixtures use)
+— see that fixture and `IMPLEMENTATIONS.md`/`CONFORMANCE.md` for its
+current status (executed end-to-end by all three fixture runners).
 
 *Executable correspondence:* `spherepop-kernel::sugar::{link, unlink,
 choice, merge, set_meta}` (`sugar.rs`) and `History::meld`

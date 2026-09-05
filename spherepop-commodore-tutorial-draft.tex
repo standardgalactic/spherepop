@@ -1,0 +1,311 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{fontspec}
+\setmainfont{TeX Gyre Pagella}
+\setmonofont{DejaVu Sans Mono}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{enumitem}
+\usepackage{parskip}
+\usepackage{titlesec}
+\hypersetup{colorlinks=true,linkcolor=black,urlcolor=blue,citecolor=black}
+\titleformat{\section}{\Large\bfseries}{\thesection}{0.6em}{}
+\titleformat{\subsection}{\large\bfseries}{\thesubsection}{0.6em}{}
+
+\lstdefinestyle{basic}{
+  basicstyle=\ttfamily\small,
+  columns=fullflexible,
+  keepspaces=true,
+  frame=single,
+  breaklines=true,
+  showstringspaces=false
+}
+\lstdefinestyle{shell}{
+  basicstyle=\ttfamily\small,
+  columns=fullflexible,
+  keepspaces=true,
+  frame=single,
+  breaklines=true,
+  showstringspaces=false
+}
+
+\title{Spherepop on the Commodore\\\large A Practical Introduction to PET and C64 Programming with VICE}
+\author{Flyxion}
+\date{August 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+This tutorial begins with a modern Ubuntu or WSL installation and ends with a tiny playable Commodore 64 game. Along the way we install VICE, launch Commodore PET and C64 emulators, enter short BASIC programs by hand, learn how to stop and clear programs, manipulate C64 screen memory directly, read held keys, fire a projectile, detect a collision, animate a small ``pop,'' and maintain a score. The final program is deliberately small enough to type into an emulated C64 while still exposing the architecture of a real game loop.
+\end{abstract}
+
+\section{Why do this?}
+
+The Commodore machines are useful precisely because so little is hidden. A modern application may pass through an operating system, graphical toolkit, browser engine, virtual machine, driver stack, and GPU before a visible character appears. On a Commodore 64, a BASIC program can place a character on the display by writing a number directly into screen memory. The distance between an abstract rule and a physical-looking result is remarkably short.
+
+This makes the machine a natural playground for Spherepop. We can begin with a few elementary state changes---position, creation, refusal at a boundary, collision, disappearance, and regeneration---and watch them become a game. The final loop can be read as a tiny operational system: move, fire, advance, compare, pop, score, regenerate, repeat.
+
+\section{Installing VICE on Ubuntu or WSL}
+
+VICE is the Versatile Commodore Emulator. Ubuntu packages it as \texttt{vice}; Ubuntu 24.04, for example, provides VICE 3.7.1 in the multiverse repository. The VICE manual identifies \texttt{xpet} as the PET emulator and \texttt{x64sc} as the accurate C64 emulator.
+
+On Ubuntu or Ubuntu under WSL, begin with:
+
+\begin{lstlisting}[style=shell]
+sudo apt update
+sudo apt install vice
+\end{lstlisting}
+
+Check that the programs exist:
+
+\begin{lstlisting}[style=shell]
+which xpet
+which x64sc
+x64sc -version
+\end{lstlisting}
+
+On WSL, graphical VICE windows require GUI support. Current WSL installations with WSLg normally provide this automatically. If a VICE window opens, the graphical side is already working.
+
+Some packaged VICE installations do not contain every original Commodore ROM image for licensing or packaging reasons. A failure such as
+
+\begin{lstlisting}[style=shell]
+C64MEM: Error - Couldn't load kernal ROM `kernal-901227-03.bin'.
+Error - Machine initialization failed.
+\end{lstlisting}
+
+means that the emulator itself was found but a required machine ROM was not. Supply legally obtained ROM images in the location expected by the installed VICE package or configure VICE to use the directory containing them. This is distinct from a BASIC programming error.
+
+\section{Trying the Commodore PET}
+
+Launch the PET from the shell:
+
+\begin{lstlisting}[style=shell]
+xpet
+\end{lstlisting}
+
+After the familiar Commodore BASIC prompt appears, type a minimal program. On an emulator whose keyboard mapping makes shifted characters inconvenient, lowercase input is perfectly adequate:
+
+\begin{lstlisting}[style=basic]
+10 print "hello from the pet"
+20 goto 10
+\end{lstlisting}
+
+Then type:
+
+\begin{lstlisting}[style=basic]
+run
+\end{lstlisting}
+
+The PET will print the sentence indefinitely. Use the emulated \textbf{RUN/STOP} key to interrupt it. At the BASIC prompt,
+
+\begin{lstlisting}[style=basic]
+list
+\end{lstlisting}
+
+shows the program currently stored in memory. A program can deliberately terminate with an \texttt{END} statement:
+
+\begin{lstlisting}[style=basic]
+10 print "one pass through the world"
+20 end
+\end{lstlisting}
+
+A slightly more philosophical test is:
+
+\begin{lstlisting}[style=basic]
+10 print "(the world (is all (that is the case)))"
+20 goto 10
+\end{lstlisting}
+
+The important lesson is not the text itself. We have already acquired the basic edit--run--interrupt--list cycle used throughout the rest of the tutorial.
+
+\section{Launching the Commodore 64}
+
+For the more accurate C64 emulation, run:
+
+\begin{lstlisting}[style=shell]
+x64sc
+\end{lstlisting}
+
+VICE also provides \texttt{x64}, its faster C64 emulator, but \texttt{x64sc} is a good default when accuracy matters.
+
+If VICE reports an error such as
+
+\begin{lstlisting}[style=shell]
+Filesystem Image: Error - Cannot open directory `/some/path' as an image.
+Error - autostart disk attach failed.
+AUTOSTART: Error
+\end{lstlisting}
+
+it has been asked to autostart a path that it cannot attach. This is not a failure of the BASIC interpreter. Start \texttt{x64sc} without the bad autostart argument and work directly at the \texttt{READY.} prompt.
+
+\section{A few BASIC survival commands}
+
+The following commands are enough to recover from most early experiments. \texttt{RUN} executes the program. \texttt{LIST} displays it. \texttt{END} terminates execution when encountered. The physical or emulated \textbf{RUN/STOP} key interrupts a running program.
+
+To clear the C64 screen from BASIC, use:
+
+\begin{lstlisting}[style=basic]
+print chr$(147)
+\end{lstlisting}
+
+Entering a line number by itself deletes that program line. Thus
+
+\begin{lstlisting}[style=basic]
+200
+\end{lstlisting}
+
+deletes line 200. Typing a numbered line again replaces the old version, which makes incremental patching convenient.
+
+One historical peculiarity matters enormously: Commodore BASIC V2 distinguishes variable names using only their first two significant characters. Long descriptive names therefore collide surprisingly easily. In this tutorial we deliberately use short names such as \texttt{sx}, \texttt{sy}, \texttt{sc}, \texttt{bx}, and \texttt{ox}.
+
+\section{The first movable object}
+
+Begin with the smallest possible player. Type:
+
+\begin{lstlisting}[style=basic]
+10 x=20
+20 print chr$(147)
+30 print tab(x);"^"
+40 get a$
+50 if a$="a" and x>1 then x=x-1
+60 if a$="d" and x<38 then x=x+1
+70 goto 20
+\end{lstlisting}
+
+After \texttt{RUN}, pressing A moves the arrow left and D moves it right. This version clears and redraws the entire screen repeatedly. It is crude, but it proves that input, state, rendering, and looping all work.
+
+Conceptually, \texttt{x} is the state of the player. The two \texttt{IF} statements also implement a primitive refusal rule: an attempted movement beyond the chosen boundary is simply not admitted.
+
+\section{Why repeated PRINT eventually becomes a problem}
+
+A first attempt at adding bullets can use many \texttt{PRINT} statements to position objects vertically. Unfortunately, repeatedly printing newlines eventually reaches the bottom of the C64 display and causes the screen to scroll. What looks like random graphical corruption may simply be the terminal behavior of BASIC doing exactly what it was told.
+
+The better solution is to stop treating the display as a scrolling terminal and treat it as memory.
+
+\section{C64 screen memory}
+
+In the normal C64 text configuration, screen memory begins at address 1024 and contains 40 columns by 25 rows. A useful address calculation is therefore
+
+\begin{verbatim}
+1024 + row * 40 + column
+\end{verbatim}
+
+A BASIC \texttt{POKE} writes a byte to an address. For example,
+
+\begin{lstlisting}[style=basic]
+poke 1024+22*40+x,30
+\end{lstlisting}
+
+writes screen code 30 into row 22 at horizontal position \texttt{x}. Writing screen code 32 places a blank and is therefore a convenient way to erase an old object.
+
+This is the conceptual turning point of the tutorial. We are no longer asking BASIC to print a page. We are maintaining a little world represented directly in display memory.
+
+\section{Held-key movement}
+
+\texttt{GET A\$} consumes characters from BASIC's input mechanism, so movement can feel like repeated tapping rather than game control. The C64 also exposes the currently detected key at memory location 197. We can read it with:
+
+\begin{lstlisting}[style=basic]
+k=peek(197)
+\end{lstlisting}
+
+For the keyboard mapping used here, A is 10, D is 18, and space is 60. Thus:
+
+\begin{lstlisting}[style=basic]
+60 k=peek(197)
+70 if k=10 and x>0 then x=x-1
+80 if k=18 and x<39 then x=x+1
+90 if k=60 and b=0 then b=21:c=x
+\end{lstlisting}
+
+Holding A or D now produces continuous movement. This simple method is essentially single-key input; a later machine-language or keyboard-matrix version can recognize combinations such as movement and fire simultaneously.
+
+\section{Spherepop Shooter}
+
+We can now assemble the complete BASIC prototype. The player is a character near the bottom of the screen. A sphere appears near the top. Space creates one projectile. The projectile advances upward. A collision causes a short character animation, increments the score, erases the sphere, and generates another sphere at a random horizontal coordinate.
+
+The program intentionally remains a character-mode prototype. It is small enough to type by hand and transparent enough that every state transition can be inspected.
+
+\subsection{Complete program}
+
+Start from an empty BASIC program if desired with \texttt{NEW}, then enter the following. The code uses direct screen memory and held-key input.
+
+\begin{lstlisting}[style=basic]
+10 x=20:b=0:ox=x:p=0:sc=0
+20 sx=10:sy=2
+30 print chr$(147)
+40 poke 1024+sy*40+sx,81
+45 print chr$(19);"pops:";sc
+50 poke 1024+22*40+x,30
+60 k=peek(197)
+70 if k=10 and x>0 then x=x-1
+80 if k=18 and x<39 then x=x+1
+90 if k=60 and b=0 then b=21:c=x
+100 poke 1024+22*40+ox,32
+110 poke 1024+22*40+x,30
+120 ox=x
+130 if p>0 then poke 1024+p*40+c,32
+140 if b=0 then 210
+150 b=b-1
+160 if b=sy and c=sx then 220
+170 if b<1 then b=0:p=0:goto 60
+180 poke 1024+b*40+c,93:p=b
+190 goto 60
+210 goto 60
+220 poke 1024+sy*40+sx,42
+225 for d=1 to 40:next
+230 poke 1024+sy*40+sx,43
+235 for d=1 to 40:next
+240 poke 1024+sy*40+sx,32
+245 sc=sc+1
+250 print chr$(19);"pops:";sc
+255 b=0:p=0
+260 sx=int(rnd(1)*38)+1
+265 poke 1024+sy*40+sx,81
+270 goto 60
+\end{lstlisting}
+
+Type \texttt{RUN}. Hold A and D to move. Press space to fire. Line up with the sphere and hit it. The sphere changes characters briefly, disappears, the \texttt{POPS} count increases, and another sphere appears.
+
+\section{Reading the game as a state machine}
+
+The program is more interesting than its graphics suggest. The player has a horizontal state \texttt{x}. The target has a position \texttt{(sx,sy)}. The bullet has a vertical state \texttt{b} and a captured horizontal coordinate \texttt{c}. Firing binds the projectile to the player's horizontal coordinate at the instant of creation. Boundary tests refuse player transitions outside the screen. Each loop advances the projectile. Line 160 asks whether projectile and target occupy the same cell. If they do, control transfers to the pop routine.
+
+The crucial transition is:
+
+\begin{lstlisting}[style=basic]
+160 if b=sy and c=sx then 220
+\end{lstlisting}
+
+The collision is therefore not a graphical illusion. It is an equality relation over two pieces of state. Lines 220--240 make that state transition visible as a tiny explosion. Line 245 records the event:
+
+\begin{lstlisting}[style=basic]
+245 sc=sc+1
+\end{lstlisting}
+
+Finally, lines 260--265 create a new admissible target state. The entire game is a repeated transformation of a very small state space.
+
+\section{Debugging lessons from building it interactively}
+
+Several failures encountered while constructing the game are worth preserving because they reveal the machine. A screen that appears to move unpredictably may be ordinary scrolling caused by too many \texttt{PRINT} operations. A syntax error reported at a particular line should first be inspected with \texttt{LIST 190}, or the corresponding line number, because the stored program is authoritative: the character that actually reached the emulator may differ from what was intended. Re-entering a numbered line replaces it, while entering only its number deletes it.
+
+Short variable names are not merely stylistic nostalgia. Because BASIC V2 recognizes only the first two significant characters of variable names, names that appear distinct to a modern programmer may denote the same variable. Restricting the program to compact one- and two-character names avoids an entire class of mysterious errors.
+
+VICE errors should likewise be separated from BASIC errors. A missing KERNAL ROM occurs before the emulated machine can initialize. An autostart filesystem error concerns a host path VICE attempted to attach. A \texttt{?SYNTAX ERROR IN 190} comes from the Commodore BASIC program itself. Keeping those layers distinct makes debugging much easier.
+
+\section{Where to take Spherepop next}
+
+The present program is a proof of concept rather than the endpoint. The most natural next step is to replace character graphics with the C64's hardware sprites. A sphere can then become a genuinely circular multicolor object and the player can become a small ship. Direct keyboard-matrix scanning would permit simultaneous movement and firing. Multiple projectiles and multiple spheres would turn the single collision relation into a collection of interacting objects. Color RAM could make each pop flash independently. SID sound registers could turn the pop into an audible event.
+
+Beyond BASIC, the same design can be rewritten in 6502 assembly. That would not change the conceptual game: player state, projectile state, target state, collision, pop, score, regeneration. It would instead change how directly and rapidly those operations are expressed. The BASIC prototype therefore serves as an executable specification for a later assembly version.
+
+The larger lesson is that expressive complexity need not begin with a large primitive vocabulary. A few bytes of state, a few comparisons, and a repeated transition loop are enough to produce recognizable agency, interaction, consequence, memory, and recurrence. On a C64, those abstractions remain close enough to the machine that one can watch them become pixels---or, for now, characters---almost one operation at a time.
+
+\section*{References and further reading}
+
+VICE Team. \emph{VICE Manual}. In particular, the emulator invocation documentation identifies \texttt{x64}, \texttt{x64sc}, and \texttt{xpet}. Available from \url{https://vice-emu.sourceforge.io/}.
+
+Ubuntu Packages. \emph{vice --- Versatile Commodore Emulator}. Ubuntu package archive, including the Ubuntu 24.04/Noble VICE package. Available from \url{https://packages.ubuntu.com/noble/vice}.
+
+\end{document}

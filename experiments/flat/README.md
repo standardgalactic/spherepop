@@ -94,10 +94,26 @@ Each fixture is one JSON file in `fixtures/`. Fields:
 | `events` | The event sequence to submit, in order (see "Event ops" below). |
 | `expect` | The expected final state (see "Expectation fields" below). |
 
-An event without `manual: true` is executed; a fixture with `manual: true`
-(currently only `08_meld.json`) is structurally validated (its narrative
-fields must be present) but not executed end-to-end — see that file for
-why Meld does not yet fit this single-Arbiter schema.
+An event without `manual: true` is executed. A fixture with two
+top-level `history_a`/`history_b` blocks instead of a single
+`initial_option_space`/`events` block (currently only `08_meld.json`)
+uses the Meld two-history schema instead (see "Meld fixture schema"
+below); no fixture is currently marked `manual: true`.
+
+### Meld fixture schema
+
+`08_meld.json` doesn't fit the single-Arbiter event-stream schema above
+because Meld (the free monoidal composition of two independently-
+generated histories) operates on two `History` values directly, before
+either is submitted to an Arbiter. Its schema is instead:
+
+| Field | Meaning |
+|---|---|
+| `history_a`, `history_b` | Each an independent sub-history: `{"initial_option_space": [...], "events": [...], "certified_rules": [...]}`, submitted through its own Arbiter exactly like the single-history schema above. |
+| `expect_melded_history_len` | The length of the melded event log, i.e. `len(history_a) + len(history_b)` (event-log concatenation, matching `spherepop-kernel::History::meld`). |
+
+A runner detects this schema by the presence of `history_a` (rather
+than `initial_option_space`) at the top level of the fixture.
 
 ### Event ops
 
@@ -154,7 +170,7 @@ All are optional; only the fields present are checked.
 | `05a`/`05b_same_snapshot_different_history_*` | Same snapshot, different history (a paired comparison — see the "pair_with" field in each file) |
 | `06_derived_merge` | Derived Merge |
 | `07_desugaring` | Desugaring |
-| `08_meld` | Meld (structural fixture only — see "Known gaps" below) |
+| `08_meld` | Meld (executed via the two-history schema — see "Meld fixture schema" above) |
 | `09_replay` | Replay (partial — see "Known gaps" below) |
 | `10_invalid_event` | Invalid event |
 | `11_small_arithmetic` | Small arithmetic (`2 3 + .`) |
@@ -165,13 +181,11 @@ All are optional; only the fields present are checked.
 This suite intentionally does not yet close every item in the tracking
 issue's Phase C checklist:
 
-- **Meld** (`08_meld.json`) is marked `manual: true`. Meld composes two
-  independently-generated `History` values directly (the free monoidal
-  tensor), which doesn't fit a single-Arbiter event-stream fixture. The
-  executable evidence for Meld today is `spherepop-kernel`'s own
-  `History::meld` and its test coverage. Extending this fixture format
-  (or the runners) to execute a two-history Meld end-to-end is left as
-  follow-up work.
+- **Meld** (`08_meld.json`) is now executed end-to-end by all three
+  runners via the two-history schema (see "Meld fixture schema" above),
+  not just structurally validated. This was verified directly against
+  `spherepop-kernel`'s own `History::meld` semantics (event-log
+  concatenation).
 - **Replay** (`09_replay.json`) currently checks that folding `apply`
   over one in-memory `History` twice yields an equal `State`. It does
   not yet check the stronger claim from the issue: serialize the history

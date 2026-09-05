@@ -65,6 +65,69 @@ enum RunOutcome {
     Fail(Vec<Failure>),
 }
 
+/// Builds and submits one sub-history (`history_a` / `history_b` of the Meld
+/// fixture) through its own Arbiter, returning the resulting `History`.
+fn run_sub_history(sub: &Json) -> Result<Arbiter, Vec<Failure>> {
+    let omega0: Vec<u64> = sub
+        .field("initial_option_space")
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|v| v.as_u64().unwrap())
+        .collect();
+    let rules: Vec<&'static str> = sub
+        .get("certified_rules")
+        .and_then(Json::as_array)
+        .unwrap_or(&[])
+        .iter()
+        .map(|v| Box::leak(v.as_str().unwrap().to_string().into_boxed_str()) as &'static str)
+        .collect();
+    let mut arb = Arbiter::new(omega0.iter().copied(), rules);
+    for ev in sub.get("events").and_then(Json::as_array).unwrap_or(&[]) {
+        let op = ev.field("op").as_str().unwrap();
+        let events = expect_events_from_op(op, ev);
+        if let Err(e) = arb.submit(Proposal::new(events)) {
+            return Err(vec![Failure(format!("sub-history event {:?} was rejected: {:?}", ev, e))]);
+        }
+    }
+    Ok(arb)
+}
+
+/// Executes a two-history Meld fixture (`history_a`/`history_b`) end-to-end:
+/// each sub-history runs through its own Arbiter, then the two resulting
+/// histories are melded (event-log concatenation, via `History::meld`) and
+/// checked against `expect_melded_history_len`.
+fn run_meld_fixture(fixture: &Json) -> RunOutcome {
+    let arb_a = match run_sub_history(fixture.field("history_a")) {
+        Ok(a) => a,
+        Err(f) => return RunOutcome::Fail(f),
+    };
+    let arb_b = match run_sub_history(fixture.field("history_b")) {
+        Ok(b) => b,
+        Err(f) => return RunOutcome::Fail(f),
+    };
+
+    let mut melded = arb_a.history_clone();
+    melded.meld(arb_b.history_ref());
+
+    let mut failures = Vec::new();
+    if let Some(expected) = fixture.get("expect_melded_history_len").and_then(Json::as_u64) {
+        if melded.len() as u64 != expected {
+            failures.push(Failure(format!(
+                "expect_melded_history_len: expected {}, got {}",
+                expected,
+                melded.len()
+            )));
+        }
+    }
+
+    if failures.is_empty() {
+        RunOutcome::Pass
+    } else {
+        RunOutcome::Fail(failures)
+    }
+}
+
 fn run_fixture(path: &Path) -> RunOutcome {
     let text = match std::fs::read_to_string(path) {
         Ok(t) => t,
@@ -74,6 +137,10 @@ fn run_fixture(path: &Path) -> RunOutcome {
         Ok(v) => v,
         Err(e) => return RunOutcome::Fail(vec![Failure(format!("json parse error: {e}"))]),
     };
+
+    if fixture.get("history_a").is_some() {
+        return run_meld_fixture(&fixture);
+    }
 
     if fixture.get("manual").and_then(Json::as_bool).unwrap_or(false) {
         // Structural-only fixture (e.g. Meld): confirm required narrative
