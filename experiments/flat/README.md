@@ -24,9 +24,9 @@ with no hidden fifth primitive.
 ./run_all.sh
 ```
 
-This runs the fixture suite against two independent implementations,
+This runs the fixture suite against four independent implementations,
 regenerates `CONFORMANCE.md` (the Phase D "generated conformance
-matrix" deliverable), and fails (non-zero exit) if either implementation
+matrix" deliverable), and fails (non-zero exit) if any implementation
 disagrees with a fixture's own recorded expectations:
 
 - **Python oracle** (`run_python.py`) — a from-scratch reimplementation
@@ -42,9 +42,12 @@ disagrees with a fixture's own recorded expectations:
   deliberately independent of `compiler/`'s general-purpose Bubble
   interpreter (whose own `Bind`/`Collapse` are still known to diverge
   from the canonical semantics -- see `IMPLEMENTATIONS.md`).
+- **Go implementation** (`../../spherepop-go`, via `go test` and
+  `go run ./cmd/fixtures`) — a fourth standalone realization of the
+  event/history/arbiter model and SPHIST/1 encoder/decoder.
 
-All three runners read the *same* JSON fixture files in `fixtures/`, so
-agreement between them is a genuine three-implementation
+All four runners read the *same* JSON fixture files in `fixtures/`, so
+agreement between them is a genuine four-implementation
 cross-implementation conformance result — the "Portable" evidence
 criterion from the tracking issue.
 
@@ -53,6 +56,7 @@ Run them individually with:
 ```sh
 python3 run_python.py                       # Python oracle only
 cd ../../spherepop-kernel && cargo run --bin fixtures   # Rust kernel only
+(cd ../../spherepop-go && go test ./... && go run ./cmd/fixtures ../experiments/flat/fixtures)  # Go only
 (cd ../../compiler/build && cmake .. && make sp_fixtures && ./sp_fixtures)  # C kernel only
 python3 generate_conformance_matrix.py       # regenerate CONFORMANCE.md only
 ```
@@ -158,6 +162,7 @@ All are optional; only the fields present are checked.
 | `quotient_honoring_refusals_same_class` | Same, but for the variant that excludes withdrawn (`Unlink`-ed) Bind pairs. |
 | `meta_keys` | List of object ids that must appear as keys under the dedicated `SetMeta` collapse rule. |
 | `deterministic_replay` | If `true`, replaying the resulting history twice from the same initial `Ω` must produce byte-for-byte identical state. |
+| `canonical_history_fnv1a64` | Encode the replay input as SPHIST/1, check its 16-digit lowercase FNV-1a-64 digest, decode it, and require fresh-state replay to equal the original state. |
 
 ## Fixture inventory
 
@@ -171,7 +176,7 @@ All are optional; only the fields present are checked.
 | `06_derived_merge` | Derived Merge |
 | `07_desugaring` | Desugaring |
 | `08_meld` | Meld (executed via the two-history schema — see "Meld fixture schema" above) |
-| `09_replay` | Replay (partial — see "Known gaps" below) |
+| `09_replay` | Canonical SPHIST/1 serialization, digest, decode, and fresh-state replay |
 | `10_invalid_event` | Invalid event |
 | `11_small_arithmetic` | Small arithmetic (`2 3 + .`) |
 | `12_small_abstraction` | Small abstraction |
@@ -186,14 +191,12 @@ issue's Phase C checklist:
   not just structurally validated. This was verified directly against
   `spherepop-kernel`'s own `History::meld` semantics (event-log
   concatenation).
-- **Replay** (`09_replay.json`) currently checks that folding `apply`
-  over one in-memory `History` twice yields an equal `State`. It does
-  not yet check the stronger claim from the issue: serialize the history
-  to a wire format, replay from an *empty* world, and compare a canonical
-  digest. That requires the serialization format from Phase B
-  ("Specify serialization and canonical output"), which is not yet
-  written; once it exists, this fixture should be extended rather than
-  replaced.
+- **Replay** (`09_replay.json`) now exercises the stronger Phase B claim.
+  Each adapter encodes the complete replay input as the canonical
+  [SPHIST/1 envelope](HISTORY-WIRE-V1.md), checks the expected FNV-1a-64
+  digest, decodes the bytes independently, and replays the decoded history
+  from a fresh state initialized only by the decoded option space. FNV is
+  a portable regression identifier, not an authenticity mechanism.
 - Three implementations are now exercised (Rust, Python, C); see
   `CONFORMANCE.md`'s "Blocked adapters" section for the concrete,
   investigated reason Forth isn't yet, and `IMPLEMENTATIONS.md` for

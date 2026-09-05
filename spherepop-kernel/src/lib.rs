@@ -19,6 +19,7 @@ pub mod history;
 pub mod json;
 pub mod overlay;
 pub mod sugar;
+pub mod wire;
 
 pub use arbiter::{Arbiter, ArbiterError, Proposal};
 pub use event::{Event, EventKind, LogPos, ObjectId, RuleId};
@@ -303,5 +304,22 @@ mod tests {
         let result_a = arb_a.submit(Proposal::new(vec![Event::pop(2)]));
         let result_b = arb_b.submit(Proposal::new(vec![Event::pop(2)]));
         assert_eq!(result_a.is_ok(), result_b.is_ok());
+    }
+
+    #[test]
+    fn canonical_history_wire_round_trip() {
+        let mut arb = Arbiter::new(omega(&[3, 1, 2]), ["identity"]);
+        arb.submit(Proposal::new(vec![
+            Event::pop(1),
+            Event::bind(1, 2, "adjacent"),
+            Event::collapse("identity"),
+        ])).unwrap();
+        let bytes = wire::encode_history([3, 1, 2], ["identity"], arb.history_ref()).unwrap();
+        assert_eq!(wire::fnv1a64(&bytes), "bf4988c6e7a3c379");
+        let decoded = wire::decode_history(&bytes).unwrap();
+        assert_eq!(decoded.history.replay(&decoded.initial_option_space), arb.state());
+        let mut trailing = bytes;
+        trailing.push(0);
+        assert!(wire::decode_history(&trailing).is_err());
     }
 }

@@ -368,7 +368,7 @@ etc., matched by prefix in fixture `10`'s `expect_error` field).
 
 ---
 
-## 9. Serialization and canonical output (partial)
+## 9. Serialization and canonical output
 
 The only serialization format specified *and exercised* as of this
 version is the flat fixture JSON format in
@@ -385,16 +385,19 @@ an `Event`'s (§2): a fixture may omit any `expect` field it does not
 need checked, and a checker must not treat an absent field as a
 zero/false expectation.
 
-**Not yet specified:** a canonical *wire* encoding of `H` itself (as
-opposed to the fixture-description format above, which encodes a
-*test case*, not a portable history) sufficient to serialize an
-arbitrary `H`, replay it from an empty world on a different machine or
-implementation, and compare a canonical digest. Fixture
-`09_replay.json` deliberately checks only the weaker in-memory property
-("folding `apply` over one `History` twice yields an equal `State`")
-and says so in its own `explanation` field; the stronger serialize/
-replay-from-empty/digest-compare claim is explicitly left as follow-up
-work gated on this section, not silently assumed to already hold.
+The canonical wire encoding of a replayable world is **SPHIST/1**, defined
+byte-for-byte in `experiments/flat/HISTORY-WIRE-V1.md`. It contains the
+sorted initial option space, sorted certified-rule names, and ordered
+primitive history. Event positions are implicit in sequence order, and
+derived forms must be desugared before encoding. It deliberately excludes
+terminal state and Collapse outputs: those remain replay products.
+
+Fixture `09_replay.json` fixes one golden 107-byte envelope and its
+FNV-1a-64 digest. Each conforming adapter constructs the envelope from its
+executed history, checks the digest, decodes without consulting the fixture
+event list, and replays from a fresh state initialized only from the
+decoded option space. FNV-1a-64 is a stable conformance identifier, not a
+cryptographic authentication mechanism.
 
 ---
 
@@ -443,7 +446,7 @@ the event grammar it defines:
   four-primitive event grammar, world model, well-formedness, replay,
   four reference collapse rules, five derived sugar forms, Meld as a
   structural (non-primitive) operation, the fixed error set, and the
-  partial serialization status of §9, as already realized identically
+  SPHIST/1 serialization and canonical digest of §9, as realized identically
   by `spherepop-kernel/`, `experiments/flat/run_python.py`, and
   `compiler/tools/fixtures/`, and checked by every fixture in
   `experiments/flat/fixtures/`.

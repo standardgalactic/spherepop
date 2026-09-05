@@ -106,6 +106,7 @@ add_executable(sp_fixtures
     tools/fixtures/kernel.c
     tools/fixtures/collapse_rules.c
     tools/fixtures/sugar.c
+    tools/fixtures/wire.c
 )
 target_include_directories(sp_fixtures PRIVATE tools/fixtures)
 target_compile_definitions(sp_fixtures PRIVATE

@@ -19,10 +19,115 @@ Exits non-zero if any fixture fails.
 from __future__ import annotations
 
 import json
+import struct
 import sys
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Optional
+
+
+WIRE_MAGIC = b"SPHIST1\0"
+
+
+def _wire_string(value: str) -> bytes:
+    encoded = value.encode("utf-8")
+    return struct.pack(">I", len(encoded)) + encoded
+
+
+def encode_history(omega0, rules, history: list[Event]) -> bytes:
+    """Encode a replayable world using the normative SPHIST/1 envelope."""
+    out = bytearray(WIRE_MAGIC)
+    omega_values = list(omega0)
+    rule_values = list(rules)
+    if len(omega_values) != len(set(omega_values)):
+        raise ValueError("duplicate initial option")
+    if len(rule_values) != len(set(rule_values)):
+        raise ValueError("duplicate certified rule")
+    omega = sorted(omega_values)
+    certified = sorted(rule_values)
+    out += struct.pack(">I", len(omega))
+    for object_id in omega:
+        out += struct.pack(">Q", object_id)
+    out += struct.pack(">I", len(certified))
+    for rule_name in certified:
+        out += _wire_string(rule_name)
+    out += struct.pack(">I", len(history))
+    for event in history:
+        kinds = {"pop": 0, "refuse": 1, "bind": 2, "collapse": 3}
+        out.append(kinds[event.kind])
+        if event.kind == "pop":
+            out += struct.pack(">Q", event.a)
+        elif event.kind == "refuse":
+            out += struct.pack(">Q", event.a)
+            out.append(1 if event.b is not None else 0)
+            if event.b is not None:
+                out += struct.pack(">Q", event.b)
+            out += _wire_string(event.reason or "")
+        elif event.kind == "bind":
+            out += struct.pack(">QQ", event.a, event.b)
+            out += _wire_string(event.tag or "")
+        else:
+            out += _wire_string(event.rule or "")
+    return bytes(out)
+
+
+def decode_history(data: bytes) -> tuple[list[int], list[str], list[Event]]:
+    """Decode SPHIST/1 and reject truncation, invalid UTF-8, or trailing bytes."""
+    view = memoryview(data)
+    offset = 0
+
+    def take(n: int) -> bytes:
+        nonlocal offset
+        if n < 0 or offset + n > len(view):
+            raise ValueError("truncated SPHIST/1 envelope")
+        value = bytes(view[offset:offset + n])
+        offset += n
+        return value
+
+    def u32() -> int:
+        return struct.unpack(">I", take(4))[0]
+
+    def u64() -> int:
+        return struct.unpack(">Q", take(8))[0]
+
+    def string() -> str:
+        return take(u32()).decode("utf-8")
+
+    if take(len(WIRE_MAGIC)) != WIRE_MAGIC:
+        raise ValueError("invalid SPHIST/1 magic")
+    omega = [u64() for _ in range(u32())]
+    rules = [string() for _ in range(u32())]
+    history = []
+    for _ in range(u32()):
+        kind = take(1)[0]
+        if kind == 0:
+            history.append(pop(u64()))
+        elif kind == 1:
+            a = u64()
+            has_b = take(1)[0]
+            if has_b not in (0, 1):
+                raise ValueError("invalid Refuse has_b flag")
+            b = u64() if has_b else None
+            history.append(refuse(a, string(), b=b))
+        elif kind == 2:
+            history.append(bind(u64(), u64(), string()))
+        elif kind == 3:
+            history.append(collapse(string()))
+        else:
+            raise ValueError(f"invalid event kind {kind}")
+    if offset != len(view):
+        raise ValueError("trailing bytes in SPHIST/1 envelope")
+    if omega != sorted(set(omega)) or rules != sorted(set(rules)):
+        raise ValueError("non-canonical SPHIST/1 set ordering")
+    return omega, rules, history
+
+
+def fnv1a64(data: bytes) -> str:
+    digest = 0xCBF29CE484222325
+    for byte in data:
+        digest ^= byte
+        digest = (digest * 0x100000001B3) & 0xFFFFFFFFFFFFFFFF
+    return f"{digest:016x}"
 
 
 # ---------------------------------------------------------------------
@@ -337,6 +442,27 @@ def run_fixture(path: Path) -> list[str]:
         s2 = arb.state()
         if s1 != s2:
             failures.append("deterministic_replay: two replays of the same history disagreed")
+    if "canonical_history_fnv1a64" in expect:
+        wire = encode_history(omega0, rules, arb.history)
+        actual_digest = fnv1a64(wire)
+        if actual_digest != expect["canonical_history_fnv1a64"]:
+            failures.append(
+                "canonical_history_fnv1a64: expected "
+                f"{expect['canonical_history_fnv1a64']}, got {actual_digest}"
+            )
+        decoded_omega, decoded_rules, decoded_history = decode_history(wire)
+        replayed = State(option_space=set(decoded_omega))
+        for event in decoded_history:
+            apply(replayed, event)
+        if replayed != state:
+            failures.append("wire_replay: decoded history produced a different state")
+        if decoded_rules != sorted(rules):
+            failures.append("wire_replay: certified rules changed during round trip")
+        try:
+            decode_history(wire + b"\0")
+            failures.append("wire_decode: accepted trailing bytes")
+        except ValueError:
+            pass
 
     return failures
 
