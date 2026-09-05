@@ -1,0 +1,20 @@
+{
+  "name": "quotient_equal_different_history_run_b",
+  "pair_with": "13a_quotient_equal_different_history_run_a.json",
+  "invariant": "See the paired fixture: every raw observable field (option_space, committed, bound, refused_count, history_len) differs from the pair, yet collapse_quotient still places 3 and 4 in the same equivalence class in both runs.",
+  "explanation": "Here 1 is Refused instead of Popped (so it stays in Omega, and Omega ends at {1,2,3,4} rather than {2,3,4}), and 3/4 are Bound under tag 'kinship' rather than 'adjacent'. Nothing in the raw snapshot matches the paired fixture. But collapse_quotient treats any non-'__meta__'-tagged Bind as a union regardless of tag text, so 3 and 4 still collapse into one equivalence class here exactly as in the pair -- demonstrating that quotient agreement is a strictly coarser, and strictly different, notion than the fixtures/05 pair's terminal-snapshot agreement.",
+  "initial_option_space": [1, 2, 3, 4],
+  "certified_rules": [],
+  "events": [
+    {"op": "refuse", "a": 1, "reason": "excluded by this run"},
+    {"op": "bind", "a": 3, "b": 4, "tag": "kinship"}
+  ],
+  "expect": {
+    "option_space": [1, 2, 3, 4],
+    "committed": [],
+    "bound": [[3, 4, "kinship"]],
+    "refused_count": 1,
+    "history_len": 2,
+    "quotient_same_class": [[3, 4, true]]
+  }
+}

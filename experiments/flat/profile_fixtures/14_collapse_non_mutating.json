@@ -1,0 +1,20 @@
+{
+  "name": "profile_collapse_non_mutating",
+  "invariant": "Collapse does not mutate prior history: replay of the prefix before a Collapse event is unaffected by which rule the Collapse event invokes (COMPLEXITY.md section 14, item 2).",
+  "explanation": "Two histories share an identical prefix (pop/bind events) and diverge only in which certified rule their final Collapse event names. The prefix's committed set and option space must be identical across both branches, even though the two Collapse events themselves observe under different rules and therefore may report different quotient classes.",
+  "common_prefix_option_space": [1, 2, 3],
+  "certified_rules": ["quorum", "unanimous"],
+  "common_prefix_ops": [
+    {"op": "pop", "a": 1},
+    {"op": "bind", "a": 1, "b": 2, "tag": "assemble"}
+  ],
+  "branch_a_ops": [
+    {"op": "collapse", "rule": "quorum"}
+  ],
+  "branch_b_ops": [
+    {"op": "collapse", "rule": "unanimous"}
+  ],
+  "expect_prefix_option_space": [2, 3],
+  "expect_prefix_committed": [1],
+  "expect_prefix_history_len": 2
+}

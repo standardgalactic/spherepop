@@ -1,0 +1,32 @@
+{
+  "name": "profile_depth_vs_width",
+  "invariant": "Equal event count does not imply equal dependency depth (COMPLEXITY.md section 10, Counterexample 1). H1 is a sequential chain a->b->c->d; H2 pops the same four objects with no binds at all. Both have event count 4 (in the pop-only prefix used for the graph), but D(H1)=4, W(H1)=1 while D(H2)=1, W(H2)=4.",
+  "explanation": "Depth is computed as the longest dependency path counted in vertices under the default assembly interpretation (a bind(a,b) edge is read as 'b depends on a'); width is the maximum antichain size, computed exactly via Dilworth/Mirsky duality (min chain cover of the reachability relation).",
+  "history_1": {
+    "initial_option_space": [1, 2, 3, 4],
+    "certified_rules": [],
+    "ops": [
+      {"op": "pop", "a": 1},
+      {"op": "pop", "a": 2},
+      {"op": "pop", "a": 3},
+      {"op": "pop", "a": 4},
+      {"op": "bind", "a": 1, "b": 2, "tag": "assemble"},
+      {"op": "bind", "a": 2, "b": 3, "tag": "assemble"},
+      {"op": "bind", "a": 3, "b": 4, "tag": "assemble"}
+    ]
+  },
+  "history_2": {
+    "initial_option_space": [5, 6, 7, 8],
+    "certified_rules": [],
+    "ops": [
+      {"op": "pop", "a": 5},
+      {"op": "pop", "a": 6},
+      {"op": "pop", "a": 7},
+      {"op": "pop", "a": 8}
+    ]
+  },
+  "expect": {
+    "history_1": {"num_components": 4, "depth": 4, "width": 1},
+    "history_2": {"num_components": 4, "depth": 1, "width": 4}
+  }
+}

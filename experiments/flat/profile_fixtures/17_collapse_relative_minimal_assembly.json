@@ -1,0 +1,31 @@
+{
+  "name": "profile_collapse_relative_minimal_assembly",
+  "invariant": "Coarser collapse rules cannot increase minimal collapse-relative assembly cost (COMPLEXITY.md section 4's proposition, section 14 item 5), witnessed here as a strict inequality: A_min^fine(x) = 4 > A_min^coarse(x) = 3 for the target observation x = '1 and 3 in the same class'.",
+  "explanation": "Two candidate histories both attempt to relate object 1 to object 3 via an intermediate object 2, then withdraw the (1,2) relation. candidate_coarse (length 3) achieves '1~3' under the coarse rule (which ignores refusals entirely and unions every bind regardless), but NOT under the fine rule (which honors the withdrawal and so never unions 1 with 2, leaving 1 isolated). candidate_fine (length 4) adds one more bind(1,3) directly, which is enough to achieve '1~3' under both rules. Because 'fine' is strictly the finer rule (it preserves the withdrawal-distinction 'coarse' discards), it can only be satisfied by the longer candidate, giving a strictly larger Collapse-relative minimum -- exactly the direction COMPLEXITY.md section 4's proposition predicts, now with a witness that is strict rather than merely non-strict.",
+  "certified_rules": [],
+  "candidate_coarse": {
+    "initial_option_space": [1, 2, 3],
+    "ops": [
+      {"op": "bind", "a": 1, "b": 2, "tag": "assemble"},
+      {"op": "bind", "a": 2, "b": 3, "tag": "assemble"},
+      {"op": "refuse_bind", "a": 1, "b": 2, "reason": "relation withdrawn"}
+    ]
+  },
+  "candidate_fine": {
+    "initial_option_space": [1, 2, 3],
+    "ops": [
+      {"op": "bind", "a": 1, "b": 2, "tag": "assemble"},
+      {"op": "bind", "a": 2, "b": 3, "tag": "assemble"},
+      {"op": "refuse_bind", "a": 1, "b": 2, "reason": "relation withdrawn"},
+      {"op": "bind", "a": 1, "b": 3, "tag": "assemble"}
+    ]
+  },
+  "target": [1, 3],
+  "expect": {
+    "candidate_coarse": {"length": 3, "same_class_under_coarse": true, "same_class_under_fine": false},
+    "candidate_fine": {"length": 4, "same_class_under_coarse": true, "same_class_under_fine": true},
+    "min_length_achieving_coarse": 3,
+    "min_length_achieving_fine": 4,
+    "strictly_greater": true
+  }
+}

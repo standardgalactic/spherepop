@@ -1,0 +1,14 @@
+{
+  "name": "profile_length_increases",
+  "invariant": "L(H . e) = L(H) + 1 for every admissible event e (COMPLEXITY.md section 2). This should be the first regression check on any implementation of the derived profile function.",
+  "explanation": "Trivial but foundational: since History is append-only and every admitted event contributes exactly one entry, event length must increase by exactly one per admitted event regardless of event kind (pop/refuse/bind/collapse).",
+  "initial_option_space": [1, 2, 3, 4],
+  "certified_rules": ["quorum"],
+  "ops": [
+    {"op": "pop", "a": 1},
+    {"op": "bind", "a": 1, "b": 2, "tag": "assemble"},
+    {"op": "refuse", "a": 3, "reason": "not selected"},
+    {"op": "collapse", "rule": "quorum"}
+  ],
+  "expect_lengths_after_each_op": [1, 2, 3, 4]
+}

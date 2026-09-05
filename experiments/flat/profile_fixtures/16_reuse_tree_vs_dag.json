@@ -1,0 +1,47 @@
+{
+  "name": "profile_reuse_tree_vs_dag",
+  "invariant": "DAG reuse differs from tree-unfolded reconstruction (COMPLEXITY.md section 10, Counterexample 2 / section 9). Building component u once (from a, b) and binding it into three downstream assemblies gives a strictly positive reuse gain G_reuse(H) = A_tree(H) - A_DAG(H) > 0, since the tree-unfolded cost duplicates u's whole ancestor lineage (a, b, u) once per downstream consumer while the DAG cost pays for a, b, u once plus three cheap reuse edges.",
+  "explanation": "history_shared reuses u=3 across v1,v2,v3 via three separate bind edges out of u. history_no_reuse independently reconstructs a fresh copy of the a-b-u lineage for every one of its three sinks, so it has no shared ancestors at all; its own reuse gain is expected to be non-positive (small and <= 0, reflecting 'no reuse occurred, and binding still cost something'), not positive -- this is an intentional contrast, not an error, per profile.py's documented caveat that G_reuse is not asserted non-negative in general, only when actual sharing exists.",
+  "history_shared": {
+    "initial_option_space": [1, 2, 3, 4, 5, 6],
+    "certified_rules": [],
+    "ops": [
+      {"op": "pop", "a": 1},
+      {"op": "pop", "a": 2},
+      {"op": "pop", "a": 3},
+      {"op": "bind", "a": 1, "b": 3, "tag": "assemble"},
+      {"op": "bind", "a": 2, "b": 3, "tag": "assemble"},
+      {"op": "pop", "a": 4},
+      {"op": "pop", "a": 5},
+      {"op": "pop", "a": 6},
+      {"op": "bind", "a": 3, "b": 4, "tag": "assemble"},
+      {"op": "bind", "a": 3, "b": 5, "tag": "assemble"},
+      {"op": "bind", "a": 3, "b": 6, "tag": "assemble"}
+    ]
+  },
+  "history_no_reuse": {
+    "initial_option_space": [11, 12, 13, 14, 21, 22, 23, 24, 31, 32, 33, 34],
+    "certified_rules": [],
+    "ops": [
+      {"op": "pop", "a": 11}, {"op": "pop", "a": 12}, {"op": "pop", "a": 13},
+      {"op": "bind", "a": 11, "b": 13, "tag": "assemble"},
+      {"op": "bind", "a": 12, "b": 13, "tag": "assemble"},
+      {"op": "pop", "a": 14},
+      {"op": "bind", "a": 13, "b": 14, "tag": "assemble"},
+      {"op": "pop", "a": 21}, {"op": "pop", "a": 22}, {"op": "pop", "a": 23},
+      {"op": "bind", "a": 21, "b": 23, "tag": "assemble"},
+      {"op": "bind", "a": 22, "b": 23, "tag": "assemble"},
+      {"op": "pop", "a": 24},
+      {"op": "bind", "a": 23, "b": 24, "tag": "assemble"},
+      {"op": "pop", "a": 31}, {"op": "pop", "a": 32}, {"op": "pop", "a": 33},
+      {"op": "bind", "a": 31, "b": 33, "tag": "assemble"},
+      {"op": "bind", "a": 32, "b": 33, "tag": "assemble"},
+      {"op": "pop", "a": 34},
+      {"op": "bind", "a": 33, "b": 34, "tag": "assemble"}
+    ]
+  },
+  "expect": {
+    "history_shared": {"tree_cost": 12.0, "dag_cost": 7.5, "reuse_gain_positive": true},
+    "history_no_reuse": {"tree_cost": 12.0, "dag_cost": 14.7, "reuse_gain_positive": false}
+  }
+}
