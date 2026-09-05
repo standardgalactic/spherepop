@@ -45,6 +45,7 @@ type expectation struct {
 	QuotientHonoringRefusalsSameClass *[][]any  `json:"quotient_honoring_refusals_same_class"`
 	MetaKeys                          *[]uint64 `json:"meta_keys"`
 	DeterministicReplay               bool      `json:"deterministic_replay"`
+	CanonicalHistoryFNV1a64           string    `json:"canonical_history_fnv1a64"`
 }
 
 type fixture struct {
@@ -161,7 +162,7 @@ func checkTriples(rows [][]any, check func(sp.ObjectID, sp.ObjectID) bool, name 
 	return failures
 }
 
-func checkExpected(a *sp.Arbiter, initial []sp.ObjectID, expect *expectation) []string {
+func checkExpected(a *sp.Arbiter, initial []sp.ObjectID, certified []sp.RuleID, expect *expectation) []string {
 	if expect == nil {
 		return nil
 	}
@@ -228,6 +229,24 @@ func checkExpected(a *sp.Arbiter, initial []sp.ObjectID, expect *expectation) []
 			failures = append(failures, "deterministic replay disagreed")
 		}
 	}
+	if expect.CanonicalHistoryFNV1a64 != "" {
+		wire, err := sp.EncodeHistory(initial, certified, history)
+		if err != nil {
+			failures = append(failures, "wire encode: "+err.Error())
+		} else {
+			if digest := sp.FNV1a64(wire); digest != expect.CanonicalHistoryFNV1a64 {
+				failures = append(failures, fmt.Sprintf("canonical_history_fnv1a64: expected %s, got %s", expect.CanonicalHistoryFNV1a64, digest))
+			}
+			decoded, err := sp.DecodeHistory(wire)
+			if err != nil { failures = append(failures, "wire decode: "+err.Error())
+			} else if !reflect.DeepEqual(decoded.History.Replay(decoded.InitialOptionSpace), state) {
+				failures = append(failures, "wire_replay: decoded history produced a different state")
+			}
+			if _, err := sp.DecodeHistory(append(append([]byte(nil), wire...), 0)); err == nil {
+				failures = append(failures, "wire_decode: accepted trailing bytes")
+			}
+		}
+	}
 	return failures
 }
 
@@ -265,9 +284,10 @@ func runFixture(path string) ([]string, error) {
 		return nil, nil
 	}
 	initial := ids(input.InitialOptionSpace)
-	a := sp.NewArbiter(initial, rules(input.CertifiedRules))
+	certified := rules(input.CertifiedRules)
+	a := sp.NewArbiter(initial, certified)
 	failures := execute(a, input.Events)
-	failures = append(failures, checkExpected(a, initial, input.Expect)...)
+	failures = append(failures, checkExpected(a, initial, certified, input.Expect)...)
 	return failures, nil
 }
 

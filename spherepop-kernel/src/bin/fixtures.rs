@@ -12,7 +12,7 @@
 //!   cargo run --bin fixtures [path/to/fixtures/dir]
 
 use spherepop_kernel::json::Json;
-use spherepop_kernel::{collapse, sugar, Arbiter, ArbiterError, Event, Proposal};
+use spherepop_kernel::{collapse, sugar, wire, Arbiter, ArbiterError, Event, Proposal};
 use std::collections::{BTreeSet, HashSet};
 use std::path::{Path, PathBuf};
 
@@ -176,7 +176,7 @@ fn run_executable_fixture(fixture: &Json) -> Result<(), Vec<Failure>> {
         .collect();
 
     let omega0_hashset: HashSet<u64> = omega0.iter().copied().collect();
-    let mut arb = Arbiter::new(omega0.iter().copied(), rules);
+    let mut arb = Arbiter::new(omega0.iter().copied(), rules.iter().copied());
     let mut failures = Vec::new();
 
     for ev in fixture.get("events").and_then(Json::as_array).unwrap_or(&[]) {
@@ -291,6 +291,30 @@ fn run_executable_fixture(fixture: &Json) -> Result<(), Vec<Failure>> {
             let s2 = arb.history_ref().replay(&omega0_hashset);
             if s1 != s2 {
                 failures.push(Failure("deterministic_replay: two replays of the same history disagreed".into()));
+            }
+        }
+        if let Some(expected) = expect.get("canonical_history_fnv1a64").and_then(Json::as_str) {
+            match wire::encode_history(omega0.iter().copied(), rules.iter().copied(), arb.history_ref()) {
+                Err(error) => failures.push(Failure(format!("wire encode: {error}"))),
+                Ok(bytes) => {
+                    let actual = wire::fnv1a64(&bytes);
+                    if actual != expected {
+                        failures.push(Failure(format!("canonical_history_fnv1a64: expected {expected}, got {actual}")));
+                    }
+                    match wire::decode_history(&bytes) {
+                        Err(error) => failures.push(Failure(format!("wire decode: {error}"))),
+                        Ok(decoded) => {
+                            if decoded.history.replay(&decoded.initial_option_space) != state {
+                                failures.push(Failure("wire_replay: decoded history produced a different state".into()));
+                            }
+                        }
+                    }
+                    let mut trailing = bytes.clone();
+                    trailing.push(0);
+                    if wire::decode_history(&trailing).is_ok() {
+                        failures.push(Failure("wire_decode: accepted trailing bytes".into()));
+                    }
+                }
             }
         }
     }

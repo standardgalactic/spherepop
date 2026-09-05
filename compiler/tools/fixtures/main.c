@@ -24,6 +24,7 @@
 #include "json.h"
 #include "kernel.h"
 #include "sugar.h"
+#include "wire.h"
 
 #ifndef FIXTURES_DEFAULT_DIR
 #define FIXTURES_DEFAULT_DIR "../experiments/flat/fixtures"
@@ -366,6 +367,38 @@ static Outcome run_executable_fixture(const Json *fixture, FailureList *failures
             }
             state_free(&s1);
             state_free(&s2);
+        }
+        const char *expected_digest = json_get_str(expect, "canonical_history_fnv1a64", NULL);
+        if (expected_digest) {
+            unsigned char *wire = NULL;
+            size_t wire_len = 0;
+            char wire_error[128] = {0};
+            if (!wire_encode(&arb, &wire, &wire_len, wire_error)) {
+                flist_addf(failures, "wire encode: %s", wire_error);
+            } else {
+                char actual[17];
+                wire_fnv1a64_hex(wire, wire_len, actual);
+                if (strcmp(actual, expected_digest) != 0)
+                    flist_addf(failures, "canonical_history_fnv1a64: expected %s, got %s", expected_digest, actual);
+                State replayed;
+                if (!wire_decode_replay(wire, wire_len, &replayed, wire_error)) {
+                    flist_addf(failures, "wire decode: %s", wire_error);
+                } else {
+                    if (!state_equals(&replayed, &state))
+                        flist_addf(failures, "wire_replay: decoded history produced a different state");
+                    state_free(&replayed);
+                }
+                unsigned char *trailing = malloc(wire_len + 1);
+                memcpy(trailing, wire, wire_len);
+                trailing[wire_len] = 0;
+                State invalid_state;
+                if (wire_decode_replay(trailing, wire_len + 1, &invalid_state, wire_error)) {
+                    flist_addf(failures, "wire_decode: accepted trailing bytes");
+                    state_free(&invalid_state);
+                }
+                free(trailing);
+                free(wire);
+            }
         }
     }
 

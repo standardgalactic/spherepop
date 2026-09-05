@@ -1,6 +1,9 @@
 package spherepop
 
-import "testing"
+import (
+	"reflect"
+	"testing"
+)
 
 func TestPrimitiveSemantics(t *testing.T) {
 	a := NewArbiter([]ObjectID{1, 2, 3}, []RuleID{"quotient"})
@@ -61,5 +64,30 @@ func TestOverlayStaleness(t *testing.T) {
 	_, _ = a.Submit(NewProposal(PopEvent(2)))
 	if _, err := m.Commit(o); err == nil {
 		t.Fatal("stale overlay was committed")
+	}
+}
+
+func TestCanonicalHistoryWireRoundTrip(t *testing.T) {
+	a := NewArbiter([]ObjectID{3, 1, 2}, []RuleID{"identity"})
+	_, err := a.Submit(NewProposal(PopEvent(1), BindEvent(1, 2, "adjacent"), CollapseEvent("identity")))
+	if err != nil {
+		t.Fatal(err)
+	}
+	wire, err := EncodeHistory([]ObjectID{3, 1, 2}, []RuleID{"identity"}, a.History())
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got := FNV1a64(wire); got != "bf4988c6e7a3c379" {
+		t.Fatalf("digest=%s", got)
+	}
+	decoded, err := DecodeHistory(wire)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !reflect.DeepEqual(decoded.History.Replay(decoded.InitialOptionSpace), a.State()) {
+		t.Fatal("round-trip replay changed state")
+	}
+	if _, err := DecodeHistory(append(wire, 0)); err == nil {
+		t.Fatal("trailing byte was accepted")
 	}
 }
