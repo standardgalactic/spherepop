@@ -16,6 +16,7 @@ pub mod arbiter;
 pub mod collapse;
 pub mod event;
 pub mod history;
+pub mod json;
 pub mod overlay;
 pub mod sugar;
 

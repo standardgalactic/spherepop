@@ -1,0 +1,16 @@
+{
+  "name": "invalid_event",
+  "invariant": "A malformed or inadmissible continuation (here, popping an object no longer in Omega) is rejected without partially mutating the already-committed history.",
+  "explanation": "After Pop(1) succeeds, a second Pop(1) is inadmissible because 1 has left Omega. The Arbiter must reject it atomically -- the history length before and after the rejected proposal must be identical, and Omega/committed must be unaffected by the attempted (and refused) proposal.",
+  "initial_option_space": [1, 2],
+  "certified_rules": [],
+  "events": [
+    {"op": "pop", "a": 1},
+    {"op": "pop", "a": 1, "expect_reject": true, "expect_error": "PopOutsideOptionSpace"}
+  ],
+  "expect": {
+    "option_space": [2],
+    "committed": [1],
+    "history_len": 1
+  }
+}

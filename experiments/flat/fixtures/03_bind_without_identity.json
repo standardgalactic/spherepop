@@ -1,0 +1,16 @@
+{
+  "name": "bind_without_identity",
+  "invariant": "Bind makes a dependency between two objects observable without identifying them: both remain distinct, uncommitted members of Omega.",
+  "explanation": "A snapshot that only stored 'object 1' after binding 1 and 2 would be indistinguishable from never having bound anything. Bind's effect is only visible in the append-only history (and to collapse rules that read it) -- there is no mutation to either object's own state.",
+  "initial_option_space": [1, 2],
+  "certified_rules": [],
+  "events": [
+    {"op": "bind", "a": 1, "b": 2, "tag": "adjacent"}
+  ],
+  "expect": {
+    "option_space": [1, 2],
+    "committed": [],
+    "bound": [[1, 2, "adjacent"]],
+    "history_len": 1
+  }
+}

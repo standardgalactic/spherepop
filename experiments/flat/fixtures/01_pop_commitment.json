@@ -1,0 +1,15 @@
+{
+  "name": "pop_commitment",
+  "invariant": "Pop removes exactly the committed object from Omega, appends exactly one event, and leaves earlier events unchanged.",
+  "explanation": "A plain state snapshot after Pop(1) looks identical whether Pop(1) happened once or was somehow replayed twice; the append-only history is what lets an observer distinguish 'committed once, long ago' from 'committed just now, again'. Recording only the resulting Omega would erase that provenance.",
+  "initial_option_space": [1, 2, 3],
+  "certified_rules": [],
+  "events": [
+    {"op": "pop", "a": 1}
+  ],
+  "expect": {
+    "option_space": [2, 3],
+    "committed": [1],
+    "history_len": 1
+  }
+}

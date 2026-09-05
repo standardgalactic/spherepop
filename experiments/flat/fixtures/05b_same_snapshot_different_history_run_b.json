@@ -1,0 +1,20 @@
+{
+  "name": "same_snapshot_different_history_run_b",
+  "pair_with": "05a_same_snapshot_different_history_run_a.json",
+  "invariant": "See the paired fixture: identical terminal Omega, different provenance.",
+  "explanation": "Here Omega also ends at {3, 4}, reached via the same two Pop events plus a Refuse of 3 instead of a Bind of 3 and 4 (Refuse never touches Omega, so it stays at {3, 4}). The terminal option-space snapshot is byte-identical to the paired run, but the histories -- and thus what a later collapse rule could observe about 3 and 4 -- are not.",
+  "initial_option_space": [1, 2, 3, 4],
+  "certified_rules": [],
+  "events": [
+    {"op": "pop", "a": 1},
+    {"op": "pop", "a": 2},
+    {"op": "refuse", "a": 3, "reason": "excluded by this run"}
+  ],
+  "expect": {
+    "option_space": [3, 4],
+    "committed": [1, 2],
+    "bound": [],
+    "refused_count": 1,
+    "history_len": 3
+  }
+}

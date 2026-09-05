@@ -1,0 +1,300 @@
+{
+  "name": "recursion_sum",
+  "program": "((rec sum(n) = (if0 n then 0 else (n + (sum (n - 1))))) 4)",
+  "reference_value": 10,
+  "observed_value": 10,
+  "match": true,
+  "initial_option_space": [
+    1,
+    3,
+    5,
+    6,
+    8,
+    10,
+    11,
+    13,
+    15,
+    16,
+    18,
+    20,
+    21,
+    23,
+    25,
+    26,
+    27,
+    28,
+    29
+  ],
+  "certified_rules": [
+    "result"
+  ],
+  "events": [
+    {
+      "op": "pop",
+      "a": 1
+    },
+    {
+      "op": "bind",
+      "a": 1,
+      "b": 4,
+      "tag": "denotes"
+    },
+    {
+      "op": "bind",
+      "a": 2,
+      "b": 1,
+      "tag": "env:n"
+    },
+    {
+      "op": "pop",
+      "a": 3
+    },
+    {
+      "op": "refuse",
+      "a": 4,
+      "reason": "not selected by Choice"
+    },
+    {
+      "op": "pop",
+      "a": 5
+    },
+    {
+      "op": "bind",
+      "a": 5,
+      "b": 1,
+      "tag": "denotes"
+    },
+    {
+      "op": "bind",
+      "a": 1,
+      "b": 5,
+      "tag": "operand_of_-"
+    },
+    {
+      "op": "pop",
+      "a": 6
+    },
+    {
+      "op": "bind",
+      "a": 6,
+      "b": 3,
+      "tag": "denotes"
+    },
+    {
+      "op": "bind",
+      "a": 7,
+      "b": 6,
+      "tag": "env:n"
+    },
+    {
+      "op": "pop",
+      "a": 8
+    },
+    {
+      "op": "refuse",
+      "a": 9,
+      "reason": "not selected by Choice"
+    },
+    {
+      "op": "pop",
+      "a": 10
+    },
+    {
+      "op": "bind",
+      "a": 10,
+      "b": 1,
+      "tag": "denotes"
+    },
+    {
+      "op": "bind",
+      "a": 6,
+      "b": 10,
+      "tag": "operand_of_-"
+    },
+    {
+      "op": "pop",
+      "a": 11
+    },
+    {
+      "op": "bind",
+      "a": 11,
+      "b": 2,
+      "tag": "denotes"
+    },
+    {
+      "op": "bind",
+      "a": 12,
+      "b": 11,
+      "tag": "env:n"
+    },
+    {
+      "op": "pop",
+      "a": 13
+    },
+    {
+      "op": "refuse",
+      "a": 14,
+      "reason": "not selected by Choice"
+    },
+    {
+      "op": "pop",
+      "a": 15
+    },
+    {
+      "op": "bind",
+      "a": 15,
+      "b": 1,
+      "tag": "denotes"
+    },
+    {
+      "op": "bind",
+      "a": 11,
+      "b": 15,
+      "tag": "operand_of_-"
+    },
+    {
+      "op": "pop",
+      "a": 16
+    },
+    {
+      "op": "bind",
+      "a": 16,
+      "b": 1,
+      "tag": "denotes"
+    },
+    {
+      "op": "bind",
+      "a": 17,
+      "b": 16,
+      "tag": "env:n"
+    },
+    {
+      "op": "pop",
+      "a": 18
+    },
+    {
+      "op": "refuse",
+      "a": 19,
+      "reason": "not selected by Choice"
+    },
+    {
+      "op": "pop",
+      "a": 20
+    },
+    {
+      "op": "bind",
+      "a": 20,
+      "b": 1,
+      "tag": "denotes"
+    },
+    {
+      "op": "bind",
+      "a": 16,
+      "b": 20,
+      "tag": "operand_of_-"
+    },
+    {
+      "op": "pop",
+      "a": 21
+    },
+    {
+      "op": "bind",
+      "a": 21,
+      "b": 0,
+      "tag": "denotes"
+    },
+    {
+      "op": "bind",
+      "a": 22,
+      "b": 21,
+      "tag": "env:n"
+    },
+    {
+      "op": "pop",
+      "a": 23
+    },
+    {
+      "op": "refuse",
+      "a": 24,
+      "reason": "not selected by Choice"
+    },
+    {
+      "op": "pop",
+      "a": 25
+    },
+    {
+      "op": "bind",
+      "a": 25,
+      "b": 0,
+      "tag": "denotes"
+    },
+    {
+      "op": "bind",
+      "a": 16,
+      "b": 25,
+      "tag": "operand_of_+"
+    },
+    {
+      "op": "pop",
+      "a": 26
+    },
+    {
+      "op": "bind",
+      "a": 26,
+      "b": 1,
+      "tag": "denotes"
+    },
+    {
+      "op": "bind",
+      "a": 11,
+      "b": 26,
+      "tag": "operand_of_+"
+    },
+    {
+      "op": "pop",
+      "a": 27
+    },
+    {
+      "op": "bind",
+      "a": 27,
+      "b": 3,
+      "tag": "denotes"
+    },
+    {
+      "op": "bind",
+      "a": 6,
+      "b": 27,
+      "tag": "operand_of_+"
+    },
+    {
+      "op": "pop",
+      "a": 28
+    },
+    {
+      "op": "bind",
+      "a": 28,
+      "b": 6,
+      "tag": "denotes"
+    },
+    {
+      "op": "bind",
+      "a": 1,
+      "b": 28,
+      "tag": "operand_of_+"
+    },
+    {
+      "op": "pop",
+      "a": 29
+    },
+    {
+      "op": "bind",
+      "a": 29,
+      "b": 10,
+      "tag": "denotes"
+    },
+    {
+      "op": "collapse",
+      "rule": "result"
+    }
+  ]
+}

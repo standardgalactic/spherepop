@@ -1,0 +1,25 @@
+{
+  "name": "desugaring",
+  "invariant": "Link, Unlink, Choice, Merge, and SetMeta each expand into primitive traces with no extra event kind: every event appended below is structurally a Pop, Refuse, Bind, or Collapse.",
+  "explanation": "Link(a,b) is literally Bind(a,b). Unlink(a,b) is Refuse(Bind(a,b)) -- it does not delete the original Bind, only documents withdrawal, which is why the bind fact for (1,2) is still present after the unlink below. Choice(taken,rejected) is Pop(taken) alongside an explicit Refuse(rejected) rather than letting the untaken branch silently vanish. Merge is Bind+Collapse (see the derived_merge fixture). SetMeta is a Bind tagged '__meta__' that ordinary quotient rules are defined to skip.",
+  "initial_option_space": [1, 2, 3, 4, 5, 6, 7],
+  "certified_rules": ["quotient"],
+  "events": [
+    {"op": "link", "a": 1, "b": 2, "tag": "adjacent"},
+    {"op": "unlink", "a": 1, "b": 2},
+    {"op": "choice", "taken": 3, "rejected": 4},
+    {"op": "merge", "a": 5, "b": 6, "rule": "quotient"},
+    {"op": "set_meta", "object": 5, "key": 7}
+  ],
+  "expect": {
+    "option_space": [1, 2, 4, 5, 6, 7],
+    "committed": [3],
+    "bound": [[1, 2, "adjacent"], [5, 6, "merge"], [5, 7, "__meta__"]],
+    "refused_count": 2,
+    "observed_rules": ["quotient"],
+    "history_len": 7,
+    "quotient_same_class": [[1, 2, true], [5, 6, true], [5, 7, false]],
+    "quotient_honoring_refusals_same_class": [[1, 2, false], [5, 6, true]],
+    "meta_keys": [5]
+  }
+}

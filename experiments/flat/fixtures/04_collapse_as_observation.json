@@ -1,0 +1,21 @@
+{
+  "name": "collapse_as_observation",
+  "invariant": "Two different collapse rules yield different projections of one unchanged history.",
+  "explanation": "The underlying history (two Bind facts) never changes across the two Collapse events. What differs is purely the observation: the quotienting rule identifies bound pairs into equivalence classes, while a rule that ignores relations entirely would not. Collapse never mutates H -- it only produces an external observation value from it.",
+  "initial_option_space": [1, 2, 3, 4],
+  "certified_rules": ["quotient", "identity"],
+  "events": [
+    {"op": "bind", "a": 1, "b": 2, "tag": "m"},
+    {"op": "bind", "a": 3, "b": 4, "tag": "n"},
+    {"op": "collapse", "rule": "quotient"},
+    {"op": "collapse", "rule": "identity"}
+  ],
+  "expect": {
+    "option_space": [1, 2, 3, 4],
+    "committed": [],
+    "bound": [[1, 2, "m"], [3, 4, "n"]],
+    "observed_rules": ["quotient", "identity"],
+    "history_len": 4,
+    "quotient_same_class": [[1, 2, true], [3, 4, true], [1, 3, false]]
+  }
+}

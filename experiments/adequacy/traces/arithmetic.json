@@ -1,0 +1,85 @@
+{
+  "name": "arithmetic",
+  "program": "((2 + 3) - 1)",
+  "reference_value": 4,
+  "observed_value": 4,
+  "match": true,
+  "initial_option_space": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "certified_rules": [
+    "result"
+  ],
+  "events": [
+    {
+      "op": "pop",
+      "a": 1
+    },
+    {
+      "op": "bind",
+      "a": 1,
+      "b": 2,
+      "tag": "denotes"
+    },
+    {
+      "op": "pop",
+      "a": 2
+    },
+    {
+      "op": "bind",
+      "a": 2,
+      "b": 3,
+      "tag": "denotes"
+    },
+    {
+      "op": "bind",
+      "a": 1,
+      "b": 2,
+      "tag": "operand_of_+"
+    },
+    {
+      "op": "pop",
+      "a": 3
+    },
+    {
+      "op": "bind",
+      "a": 3,
+      "b": 5,
+      "tag": "denotes"
+    },
+    {
+      "op": "pop",
+      "a": 4
+    },
+    {
+      "op": "bind",
+      "a": 4,
+      "b": 1,
+      "tag": "denotes"
+    },
+    {
+      "op": "bind",
+      "a": 3,
+      "b": 4,
+      "tag": "operand_of_-"
+    },
+    {
+      "op": "pop",
+      "a": 5
+    },
+    {
+      "op": "bind",
+      "a": 5,
+      "b": 4,
+      "tag": "denotes"
+    },
+    {
+      "op": "collapse",
+      "rule": "result"
+    }
+  ]
+}

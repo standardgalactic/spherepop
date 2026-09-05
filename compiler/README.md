@@ -103,6 +103,8 @@ src/stdlib/     — Standard library in Spherepop
 examples/       — Annotated example programs
 spec/           — Formal grammar and operational semantics
 docs/           — Extended documentation
+tools/fixtures/ — Standalone C port of the canonical event/history/
+                  arbiter/collapse/sugar model (see below)
 ```
 
 ## Building with CMake
@@ -112,6 +114,17 @@ cmake -B build -DCMAKE_BUILD_TYPE=Debug -DSP_ENABLE_SANITIZERS=ON
 cmake --build build
 ctest --test-dir build
 ```
+
+This also builds `build/sp_fixtures`, a small standalone executable
+that is **not** part of the `spherepop`/`spherepop_core` interpreter
+above. It is a from-scratch C port of the canonical Pop/Refuse/Bind/
+Collapse event-log model (see `tools/fixtures/kernel.h`), kept separate
+because this interpreter's own `Bind`/`Collapse` are still known to
+diverge from that model (constraint-set merge, and an unimplemented
+node kind, respectively). `sp_fixtures` runs the shared JSON fixture
+suite in `../experiments/flat/fixtures/` and is one of three
+independent implementations checked against each other there — see
+`../experiments/flat/README.md` and `../experiments/flat/CONFORMANCE.md`.
 
 ## Theoretical Background
 

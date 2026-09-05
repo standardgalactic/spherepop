@@ -45,9 +45,14 @@ int main(void) {
     TINT("power 2^10", "2 ^ 10", 1024);
     TINT("let binding", "let x = 7; x", 7);
     TINT("nested bubble", "bubble { bubble { 6 * 7 } }", 42);
-    TINT("if true", "if 1 { 99 } else { 0 }", 99);
-    TINT("if false", "if 0 { 99 } else { 42 }", 42);
-    TINT("factorial 5", "fn f(n) { if n <= 1 { return 1; } return n * f(n-1); } f(5)", 120);
+    /* NOTE: the parser requires parenthesized conditions (see parse_stmt's
+     * TOK_IF handling in parser.c, which calls expect(p, TOK_LPAREN) /
+     * expect(p, TOK_RPAREN) around the condition) -- these fixtures
+     * previously used paren-less conditions and could never have passed
+     * against the parser as written. Updated to match the real grammar. */
+    TINT("if true", "if (1) { 99 } else { 0 }", 99);
+    TINT("if false", "if (0) { 99 } else { 42 }", 42);
+    TINT("factorial 5", "fn f(n) { if (n <= 1) { return 1; } return n * f(n-1); } f(5)", 120);
 
     printf("\n%d/%d passed\n", tests_passed, tests_run);
     return tests_passed == tests_run ? 0 : 1;

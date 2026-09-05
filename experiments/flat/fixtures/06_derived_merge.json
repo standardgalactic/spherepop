@@ -1,0 +1,18 @@
+{
+  "name": "derived_merge",
+  "invariant": "Merge_c(a,b) := Collapse_c(Bind(a,b)) exactly -- 'merging' two objects is nothing but a Bind followed by an observation under an identifying quotient rule. No separate Merge event kind exists.",
+  "explanation": "The 'merge' operation below expands to precisely two primitive events, a Bind and a Collapse; the fixture then checks that the quotient rule identifies the merged pair while leaving an unrelated object in its own class, reproducing 'merge' behavior from strictly primitive parts.",
+  "initial_option_space": [1, 2, 3, 4],
+  "certified_rules": ["merge_quotient"],
+  "events": [
+    {"op": "merge", "a": 1, "b": 2, "rule": "merge_quotient"}
+  ],
+  "expect": {
+    "option_space": [1, 2, 3, 4],
+    "committed": [],
+    "bound": [[1, 2, "merge"]],
+    "observed_rules": ["merge_quotient"],
+    "history_len": 2,
+    "quotient_same_class": [[1, 2, true], [1, 3, false]]
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "name": "identity_application",
+  "program": "((\u03bbx. x) 7)",
+  "reference_value": 7,
+  "observed_value": 7,
+  "match": true,
+  "initial_option_space": [
+    1
+  ],
+  "certified_rules": [
+    "result"
+  ],
+  "events": [
+    {
+      "op": "pop",
+      "a": 1
+    },
+    {
+      "op": "bind",
+      "a": 1,
+      "b": 7,
+      "tag": "denotes"
+    },
+    {
+      "op": "bind",
+      "a": 2,
+      "b": 1,
+      "tag": "env:x"
+    },
+    {
+      "op": "collapse",
+      "rule": "result"
+    }
+  ]
+}

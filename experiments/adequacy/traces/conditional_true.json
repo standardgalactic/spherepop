@@ -1,0 +1,78 @@
+{
+  "name": "conditional_true",
+  "program": "(if0 (3 - 3) then 100 else 200)",
+  "reference_value": 100,
+  "observed_value": 100,
+  "match": true,
+  "initial_option_space": [
+    1,
+    2,
+    3,
+    4,
+    6
+  ],
+  "certified_rules": [
+    "result"
+  ],
+  "events": [
+    {
+      "op": "pop",
+      "a": 1
+    },
+    {
+      "op": "bind",
+      "a": 1,
+      "b": 3,
+      "tag": "denotes"
+    },
+    {
+      "op": "pop",
+      "a": 2
+    },
+    {
+      "op": "bind",
+      "a": 2,
+      "b": 3,
+      "tag": "denotes"
+    },
+    {
+      "op": "bind",
+      "a": 1,
+      "b": 2,
+      "tag": "operand_of_-"
+    },
+    {
+      "op": "pop",
+      "a": 3
+    },
+    {
+      "op": "bind",
+      "a": 3,
+      "b": 0,
+      "tag": "denotes"
+    },
+    {
+      "op": "pop",
+      "a": 4
+    },
+    {
+      "op": "refuse",
+      "a": 5,
+      "reason": "not selected by Choice"
+    },
+    {
+      "op": "pop",
+      "a": 6
+    },
+    {
+      "op": "bind",
+      "a": 6,
+      "b": 100,
+      "tag": "denotes"
+    },
+    {
+      "op": "collapse",
+      "rule": "result"
+    }
+  ]
+}

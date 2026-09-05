@@ -1,0 +1,17 @@
+{
+  "name": "small_abstraction",
+  "invariant": "A single reusable history transformer, defined once, can be applied more than once with different arguments -- demonstrating abstraction beyond direct, one-off event entry.",
+  "explanation": "Choice(taken, rejected) is the reusable transformer here: `sugar::choice` is defined exactly once (Pop(taken) alongside an explicit Refuse(rejected)) and this fixture applies it twice with two different argument pairs. The two resulting sub-traces are structurally identical in shape (one Pop, one Refuse) and differ only in which objects they name, which is what makes it a genuine abstraction rather than two independently hand-written event sequences.",
+  "initial_option_space": [1, 2, 3, 4],
+  "certified_rules": [],
+  "events": [
+    {"op": "choice", "taken": 1, "rejected": 2},
+    {"op": "choice", "taken": 3, "rejected": 4}
+  ],
+  "expect": {
+    "option_space": [2, 4],
+    "committed": [1, 3],
+    "refused_count": 2,
+    "history_len": 4
+  }
+}

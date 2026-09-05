@@ -1,0 +1,15 @@
+{
+  "name": "meld",
+  "manual": true,
+  "invariant": "Meld is structural composition (the free monoidal tensor) of two independently-generated histories -- concatenation of event logs -- and is distinct from Bind-based concurrency, which couples elements within a single shared history instead of combining two separate ones.",
+  "explanation": "Meld operates directly on two History values before either is under a single Arbiter's option-space accounting, so it does not fit the single-Arbiter event-stream schema the other fixtures use here. This fixture is intentionally marked 'manual': the automated runners parse and structurally validate it but do not yet execute it end-to-end. `spherepop-kernel::History::meld` and its unit tests (see spherepop-kernel/src/history.rs) are the current executable evidence for this operation; wiring Meld into the flat-fixture schema is tracked as follow-up work.",
+  "history_a": {
+    "initial_option_space": [1, 2],
+    "events": [{"op": "pop", "a": 1}]
+  },
+  "history_b": {
+    "initial_option_space": [3, 4],
+    "events": [{"op": "pop", "a": 3}]
+  },
+  "expect_melded_history_len": 2
+}

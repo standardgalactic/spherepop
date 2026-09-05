@@ -34,12 +34,22 @@ entirely in terms of the four primitives.
 - `src/bin/trace.rs` — runnable worked example: introduce two objects,
   bind them, observe under a quotient rule (this *is* Merge), then
   withdraw reliance on the bind without deleting it.
+- `src/bin/fixtures.rs` — conformance runner for the language-neutral
+  flat fixture suite in `../experiments/flat/fixtures/`; see
+  `../experiments/flat/README.md` for the fixture format. An independent
+  Python oracle (`../experiments/flat/run_python.py`) reads the same
+  fixtures, so agreement between the two is a small cross-implementation
+  conformance result.
+- `src/json.rs` — a minimal, dependency-free JSON reader/writer used only
+  by `bin/fixtures.rs`, so the crate can read the fixture files without
+  taking on `serde_json` as a dependency.
 
 ## Running
 
 ```sh
-cargo test          # 20 unit tests
+cargo test              # 20 unit tests
 cargo run --bin trace
+cargo run --bin fixtures  # flat fixture conformance suite
 ```
 
 ## What the tests check

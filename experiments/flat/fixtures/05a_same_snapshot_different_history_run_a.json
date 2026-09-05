@@ -1,0 +1,20 @@
+{
+  "name": "same_snapshot_different_history_run_a",
+  "pair_with": "05b_same_snapshot_different_history_run_b.json",
+  "invariant": "Two histories can terminate with an identical Omega snapshot while remaining distinguishable by their recorded provenance (what was bound, what was refused, and in what order).",
+  "explanation": "This fixture and its pair both leave Omega = {3, 4} at the end, so a system that only ever recorded 'current Omega' could not tell them apart. Compare the 'bound' and 'refused_count' fields against the paired fixture: they differ, which is only visible because the history itself -- not just the terminal snapshot -- is retained.",
+  "initial_option_space": [1, 2, 3, 4],
+  "certified_rules": [],
+  "events": [
+    {"op": "pop", "a": 1},
+    {"op": "pop", "a": 2},
+    {"op": "bind", "a": 3, "b": 4, "tag": "adjacent"}
+  ],
+  "expect": {
+    "option_space": [3, 4],
+    "committed": [1, 2],
+    "bound": [[3, 4, "adjacent"]],
+    "refused_count": 0,
+    "history_len": 3
+  }
+}

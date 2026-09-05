@@ -36,8 +36,14 @@ set(SP_LEXER_SRCS
 set(SP_PARSER_SRCS
     src/parser/parser.c
     src/parser/ast.c
-    src/parser/precedence.c
-    src/parser/prettyprint.c
+    # NOTE: this list previously also listed src/parser/precedence.c and
+    # src/parser/prettyprint.c, neither of which exists in the source tree
+    # (confirmed: no file, no caller anywhere referencing functions from
+    # them). Precedence climbing is implemented inline in parser.c
+    # (parse_unary/parse_power/parse_mul/... functions), and AST pretty-
+    # printing is implemented as node_print() in ast.c. Removed so the
+    # project actually builds; re-add only if real, non-duplicate code is
+    # split into those files.
 )
 
 set(SP_VM_SRCS
@@ -89,6 +95,22 @@ target_link_libraries(spherepop_core m)
 add_executable(spherepop src/main.c)
 target_link_libraries(spherepop spherepop_core)
 target_include_directories(spherepop PRIVATE src)
+
+# Flat fixture conformance runner (experiments/flat/): a standalone C
+# port of the canonical Pop/Refuse/Bind/Collapse event-log model, kept
+# deliberately independent of spherepop_core -- see
+# tools/fixtures/kernel.h for why. Not linked against spherepop_core.
+add_executable(sp_fixtures
+    tools/fixtures/main.c
+    tools/fixtures/json.c
+    tools/fixtures/kernel.c
+    tools/fixtures/collapse_rules.c
+    tools/fixtures/sugar.c
+)
+target_include_directories(sp_fixtures PRIVATE tools/fixtures)
+target_compile_definitions(sp_fixtures PRIVATE
+    FIXTURES_DEFAULT_DIR="${CMAKE_SOURCE_DIR}/../experiments/flat/fixtures")
+target_link_libraries(sp_fixtures m)
 
 # Compiler warnings
 include(cmake/CompilerWarnings.cmake)

@@ -1,0 +1,50 @@
+{
+  "name": "conditional_false",
+  "program": "(if0 1 then 100 else 200)",
+  "reference_value": 200,
+  "observed_value": 200,
+  "match": true,
+  "initial_option_space": [
+    1,
+    2,
+    4
+  ],
+  "certified_rules": [
+    "result"
+  ],
+  "events": [
+    {
+      "op": "pop",
+      "a": 1
+    },
+    {
+      "op": "bind",
+      "a": 1,
+      "b": 1,
+      "tag": "denotes"
+    },
+    {
+      "op": "pop",
+      "a": 2
+    },
+    {
+      "op": "refuse",
+      "a": 3,
+      "reason": "not selected by Choice"
+    },
+    {
+      "op": "pop",
+      "a": 4
+    },
+    {
+      "op": "bind",
+      "a": 4,
+      "b": 200,
+      "tag": "denotes"
+    },
+    {
+      "op": "collapse",
+      "rule": "result"
+    }
+  ]
+}

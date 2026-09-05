@@ -1,0 +1,21 @@
+{
+  "name": "small_arithmetic",
+  "invariant": "A minimal arithmetic program (the Forth-style `2 3 + .`) can be encoded and run as a sequence of primitive events, exposing its full primitive trace rather than hiding computation behind an opaque evaluator.",
+  "explanation": "Object 100 stands for the pushed literal 2, object 101 for the pushed literal 3, and object 102 for the computed sum 5. Pushing a literal is Pop-ing its value-object into commitment; '+' is a Bind recording that 100 and 101 were combined as operands; committing the result is Pop(102); '.' (print/observe) is a Collapse under a 'print' rule. This does not ask the kernel to perform integer addition -- it demonstrates that even a tiny stack computation decomposes into nothing but the four primitives, with every step visible in the history.",
+  "initial_option_space": [100, 101, 102],
+  "certified_rules": ["print"],
+  "events": [
+    {"op": "pop", "a": 100},
+    {"op": "pop", "a": 101},
+    {"op": "bind", "a": 100, "b": 101, "tag": "operand_of_+"},
+    {"op": "pop", "a": 102},
+    {"op": "collapse", "rule": "print"}
+  ],
+  "expect": {
+    "option_space": [],
+    "committed": [100, 101, 102],
+    "bound": [[100, 101, "operand_of_+"]],
+    "observed_rules": ["print"],
+    "history_len": 5
+  }
+}

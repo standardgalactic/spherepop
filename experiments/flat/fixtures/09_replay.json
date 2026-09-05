@@ -1,0 +1,20 @@
+{
+  "name": "replay",
+  "invariant": "Replay is deterministic: folding `apply` over the same History from the same initial Omega always produces an equal State, regardless of how many times it is replayed.",
+  "explanation": "`apply` is a pure function of (State, Event) alone -- no wall-clock reads, no ambient globals -- so replaying the same finite event log twice must produce byte-for-byte identical State values. This fixture checks that property directly rather than asserting it only in prose. Full round-trip serialize/deserialize-then-replay (the stronger 'same digest after going through a wire format' claim from the tracking issue) is not yet exercised here; see Phase B ('Specify serialization and canonical output') for that follow-up.",
+  "initial_option_space": [1, 2, 3],
+  "certified_rules": ["identity"],
+  "events": [
+    {"op": "pop", "a": 1},
+    {"op": "bind", "a": 1, "b": 2, "tag": "adjacent"},
+    {"op": "collapse", "rule": "identity"}
+  ],
+  "expect": {
+    "option_space": [2, 3],
+    "committed": [1],
+    "bound": [[1, 2, "adjacent"]],
+    "observed_rules": ["identity"],
+    "history_len": 3,
+    "deterministic_replay": true
+  }
+}

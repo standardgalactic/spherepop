@@ -1,0 +1,16 @@
+{
+  "name": "refusal_preservation",
+  "invariant": "Refuse records inadmissibility of an option without removing it from Omega.",
+  "explanation": "If refusal shrank Omega the way Pop does, a refused option and a committed option would be observationally identical from Omega alone. Keeping refused options in Omega while separately recording the refusal is what lets a later rule reconsider (or continue to distrust) that option without contradiction.",
+  "initial_option_space": [1, 2],
+  "certified_rules": [],
+  "events": [
+    {"op": "refuse", "a": 1, "reason": "inadmissible for now"}
+  ],
+  "expect": {
+    "option_space": [1, 2],
+    "committed": [],
+    "refused_count": 1,
+    "history_len": 1
+  }
+}
