@@ -37,6 +37,8 @@ Play the [Spellpop mini-game](https://standardgalactic.github.io/spherepop/spell
 
 [Spherepop Game Engine](https://standardgalactic.github.io/spherepop/game-engine.html) — *Playable Demo*
 
+[Same State, Different History](https://standardgalactic.github.io/spherepop/history-comparator.html) — *Interactive Comparator*
+
 ---
 
 ## What Spherepop Is
