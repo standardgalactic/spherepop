@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Same State, Different History — Spherepop</title>
+<style>
+:root{--bg:#0b0d0c;--panel:#101312;--rule:#262b28;--ink:#dcd9d0;--dim:#8b8f8a;--admit:#8fb39a;--refuse:#c06a4e;--serif:"Iowan Old Style","Palatino Linotype",Georgia,serif;--mono:"IBM Plex Mono","SF Mono",Menlo,Consolas,monospace}
+*{box-sizing:border-box}html,body{margin:0}body{background:var(--bg);color:var(--ink);font-family:var(--serif);line-height:1.5;padding:28px 18px 60px}.wrap{max-width:920px;margin:auto}h1{font-weight:400;font-size:1.65rem;margin:0 0 6px}.premise{color:var(--dim);max-width:64ch;margin:0 0 30px}.premise em{color:var(--ink);font-style:normal}.stage{display:flex;gap:18px;flex-wrap:wrap}.panel{flex:1 1 380px;min-width:300px;background:var(--panel);border:1px solid var(--rule);padding:16px}.panel h2,.verdict h3{font:500 .78rem var(--mono);color:var(--dim);letter-spacing:.02em;margin:0 0 12px}.panel h2 span{color:var(--ink)}svg{width:100%;height:200px;display:block}.edge{stroke:var(--admit);stroke-width:2;opacity:0;transition:opacity .35s}.edge.shown{opacity:1}.edge.refused{stroke:var(--refuse);stroke-dasharray:4 4}.node circle{fill:#1b1e1c;stroke:var(--dim);stroke-width:1.4;opacity:0;transform:scale(.7);transform-origin:center;transition:.3s}.node text{fill:var(--ink);font:12px var(--mono);text-anchor:middle;dominant-baseline:middle;opacity:0;transition:.3s}.node .shown{opacity:1;transform:scale(1)}.controls{display:flex;gap:8px;margin:10px 0 14px}button{font: .76rem var(--mono);background:transparent;color:var(--ink);border:1px solid var(--rule);padding:7px 12px;cursor:pointer}button:hover:not(:disabled){border-color:var(--dim)}button:disabled{opacity:.4;cursor:not-allowed}button:focus-visible{outline:2px solid var(--admit);outline-offset:2px}.log{font: .78rem var(--mono);border-top:1px solid var(--rule);padding-top:10px;min-height:150px}.row{display:flex;gap:10px;padding:3px 0;color:var(--dim);opacity:0;transform:translateY(2px);transition:.3s}.row.shown{opacity:1;transform:none}.seq{width:1.4em;text-align:right}.op{width:5.6em}.op.admit{color:var(--admit)}.op.refuse{color:var(--refuse)}.op.collapse{color:var(--ink)}.row.shown .detail{color:var(--ink)}.verdict{margin-top:26px;border-top:1px solid var(--rule);padding-top:20px;max-width:66ch;opacity:0;transform:translateY(6px);transition:.5s}.verdict.shown{opacity:1;transform:none}.verdict p{margin:0 0 12px}.reset-all{margin-top:22px}code{font-family:var(--mono)}@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body><main class="wrap">
+<h1>Same state, different history</h1>
+<p class="premise">Two panels build the identical final graph—three objects and two relations—through different sequences of <em>Pop</em>, <em>Refuse</em>, <em>Bind</em>, and <em>Collapse</em>. Step through both, then compare what their histories retain.</p>
+<div class="stage">
+<section class="panel"><h2>Path <span>A</span></h2><svg viewBox="0 0 260 200" id="svgA" aria-label="Path A graph"></svg><div class="controls"><button id="stepA">Step</button><button id="resetA">Reset</button></div><div class="log" id="logA" aria-live="polite"></div></section>
+<section class="panel"><h2>Path <span>B</span></h2><svg viewBox="0 0 260 200" id="svgB" aria-label="Path B graph"></svg><div class="controls"><button id="stepB">Step</button><button id="resetB">Reset</button></div><div class="log" id="logB" aria-live="polite"></div></section>
+</div>
+<section class="verdict" id="verdict"><h3>What replay shows</h3>
+<p>Both logs terminate at the same rendered state: objects <code>a</code>, <code>b</code>, and <code>c</code>, with admitted relations <code>a–b</code> and <code>b–c</code>. Inspection of the current graph alone cannot distinguish the paths.</p>
+<p>Path B, however, records a Refuse of <code>a–c</code>. That relation was considered and excluded. Path A never considered it and therefore contains no corresponding historical fact.</p>
+<p>Replay recovers this difference. Under Spherepop the structures are not identical, because identity is indexed by history rather than present state.</p></section>
+<div class="reset-all"><button id="resetAll">Reset both</button></div>
+</main>
+<script>
+(function(){
+const layout={a:{x:55,y:150},b:{x:190,y:55},c:{x:190,y:150}};
+const historyA=[
+ {op:'POP',node:'a',detail:'pop a'},
+ {op:'POP',node:'b',detail:'pop b'},
+ {op:'POP',node:'c',detail:'pop c'},
+ {op:'BIND',edge:['a','b'],detail:'bind a–b'},
+ {op:'BIND',edge:['b','c'],detail:'bind b–c'},
+ {op:'COLLAPSE',detail:'render {a,b,c; a–b, b–c}'}
+];
+const historyB=[
+ {op:'POP',node:'c',detail:'pop c'},
+ {op:'POP',node:'a',detail:'pop a'},
+ {op:'REFUSE',edge:['a','c'],detail:'refuse proposed a–c (b unresolved)'},
+ {op:'POP',node:'b',detail:'pop b'},
+ {op:'BIND',edge:['a','b'],detail:'bind a–b'},
+ {op:'BIND',edge:['b','c'],detail:'bind b–c'},
+ {op:'COLLAPSE',detail:'render {a,b,c; a–b, b–c}'}
+];
+let panelA=null,panelB=null;
+function checkBothDone(){const v=document.getElementById('verdict');v.classList.toggle('shown',!!(panelA&&panelB&&panelA.isDone()&&panelB.isDone()))}
+function makePanel(svgId,logId,stepId,resetId,history){
+ const svg=document.getElementById(svgId),log=document.getElementById(logId),nodes={},edges={};let index=0,timers=[];
+ Object.keys(layout).forEach(id=>{const group=document.createElementNS('http://www.w3.org/2000/svg','g'),circle=document.createElementNS('http://www.w3.org/2000/svg','circle'),text=document.createElementNS('http://www.w3.org/2000/svg','text');group.setAttribute('class','node');circle.setAttribute('cx',layout[id].x);circle.setAttribute('cy',layout[id].y);circle.setAttribute('r',16);text.setAttribute('x',layout[id].x);text.setAttribute('y',layout[id].y);text.textContent=id;group.append(circle,text);svg.appendChild(group);nodes[id]={circle,text}});
+ function key(pair,refused){return pair.slice().sort().join('-')+(refused?':refused':'')}
+ function ensureEdge(pair,refused){const k=key(pair,refused);if(edges[k])return edges[k];const line=document.createElementNS('http://www.w3.org/2000/svg','line');line.setAttribute('x1',layout[pair[0]].x);line.setAttribute('y1',layout[pair[0]].y);line.setAttribute('x2',layout[pair[1]].x);line.setAttribute('y2',layout[pair[1]].y);line.setAttribute('class','edge'+(refused?' refused':''));svg.insertBefore(line,svg.firstChild);edges[k]=line;return line}
+ function append(ev,n){const row=document.createElement('div');row.className='row';const cls=ev.op==='REFUSE'?'refuse':ev.op==='COLLAPSE'?'collapse':'admit';row.innerHTML='<span class="seq">'+n+'</span><span class="op '+cls+'">'+ev.op+'</span><span class="detail">'+ev.detail+'</span>';log.appendChild(row);requestAnimationFrame(()=>row.classList.add('shown'))}
+ function apply(ev){if(ev.node){nodes[ev.node].circle.classList.add('shown');nodes[ev.node].text.classList.add('shown')}if(ev.edge){const refused=ev.op==='REFUSE',line=ensureEdge(ev.edge,refused);requestAnimationFrame(()=>line.classList.add('shown'));if(refused)timers.push(setTimeout(()=>line.classList.remove('shown'),900))}}
+ function step(){if(index>=history.length)return;const ev=history[index];append(ev,index+1);apply(ev);index++;stepButton.disabled=index>=history.length;checkBothDone()}
+ function reset(){timers.forEach(clearTimeout);timers=[];index=0;log.innerHTML='';Object.values(nodes).forEach(n=>{n.circle.classList.remove('shown');n.text.classList.remove('shown')});Object.values(edges).forEach(e=>e.remove());Object.keys(edges).forEach(k=>delete edges[k]);stepButton.disabled=false;checkBothDone()}
+ const stepButton=document.getElementById(stepId);stepButton.addEventListener('click',step);document.getElementById(resetId).addEventListener('click',reset);
+ return{isDone:()=>index>=history.length,reset};
+}
+panelA=makePanel('svgA','logA','stepA','resetA',historyA);
+panelB=makePanel('svgB','logB','stepB','resetB',historyB);
+document.getElementById('resetAll').addEventListener('click',()=>{panelA.reset();panelB.reset()});
+checkBothDone();
+})();
+</script></body></html>
