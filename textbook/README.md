@@ -1,3 +1,7 @@
+[The Algebra of Binding](https://standardgalactic.github.io/spherepop/textbook/algebra-of-binding.pdf)
+
+[Remainders and Residuals](https://standardgalactic.github.io/spherepop/textbook/remainders-and-residuals.pdf)
+
 [Beyond Parentheses](https://standardgalactic.github.io/spherepop/textbook/beyond-parentheses.pdf)
 
 [A Historical Foundation for Dependent Type Theory](https://standardgalactic.github.io/spherepop/textbook/dependent-type-theory.pdf)
