@@ -1,5 +1,8 @@
 # Spherepop
 
+
+[Spherepop Theory](https://standardgalactic.github.io/spherepop/dynamics/spherepop.pdf)
+
 [Formal Logic](textbook/README.md)
 
 [Recursive Containment and Deferred Closure](https://standardgalactic.github.io/spherepop/dynamics/spherepop_scope_dynamics.pdf)
