@@ -1,0 +1,22 @@
+{
+  "name": "history_state_rendering",
+  "invariant": "Canonical history is the replay input, semantic state is derived by replay, and rendering is a replaceable projection that cannot alter either one.",
+  "initial_option_space": [1, 2, 3],
+  "certified_rules": ["identity"],
+  "events": [
+    {"op": "pop", "a": 1},
+    {"op": "bind", "a": 1, "b": 2, "tag": "adjacent"},
+    {"op": "collapse", "rule": "identity"}
+  ],
+  "expect": {
+    "history_fnv1a64": "bf4988c6e7a3c379",
+    "state": {
+      "bound": [[1, 2, "adjacent"]],
+      "committed": [1],
+      "observed": [[0, "identity"]],
+      "option_space": [2, 3],
+      "refused": []
+    },
+    "compact_rendering": "Omega[2,3] | committed[1] | bound[1-adjacent->2] | refused[] | observed[identity]"
+  }
+}
