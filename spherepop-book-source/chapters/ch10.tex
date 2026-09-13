@@ -1,0 +1,64 @@
+\chapter{A Reference Interpreter}
+\label{ch:interpreter}
+
+This chapter presents a complete interpreter for the core fragment of the notation, together with the symbolic simplifier of Chapter~\ref{ch:rewriting}. The program is written in Python, uses only the standard library, and runs in well under a second. It is intended to be read alongside the definitions: each function is a few lines long, and each corresponds closely to a definition or a lemma in the text. The file is \texttt{spherepop.py}, and the transcript at the end of the chapter is the output of running it.
+
+\section{Values and terms}
+
+A value is an integer, a colour, a symbol, or an image. A circle is a pair of an operator name and a tuple of operand terms, and a term is either a value or a circle. The classes are declared \emph{frozen}, which makes instances immutable and hashable, so that the persistence property discussed in Chapter~\ref{ch:images} holds by construction: no operation can change a value that another part of a term is holding.
+
+\lstinputlisting[linerange={13-58}]{spherepop.py}
+
+The function \texttt{sort\_of} reports the sort of a value, and \texttt{is\_value} distinguishes values from circles. Python's booleans are excluded explicitly, because they are a subclass of the integers and would otherwise be accepted as numbers.
+
+\section{Operators and admissibility}
+
+An operator is a record containing its name, its signature, its result sort, and a function \texttt{delta} that computes $\delta_o$. The table \texttt{OPERATORS} holds the seven operators used in the text. The function \texttt{admissible} decides whether an operand tuple lies in $\dom(\delta_o)$, by checking the arity and sorts against the signature and then the side conditions of the particular operator: a non-negative exponent for \texttt{pow}, an angle divisible by $90$ for \texttt{rotate}, and equal heights for \texttt{beside}.
+
+\lstinputlisting[linerange={60-123}]{spherepop.py}
+
+The rotation is implemented by reversing the rows and transposing, which is the clockwise quarter-turn; repeating it gives the other angles, and Python's treatment of negative remainders makes negative angles behave as anticlockwise rotations, in accordance with the convention of Chapter~\ref{ch:images}.
+
+\section{Popping}
+
+The function \texttt{step} performs one pop. It searches the operands from left to right for a circle that can be popped, and if it finds one it rebuilds the enclosing circle around the result. If none of the operands can be popped, and all of them are values, it tries rule (Pop) on the circle itself. The function returns \texttt{None} when no pop applies, which is the test for a normal form. The function \texttt{normalize} repeats \texttt{step} until it returns \texttt{None}, counting the pops, and the function \texttt{size} counts circles. The step limit guards against runaway computation, although by Theorem~\ref{thm:termination} it can never be reached by a term of fewer circles than the limit.
+
+\lstinputlisting[linerange={125-157}]{spherepop.py}
+
+The strategy is leftmost innermost. By Theorem~\ref{thm:unique} it makes no difference to the normal form, and by Corollary~\ref{cor:order} none to the number of pops.
+
+\section{Substitution}
+
+Substitution is a direct transcription of the definition in Chapter~\ref{ch:symbols}. A substitution is a dictionary from symbol names to values.
+
+\lstinputlisting[linerange={161-167}]{spherepop.py}
+
+\section{Rewriting}
+
+The function \texttt{rewrite\_step} extends \texttt{step} with the rules (R1)--(R8) of Chapter~\ref{ch:rewriting}. As before it first looks for a step inside the operands, and only then tries the rules on the circle itself, so the strategy remains leftmost innermost. Comparing it with \texttt{step} shows exactly what rewriting adds: the rules fire on circles whose operands are not all values, which is what allows inert circles to be simplified.
+
+\lstinputlisting[linerange={185-226}]{spherepop.py}
+
+\section{A test run}
+
+The remaining part of the file builds the examples of the text and prints the results. Running it with \texttt{python3 spherepop.py} produces the following transcript. The first line shows the evaluation of $2+3\times4$ in two pops. The tower section confirms that each $T_n$ over a symbol is already in normal form, with $n-1$ circles, and the next section shows the same towers with $\Meta$ replaced by $2$, giving $2$, $4$, $16$, $65536$ in $0$, $1$, $2$, $3$ pops, and checking that the fifth tower is $2^{65536}$, a number of $65537$ bits. The left-nested term with four twos gives $256$. The two picture terms of Chapter~\ref{ch:images} follow, and then two blocked terms, which stop at once with zero pops. The last section shows the simplifier of Chapter~\ref{ch:rewriting}.
+
+\lstinputlisting[basicstyle=\ttfamily\footnotesize,language={}]{output.txt}
+
+\section*{Exercises}
+
+\begin{exercise}
+Add an operator \texttt{min} of signature $\Num\times\Num\to\Num$ to the table and check that terms using it normalize as expected. Which parts of the proofs in Chapter~\ref{ch:order} need to be revisited? (None should.)
+\end{exercise}
+
+\begin{exercise}
+Implement the operator $\op{flip}$ of Exercise~7.5 and test the identity you found there on several images.
+\end{exercise}
+
+\begin{exercise}
+Write a function that performs one round of parallel popping, and use it to confirm Proposition~\ref{prop:parallel} on balanced and unbalanced terms.
+\end{exercise}
+
+\begin{exercise}
+Write a version of \texttt{normalize} that, at each step, chooses a random redex instead of the leftmost one. Run it many times on a term of your choice and check that the result and the number of pops never vary, as Theorem~\ref{thm:unique} and Corollary~\ref{cor:order} predict. Then do the same for the simplifier, using the term of Example~\ref{ex:lengths}, and observe that the number of steps does vary.
+\end{exercise}

@@ -1,0 +1,105 @@
+\documentclass[11pt,oneside]{book}
+
+\usepackage[margin=1.2in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[expansion=false]{microtype}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{fancyhdr}
+\usepackage{listings}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc}
+\usepackage[colorlinks=true,linkcolor=black,citecolor=black,urlcolor=black]{hyperref}
+
+\setlength{\parindent}{1.4em}
+\setlength{\parskip}{0pt}
+\linespread{1.08}
+\emergencystretch=2em
+\setlist{itemsep=2pt,topsep=4pt}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\nouppercase{\leftmark}}
+\fancyfoot[C]{\small\thepage}
+\renewcommand{\headrulewidth}{0.3pt}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[chapter]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{exercise}{Exercise}[chapter]
+\renewcommand{\theexercise}{\thechapter.\arabic{exercise}}
+
+% notation
+\newcommand{\cir}[1]{\langle #1\rangle}
+\newcommand{\pop}{\longrightarrow}
+\newcommand{\popstar}{\longrightarrow^{*}}
+\newcommand{\Num}{\mathsf{Num}}
+\newcommand{\Color}{\mathsf{Color}}
+\newcommand{\Sym}{\mathsf{Sym}}
+\newcommand{\Image}{\mathsf{Image}}
+\newcommand{\Nat}{\mathsf{Nat}}
+\newcommand{\dom}{\operatorname{dom}}
+\newcommand{\nf}{\operatorname{nf}}
+\newcommand{\size}{\operatorname{size}}
+\newcommand{\depth}{\operatorname{depth}}
+\newcommand{\op}[1]{\mathsf{#1}}
+\newcommand{\Meta}{\mathit{Meta}}
+
+\lstset{
+  basicstyle=\ttfamily\small,
+  breaklines=true,
+  columns=fullflexible,
+  keepspaces=true,
+  frame=single,
+  framerule=0.3pt,
+  xleftmargin=0.5em,
+  xrightmargin=0.5em,
+  aboveskip=8pt,
+  belowskip=6pt,
+  language=Python,
+  keywordstyle=\bfseries,
+  commentstyle=\itshape,
+  showstringspaces=false
+}
+
+\title{\Huge An Introduction to SpherePOP\\[10pt]
+\Large Nested Circles, Typed Operators, and Reduction}
+\author{Flyxion\\[2pt]\normalsize Independent Researcher}
+\date{October 2026}
+
+\begin{document}
+
+\frontmatter
+\maketitle
+\tableofcontents
+
+\input{chapters/preface}
+
+\mainmatter
+\input{chapters/ch01}
+\input{chapters/ch02}
+\input{chapters/ch03}
+\input{chapters/ch04}
+\input{chapters/ch05}
+\input{chapters/ch06}
+\input{chapters/ch07}
+\input{chapters/ch08}
+\input{chapters/ch09}
+\input{chapters/ch10}
+
+\appendix
+\input{chapters/appA}
+\input{chapters/appB}
+
+\backmatter
+\input{chapters/refs}
+
+\end{document}

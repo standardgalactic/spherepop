@@ -1,5 +1,6 @@
 # Spherepop
 
+[An Introduction to Spherepop](https://standardgalactic.github.io/spherepop/an_introduction_to_spherepop.pdf)
 
 [Spherepop Theory](https://standardgalactic.github.io/spherepop/dynamics/spherepop.pdf)
 

@@ -1,0 +1,105 @@
+\chapter{Order, Termination, and Confluence}
+\label{ch:order}
+
+A definition of evaluation is only trustworthy if it answers three questions. Does evaluation always stop? If it stops, does it give one answer, or can the answer depend on arbitrary choices made along the way? And how much work does it take? For the notation of the preceding chapters all three questions have complete and simple answers, and this chapter proves them. The proofs are short, but they are worth reading closely, because the same three questions are asked of every system in later chapters and the answers there are less comfortable.
+
+\section{Termination}
+
+\begin{theorem}[Termination]\label{thm:termination}
+There is no infinite sequence $t_0\pop t_1\pop t_2\pop\cdots$. Every sequence of pops starting from a term $t$ has at most $\size(t)$ steps.
+\end{theorem}
+\begin{proof}
+By Proposition~\ref{prop:size-drop}, each pop reduces the size by exactly one. Sizes are non-negative integers, so a sequence starting from size $n$ cannot have more than $n$ steps.
+\end{proof}
+
+The argument uses nothing about the operators except that popping replaces a circle by a value. It is therefore insensitive to what the operators compute, and it would survive the addition of any number of new sorts and operators, provided each new operator returns a value. In Chapter~\ref{ch:rewriting} operators are allowed to return circles, and this is exactly the point at which the argument breaks.
+
+\section{The diamond property}
+
+Suppose two different circles of a term are both ready. Popping one leaves the other ready, and the order of the two pops cannot be detected afterward. The following lemma states this precisely.
+
+\begin{lemma}[Diamond property]\label{lem:diamond}
+If $t\pop t_1$ and $t\pop t_2$ then either $t_1=t_2$, or there is a term $t_3$ with $t_1\pop t_3$ and $t_2\pop t_3$.
+\end{lemma}
+\begin{proof}
+Let the first pop replace the redex at position $p$ and the second the redex at position $q$. If $p=q$ then $t_1=t_2$, because $\delta_o$ is a function. Otherwise suppose, for a contradiction, that $p$ is a proper prefix of $q$. Then the redex at $p$ contains the redex at $q$ as a proper subterm. But a redex has only values as operands, and a circle is not a value, so a redex contains no circle as a proper subterm. The same argument excludes the case that $q$ is a proper prefix of $p$. Hence $p$ and $q$ are disjoint. Write $v_p$ and $v_q$ for the values that the two redexes pop to, so that $t_1=t[p\leftarrow v_p]$ and $t_2=t[q\leftarrow v_q]$. Because the positions are disjoint, the redex at $q$ is still present in $t_1$ and the redex at $p$ is still present in $t_2$, and popping them gives
+\[
+t_1[q\leftarrow v_q] \;=\; t[p\leftarrow v_p][q\leftarrow v_q] \;=\; t[q\leftarrow v_q][p\leftarrow v_p] \;=\; t_2[p\leftarrow v_p],
+\]
+the middle equality being the disjointness identity of Chapter~\ref{ch:terms}. Taking $t_3$ to be this common term completes the proof.
+\end{proof}
+
+\section{Unique normal forms}
+
+\begin{theorem}[Unique normal form]\label{thm:unique}
+Every term $t$ has exactly one normal form $\nf(t)$, and every maximal sequence of pops starting from $t$ ends in $\nf(t)$.
+\end{theorem}
+\begin{proof}
+By Theorem~\ref{thm:termination} every sequence of pops from $t$ can be extended until no pop applies, so a normal form exists. For uniqueness, argue by strong induction on $\size(t)$ that all maximal sequences from $t$ end in the same term. If $t$ is in normal form, the only maximal sequence is the empty one. Otherwise take two maximal sequences, the first beginning $t\pop a$ and the second beginning $t\pop b$. If $a=b$ the induction hypothesis applies to $a$, since $\size(a)<\size(t)$, and the two sequences end in the same term. If $a\neq b$ then Lemma~\ref{lem:diamond} provides $c$ with $a\pop c$ and $b\pop c$. Let $n$ be the end of some maximal sequence from $c$. Then $a\pop c\popstar n$ is a maximal sequence from $a$, so by the induction hypothesis the first sequence ends in $n$, and in the same way $b\pop c\popstar n$ shows that the second sequence ends in $n$ as well.
+\end{proof}
+
+\begin{corollary}[Order independence]\label{cor:order}
+All maximal sequences of pops from $t$ have the same length, namely $\size(t)-\size(\nf(t))$.
+\end{corollary}
+\begin{proof}
+By Theorem~\ref{thm:unique} all of them end in $\nf(t)$, and by Corollary~\ref{cor:length} the number of steps is determined by the sizes of the first and last terms.
+\end{proof}
+
+The practical meaning is considerable. A program written in this notation has no evaluation order to get wrong. An implementation may choose the leftmost ready circle, the rightmost, a random one, or all of them at once, and it will obtain the same normal form in the same number of pops. A reader, human or mechanical, who works through the term in a different order from the author's will not disagree about the result. If two readers do disagree, one of them has made an arithmetic mistake.
+
+\section{Strategies and parallel popping}
+
+A \emph{strategy} is a rule for choosing which ready circle to pop. Theorem~\ref{thm:unique} says that every strategy is correct. Strategies differ only in how they use time. The simplest is the \emph{leftmost} strategy, which pops the first redex found in a left-to-right scan, and it is the one used by the interpreter of Chapter~\ref{ch:interpreter}. A more interesting one is \emph{parallel popping}, which pops every redex of the current term in a single round. Lemma~\ref{lem:diamond} guarantees that the redexes do not interfere, so a round is well defined and gives a term that is reachable by ordinary pops.
+
+\begin{proposition}[Parallel rounds]\label{prop:parallel}
+If every circle that arises during evaluation is admissible, then parallel popping evaluates $t$ to a value in exactly $\depth(t)$ rounds.
+\end{proposition}
+\begin{proof}
+Let $t$ be a term that is not a value, and let $t'$ be the term obtained by one round of parallel popping, in which every innermost circle is replaced by a value. It suffices to show $\depth(t')=\depth(t)-1$, since a term of depth $0$ is a value. The claim is proved by structural induction on $t$. For a circle all of whose operands are values the depth is $1$ and the circle is replaced by a value of depth $0$. For a circle $\cir{o\; t_1\cdots t_n}$ with some operand not a value, each operand $t_i$ of depth $d_i\ge1$ becomes a term of depth $d_i-1$ by the induction hypothesis, while operands that are values stay as they are with depth $0$. The greatest operand depth $m=\max d_i\ge1$ therefore becomes $m-1$, and the depth of the circle changes from $1+m$ to $1+(m-1)=m$, a decrease of exactly one.
+\end{proof}
+
+The proposition shows that the number of rounds, the parallel time, is governed by depth and not by size. A balanced expression of depth $d$ has $2^{d}-1$ binary circles, and parallel popping needs only $d$ rounds, whereas sequential popping needs $2^{d}-1$ pops. A tall tower of nested circles, by contrast, has depth equal to its size, and parallelism gives no benefit at all.
+
+\begin{example}
+Let $E_3$ be the balanced expression
+\[
+\cir{\op{add}\; \cir{\op{add}\; \cir{\op{add}\; 1\; 1}\; \cir{\op{add}\; 1\; 1}}\; \cir{\op{add}\; \cir{\op{add}\; 1\; 1}\; \cir{\op{add}\; 1\; 1}}} .
+\]
+It has seven circles and depth three. Sequential popping takes seven pops, and parallel popping takes three rounds: the four innermost circles at once, then the two above them, then the outermost. The value is $8$. \hfill$\triangleright$
+\end{example}
+
+\section{Towers}
+
+A particularly instructive family of terms is the family of right-nested towers of exponentiation. Writing $x$ for a fixed operand, let
+\[
+T_1 = x,\qquad T_{n+1}=\cir{\op{pow}\; x\; T_n}.
+\]
+Then $T_2=\cir{\op{pow}\; x\; x}$, $T_3=\cir{\op{pow}\; x\; \cir{\op{pow}\; x\; x}}$, and in general $T_n$ has $n-1$ circles, each enclosing the next, so $\size(T_n)=\depth(T_n)=n-1$. If $x$ is the number $2$ the sequence of values is $2$, $4$, $16$, $65536$, and then $2^{65536}$, and each is obtained by $n-1$ pops. The towers grow in value with extraordinary speed, while they grow in size, and therefore in cost, only linearly. They also show that the depth bound of Proposition~\ref{prop:parallel} cannot be improved: nothing can be popped in parallel in a tower, because at every stage there is only one ready circle. By Corollary~\ref{cor:length}, the number of pops needed to reach the value is always $n-1$, no matter how large the value turns out to be.
+
+The same operands arranged the other way, as the left-nested term $\cir{\op{pow}\; \cir{\op{pow}\; \cir{\op{pow}\; 2\; 2}\; 2}\; 2}$, give a very different value, namely $256$ and not $65536$. The notation makes the two groupings different terms from the outset, and so there is nothing to disambiguate.
+
+\section*{Exercises}
+
+\begin{exercise}[\dag]\label{ex:ch4-diamond}
+For $t=\cir{\op{add}\; \cir{\op{mul}\; 2\; 3}\; \cir{\op{mul}\; 4\; 5}}$ write out the two terms $t_1$, $t_2$ reached by popping each redex and exhibit the common term $t_3$ required by Lemma~\ref{lem:diamond}.
+\end{exercise}
+
+\begin{exercise}[\dag]\label{ex:ch4-rounds}
+A term has size $15$ and is a balanced binary expression. How many sequential pops and how many parallel rounds does it need?
+\end{exercise}
+
+\begin{exercise}[\dag]\label{ex:ch4-tower}
+Compute the value of $\cir{\op{pow}\; 3\; \cir{\op{pow}\; 3\; 3}}$ and of $\cir{\op{pow}\; \cir{\op{pow}\; 3\; 3}\; 3}$, and state the number of pops for each.
+\end{exercise}
+
+\begin{exercise}
+The proof of Theorem~\ref{thm:unique} uses induction on size. Where does it use that $\delta_o$ is a function? Where would it fail if $\delta_o$ were allowed to return different values on different occasions?
+\end{exercise}
+
+\begin{exercise}
+Prove that any set of redexes in a term may be popped in any order, by induction on the number of redexes, using Lemma~\ref{lem:diamond}. What is the relation to Proposition~\ref{prop:parallel}?
+\end{exercise}
+
+\begin{exercise}
+Find a term $t$ with $\size(t)=5$ for which parallel popping takes $5$ rounds and a term with $\size(t)=5$ for which it takes $3$.
+\end{exercise}

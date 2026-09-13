@@ -1,0 +1,28 @@
+-- arithmetic
+<add 2 <mul 3 4>> => 14 in 2 steps
+-- towers over the symbol Meta
+1 Meta circles: 0 normal form unchanged: True
+2 <pow Meta Meta> circles: 1 normal form unchanged: True
+3 <pow Meta <pow Meta Meta>> circles: 2 normal form unchanged: True
+4 <pow Meta <pow Meta <pow Meta Meta>>> circles: 3 normal form unchanged: True
+-- towers with Meta := 2
+1 2 => 2 in 0 steps
+2 <pow 2 2> => 4 in 1 steps
+3 <pow 2 <pow 2 2>> => 16 in 2 steps
+4 <pow 2 <pow 2 <pow 2 2>>> => 65536 in 3 steps
+5 value is 2**65536: True bit length: 65537
+-- left nesting of four twos
+<pow <pow <pow 2 2> 2> 2> => 256
+-- images
+<rotate <recolor x.x/.x. red> 90> => .red/red./.red
+<beside <rotate xx/xx 90> <recolor xx/xx blue>> => xxblueblue/xxblueblue
+-- inert circles
+<rotate red x.x/.x.> => <rotate red x.x/.x.> after 0 steps
+<add 1 <pow 2 -1>> => <add 1 <pow 2 -1>> after 0 steps
+-- order independence on a small term
+<add <mul 2 3> <mul 4 5>> => 26
+-- rewriting
+<pow x 1> => x in 1 steps
+<add <mul x 1> 0> => x in 2 steps
+<mul <add x 0> 0> => 0 in 2 steps
+<pow <pow x 1> 0> => 1 in 2 steps

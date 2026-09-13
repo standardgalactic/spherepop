@@ -1,0 +1,85 @@
+\chapter{Popping}
+\label{ch:popping}
+
+\section{The reduction relation}
+
+A computation in SpherePOP is a sequence of pops. A single pop is described by a relation $t\pop t'$ between terms, read \emph{$t$ pops to $t'$}, which is defined by two rules. The first, called (Pop), states what happens to a circle that is ready. The second, called (Arg), lets a pop happen anywhere inside a term.
+
+\begin{definition}[Popping]\label{def:pop}
+A circle $\cir{o\; v_1\cdots v_n}$ whose operands are all values and satisfy $(v_1,\dots,v_n)\in\dom(\delta_o)$ is called a \emph{redex}. The relation $\pop$ is the smallest relation satisfying
+\begin{align}
+\cir{o\; v_1\cdots v_n} &\pop \delta_o(v_1,\dots,v_n) &&\text{if }(v_1,\dots,v_n)\in\dom(\delta_o), \tag{Pop}\\
+\cir{o\; t_1\cdots t_i\cdots t_n} &\pop \cir{o\; t_1\cdots t_i'\cdots t_n} &&\text{if } t_i\pop t_i'. \tag{Arg}
+\end{align}
+The reflexive and transitive closure of $\pop$ is written $\popstar$.
+\end{definition}
+
+The first rule needs no commentary beyond the observation that it applies only when every operand is already a value. The second rule states that popping is allowed at any depth. Taken together they say that a pop replaces, at some position $p$ of the term, a redex $t|_p$ by the value $\delta_o(v_1,\dots,v_n)$, so that $t' = t[p\leftarrow\delta_o(v_1,\dots,v_n)]$. This description is often more convenient than the pair of rules, and the two are equivalent by a routine induction on the position $p$.
+
+\begin{example}\label{ex:trace}
+Let $t=\cir{\op{add}\; \cir{\op{mul}\; 2\; 3}\; \cir{\op{mul}\; 4\; 5}}$. The redexes of $t$ are the two multiplications, at positions $1$ and $2$. Popping the first gives $\cir{\op{add}\; 6\; \cir{\op{mul}\; 4\; 5}}$ and popping the second gives $\cir{\op{add}\; \cir{\op{mul}\; 2\; 3}\; 20}$. Each of these has exactly one redex left, and popping it in either case gives $\cir{\op{add}\; 6\; 20}$, which pops to $26$. The two derivations are
+\begin{align*}
+t &\pop \cir{\op{add}\; 6\; \cir{\op{mul}\; 4\; 5}} \pop \cir{\op{add}\; 6\; 20} \pop 26,\\
+t &\pop \cir{\op{add}\; \cir{\op{mul}\; 2\; 3}\; 20} \pop \cir{\op{add}\; 6\; 20} \pop 26. \tag*{$\triangleright$}
+\end{align*}
+\end{example}
+
+\section{Where redexes are}
+
+A redex is a circle all of whose operands are values. Such a circle contains no other circle as a subterm, and this observation gives a clean description of where redexes can occur. Call a circle \emph{innermost} if none of its operands is a circle.
+
+\begin{lemma}\label{lem:redex}
+The redexes of a term are exactly its innermost circles whose operands are admissible. Every term that is not a value has at least one innermost circle.
+\end{lemma}
+\begin{proof}
+A redex has only values as operands, so it is innermost, and by definition its operands are admissible. Conversely an innermost circle has only values as operands, and if they are admissible it is a redex. For the second claim, choose in a non-value term a circle of greatest depth along some path from the outside. If one of its operands were a circle, that circle would lie deeper still, contradicting the choice. Hence all operands are values.
+\end{proof}
+
+\section{Normal forms and inert circles}
+
+A term is in \emph{normal form} if no pop applies to it. Every value is in normal form. A term that is in normal form but is not a value is called \emph{blocked}. By Lemma~\ref{lem:redex}, a term is in normal form exactly when every innermost circle in it has inadmissible operands, and a blocked term is one in which at least one circle is innermost and inadmissible, so that popping stops with a circle still present.
+
+A circle with inadmissible operands is called \emph{inert}. Inert circles are not errors. Nothing is signalled and nothing is discarded. The circle simply remains in the term, and every circle that encloses it remains too, since an enclosing circle cannot be popped until all of its operands are values. This is a feature of the design. An inert circle is visible, it can be inspected, and it can sometimes be repaired later, as when a symbol inside it is replaced by a number in Chapter~\ref{ch:symbols}.
+
+\begin{example}
+The circle $\cir{\op{pow}\; 2\; -1}$ is inert, because $\delta_{\op{pow}}$ is not defined for a negative exponent. The term $\cir{\op{add}\; 1\; \cir{\op{pow}\; 2\; -1}}$ is therefore blocked: its only innermost circle is inert, and the outer circle is not a redex because one of its operands is a circle and not a value. Both circles remain after popping stops. \hfill$\triangleright$
+\end{example}
+
+\section{Counting pops}
+
+The most important feature of a pop is that it removes exactly one circle. A redex $\cir{o\;v_1\cdots v_n}$ is one circle, and it is replaced by a value, which is no circle at all. No other part of the term changes.
+
+\begin{proposition}\label{prop:size-drop}
+If $t\pop t'$ then $\size(t')=\size(t)-1$.
+\end{proposition}
+\begin{proof}
+Write $t' = t[p\leftarrow v]$ where $t|_p$ is a redex and $v$ is a value. The redex contributes $1+\sum\size(v_i)=1$ to the size of $t$, since its operands are values, and $v$ contributes $0$ to the size of $t'$. The remaining circles of $t$ and $t'$ are the same.
+\end{proof}
+
+\begin{corollary}\label{cor:length}
+If $t\popstar t'$ in $k$ steps then $\size(t')=\size(t)-k$. In particular a term that pops to a value does so in exactly $\size(t)$ steps.
+\end{corollary}
+
+The corollary has a pleasant practical reading. The cost of evaluating a term to a value, counted in pops, is its size and nothing else. It does not depend on the order of popping, on which of several ready circles is chosen first, or on the values involved. A term whose operators are expensive may of course be slow to evaluate, but the number of pops is fixed in advance by the shape of the term.
+
+\section*{Exercises}
+
+\begin{exercise}[\dag]\label{ex:ch3-redexes}
+List the redexes of $\cir{\op{add}\; \cir{\op{mul}\; 2\; 3}\; \cir{\op{mul}\; 4\; \cir{\op{sub}\; 9\; 4}}}$ and give all pop sequences that reach a value.
+\end{exercise}
+
+\begin{exercise}[\dag]\label{ex:ch3-eval}
+Evaluate $\cir{\op{pow}\; \cir{\op{add}\; 1\; 1}\; \cir{\op{mul}\; 2\; \cir{\op{sub}\; 5\; 2}}}$ to a value, state the number of pops, and compare it with the size of the term.
+\end{exercise}
+
+\begin{exercise}[\dag]\label{ex:ch3-blocked}
+Is $\cir{\op{mul}\; 3\; \cir{\op{pow}\; 0\; \cir{\op{sub}\; 2\; 3}}}$ a value, a blocked term, or a term with a redex? Evaluate as far as possible and list the circles that remain.
+\end{exercise}
+
+\begin{exercise}
+Show that if $t$ is blocked then $t$ contains an innermost circle $c$ whose operands are inadmissible, and that every circle containing $c$ is also present in every term to which $t$ pops.
+\end{exercise}
+
+\begin{exercise}
+Prove that the (Arg) rule is redundant if the relation is instead defined by the statement ``$t\pop t[p\leftarrow\delta_o(v_1,\dots,v_n)]$ whenever $t|_p=\cir{o\;v_1\cdots v_n}$ is a redex.'' That is, show that the two definitions give the same relation.
+\end{exercise}

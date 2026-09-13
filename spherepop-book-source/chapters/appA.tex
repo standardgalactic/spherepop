@@ -1,0 +1,79 @@
+\chapter{Solutions to Selected Exercises}
+\label{app:solutions}
+
+\noindent Solutions are given for the exercises marked with a dagger.
+
+\paragraph{Exercise~\ref{ex:ch1-write}.}
+$2+3\times4$ is $\cir{\op{add}\; 2\; \cir{\op{mul}\; 3\; 4}}$, with value $14$. $(2+3)\times4$ is $\cir{\op{mul}\; \cir{\op{add}\; 2\; 3}\; 4}$, with value $20$.
+
+\paragraph{Exercise~\ref{ex:ch1-tower}.}
+The groupings are $\cir{\op{pow}\; a\; \cir{\op{pow}\; b\; c}}$ and $\cir{\op{pow}\; \cir{\op{pow}\; a\; b}\; c}$. For $(a,b,c)=(2,3,2)$ the first is $2^{(3^2)}=2^9=512$ and the second is $(2^3)^2=8^2=64$.
+
+\paragraph{Exercise~\ref{ex:ch1-pops}.}
+There are two sequences, according to whether $\cir{\op{mul}\; 2\; 3}$ or $\cir{\op{sub}\; 9\; 4}$ is popped first. Both pass through the term $\cir{\op{add}\; 6\; 5}$ after two pops and reach $11$ after three.
+
+\paragraph{Exercise~\ref{ex:ch2-size}.}
+The first term has four circles and depth $3$, as computed in the text. In the second term, the exponent $2$ is replaced by $\cir{\op{add}\; 1\; 1}$, which adds one circle at depth $1$ beneath $\op{pow}$. The size is $5$. The depth is still $3$, because $\op{pow}$ has operands of depths $1$ and $1$, so its depth is $2$, and the outer circle has depth $1+\max(1,2)=3$.
+
+\paragraph{Exercise~\ref{ex:ch2-bound}.}
+By induction on the depth $d$. If $d=0$ the term is a value of size $0=2^{0}-1$. If $d\ge1$ the term is $\cir{o\; t_1\; t_2}$ and each operand has depth at most $d-1$, hence by the induction hypothesis size at most $2^{d-1}-1$. The size of the term is therefore at most $1+2(2^{d-1}-1)=2^{d}-1$.
+
+\paragraph{Exercise~\ref{ex:ch2-positions}.}
+The positions are $\varepsilon$, $1$, $2$, $1\cdot1$, and $1\cdot2$. The subterm at $1\cdot2$ is $3$, and $t[1\cdot2\leftarrow7]=\cir{\op{add}\; \cir{\op{mul}\; 2\; 7}\; 4}$.
+
+\paragraph{Exercise~\ref{ex:ch3-redexes}.}
+The innermost circles are $\cir{\op{mul}\; 2\; 3}$ at position $1$ and $\cir{\op{sub}\; 9\; 4}$ at position $2\cdot2$, and both are redexes. The circle $\cir{\op{mul}\; 4\; \cir{\op{sub}\; 9\; 4}}$ is not a redex until the subtraction has been popped. The term has four circles. Denote the pops by $m_1$ (for $\op{mul}\;2\;3$, value $6$), $s$ (for $\op{sub}\;9\;4$, value $5$), $m_2$ (for $\op{mul}\;4\;5$, value $20$), and $a$ (the final addition). The constraints are that $s$ precedes $m_2$ and that $a$ comes last, so there are three sequences: $m_1,s,m_2,a$; $s,m_1,m_2,a$; and $s,m_2,m_1,a$. All reach $26$.
+
+\paragraph{Exercise~\ref{ex:ch3-eval}.}
+$\cir{\op{sub}\; 5\; 2}\to3$, then $\cir{\op{mul}\; 2\; 3}\to6$, $\cir{\op{add}\; 1\; 1}\to2$, and finally $\cir{\op{pow}\; 2\; 6}\to64$. There are four pops, equal to the size of the term, as required by Corollary~\ref{cor:length}.
+
+\paragraph{Exercise~\ref{ex:ch3-blocked}.}
+The term is neither a value nor a term with a pending redex after the first pop. It starts with one redex, $\cir{\op{sub}\; 2\; 3}$, which pops to $-1$. The circle $\cir{\op{pow}\; 0\; -1}$ is then innermost and inadmissible, since the exponent is negative, and so the term is blocked. The remaining term is $\cir{\op{mul}\; 3\; \cir{\op{pow}\; 0\; -1}}$, with two circles.
+
+\paragraph{Exercise~\ref{ex:ch4-diamond}.}
+$t_1=\cir{\op{add}\; 6\; \cir{\op{mul}\; 4\; 5}}$, $t_2=\cir{\op{add}\; \cir{\op{mul}\; 2\; 3}\; 20}$, and $t_3=\cir{\op{add}\; 6\; 20}$, reached from $t_1$ by popping the remaining multiplication and from $t_2$ by popping the other.
+
+\paragraph{Exercise~\ref{ex:ch4-rounds}.}
+A balanced binary term of size $15=2^{4}-1$ has depth $4$. Sequential popping takes $15$ pops, and parallel popping takes $4$ rounds, by Proposition~\ref{prop:parallel}.
+
+\paragraph{Exercise~\ref{ex:ch4-tower}.}
+$\cir{\op{pow}\; 3\; \cir{\op{pow}\; 3\; 3}}$ pops to $\cir{\op{pow}\; 3\; 27}$ and then to $3^{27}=7625597484987$, in two pops. $\cir{\op{pow}\; \cir{\op{pow}\; 3\; 3}\; 3}$ pops to $\cir{\op{pow}\; 27\; 3}$ and then to $27^{3}=19683$, also in two pops.
+
+\paragraph{Exercise~\ref{ex:ch5-sorting}.}
+The term is not well-sorted: the first operand has sort $\Num$ where $\op{rotate}$ requires $\Image$, and the second operand has sort $\Image$ where it requires $\Num$. Evaluation pops $\cir{\op{add}\; 1\; 2}$ to $3$ and stops at the inert circle $\cir{\op{rotate}\; 3\; I}$, after one pop.
+
+\paragraph{Exercise~\ref{ex:ch5-blocked}.}
+The term $\cir{\op{pow}\; 2\; \cir{\op{sub}\; 0\; 1}}$ is well-sorted, with sort $\Num$. It pops to $\cir{\op{pow}\; 2\; -1}$, which is blocked because $\op{pow}$ is not defined for negative exponents.
+
+\paragraph{Exercise~\ref{ex:ch5-nat}.}
+No. The second operand of $\op{pow}$ is $\cir{\op{sub}\; 5\; 2}$, whose sort is $\Num$, but the signature requires $\Nat$. An operator of truncated subtraction, $\op{monus}:\Nat\times\Nat\to\Nat$, with $\delta(a,b)=\max(a-b,0)$, would restore well-sortedness, provided the numerals $5$ and $2$ are accepted as values of sort $\Nat$.
+
+\paragraph{Exercise~\ref{ex:ch6-tower}.}
+$\sigma(T_3)=\cir{\op{pow}\; 3\; \cir{\op{pow}\; 3\; 3}}$, which pops to $\cir{\op{pow}\; 3\; 27}$ and then to $7625597484987$, in two pops.
+
+\paragraph{Exercise~\ref{ex:ch6-staged}.}
+The first stage pops $\cir{\op{mul}\; 2\; 3}$ and gives $\cir{\op{add}\; 6\; \cir{\op{mul}\; x\; 4}}$, after one pop. For $x=5$, the second stage gives $\cir{\op{add}\; 6\; \cir{\op{mul}\; 5\; 4}}$, then $\cir{\op{add}\; 6\; 20}$, then $26$, in two pops. The total is three pops, equal to the size of the original term.
+
+\paragraph{Exercise~\ref{ex:ch6-noteq}.}
+Take $t=\cir{\op{add}\; 1\; x}$ and $\sigma(x)=2$. Then $\nf(t)=t$ and $\sigma(\nf(t))=\cir{\op{add}\; 1\; 2}$, whereas $\nf(\sigma(t))=3$. They differ, but $\cir{\op{add}\; 1\; 2}\to3$.
+
+\paragraph{Exercise~\ref{ex:ch7-rotate}.}
+The results are $\mathtt{da/eb/fc}$, $\mathtt{fed/cba}$, and $\mathtt{cf/be/ad}$. Three successive quarter-turns are the same as a rotation by $270$.
+
+\paragraph{Exercise~\ref{ex:ch7-commute}.}
+A rotation sends the cell at position $(i,j)$ to a new position $\pi(i,j)$ determined by the rotation alone, and leaves its contents unchanged. A recolouring replaces the contents $k$ of a cell by $c$ if $k$ is a colour and leaves a blank unchanged, and does not depend on the position. So both orders send the contents $k$ at $(i,j)$ to $c$ or blank at $\pi(i,j)$, according to whether $k$ was a colour or blank.
+
+\paragraph{Exercise~\ref{ex:ch7-beside}.}
+No. The heights are $2$ and $3$, so the tuple is not admissible and the circle is inert. Inside a larger term the circle remains, and so do all enclosing circles, so the larger term is blocked.
+
+\paragraph{Exercise~\ref{ex:ch7-above}.}
+The defining term has four circles. Popping the two inner rotations gives $\mathtt{bd/ac}$ and $\mathtt{f/e}$, and the $\op{beside}$ circle then gives $\mathtt{bdf/ace}$. The final rotation by $90$ gives $\mathtt{ab/cd/ef}$. There are four pops.
+
+\paragraph{Exercise~\ref{ex:ch8-lengths}.}
+Leftmost innermost: $\cir{\op{add}\; x\; 0}\to x$ by (R3), then $\cir{\op{mul}\; x\; 0}\to0$ by (R7), two steps. Outermost: (R7) applies at the root at once and gives $0$, in one step. The normal form is $0$ in both cases and the lengths are $2$ and $1$.
+
+\paragraph{Exercise~\ref{ex:ch8-nonconf}.}
+Both rules apply to $\cir{\op{pow}\; 0\; 0}$, the first giving $1$ and the second giving $0$. Neither $1$ nor $0$ can be rewritten further, so the critical pair is not joinable, and the term has the two distinct normal forms $1$ and $0$.
+
+\paragraph{Exercise~\ref{ex:ch8-dist}.}
+With each numeral interpreted as $2$, the term $\cir{\op{mul}\; 2\; \cir{\op{add}\; 3\; 4}}$ has interpretation $2\cdot(2+2+1)=10$. The rewritten term $\cir{\op{add}\; \cir{\op{mul}\; 2\; 3}\; \cir{\op{mul}\; 2\; 4}}$ has interpretation $(2\cdot2)+(2\cdot2)+1=9$. The decrease is $[a]-1=1$, as predicted.

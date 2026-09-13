@@ -1,0 +1,102 @@
+\chapter{Rewriting}
+\label{ch:rewriting}
+
+Up to this point every operator has returned a value. An operator may instead be allowed to return a circle, so that popping transforms one expression into another expression and does not necessarily bring the computation closer to a number. This is the step from evaluation to rewriting, and it is the step at which the clean results of Chapter~\ref{ch:order} stop being automatic. This chapter introduces rewriting in the setting of the notation, shows a system of rules for which the good properties can be proved, and exhibits three small variations that destroy them.
+
+\section{Rules}
+
+A \emph{rewriting rule} has the form $\ell\to r$, where $\ell$ and $r$ are terms that may contain \emph{variables}, written $x$, $y$, and standing for arbitrary terms. The left-hand side $\ell$ is the pattern. A term $t$ \emph{matches} the rule at a position $p$ if $t|_p$ is obtained from $\ell$ by replacing each variable by some term, and the rule then allows $t$ to be rewritten by replacing $t|_p$ by $r$ with the same replacements made. The variables of $r$ are required to occur in $\ell$. Values are written in rules as themselves and are matched only by themselves.
+
+Consider the following eight rules, which describe the usual identities of arithmetic and are added to the (Pop) rule of Chapter~\ref{ch:popping}.
+\begin{align*}
+&\text{(R1)}\ \cir{\op{pow}\; x\; 1}\to x &&\text{(R2)}\ \cir{\op{pow}\; x\; 0}\to 1\\
+&\text{(R3)}\ \cir{\op{add}\; x\; 0}\to x &&\text{(R4)}\ \cir{\op{add}\; 0\; x}\to x\\
+&\text{(R5)}\ \cir{\op{mul}\; x\; 1}\to x &&\text{(R6)}\ \cir{\op{mul}\; 1\; x}\to x\\
+&\text{(R7)}\ \cir{\op{mul}\; x\; 0}\to 0 &&\text{(R8)}\ \cir{\op{mul}\; 0\; x}\to 0
+\end{align*}
+Because the variable $x$ may stand for any term, the rules apply to circles that (Pop) cannot touch. The term $\cir{\op{pow}\; y\; 1}$, with $y$ a symbol, is inert under (Pop), but rule (R1) rewrites it to $y$. Similarly $\cir{\op{mul}\; \cir{\op{pow}\; y\; 2}\; 0}$ is rewritten by (R7) to $0$, discarding the inert circle inside it.
+
+\begin{example}
+The term $\cir{\op{add}\; \cir{\op{mul}\; x\; 1}\; 0}$, with $x$ a symbol, rewrites by (R5) to $\cir{\op{add}\; x\; 0}$ and then by (R3) to $x$. The expression has two circles and the symbolic computation removes both, without ever assigning $x$ a value. The term $\cir{\op{pow}\; \cir{\op{pow}\; x\; 1}\; 0}$ rewrites to $\cir{\op{pow}\; x\; 0}$ by (R1) and to $1$ by (R2). \hfill$\triangleright$
+\end{example}
+
+\section{What changes}
+
+Two of the properties established in Chapter~\ref{ch:order} no longer follow from the same arguments. A rule need not replace a circle by a value, so the reduction of a term can leave the size of the term fixed or even increase it, and Theorem~\ref{thm:termination} has nothing to say. Rules also may overlap, in the sense that two different rules, or one rule at two different positions of the same term, may apply to the same circle, and the redexes then no longer sit at disjoint positions, so Lemma~\ref{lem:diamond} cannot be applied directly. Order independence of length, finally, is lost, even where the normal form is still unique.
+
+\begin{example}\label{ex:lengths}
+Let $t=\cir{\op{mul}\; \cir{\op{add}\; x\; 0}\; 0}$. Rewriting the inner circle first, by (R3), gives $\cir{\op{mul}\; x\; 0}$, and (R7) then gives $0$, for a total of two steps. Rewriting the outer circle first, by (R7), gives $0$ immediately, in one step. The normal form is the same, but the lengths of the two sequences differ, and so Corollary~\ref{cor:order} does not extend to rewriting. \hfill$\triangleright$
+\end{example}
+
+\section{Termination of the arithmetic rules}
+
+For the eight rules above, termination is easy to prove, and the proof shows the general method: find a quantity that decreases with every step.
+
+\begin{theorem}\label{thm:rewrite-term}
+Every sequence of rewrites using (Pop) and (R1)--(R8) is finite.
+\end{theorem}
+\begin{proof}
+The size of a term decreases at every step. For (Pop) this is Proposition~\ref{prop:size-drop}. For a rule among (R1)--(R8), the left-hand side has size $1+\size(x)$ and the right-hand side is $x$, of size $\size(x)$, or a numeral, of size $0$, so the replacement lowers the size of the subterm by at least one. The size of the whole term is then lowered by the same amount, since the context is unchanged.
+\end{proof}
+
+\section{Confluence by critical pairs}
+
+Showing that the normal form is unique requires a different argument. Two rules overlap when a single term can be rewritten by either. The \emph{critical pairs} of a system are the pairs of terms obtained by applying each of two overlapping rules to the overlap. If both terms of every critical pair can be rewritten to a common term, the pair is said to be \emph{joinable}. A theorem of Knuth and Bendix states that a terminating rewriting system is locally confluent if and only if all of its critical pairs are joinable, and a lemma of Newman states that a terminating, locally confluent system is confluent, and therefore has unique normal forms. The two results together give a practical test for uniqueness of normal forms: check the critical pairs.
+
+\begin{theorem}\label{thm:rewrite-conf}
+The system consisting of (Pop) and (R1)--(R8) is confluent, and every term has a unique normal form.
+\end{theorem}
+\begin{proof}
+The system terminates by Theorem~\ref{thm:rewrite-term}, so by the two results quoted it suffices to check that every critical pair is joinable. The left-hand sides of (R1)--(R8) each have one circle, with operands that are variables or numerals, so there is no overlap below the root of a left-hand side, and every critical pair comes from two rules applying to the same circle. Rules with different operators cannot overlap. For the same operator there are the following cases.
+
+\emph{Addition.} Rules (R3) and (R4) both apply to $\cir{\op{add}\; 0\; 0}$ and give $0$ in both cases.
+
+\emph{Multiplication.} Rules (R5) and (R6) both apply to $\cir{\op{mul}\; 1\; 1}$ and give $1$. Rules (R5) and (R8) both apply to $\cir{\op{mul}\; 0\; 1}$ and give $0$. Rules (R6) and (R7) both apply to $\cir{\op{mul}\; 1\; 0}$ and give $0$. Rules (R7) and (R8) both apply to $\cir{\op{mul}\; 0\; 0}$ and give $0$. The other pairs cannot overlap, since they require the same operand to be both $1$ and $0$.
+
+\emph{Powers.} Rules (R1) and (R2) require the exponent to be $1$ and $0$ respectively and so cannot overlap.
+
+\emph{Overlaps with (Pop).} The rule (Pop) applies to a circle whose operands are all numbers, and the rules (R1)--(R8) may apply to the same circle when an operand is $0$ or $1$. The two results agree in every such case, by the identities $a+0=0+a=a$, $a\cdot1=1\cdot a=a$, $a\cdot0=0\cdot a=0$, $a^{1}=a$, and $a^{0}=1$.
+
+All critical pairs are therefore joinable.
+\end{proof}
+
+The theorem justifies using any strategy at all for simplification. The interpreter of Chapter~\ref{ch:interpreter} uses the leftmost innermost strategy, and by the theorem it reaches the same normal form as any other, although, as Example~\ref{ex:lengths} shows, possibly in a different number of steps.
+
+\section{When rewriting goes wrong}
+
+Three small variations show how fragile the conclusions of the previous section are.
+
+\paragraph{Non-termination.}
+Add the rule $\cir{\op{add}\; x\; y}\to\cir{\op{add}\; y\; x}$, which expresses commutativity of addition. Then $\cir{\op{add}\; a\; b}\to\cir{\op{add}\; b\; a}\to\cir{\op{add}\; a\; b}\to\cdots$ is an infinite sequence, for symbols $a$ and $b$, and no term of this shape has a normal form. The identity is true and a perfectly good equation, but as a rule applied in one direction it makes the system loop. Systems that must use commutative operators handle the difficulty by rewriting modulo the commutativity, an extension not pursued here.
+
+\paragraph{Growth without non-termination.}
+Add the distributive rule $\cir{\op{mul}\; a\; \cir{\op{add}\; b\; c}}\to\cir{\op{add}\; \cir{\op{mul}\; a\; b}\; \cir{\op{mul}\; a\; c}}$. The right-hand side has three circles where the left has two, so the size of a term can increase at a step, and the argument by size no longer applies. The system restricted to $\op{add}$ and $\op{mul}$ nonetheless terminates. Interpret each value as the number $2$, each circle $\cir{\op{add}\; s\; t}$ as $[s]+[t]+1$, and each circle $\cir{\op{mul}\; s\; t}$ as $[s]\cdot[t]$, where $[s]$ denotes the interpretation of $s$. All interpretations are at least $2$, and both operations are strictly increasing in each argument at such values. For the distributive rule with $[a]$, $[b]$, $[c]$ the interpretations of the three subterms, the left-hand side has interpretation $[a]([b]+[c]+1)=[a][b]+[a][c]+[a]$, and the right-hand side has $[a][b]+[a][c]+1$, which is smaller by $[a]-1\ge1$. Every use of the rule, in any context, therefore lowers the interpretation of the whole term. The rule (Pop) lowers it as well, since a circle whose two operands are values has interpretation at least $4$ and is replaced by a value, whose interpretation is $2$. A strictly decreasing sequence of integers that are at least $2$ must be finite.
+
+\paragraph{Loss of confluence.}
+Replace (R2) by the pair of rules $\cir{\op{pow}\; x\; 0}\to1$ and $\cir{\op{pow}\; 0\; x}\to0$. Both rules apply to $\cir{\op{pow}\; 0\; 0}$ and give $1$ and $0$ respectively. These are different values, and so both are normal forms. The critical pair is not joinable, the system is not confluent, and the term $\cir{\op{pow}\; 0\; 0}$ has two normal forms. The conflict is a genuine disagreement between two reasonable-looking identities, and no choice of evaluation strategy can repair it.
+
+\section{Orthogonality and the earlier results}
+
+The results of Chapter~\ref{ch:order} can be recovered in the more general setting under stronger hypotheses. A rewriting system is \emph{orthogonal} if its left-hand sides are linear, meaning that no variable occurs twice, and no two of its rules overlap. For orthogonal systems confluence holds without any termination assumption, a result going back to Rosen and to Huet. The core fragment of the notation is orthogonal, since (Pop) rules for distinct operators or distinct operand tuples cannot overlap, which is the reason that confluence there came so cheaply. The rules (R1)--(R8) are not orthogonal, because they overlap, and their confluence rests on the combination of termination and joinable critical pairs.
+
+\section*{Exercises}
+
+\begin{exercise}[\dag]\label{ex:ch8-lengths}
+Normalize $\cir{\op{mul}\; \cir{\op{add}\; x\; 0}\; 0}$ using the leftmost innermost strategy and using the outermost strategy. Compare the lengths and the results.
+\end{exercise}
+
+\begin{exercise}
+Show that the commutativity rule produces an infinite sequence from $\cir{\op{add}\; a\; b}$, and explain why the rule (Pop) does not prevent this when $a$ and $b$ are symbols.
+\end{exercise}
+
+\begin{exercise}[\dag]\label{ex:ch8-nonconf}
+Verify that the modified rule pair $\cir{\op{pow}\; x\; 0}\to1$, $\cir{\op{pow}\; 0\; x}\to0$ has a critical pair that is not joinable, and give the two normal forms of $\cir{\op{pow}\; 0\; 0}$.
+\end{exercise}
+
+\begin{exercise}[\dag]\label{ex:ch8-dist}
+Carry out the interpretation argument for the distributive rule on the term $\cir{\op{mul}\; 2\; \cir{\op{add}\; 3\; 4}}$, treating the numerals as values of interpretation $2$, and show that the interpretation of the rewritten term is smaller.
+\end{exercise}
+
+\begin{exercise}
+Find all critical pairs of the system obtained by adding the rule $\cir{\op{add}\; x\; x}\to\cir{\op{mul}\; 2\; x}$ to (R1)--(R8), and decide which are joinable.
+\end{exercise}

@@ -1,0 +1,105 @@
+\chapter{Colours and Images}
+\label{ch:images}
+
+Nothing in the development so far depends on the values being numbers. A sort is a collection of values together with whatever operators are defined on it, and the notation, the popping rule, and the theorems of Chapters~\ref{ch:terms} to \ref{ch:symbols} apply unchanged to any collection of sorts and operators that meets the two requirements stated in Chapter~\ref{ch:terms}. This chapter shows the claim at work on a second family of operators, which act on colours and on pictures. The point of the chapter is not the picture operations themselves, which are deliberately simple, but the fact that mixing sorts costs nothing in the theory.
+
+\section{The sorts}
+
+A \emph{colour} is a name such as $\mathrm{red}$ or $\mathrm{blue}$. An \emph{image} is a finite rectangular grid of cells, each cell holding either a colour or the blank marker, written $\cdot$. An image with $h$ rows and $w$ columns is said to have height $h$ and width $w$. Rows are listed from top to bottom and cells within a row from left to right. In running text an image is written as its rows separated by slashes, so that $\mathtt{x\cdot x/\cdot x\cdot}$ is the image of height $2$ and width $3$ whose top row is a filled cell, a blank, and another filled cell, and whose bottom row has the filled cell in the middle. Cells marked $\mathtt{x}$ in a drawing are understood to hold some colour whose name is not important for the example.
+
+\section{Three operators}
+
+The operators of the picture fragment have the following signatures and meanings.
+
+\begin{center}
+\begin{tabular}{@{}lll@{}}
+\toprule
+Operator & Signature & Meaning\\
+\midrule
+$\op{rotate}$ & $\Image\times\Num\to\Image$ & rotate clockwise by the given number of degrees\\
+$\op{recolor}$ & $\Image\times\Color\to\Image$ & give every non-blank cell the given colour\\
+$\op{beside}$ & $\Image\times\Image\to\Image$ & place the second image to the right of the first\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The operator $\op{rotate}$ is admissible only when the angle is a multiple of $90$, and the operator $\op{beside}$ only when the two images have the same height. Negative angles are allowed and mean anticlockwise rotation, and an angle of $360$ gives back the original. A rotation by $90$ clockwise turns the leftmost column, read from bottom to top, into the top row, and so on across the columns.
+
+\begin{example}\label{ex:rotate}
+Let $I=\mathtt{abc/def}$, with six distinct colours. Then
+\[
+\cir{\op{rotate}\; I\; 90}=\mathtt{da/eb/fc},\quad
+\cir{\op{rotate}\; I\; 180}=\mathtt{fed/cba},\quad
+\cir{\op{rotate}\; I\; 270}=\mathtt{cf/be/ad}.
+\]
+Rotation by $90$ changes the height and the width, exchanging them, while rotation by $180$ does not. \hfill$\triangleright$
+\end{example}
+
+\section{Composing operators}
+
+Nested circles of different sorts compose in exactly the way that nested numerical circles do. The term
+\[
+\cir{\op{rotate}\; \cir{\op{recolor}\; I\; \mathrm{red}}\; 90}
+\]
+is well-sorted of sort $\Image$ for any image $I$. Popping the inner circle gives an image of the same shape as $I$ with every non-blank cell coloured red, and popping the outer circle rotates that image. If $I=\mathtt{x\cdot x/\cdot x\cdot}$ then the result is the image of height $3$ and width $2$ whose rows are $\mathtt{\cdot r}$, $\mathtt{r\cdot}$, $\mathtt{\cdot r}$, with $\mathtt{r}$ standing for a red cell.
+
+A term with two independent inner circles shows the diamond property in a pictorial setting. In
+\[
+\cir{\op{beside}\; \cir{\op{rotate}\; J\; 90}\; \cir{\op{recolor}\; J\; \mathrm{blue}}}
+\]
+the rotation and the recolouring are both ready. By Lemma~\ref{lem:diamond} they may be popped in either order, or together, and the final circle then places the rotated copy of $J$ next to the blue copy. For this to be admissible the two images must have the same height, which holds, for instance, when $J$ is square.
+
+\section{Persistence}
+
+Popping a circle never changes the image it was given. A circle such as $\cir{\op{recolor}\; I\; \mathrm{red}}$ is replaced by a \emph{new} image, and any other part of the term that mentions $I$ continues to mention the original. The values of the notation are persistent in this sense, and the property is not an extra feature but a consequence of the single rule: popping replaces a circle by a value, and nothing else is touched. A practical consequence is that every intermediate term in a sequence of pops is still available. A user who has popped too far can return to an earlier term, and nothing needs to be undone.
+
+\section{Equations between terms}
+
+The confluence results of Chapter~\ref{ch:order} give a sensible meaning to equality between terms. Say that terms $s$ and $t$ are \emph{equivalent}, written $s\equiv t$, when they have the same normal form. By Theorem~\ref{thm:unique} the relation is well defined, and it is an equivalence relation. Equivalences between picture terms can then be proved by calculation.
+
+\begin{proposition}\label{prop:image-laws}
+For every image $I$, colours $c$ and $d$, and angles $a$ and $b$ that are multiples of $90$:
+\begin{enumerate}[label=(\alph*)]
+\item $\cir{\op{rotate}\; \cir{\op{rotate}\; I\; a}\; b}\equiv\cir{\op{rotate}\; I\; (a+b)}$;
+\item $\cir{\op{rotate}\; I\; 360}\equiv I$;
+\item $\cir{\op{rotate}\; \cir{\op{recolor}\; I\; c}\; a}\equiv\cir{\op{recolor}\; \cir{\op{rotate}\; I\; a}\; c}$;
+\item $\cir{\op{recolor}\; \cir{\op{recolor}\; I\; c}\; d}\equiv\cir{\op{recolor}\; I\; d}$.
+\end{enumerate}
+\end{proposition}
+\begin{proof}
+Part (a): rotation by $a$ degrees is a power of the quarter-turn $Q$, namely $Q^{a/90}$, and the powers of $Q$ satisfy $Q^m Q^n=Q^{m+n}$ and $Q^4=\mathrm{id}$. Part (b) is the case $Q^4=\mathrm{id}$, which is checked directly: four quarter-turns return every cell to its starting position. Part (c): rotation moves cells without altering their contents, and recolouring alters the contents of non-blank cells without moving them, so the two operations act on independent aspects of the image and commute. Part (d): the second recolouring overwrites the colour of every non-blank cell with $d$, and the cells that are non-blank are the same before and after the first recolouring, so the colour $c$ leaves no trace.
+\end{proof}
+
+\section{Derived operators}
+
+A circle expression can be given a name and used as an operator, if the name is understood as an abbreviation. Stacking one image above another is not among the three operators listed, but it can be defined from them. Place $A$ above $B$ by rotating each anticlockwise by a quarter-turn, putting them side by side, and rotating back:
+\[
+\cir{\op{above}\; A\; B}\;:=\;\cir{\op{rotate}\; \cir{\op{beside}\; \cir{\op{rotate}\; A\; 270}\; \cir{\op{rotate}\; B\; 270}}\; 90}.
+\]
+For $A=\mathtt{ab/cd}$ and $B=\mathtt{ef}$, the anticlockwise quarter-turns give $\mathtt{bd/ac}$ and $\mathtt{f/e}$, which are placed side by side as $\mathtt{bdf/ace}$, and the final clockwise turn gives $\mathtt{ab/cd/ef}$, as desired. The definition is admissible exactly when $A$ and $B$ have the same width, because the widths become the heights after the first rotation. A derived operator introduces no new reduction behaviour, since every use of it can be replaced by its definition, and the theorems of the earlier chapters apply to terms that use it.
+
+\section{Why the circle is not the picture}
+
+A circle in a term is a computational boundary. It records which operands belong to which operator, and it plays no part in the appearance of the result. A circle containing a rotation has no visible counterpart in the rotated image, and an image that happens to be shaped like a ring has no particular relation to any circle in a term that produced it. The two uses of the word should be kept apart, even though the notation can be drawn with circles around pictures, so that the structure of a computation sits visually on top of the objects it operates on. The separation is what lets the notation stay general, and the same circles that enclose picture operands in this chapter enclosed numbers in the preceding ones.
+
+\section*{Exercises}
+
+\begin{exercise}[\dag]\label{ex:ch7-rotate}
+Let $I=\mathtt{abc/def}$. Compute $\cir{\op{rotate}\; I\; 90}$, $\cir{\op{rotate}\; I\; 180}$, and $\cir{\op{rotate}\; I\; 270}$, and check that three quarter-turns agree with $\cir{\op{rotate}\; I\; 270}$.
+\end{exercise}
+
+\begin{exercise}[\dag]\label{ex:ch7-commute}
+Prove part (c) of Proposition~\ref{prop:image-laws} by describing the effect of each operator on a single cell.
+\end{exercise}
+
+\begin{exercise}[\dag]\label{ex:ch7-beside}
+Let $I$ have height $2$ and width $3$ and let $K$ have height $3$ and width $3$. Is $\cir{\op{beside}\; I\; K}$ a redex? What happens if it is placed inside a larger term?
+\end{exercise}
+
+\begin{exercise}[\dag]\label{ex:ch7-above}
+Compute $\cir{\op{above}\; A\; B}$ for $A=\mathtt{ab/cd}$ and $B=\mathtt{ef}$ by popping the defining term step by step, and count the pops.
+\end{exercise}
+
+\begin{exercise}
+Define an operator $\op{flip}$ that reflects an image left to right. Express a clockwise rotation by $90$ as a composition of $\op{flip}$ and another operation of your choosing, and decide which further operators, if any, are needed.
+\end{exercise}

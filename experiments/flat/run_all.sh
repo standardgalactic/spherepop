@@ -25,6 +25,15 @@ else
 fi
 
 echo
+echo "== History/state/rendering boundary =="
+if python3 run_layer_separation.py; then
+  echo "Layer separation: ALL PASS"
+else
+  echo "Layer separation: FAILURES"
+  status=1
+fi
+
+echo
 echo "== Rust reference kernel (spherepop-kernel) =="
 if (cd ../../spherepop-kernel && cargo run --quiet --bin fixtures); then
   echo "Rust kernel: ALL PASS"

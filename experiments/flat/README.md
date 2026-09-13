@@ -29,7 +29,7 @@ regenerates `CONFORMANCE.md` (the Phase D "generated conformance
 matrix" deliverable), and fails (non-zero exit) if any implementation
 disagrees with a fixture's own recorded expectations:
 
-Before the language implementations, `run_all.sh` also executes
+After the Python oracle, `run_all.sh` also executes
 `run_layer_separation.py`. This small boundary artifact starts only from a
 SPHIST/1 history envelope, derives semantic state by fresh replay, and feeds a
 canonical state projection to two deliberately different renderers. It checks

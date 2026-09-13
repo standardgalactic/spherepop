@@ -1,13 +1,7 @@
 {
   "name": "history_state_rendering",
   "invariant": "Canonical history is the replay input, semantic state is derived by replay, and rendering is a replaceable projection that cannot alter either one.",
-  "initial_option_space": [1, 2, 3],
-  "certified_rules": ["identity"],
-  "events": [
-    {"op": "pop", "a": 1},
-    {"op": "bind", "a": 1, "b": 2, "tag": "adjacent"},
-    {"op": "collapse", "rule": "identity"}
-  ],
+  "history_sphist1_hex": "53504849535431000000000300000000000000010000000000000002000000000000000300000001000000086964656e746974790000000300000000000000000102000000000000000100000000000000020000000861646a6163656e7403000000086964656e74697479",
   "expect": {
     "history_fnv1a64": "bf4988c6e7a3c379",
     "state": {

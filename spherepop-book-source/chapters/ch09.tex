@@ -1,0 +1,44 @@
+\chapter{Neighbours and Extensions}
+\label{ch:comparisons}
+
+The notation developed in the preceding chapters is a small member of a large family of formalisms for expressions, and it is useful to see where it sits. This chapter compares it briefly with several neighbours, indicates what must be added to reach them, and records the results from the literature that the reader will need. It is a map and not a survey, and the references at the end of the book are the places to go for the details.
+
+\section{Symbolic expressions}
+
+A circle $\cir{o\; t_1\cdots t_n}$ corresponds exactly to the parenthesized prefix form $(o\ t_1\ \cdots\ t_n)$ of Lisp-family languages, and a term of the notation can be read as a symbolic expression in which the first element of every list is an operator name drawn from a fixed table. The correspondence is useful in practice, because it means that the terms of the notation can be stored, printed, and exchanged in an existing and well-supported syntax, and the interpreter of Chapter~\ref{ch:interpreter} could equally well have been written in a Lisp. The differences are in what is allowed. In a Lisp-family language the head of a list may itself be a computed expression, a function may be passed as an argument and returned as a result, and names may be bound by the program. None of these is present in the core fragment. Operators here are constants of the signature, not values, and the operators cannot be built by the program that uses them.
+
+\section{Many-sorted term rewriting}
+
+Viewed abstractly, the sorts, operators, and terms of Chapter~\ref{ch:terms} form a many-sorted signature, and the terms are the ground terms over that signature extended with a constant for every value. The (Pop) rule is a family of ground rewriting rules, one for each admissible tuple of values. In this light the notation is a specific term rewriting system, and the results of Chapters~\ref{ch:order} and \ref{ch:rewriting} are instances of the standard theory of such systems: termination by a measure that decreases at every step, confluence from orthogonality or from joinable critical pairs, and the rest. Readers who wish to follow these ideas further will find the subject treated systematically in the book of Baader and Nipkow, and the original results of Knuth and Bendix, Newman, Rosen, and Huet are cited at the end of this book.
+
+\section{The lambda calculus}
+
+The most important neighbour is the lambda calculus, in which every computation is built from variables, abstractions $\lambda x.\,M$ that introduce a name, and applications $M\,N$ that supply an argument. To reach it from the present notation one adds two kinds of term, an abstraction form that binds a symbol and an application form that substitutes for it, with one new reduction rule,
+\[
+\cir{\op{app}\; \cir{\op{lam}\; x\; M}\; N}\;\pop\; M[x:=N].
+\]
+Substitution now has to be \emph{capture-avoiding}: when $N$ contains a symbol that is bound inside $M$, the bound symbol must be renamed first, or the substitution changes the meaning of the term. The details are standard, and they are treated in the books of Barendregt and of Pierce.
+
+Two of the results of this book survive the addition and one does not. The diamond property in its present form fails, because a single substituted argument may be duplicated, so that the redexes it contains are copied and a single pop on one side requires several on the other. A weaker form, confluence, remains true, and is the Church--Rosser theorem, so normal forms are still unique when they exist. Termination, however, is lost. The term $(\lambda x.\,x\,x)(\lambda x.\,x\,x)$ pops to itself forever. Termination can be restored by a sort discipline: the simply typed lambda calculus, in which every abstraction and application is given a sort of function type, is strongly normalizing, a theorem usually attributed to Tait. The comparison with Chapter~\ref{ch:sorts} is instructive. There, sorts served to separate failures of kind from failures of detail. In the lambda calculus, sorts are the very thing that tames self-application.
+
+\section{Evaluation order}
+
+The core fragment is pure, and every circle is evaluated before the circle enclosing it. A different design, used in some languages for conditional expressions, evaluates an operand only when it is needed. In the present setting an operator $\op{if}$ of three operands, a test and two branches, would pop only when all three operands were values, so that both branches would be evaluated whichever one was selected. For a pure notation this has no effect on the value, by the results of Chapter~\ref{ch:order}, but it can have an effect on the cost, and on whether the evaluation blocks. If the discarded branch contains an inert circle, then the whole conditional is blocked even though its value is perfectly well determined by the selected branch. A lazy variant that pops the conditional as soon as the test is a value would avoid this, at the price of a slightly more complicated reduction relation, and the diamond property must be rechecked for it.
+
+\section{Operators as commitments}
+
+A last direction concerns the status of a circle that has been popped. In the present notation a pop is final, in that the circle disappears and the value takes its place, and nothing records that the circle was ever there. For some purposes this is too little. A circle might stand for a commitment to carry out an operation, whose lifecycle involves several stages: the commitment is opened, its operands are bound, the operation is applied, the result is verified against some condition, and only then is the commitment collapsed into its value. A commitment may also be refused at any of the earlier stages, and a failed verification is a state of its own and does not by itself discharge the commitment. A development of this kind turns the notation into a calculus of staged and checked computation, with the (Pop) rule of the present book corresponding to the final collapse in the case where nothing can go wrong. It requires a notion of history to be added to the semantics, and it requires types that record the stage of each commitment. These extensions are beyond the scope of an introduction, and they are mentioned here only to indicate that the core fragment is the first layer of a larger structure and not the whole of it.
+
+\section*{Exercises}
+
+\begin{exercise}
+Write the term $\cir{\op{add}\; 2\; \cir{\op{mul}\; 3\; 4}}$ as a symbolic expression in prefix form and as a function-application expression of the form $\mathrm{add}(2,\mathrm{mul}(3,4))$.
+\end{exercise}
+
+\begin{exercise}
+Explain why the diamond property of Lemma~\ref{lem:diamond} fails for the $\op{app}$--$\op{lam}$ rule in this chapter. Give a term in which a single pop on one side requires two pops to join with the other.
+\end{exercise}
+
+\begin{exercise}
+Suppose an operator $\op{if}$ of signature $\mathsf{Bool}\times\Num\times\Num\to\Num$ is added, with $\delta_{\op{if}}(\mathrm{true},a,b)=a$ and $\delta_{\op{if}}(\mathrm{false},a,b)=b$. Give a well-sorted term that is blocked although the selected branch has a value.
+\end{exercise}

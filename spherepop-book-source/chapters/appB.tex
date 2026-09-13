@@ -1,0 +1,70 @@
+\chapter{Summary of Notation and Rules}
+\label{app:summary}
+
+\section*{Syntax}
+
+\begin{center}
+\begin{tabular}{@{}ll@{}}
+\toprule
+Symbol & Meaning\\
+\midrule
+$\cir{o\; t_1\cdots t_n}$ & circle with operator $o$ and operands $t_1,\dots,t_n$\\
+$\Num,\ \Color,\ \Image,\ \Sym$ & sorts of the core fragment; $\Nat$ is introduced in Chapter~\ref{ch:sorts}\\
+$\delta_o$ & the partial function giving the meaning of operator $o$\\
+$\dom(\delta_o)$ & the admissible operand tuples of $o$\\
+$\size(t)$ & number of circles in $t$\\
+$\depth(t)$ & greatest nesting of circles in $t$\\
+$t|_p$ & subterm of $t$ at position $p$\\
+$t[p\leftarrow s]$ & $t$ with the subterm at $p$ replaced by $s$\\
+$\sigma(t)$ & substitution $\sigma$ applied to $t$\\
+$t\pop t'$ & $t$ pops to $t'$ in one step\\
+$t\popstar t'$ & $t$ pops to $t'$ in zero or more steps\\
+$\nf(t)$ & the normal form of $t$\\
+$s\equiv t$ & $s$ and $t$ have the same normal form\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section*{Reduction}
+
+\begin{align*}
+\cir{o\; v_1\cdots v_n} &\pop \delta_o(v_1,\dots,v_n) &&\text{if }(v_1,\dots,v_n)\in\dom(\delta_o) &&\text{(Pop)}\\
+\cir{o\; \dots t_i\dots} &\pop \cir{o\; \dots t_i'\dots} &&\text{if } t_i\pop t_i' &&\text{(Arg)}
+\end{align*}
+
+\section*{Operators used in the text}
+
+\begin{center}
+\begin{tabular}{@{}lll@{}}
+\toprule
+Operator & Signature & Admissible when\\
+\midrule
+$\op{add},\ \op{sub},\ \op{mul}$ & $\Num\times\Num\to\Num$ & always\\
+$\op{pow}$ & $\Num\times\Num\to\Num$ & exponent is non-negative\\
+$\op{rotate}$ & $\Image\times\Num\to\Image$ & angle is a multiple of $90$\\
+$\op{recolor}$ & $\Image\times\Color\to\Image$ & always\\
+$\op{beside}$ & $\Image\times\Image\to\Image$ & images have equal height\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section*{Main results}
+
+\begin{center}
+\begin{tabular}{@{}lp{0.68\textwidth}@{}}
+\toprule
+Result & Statement\\
+\midrule
+Proposition~\ref{prop:size-drop} & Each pop lowers the size by exactly one.\\
+Theorem~\ref{thm:termination} & Every sequence of pops is finite, of length at most the size.\\
+Lemma~\ref{lem:diamond} & Two different pops from the same term join in one step each.\\
+Theorem~\ref{thm:unique} & Every term has a unique normal form.\\
+Corollary~\ref{cor:order} & All maximal pop sequences have the same length.\\
+Proposition~\ref{prop:parallel} & Parallel popping needs exactly as many rounds as the depth.\\
+Theorem~\ref{thm:preservation} & Popping preserves sorts.\\
+Theorem~\ref{thm:progress} & A well-sorted blocked term has an inadmissible innermost circle.\\
+Theorem~\ref{thm:staged} & Evaluating with symbols first, then substituting, agrees with substituting first.\\
+Theorem~\ref{thm:rewrite-conf} & The arithmetic simplification rules are terminating and confluent.\\
+\bottomrule
+\end{tabular}
+\end{center}

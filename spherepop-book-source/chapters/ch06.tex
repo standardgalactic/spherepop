@@ -1,0 +1,86 @@
+\chapter{Symbols and Substitution}
+\label{ch:symbols}
+
+All the terms considered so far have used concrete numbers, colours, and images. A computation is more useful if some of its inputs are left open and supplied later, and the notation provides for this with the sort $\Sym$. A value of sort $\Sym$ is a symbol, a name that stands for a value not yet known. This chapter shows how symbols interact with popping, how they are replaced by values, and why evaluating a term in stages gives the same result as evaluating it all at once.
+
+\section{Symbols in circles}
+
+A symbol is a value, so a circle containing symbols is a legitimate term. What a symbol cannot do is take part in any numerical or pictorial operation, because no operator in the core fragment has $\Sym$ in its signature. The operators $\op{add}$, $\op{mul}$, $\op{pow}$, and the rest expect numbers or images, and a symbol is neither. A circle with a symbol as an operand is therefore inert in the sense of Chapter~\ref{ch:popping}, and every circle enclosing it stays unpopped as well.
+
+\begin{example}
+The term $\cir{\op{add}\; 1\; x}$, in which $x$ is a symbol, is in normal form. So is every tower $T_n=\cir{\op{pow}\; \Meta\; T_{n-1}}$ built on a symbol $\Meta$, as in Chapter~\ref{ch:order}. The term $\cir{\op{pow}\; \Meta\; \cir{\op{pow}\; \Meta\; \Meta}}$ has two circles, both inert, and the structure of the term is available for inspection even though no number has been computed. \hfill$\triangleright$
+\end{example}
+
+The observation is worth stating separately, because it contrasts with the way many programming languages treat an unknown. There the unknown is typically an error, or a null, or a value that must be supplied before evaluation can begin. Here the term simply stays as it is, and nothing is lost. The term is a perfectly good description of a computation that has not yet been carried out.
+
+\section{Substitution}
+
+A \emph{substitution} is a finite map $\sigma$ from symbols to values. Applying $\sigma$ to a term $t$ gives the term $\sigma(t)$ obtained by replacing each occurrence of a symbol $x$ in the domain of $\sigma$ by the value $\sigma(x)$. Formally,
+\[
+\sigma(v)=
+\begin{cases}
+\sigma(x) & \text{if } v \text{ is a symbol } x \text{ in the domain of } \sigma,\\
+v & \text{otherwise,}
+\end{cases}
+\qquad
+\sigma\cir{o\; t_1\cdots t_n}=\cir{o\; \sigma(t_1)\cdots\sigma(t_n)} .
+\]
+The values assigned by $\sigma$ are values, so substitution never introduces a circle, and $\size(\sigma(t))=\size(t)$ for every $t$.
+
+\begin{example}
+Let $\sigma$ send $\Meta$ to $2$. Then $\sigma(T_4)=\cir{\op{pow}\; 2\; \cir{\op{pow}\; 2\; \cir{\op{pow}\; 2\; 2}}}$, which pops in three steps to $65536$. With a different substitution, sending $\Meta$ to $3$, the tower $T_3$ becomes $\cir{\op{pow}\; 3\; \cir{\op{pow}\; 3\; 3}}$, which pops to $3^{27}=7625597484987$. A single symbolic tower thus describes a family of numerical computations, one for each value assigned to the symbol. \hfill$\triangleright$
+\end{example}
+
+\section{Substitution commutes with popping}
+
+Substituting before or after popping should lead to the same place, at least where popping is possible both ways. The following lemma makes that precise. It requires that no operator has $\Sym$ in its signature and that no operator returns a symbol, so that symbols are always passive.
+
+\begin{lemma}[Substitution commutes with popping]\label{lem:subst}
+If $t\pop t'$ then $\sigma(t)\pop\sigma(t')$, for every substitution $\sigma$.
+\end{lemma}
+\begin{proof}
+Let the pop replace the redex $\cir{o\; v_1\cdots v_n}$ at position $p$ by the value $w=\delta_o(v_1,\dots,v_n)$. Since the operands are admissible they have the sorts required by the signature, none of which is $\Sym$, so none of $v_1,\dots,v_n$ is a symbol and $\sigma$ leaves them unchanged. Hence $\sigma(t)|_p=\cir{o\; v_1\cdots v_n}$ is still a redex of $\sigma(t)$ and pops to $w$. The value $w$ is not a symbol, since no operator returns one, and so $\sigma(w)=w$. Finally, the parts of $t$ outside position $p$ are acted on by $\sigma$ in the same way in $t$ and in $t'$. Therefore $\sigma(t)\pop\sigma(t[p\leftarrow w])=\sigma(t')$.
+\end{proof}
+
+\begin{theorem}[Staged evaluation]\label{thm:staged}
+For every term $t$ and substitution $\sigma$, $\sigma(\nf(t))\popstar\nf(\sigma(t))$.
+\end{theorem}
+\begin{proof}
+Since $t\popstar\nf(t)$, repeated use of Lemma~\ref{lem:subst} gives $\sigma(t)\popstar\sigma(\nf(t))$. Continuing to pop $\sigma(\nf(t))$ until no pop applies yields a normal form of $\sigma(t)$, and by Theorem~\ref{thm:unique} this normal form is $\nf(\sigma(t))$.
+\end{proof}
+
+In practical terms: evaluating as far as possible with symbols present, then supplying values and finishing, always gives the same result as supplying the values first. The first stage does work that need not be repeated when the same term is used with many different substitutions. This is the idea of partial evaluation, in its simplest form.
+
+\begin{example}
+Let $t=\cir{\op{add}\; \cir{\op{mul}\; 2\; 3}\; \cir{\op{mul}\; x\; 4}}$. The first stage pops the circle $\cir{\op{mul}\; 2\; 3}$ and stops, since the remaining circle $\cir{\op{mul}\; x\; 4}$ is inert. The normal form is $\cir{\op{add}\; 6\; \cir{\op{mul}\; x\; 4}}$ after one pop. If $x$ is later given the value $5$, two more pops give $20$ and then $26$. The total number of pops is $3=\size(t)$, as it must be by Corollary~\ref{cor:length}, and for each further value of $x$ only two pops are needed, not three. \hfill$\triangleright$
+\end{example}
+
+\section{Substitution does not preserve normal forms}
+
+The inclusion in Theorem~\ref{thm:staged} cannot be strengthened to an equality. In general $\sigma(\nf(t))\neq\nf(\sigma(t))$, because substitution can make inert circles ready. If $t=\cir{\op{pow}\; x\; 2}$ then $t$ is in normal form, and $\sigma(\nf(t))=\cir{\op{pow}\; 3\; 2}$ for the substitution sending $x$ to $3$, while $\nf(\sigma(t))=9$. The two differ by one pop. The theorem says that the difference can always be closed by further popping, in some number of steps, and never leaves a gap that cannot be closed.
+
+\section{Free symbols and what comes next}
+
+A symbol that occurs in a term is \emph{free}, since nothing in the term binds it. The core notation has no binding construct. If the notation is extended with a form that introduces a name, as in the circle $\cir{\op{let}\; x\; t\; s}$ meaning that $x$ is to stand for $t$ inside $s$, then questions of scope arise, and the ordinary difficulties of renaming and capture appear. They are well understood, and Chapter~\ref{ch:comparisons} indicates where to read about them. Everything in this book can be done with free symbols and substitution alone.
+
+\section*{Exercises}
+
+\begin{exercise}[\dag]\label{ex:ch6-tower}
+Evaluate $\sigma(T_3)$ for $\sigma(\Meta)=3$, and state the number of pops.
+\end{exercise}
+
+\begin{exercise}[\dag]\label{ex:ch6-staged}
+Evaluate $\cir{\op{add}\; \cir{\op{mul}\; 2\; 3}\; \cir{\op{mul}\; x\; 4}}$ in two stages for $x=5$, giving the term after each stage and the pop counts.
+\end{exercise}
+
+\begin{exercise}[\dag]\label{ex:ch6-noteq}
+Find a term $t$ and substitution $\sigma$ with $\sigma(\nf(t))\ne\nf(\sigma(t))$ other than $\cir{\op{pow}\; x\; 2}$, and verify that $\sigma(\nf(t))\popstar\nf(\sigma(t))$.
+\end{exercise}
+
+\begin{exercise}
+Show that Lemma~\ref{lem:subst} fails if some operator is allowed to accept symbols. Construct an operator $\op{show}$ of signature $\Sym\to\Num$, giving the number of letters in a name, and a term and substitution for which the lemma breaks.
+\end{exercise}
+
+\begin{exercise}
+Compose two substitutions, $\sigma$ followed by $\tau$. Prove that $\tau(\sigma(t))$ is a substitution instance of $t$ and describe it.
+\end{exercise}

@@ -1,0 +1,81 @@
+\chapter{Sorts and Admissibility}
+\label{ch:sorts}
+
+The previous chapters allowed an operator to refuse a tuple of operands without saying why. In practice the refusals fall into two quite different kinds. Some are failures of kind: a colour has been supplied where a number is wanted. Others are failures of detail: the operands are numbers, as required, but one of them is a negative exponent. This chapter separates the two. Sorts catch the first kind before any popping begins, and a precise accounting of the second kind shows exactly what a sort system does and does not guarantee.
+
+\section{Sorting terms}
+
+Each operator has a signature $\sigma_1\times\cdots\times\sigma_n\to\sigma$. A term is \emph{well-sorted} with sort $\tau$, written $\vdash t:\tau$, according to the following rules.
+\begin{align}
+&\vdash v:\mathrm{sort}(v) \tag{Val}\\
+&\frac{\vdash t_1:\sigma_1\quad\cdots\quad\vdash t_n:\sigma_n\qquad o:\sigma_1\times\cdots\times\sigma_n\to\sigma}{\vdash\cir{o\; t_1\cdots t_n}:\sigma} \tag{Circ}
+\end{align}
+A term is \emph{well-sorted} if $\vdash t:\tau$ for some $\tau$, and the sort, when it exists, is unique, since each rule has only one conclusion for a given term. Sorting is checked from the inside out and takes a number of steps proportional to the size of the term. It does not require popping anything.
+
+\begin{example}
+The term $\cir{\op{rotate}\; \cir{\op{recolor}\; I\; \mathrm{red}}\; 90}$ is well-sorted with sort $\Image$, if $I$ is an image: the inner circle has sort $\Image$ because $I:\Image$ and $\mathrm{red}:\Color$, and the outer circle has sort $\Image$ because its operands have sorts $\Image$ and $\Num$. The term $\cir{\op{rotate}\; \cir{\op{add}\; 1\; 2}\; I}$ is not well-sorted. Its first operand has sort $\Num$ where $\Image$ is required, and its second has sort $\Image$ where $\Num$ is required. \hfill$\triangleright$
+\end{example}
+
+\section{Preservation}
+
+Popping must not change the sort of a term, or the sort system would tell the reader nothing about what to expect from evaluation. The requirement is stated for operators in the following form: whenever $(v_1,\dots,v_n)\in\dom(\delta_o)$, the value $\delta_o(v_1,\dots,v_n)$ has the result sort of the signature of $o$. This is part of the definition of an operator given in Chapter~\ref{ch:terms}.
+
+\begin{theorem}[Preservation]\label{thm:preservation}
+If $\vdash t:\tau$ and $t\pop t'$ then $\vdash t':\tau$.
+\end{theorem}
+\begin{proof}
+By induction on the derivation of $t\pop t'$. If the last rule is (Pop) then $t=\cir{o\; v_1\cdots v_n}$ with admissible operands, and by the sorting rule the sort $\tau$ is the result sort of $o$. The term $t'=\delta_o(v_1,\dots,v_n)$ is a value of exactly that sort. If the last rule is (Arg), then $t=\cir{o\; t_1\cdots t_i\cdots t_n}$ and $t'$ replaces $t_i$ by a term $t_i'$ with $t_i\pop t_i'$. The sort of $t_i$ is the $i$-th operand sort of $o$ because $t$ is well-sorted, and by the induction hypothesis $t_i'$ has the same sort. The sorting rule therefore applies to $t'$ with the same result.
+\end{proof}
+
+\section{Progress and its limits}
+
+A well-sorted term may still fail to evaluate. To find out how, one needs the converse of preservation, which says that a well-sorted term is either a value or can be popped. That statement is false in general, and the way in which it fails is informative.
+
+\begin{theorem}[Progress, in two parts]\label{thm:progress}
+Let $t$ be well-sorted and not a value.
+\begin{enumerate}[label=(\alph*)]
+\item If every operator is \emph{total on its signature}, meaning that $\delta_o$ is defined on every tuple of values of the right sorts, then $t$ can be popped.
+\item In general, if $t$ is in normal form, then $t$ contains an innermost circle whose operands have the right sorts but are not in $\dom(\delta_o)$.
+\end{enumerate}
+\end{theorem}
+\begin{proof}
+By Lemma~\ref{lem:redex} the term $t$ contains an innermost circle $c=\cir{o\; v_1\cdots v_n}$. Since $t$ is well-sorted, so is $c$, and therefore each $v_i$ has the $i$-th operand sort of $o$. If $\delta_o$ is total on its signature the tuple is admissible, so $c$ is a redex and $t$ can be popped, which gives (a). If $t$ is in normal form then no innermost circle is a redex, so each has operands of the right sorts that are not admissible, which gives (b).
+\end{proof}
+
+Part (b) is the precise statement of what a sort system buys. In a well-sorted term, evaluation can stop short of a value for exactly one reason: some operator was offered operands of the correct sorts that fall outside its domain of definition. Failures of kind do not occur after sorting succeeds. The remaining failures are failures of detail, and they are visible as inert circles that name the operator at fault.
+
+\begin{example}
+The term $\cir{\op{pow}\; 2\; \cir{\op{sub}\; 0\; 1}}$ is well-sorted with sort $\Num$. Popping the inner circle gives $\cir{\op{pow}\; 2\; -1}$, which is inert, since $\op{pow}$ is not defined for negative exponents. The term is blocked although it was well-sorted, in accordance with part (b) of the theorem. \hfill$\triangleright$
+\end{example}
+
+\section{Making operators total}
+
+Part (a) of the theorem suggests a design goal: choose signatures so that every operator is total on its signature, and then every well-sorted term evaluates to a value. This can be achieved in some cases by refining the sorts. Adding a sort $\Nat$ of non-negative integers and giving $\op{pow}$ the signature $\Num\times\Nat\to\Num$ makes $\op{pow}$ total, since $a^{b}$ is an integer for every integer $a$ and every non-negative $b$. Likewise, $\op{rotate}$ becomes total if its second operand has a sort whose values are exactly the multiples of $90$.
+
+The price is that the refined sorts must be tracked through the rest of the system. The result of $\op{sub}$ cannot be given sort $\Nat$, because $0-1$ is negative, and so the term $\cir{\op{pow}\; 2\; \cir{\op{sub}\; 5\; 2}}$ becomes ill-sorted, even though it evaluates without any difficulty. A sort system is conservative in this sense: it rejects some terms that would have evaluated, in order to guarantee that all of the terms it accepts do. The conservatism can be reduced by supplying more operators, for instance a truncated subtraction with result sort $\Nat$, but it cannot in general be removed. Whether to enforce totality by refined sorts or to accept inert circles for the leftover cases is a design decision, and different applications settle it differently.
+
+\section{Ill-sorted terms in practice}
+
+An ill-sorted term is still a term, and the reduction relation applies to it unchanged. The term $\cir{\op{rotate}\; \cir{\op{add}\; 1\; 2}\; I}$ of the example above pops its inner circle to give $\cir{\op{rotate}\; 3\; I}$, which is inert, because the number $3$ is not an image. The failure shows up late, after some work has already been done, and the inert circle that results mixes the original operands with the partial result. A static sort check catches the same fault before any pop occurs, and for this reason sorting is normally run first. The inert-circle convention then acts as a second line of defence, covering the failures that sorting is not designed to exclude.
+
+\section*{Exercises}
+
+\begin{exercise}[\dag]\label{ex:ch5-sorting}
+Decide whether $\cir{\op{rotate}\; \cir{\op{add}\; 1\; 2}\; I}$ is well-sorted, and trace its evaluation. Explain which operand sorts are wrong.
+\end{exercise}
+
+\begin{exercise}[\dag]\label{ex:ch5-blocked}
+Give a well-sorted term that is blocked, and say which operator fails and why.
+\end{exercise}
+
+\begin{exercise}[\dag]\label{ex:ch5-nat}
+With the sort $\Nat$ and the signature $\op{pow}:\Num\times\Nat\to\Num$, is $\cir{\op{pow}\; 2\; \cir{\op{sub}\; 5\; 2}}$ well-sorted if $\op{sub}$ has signature $\Num\times\Num\to\Num$? What operator could be added to make it well-sorted again?
+\end{exercise}
+
+\begin{exercise}
+Prove that sorting is decidable and give an algorithm whose running time is linear in the size of the term.
+\end{exercise}
+
+\begin{exercise}
+Let $t$ be well-sorted and let every operator be total on its signature. Show that $\nf(t)$ is a value, and that it has the same sort as $t$. Which earlier results do you need?
+\end{exercise}

@@ -1,0 +1,88 @@
+\chapter{Terms}
+\label{ch:terms}
+
+This chapter gives the precise syntax of the notation. The definitions are short, but they are used throughout the rest of the book, and the habit of reasoning by structural induction, which is introduced here, is the main proof technique of the chapters that follow.
+
+\section{Sorts, values, and operators}
+
+Every value has a sort, which says what kind of thing it is. The core fragment of the notation uses four sorts: $\Num$ for integers, $\Color$ for colour names, $\Image$ for finite rectangular grids of colours, and $\Sym$ for symbols, which are names of values not yet known. The set of sorts is not closed. A different application may add sorts for strings, for booleans, or for any other kind of data, and nothing in the development below depends on the particular four chosen here. For each sort $\sigma$ there is a set $V_\sigma$ of values of that sort, and the set of all values is the union of these sets.
+
+An \emph{operator} $o$ has a name, a \emph{signature} $\sigma_1 \times \cdots \times \sigma_n \to \sigma$ giving the sorts of its operands and of its result, and a partial function $\delta_o$ from tuples of values to values. The number $n$ is the arity of the operator. The function $\delta_o$ is the meaning of the operator. It is partial because some operand tuples with the right sorts are nonetheless unsuitable. Raising an integer to a negative power does not give an integer, for example, and placing two pictures of different heights side by side does not give a rectangle. The tuples on which $\delta_o$ is defined are called the \emph{admissible} operands of $o$, and the set of admissible tuples is written $\dom(\delta_o)$.
+
+Two requirements are placed on operators throughout the book. First, $\delta_o$ is a function, so that the same operands always give the same result. This is the property that makes the notation deterministic. Second, if $(v_1,\dots,v_n)\in\dom(\delta_o)$ then the sorts of $v_1,\dots,v_n$ are those of the signature and $\delta_o(v_1,\dots,v_n)$ is a value whose sort is the result sort of the signature. Chapter~\ref{ch:rewriting} relaxes the requirement that the result be a value.
+
+\begin{example}
+The operator $\op{add}$ has signature $\Num\times\Num\to\Num$, and $\delta_{\op{add}}(a,b) = a+b$ for all integers. The operator $\op{pow}$ has the same signature, but $\delta_{\op{pow}}(a,b) = a^{b}$ is defined only when $b \ge 0$, so that the result is an integer. The operator $\op{rotate}$ has signature $\Image\times\Num\to\Image$, and it is admissible only when the number is a multiple of $90$. \hfill$\triangleright$
+\end{example}
+
+\section{Terms}
+
+\begin{definition}[Terms]\label{def:terms}
+The set of \emph{terms} is the smallest set such that
+\begin{enumerate}[label=(\roman*)]
+\item every value is a term, and
+\item if $o$ is an operator of arity $n$ and $t_1,\dots,t_n$ are terms, then $\cir{o\; t_1\cdots t_n}$ is a term, called a \emph{circle}.
+\end{enumerate}
+\end{definition}
+
+A term that is not a circle is a value. A circle is drawn as a closed curve labelled $o$ enclosing the drawings of $t_1,\dots,t_n$, and the linear notation $\cir{o\; t_1\cdots t_n}$ is an abbreviation for that drawing. Because the brackets are explicit and the arity of every operator is fixed, every term has exactly one way of being read: there is no question of where a circle ends or which operands belong to it. This property, often called unique readability, is not a theorem to be proved but a consequence of the definition, and it is the reason that no precedence rules are needed.
+
+Two quantities of a term are used repeatedly. The \emph{size} of a term is the number of circles it contains, and the \emph{depth} is the greatest number of circles that lie one inside another along any path from the outside of the term to a value. Formally,
+\[
+\size(v) = 0,\qquad \size\cir{o\; t_1\cdots t_n} = 1 + \sum_{i=1}^{n}\size(t_i),
+\]
+\[
+\depth(v) = 0,\qquad \depth\cir{o\; t_1\cdots t_n} = 1 + \max_{1\le i\le n}\depth(t_i).
+\]
+For an operator of arity zero the maximum is taken over the empty set and is read as $0$, so that a nullary circle has depth $1$. For every term $\depth(t)\le\size(t)$, because a chain of nested circles is a set of distinct circles.
+
+\begin{example}
+Let $t = \cir{\op{add}\; \cir{\op{mul}\; 2\; 3}\; \cir{\op{pow}\; \cir{\op{sub}\; 5\; 1}\; 2}}$. The circles are $\op{add}$, $\op{mul}$, $\op{pow}$, and $\op{sub}$, so $\size(t)=4$. The circle $\op{sub}$ has depth $1$, the circle $\op{pow}$ containing it has depth $2$, the circle $\op{mul}$ has depth $1$, and the outer circle has depth $1+\max(1,2)=3$. Hence $\depth(t)=3$. \hfill$\triangleright$
+\end{example}
+
+\section{Positions and replacement}
+
+To talk about a particular circle inside a larger term it is convenient to give it an address. A \emph{position} is a finite sequence of positive integers. The empty sequence $\varepsilon$ is a position of every term and denotes the whole term. If $t = \cir{o\; t_1\cdots t_n}$ and $p = i\cdot q$ with $1\le i\le n$, then $p$ is a position of $t$ and the subterm of $t$ at $p$ is the subterm of $t_i$ at $q$. Writing $t|_p$ for the subterm at $p$, and $t[p\leftarrow s]$ for the term obtained from $t$ by replacing the subterm at $p$ by $s$, one has the usual identities, for example $t[p\leftarrow t|_p] = t$.
+
+Two positions are \emph{disjoint} if neither is a prefix of the other. If $p$ and $q$ are disjoint positions of $t$, then replacements at $p$ and at $q$ do not interfere, and
+\[
+\bigl(t[p\leftarrow s]\bigr)[q\leftarrow s'] \;=\; \bigl(t[q\leftarrow s']\bigr)[p\leftarrow s].
+\]
+This elementary fact is the heart of the argument for order independence in Chapter~\ref{ch:order}.
+
+\begin{example}
+In $t = \cir{\op{add}\; 1\; \cir{\op{mul}\; 2\; 3}}$ the positions are $\varepsilon$, $1$, $2$, $2\cdot1$, and $2\cdot2$. The subterm at $2$ is $\cir{\op{mul}\; 2\; 3}$, and $t[2\leftarrow 6] = \cir{\op{add}\; 1\; 6}$. The positions $1$ and $2$ are disjoint, but $2$ and $2\cdot1$ are not. \hfill$\triangleright$
+\end{example}
+
+\section{Structural induction}
+
+Because terms are defined as the smallest set closed under two constructions, one may prove that every term has a property $P$ by proving two things: that every value has $P$, and that a circle has $P$ whenever all of its operands do. This is the principle of structural induction. A parallel principle, structural recursion, justifies definitions such as those of size and depth, in which the value for a circle is computed from the values for its operands.
+
+\begin{proposition}\label{prop:leaves}
+In a term every circle of which has exactly two operands, the number of value occurrences is $\size(t)+1$.
+\end{proposition}
+\begin{proof}
+By structural induction. A value is a term with one value occurrence and size $0$, and $1 = 0+1$. For a circle $\cir{o\; t_1\; t_2}$ the number of value occurrences is the sum of those in $t_1$ and $t_2$, which by hypothesis is $(\size(t_1)+1)+(\size(t_2)+1)$. The size of the circle is $1+\size(t_1)+\size(t_2)$, and the number of value occurrences is therefore $\size(t)+1$.
+\end{proof}
+
+\section*{Exercises}
+
+\begin{exercise}[\dag]\label{ex:ch2-size}
+Compute the size and depth of $\cir{\op{add}\; \cir{\op{mul}\; 2\; 3}\; \cir{\op{pow}\; \cir{\op{sub}\; 5\; 1}\; 2}}$ and of the term obtained by replacing $2$ in the last operand by $\cir{\op{add}\; 1\; 1}$.
+\end{exercise}
+
+\begin{exercise}[\dag]\label{ex:ch2-bound}
+Prove that in a term all of whose circles are binary, $\size(t)\le 2^{\depth(t)}-1$.
+\end{exercise}
+
+\begin{exercise}[\dag]\label{ex:ch2-positions}
+List all positions of $\cir{\op{add}\; \cir{\op{mul}\; 2\; 3}\; 4}$ and compute $t[1\cdot2\leftarrow 7]$.
+\end{exercise}
+
+\begin{exercise}
+Prove, using structural induction, that $\depth(t)\le\size(t)$ for every term, and give a term for which equality holds and a term for which the inequality is strict.
+\end{exercise}
+
+\begin{exercise}
+Show that the disjointness identity displayed above can fail when $p$ is a prefix of $q$. Which side, if either, is defined?
+\end{exercise}
