@@ -29,6 +29,15 @@ regenerates `CONFORMANCE.md` (the Phase D "generated conformance
 matrix" deliverable), and fails (non-zero exit) if any implementation
 disagrees with a fixture's own recorded expectations:
 
+Before the language implementations, `run_all.sh` also executes
+`run_layer_separation.py`. This small boundary artifact starts only from a
+SPHIST/1 history envelope, derives semantic state by fresh replay, and feeds a
+canonical state projection to two deliberately different renderers. It checks
+that rendering mutates neither the history digest nor the derived state. It is
+reported separately from `CONFORMANCE.md` because renderer agreement is not a
+kernel invariant and must not be mistaken for cross-implementation semantic
+conformance.
+
 - **Python oracle** (`run_python.py`) — a from-scratch reimplementation
   of the kernel semantics, written without importing or calling into the
   Rust crate.
