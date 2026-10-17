@@ -29,6 +29,8 @@ let initial = presets[0].term,
   actions = [],
   undo = [],
   comparison = "";
+let substitutionNames = null;
+let substitutionDrafts = new Map();
 function message(text = "") {
   $("message").textContent = text;
 }
@@ -41,6 +43,8 @@ function load(term, meta) {
   actions = [];
   undo = [];
   comparison = "";
+  substitutionNames = null;
+  substitutionDrafts = new Map();
   $("source").value = JSON.stringify(term, null, 2);
   message();
   render();
@@ -212,8 +216,24 @@ function render() {
       b.classList.toggle("active", presets[i] === example);
       b.setAttribute("aria-pressed", String(presets[i] === example));
     });
-  $("substitution").replaceChildren();
+  renderSubstitution();
+  $("trace").replaceChildren();
+  if (!actions.length)
+    $("trace").append(el("li", "No actions yet. Choose a ready circle."));
+  actions.forEach((a) => {
+    const li = el("li");
+    li.append(el("strong", a.action), el("code", show(a.output)));
+    $("trace").append(li);
+  });
+  $("comparison").replaceChildren();
+  if (comparison) $("comparison").append(comparison);
+}
+function renderSubstitution() {
   const names = symbols(current);
+  const signature = JSON.stringify(names);
+  if (signature === substitutionNames) return;
+  substitutionNames = signature;
+  $("substitution").replaceChildren();
   if (names.length) {
     $("substitution").append(
       el(
@@ -227,6 +247,10 @@ function render() {
       const label = el("label", `${name} =`);
       const input = el("input");
       input.inputMode = "numeric";
+      input.value = substitutionDrafts.get(name) ?? "";
+      input.addEventListener("input", () =>
+        substitutionDrafts.set(name, input.value),
+      );
       input.setAttribute("aria-label", `Integer value for ${name}`);
       inputs[name] = input;
       label.append(input);
@@ -254,17 +278,8 @@ function render() {
       });
     $("substitution").append(apply);
   }
-  $("trace").replaceChildren();
-  if (!actions.length)
-    $("trace").append(el("li", "No actions yet. Choose a ready circle."));
-  actions.forEach((a) => {
-    const li = el("li");
-    li.append(el("strong", a.action), el("code", show(a.output)));
-    $("trace").append(li);
-  });
-  $("comparison").replaceChildren();
-  if (comparison) $("comparison").append(comparison);
 }
+
 presets.forEach((p) => {
   const button = el("button", p.name);
   button.onclick = () => load(p.term, p);
@@ -342,10 +357,14 @@ document.addEventListener("keydown", (event) => {
     event.ctrlKey ||
     event.metaKey ||
     event.altKey ||
-    ["INPUT", "TEXTAREA", "SELECT", "BUTTON", "SUMMARY", "A"].includes(
-      event.target.tagName,
-    ) ||
+    ["INPUT", "TEXTAREA", "SELECT"].includes(event.target.tagName) ||
     event.target.isContentEditable
+  )
+    return;
+  // Preserve native activation on focused controls, but allow letter shortcuts.
+  if (
+    event.target.closest("button, a, summary, [role=button]") &&
+    (event.key === "Enter" || event.key === " ")
   )
     return;
   const k = event.key.toLowerCase();

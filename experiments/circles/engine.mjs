@@ -27,8 +27,14 @@ export function show(t) {
     return t.value.length > 70
       ? `${t.value.slice(0, 28)}… (${t.value.length} digits)`
       : t.value;
-  if (t.kind === "image")
-    return `image(${t.rows.map((r) => r.join("")).join("/")})`;
+  if (t.kind === "image") {
+    const separator = t.rows.some((row) =>
+      row.some((pixel) => pixel.length > 1),
+    )
+      ? " "
+      : "";
+    return `image(${t.rows.map((r) => r.join(separator)).join("/")})`;
+  }
   return t.name;
 }
 export function validate(t, level = 0, counter = { n: 0 }) {

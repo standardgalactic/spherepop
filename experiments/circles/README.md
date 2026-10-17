@@ -64,6 +64,20 @@ With Node.js 20+ and Python 3.10+ available, run from the repository root:
 node experiments/circles/test.mjs
 ```
 
+The runner uses `python3` by default. Set `PYTHON` to another executable
+name or path when needed, for example `PYTHON=python node
+experiments/circles/test.mjs` on a POSIX shell, or `$env:PYTHON = "python"`
+before running the command in PowerShell. `PYTHON=py` also works with the
+Windows Python launcher; the setting names one executable, not a shell command.
+
+Optional browser regressions use Playwright and Chromium. After installing
+those development tools, run `node experiments/circles/test-browser.mjs`.
+The script starts its own temporary local server and checks letter shortcuts
+with button focus, native Enter activation, substitution draft preservation,
+editing, images, export and mobile containment. `PLAYWRIGHT_MODULE` can name
+an alternate module location, and `CHROMIUM_PATH` an existing browser binary.
+These browser checks are separate from the dependency-free reference CI job.
+
 `oracle.py` explicitly loads `spherepop-book-source/spherepop.py` by path,
 avoiding collisions with older packages named `spherepop`. Presets,
 deterministically generated arithmetic and symbolic terms, substitutions,

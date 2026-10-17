@@ -13,6 +13,7 @@ import {
   pop,
   parallel,
   size,
+  show,
   depth,
   equal,
   key,
@@ -38,7 +39,7 @@ function freeze(t) {
     }
   return t;
 }
-const cases = presets.map((p) => ({ term: p.term }));
+const propertyCases = presets.map((p) => ({ term: p.term }));
 let seed = 20261017;
 function random(n) {
   seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
@@ -54,9 +55,9 @@ function generated(d) {
 }
 for (let i = 0; i < 160; i++) {
   const term = generated(3);
-  cases.push({ term }, { term, env: { x: N(random(7)) } });
+  propertyCases.push({ term }, { term, env: { x: N(random(7)) } });
 }
-for (const term of [
+const edgeCases = [
   C("pow", N(0), N(0)),
   C("pow", N(2), N(-1)),
   C("add", color("red"), N(2)),
@@ -72,10 +73,10 @@ for (const term of [
   ),
   C("beside", image([["a"]]), image([["b"], ["c"]])),
   C("pow", N(2), N(65536)),
-])
-  cases.push({ term });
+].map((term) => ({ term }));
+const cases = [...propertyCases, ...edgeCases];
 const oracle = spawnSync(
-  "python3",
+  process.env.PYTHON ?? "python3",
   [fileURLToPath(new URL("oracle.py", import.meta.url))],
   {
     input: JSON.stringify(cases),
@@ -83,7 +84,7 @@ const oracle = spawnSync(
     maxBuffer: 20 * 1024 * 1024,
   },
 );
-assert.equal(oracle.status, 0, oracle.stderr);
+assert.equal(oracle.status, 0, oracle.error?.message ?? oracle.stderr);
 const expected = JSON.parse(oracle.stdout);
 check(
   `${cases.length} cases agree with the book interpreter (result, step, pop count, size)`,
@@ -107,16 +108,14 @@ check(
 check(
   "every ready pop removes exactly one circle, including partial terms",
   () =>
-    cases
-      .slice(0, 330)
-      .forEach((c) =>
-        ready(c.term).forEach((r) =>
-          assert.equal(size(pop(c.term, r.path)), size(c.term) - 1),
-        ),
+    propertyCases.forEach((c) =>
+      ready(c.term).forEach((r) =>
+        assert.equal(size(pop(c.term, r.path)), size(c.term) - 1),
       ),
+    ),
 );
 check("independent pops form diamonds", () =>
-  cases.slice(0, 330).forEach((c) => {
+  propertyCases.forEach((c) => {
     const rs = ready(c.term);
     for (let i = 0; i < rs.length; i++)
       for (let j = i + 1; j < rs.length; j++)
@@ -129,7 +128,7 @@ check("independent pops form diamonds", () =>
   }),
 );
 check("left, right and parallel strategies agree on values and work", () =>
-  cases.slice(0, 330).forEach((c) => {
+  propertyCases.forEach((c) => {
     const a = normalize(c.term),
       b = normalize(c.term, "right"),
       p = normalize(c.term, "parallel");
@@ -192,6 +191,28 @@ check(
     assert.equal(key(i), before);
   },
 );
+check("image notation separates multi-letter pixel names", () => {
+  assert.equal(
+    show(
+      image([
+        ["red", "."],
+        [".", "blue"],
+      ]),
+    ),
+    "image(red ./. blue)",
+  );
+  assert.equal(
+    show(
+      image([
+        ["x", "."],
+        [".", "y"],
+      ]),
+    ),
+    "image(x./.y)",
+  );
+  assert.equal(show(image([["ab", "c"]])), "image(ab c)");
+  assert.equal(show(image([["a", "bc"]])), "image(a bc)");
+});
 check("bounded exploration reports completeness honestly", () => {
   const r = explore(presets[0].term);
   assert.equal(r.complete, true);
