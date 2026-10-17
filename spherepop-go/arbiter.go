@@ -27,7 +27,9 @@ func (e *ArbiterError) Error() string {
 type Proposal struct{ Events []Event }
 
 func NewProposal(events ...Event) Proposal {
-	return Proposal{Events: append([]Event(nil), events...)}
+	cloned := make([]Event, len(events))
+	for i, e := range events { cloned[i] = cloneEvent(e) }
+	return Proposal{Events: cloned}
 }
 
 type Arbiter struct {
