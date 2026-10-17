@@ -68,13 +68,13 @@ void   boundlist_free(BoundList *l);
 void   boundlist_add(BoundList *l, ObjectId a, ObjectId b, const char *tag);
 bool   boundlist_contains(const BoundList *l, ObjectId a, ObjectId b, const char *tag);
 
-typedef struct { ObjectId a; char *reason; } RefusedFact;
+typedef struct { ObjectId a; char *reason; size_t pos; } RefusedFact;
 typedef struct { RefusedFact *items; size_t len, cap; } RefusedList;
 void   refusedlist_init(RefusedList *l);
 void   refusedlist_free(RefusedList *l);
 void   refusedlist_add(RefusedList *l, ObjectId a, const char *reason);
 
-typedef struct { char *rule; } ObservedFact;
+typedef struct { char *rule; size_t pos; } ObservedFact;
 typedef struct { ObservedFact *items; size_t len, cap; } ObservedList;
 void   observedlist_init(ObservedList *l);
 void   observedlist_free(ObservedList *l);
@@ -88,6 +88,7 @@ typedef struct State {
     BoundList    bound;
     RefusedList  refused;
     ObservedList observed;
+    size_t event_pos; /* replay cursor, not a new observable state component */
 } State;
 
 void state_init(State *s, const ObjectSet *omega0);

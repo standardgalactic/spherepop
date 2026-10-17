@@ -113,6 +113,14 @@ target_compile_definitions(sp_fixtures PRIVATE
     FIXTURES_DEFAULT_DIR="${CMAKE_SOURCE_DIR}/../experiments/flat/fixtures")
 target_link_libraries(sp_fixtures m)
 
+# Focused native invariants for the standalone canonical kernel.
+add_executable(sp_kernel_invariants
+    tools/fixtures/test_kernel_invariants.c
+    tools/fixtures/kernel.c
+)
+target_include_directories(sp_kernel_invariants PRIVATE tools/fixtures)
+
+
 # Compiler warnings
 include(cmake/CompilerWarnings.cmake)
 set_project_warnings(spherepop_core)
@@ -127,6 +135,7 @@ endif()
 # Tests
 if(SP_ENABLE_TESTS)
     enable_testing()
+    add_test(NAME sp_kernel_invariants COMMAND sp_kernel_invariants)
     add_subdirectory(tests)
 endif()
 
