@@ -1,0 +1,35 @@
+% additions for converted books
+\newlength{\stw}
+\newcommand{\st}[1]{\settowidth{\stw}{#1}\leavevmode\rlap{\textcolor{red!70!black}{\rule[0.5ex]{\stw}{0.6pt}}}#1}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{calc}
+\providecommand{\tightlist}{\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\newcommand{\pnum}[1]{\raisebox{0.1ex}{\textcolor{hudorange}{\sffamily\bfseries #1.}}}
+\newcommand{\stephead}[2]{\par\medskip\noindent\tikz[baseline=(n.base)]\node[fill=hudnavy,text=white,font=\sffamily\bfseries\scriptsize,inner sep=3pt,rounded corners=2pt](n){STEP #1};\ \ {\sffamily\bfseries\large #2}\par\nopagebreak\smallskip}
+\newcommand{\chip}[1]{\par\medskip\noindent\colorbox{hudbg}{\ttfamily\color{hudgreen}\scriptsize\ #1\ }\par\nopagebreak\smallskip}
+\newtcolorbox{strategybox}{enhanced,colback=white,colframe=hudnavy,boxrule=1pt,arc=2mm,
+ left=8pt,right=8pt,top=6pt,bottom=4pt,
+ attach boxed title to top left={xshift=8mm,yshift*=-\tcboxedtitleheight/2},
+ boxed title style={colback=hudnavy,colframe=hudnavy,arc=1.5mm,boxrule=0pt},
+ fonttitle=\bfseries\sffamily\scriptsize\color{white},title={SPLIT $\cdot$ BALANCE $\cdot$ CORRECT}}
+\newtcolorbox{predictbox}{enhanced,colback=yellow!12,colframe=hudamber!80!black,boxrule=1pt,arc=2mm,
+ left=8pt,right=8pt,top=7pt,bottom=4pt,
+ attach boxed title to top left={xshift=8mm,yshift*=-\tcboxedtitleheight/2},
+ boxed title style={colback=hudamber!80!black,colframe=hudamber!80!black,arc=1.5mm,boxrule=0pt},
+ fonttitle=\bfseries\sffamily\scriptsize\color{white},title={PREDICT FIRST}}
+\newtcolorbox{practicebox}{enhanced,breakable,colback=white,colframe=hudorange,boxrule=1.6pt,arc=3mm,
+ left=8pt,right=8pt,top=9pt,bottom=6pt,
+ before upper={\setlist[enumerate,1]{label=\pnum{\arabic*},leftmargin=2.4em,itemsep=0.45em,topsep=0pt}},
+ attach boxed title to top left={xshift=8mm,yshift*=-\tcboxedtitleheight/2},
+ boxed title style={colback=hudorange,colframe=hudorange,arc=1.5mm,boxrule=0pt},
+ fonttitle=\bfseries\sffamily\footnotesize\color{white},title={PRACTICE}}
+\renewtcolorbox{trustbox}[1][WHAT MAKES THIS TRUSTWORTHY?]{enhanced,colback=trustgreen,colframe=green!45!black,boxrule=1.4pt,arc=3mm,
+ left=8pt,right=8pt,top=9pt,bottom=6pt,
+ attach boxed title to top left={xshift=8mm,yshift*=-\tcboxedtitleheight/2},
+ boxed title style={colback=green!45!black,colframe=green!45!black,arc=1.5mm,boxrule=0pt},
+ fonttitle=\bfseries\sffamily\scriptsize\color{white},title={#1}}
+\newtcolorbox{bridgebox}{enhanced,colback=hudnavy,colframe=hudnavy,boxrule=0pt,arc=2mm,
+ left=8pt,right=8pt,top=6pt,bottom=5pt,fontupper=\sffamily\scriptsize\color{white},
+ before upper={\textcolor{hudamber}{\bfseries BRIDGE\ \ }}}
+\newcommand{\bigmultix}{\scalebox{3.2}{\tallybot}}

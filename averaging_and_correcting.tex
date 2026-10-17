@@ -1,0 +1,219 @@
+\documentclass[11pt]{article}
+
+\usepackage[margin=1.15in]{geometry}
+\usepackage{amsmath,amsthm}
+\usepackage{fontspec}
+\usepackage{unicode-math}
+\setmainfont{Latin Modern Roman}
+\setmonofont{Latin Modern Mono}
+\setmathfont{Latin Modern Math}
+\usepackage{microtype}
+\usepackage{booktabs}
+\usepackage{verbatim}
+\usepackage{fancyvrb}
+\usepackage[hidelinks]{hyperref}
+
+\newtheorem{proposition}{Proposition}
+\newtheorem{corollary}{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+\theoremstyle{remark}
+\newtheorem{remark}{Remark}
+
+\title{Averaging and Correcting:\\Explicit Transformations in Mathematical Problem Solving}
+\author{Flyxion\\\small Independent Researcher}
+\date{October 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent
+Mental multiplication of two numbers that sit symmetrically about a round value is usually taught as a single trick: replace $48\times 52$ by $50^2-2^2$. The trick bundles two decisions that behave differently. Choosing a reference value is a decision about representation, and its correctness is guaranteed for every choice by an elementary identity, $ab=m^2+m(u+v)+uv$ with $a=m+u$ and $b=m+v$. Whether a particular choice is useful depends on which quantities the person doing the arithmetic can evaluate comfortably, and that is a fact about the person and not about the numbers. This essay states the identity and its midpoint specialization, separates validity from serviceability relative to a stated repertoire, and describes a small tool that verifies each equality in exact arithmetic, refuses a proposed transformation that fails, and reports the residual together with a short list of slips that would produce it. It then outlines an experiment on how people choose references. No educational benefit is claimed, and the experiment is presented as a set of questions.
+\end{abstract}
+
+\section{Two decisions}
+
+A learner who multiplies $48$ by $52$ by writing $50^2-2^2$ has done two things that instruction tends to present as one. The first is to notice that $48$ and $52$ lie at equal distances from $50$, and to introduce $50$ as a reference value. The second is to keep the bookkeeping that makes the result exact: the departures $-2$ and $+2$ from the reference are not discarded but carried forward, and their effect on the product is accounted for in the term $-2^2$. The first act is a choice among representations of the same problem. The second is a verification that the chosen representation still describes the original problem. Because the two are bundled in a single memorized pattern, a learner who has the pattern can fail in two different ways: by applying it where it is not useful, and by applying it where it is not valid, for instance to a pair that is not symmetric, so that a correction term which happened to vanish before is silently dropped.
+
+The aim here is to pull the two decisions apart in a form that can be stated precisely, checked mechanically, and examined experimentally. The mathematical content is elementary and is not offered as new. What is offered is a way of describing the choice of reference so that its correctness and its usefulness are separate questions, a record format, called a trace, in which the obligations incurred by a transformation stay attached to it, and a tool that enforces those obligations without repairing a learner's mistakes on their behalf. The essay makes no claim that learners who work this way do better on any outcome. That is a question for the experiment sketched in Section~6.
+
+\section{The identity}
+
+Let $a$, $b$ and $m$ be elements of a commutative ring, for instance integers or rational numbers, and write $u=a-m$ and $v=b-m$.
+
+\begin{proposition}\label{prop:decomp}
+$ab=m^2+m(u+v)+uv$.
+\end{proposition}
+
+\begin{proof}
+Since $a=m+u$ and $b=m+v$, distributivity gives $(m+u)(m+v)=m\cdot m+m v+u m+u v=m^2+m(u+v)+uv$.
+\end{proof}
+
+Nothing in the argument uses integrality or positivity, so the reference $m$ may be any number at all, including a half-integer or a negative number. This matters for the symmetric case, where the natural reference is often not an integer.
+
+\begin{corollary}\label{cor:mid}
+If $m=\tfrac12(a+b)$ and $d=\tfrac12(a-b)$, then $u=d$, $v=-d$, and $ab=m^2-d^2$.
+\end{corollary}
+
+\begin{proof}
+Here $u=a-\tfrac12(a+b)=\tfrac12(a-b)=d$ and $v=b-\tfrac12(a+b)=-d$, so $u+v=0$ and $uv=-d^2$. Proposition~\ref{prop:decomp} gives $ab=m^2-d^2$.
+\end{proof}
+
+The linear term is $m(u+v)=m(a+b-2m)$. Over the rationals a product vanishes only when a factor does, so the linear term is zero exactly when $m=0$ or $m=\tfrac12(a+b)$. The first case is the trivial decomposition $u=a$, $v=b$, in which nothing has been simplified. The midpoint is therefore the unique nontrivial reference that eliminates the linear correction, which is the sense in which it is special. It is not the sense in which it is always the best choice, as Section~3 shows.
+
+When $a+b$ is odd the midpoint is a half-integer, and the two integer references nearest to it leave a linear term that is not eliminated but is easy to state.
+
+\begin{proposition}\label{prop:odd}
+Let $a+b=2m+1$ and $k=m-a$. Then $a=m-k$, $b=m+k+1$, and $ab=m^2+m-k(k+1)$. For the reference $m+1$ in place of $m$ the same product equals $(m+1)^2-(m+1)-k(k+1)$.
+\end{proposition}
+
+\begin{proof}
+From $a+b=2m+1$ and $a=m-k$ we get $b=m+k+1$, so $u=-k$, $v=k+1$, $u+v=1$ and $uv=-k(k+1)$, and Proposition~\ref{prop:decomp} gives the first formula. For the reference $m'=m+1$ we have $u'=-k-1$ and $v'=k$, so $u'+v'=-1$ and $u'v'=-k(k+1)$, which gives the second.
+\end{proof}
+
+For $47\times 58$ we have $a+b=105$, so $m=52$ and $k=5$, and the first formula gives $2704+52-30=2726$. The tool described below confirms this decomposition, and also the one with reference $53$, whose terms are $2809$, $-53$ and $-30$.
+
+\section{Validity and serviceability}
+
+Call a proposed expression $E$ for a target quantity $T$ \emph{valid} when $E=T$. By Proposition~\ref{prop:decomp}, a reference decomposition of $ab$ is valid for every choice of $m$, provided the three terms are evaluated and added correctly. The choice of reference therefore cannot make the decomposition wrong. Errors enter through the evaluation of the terms and through the omission or alteration of one of them, which is why a method that teaches the reference choice without the retained correction is incomplete in a way that is easy to miss: for the midpoint the linear term is zero, so omitting it costs nothing, and the habit of omitting it survives into cases where it is not zero.
+
+Usefulness is a different matter and depends on who is calculating. To make that dependence explicit without pretending to measure it, we introduce a repertoire.
+
+\begin{definition}
+A \emph{repertoire} is a set $\mathcal R$ of pairs of numbers $(x,y)$ whose product the person can produce directly, without further decomposition. A reference $m$ is \emph{serviceable} for the pair $(a,b)$ relative to $\mathcal R$ when the three pairs $(m,m)$, $(m,u+v)$ and $(u,v)$ all lie in $\mathcal R$.
+\end{definition}
+
+The repertoire is an input and not a finding. The tool uses a deliberately crude default: a pair belongs to $\mathcal R$ when each factor is zero or has the form $d\cdot 10^k$ with $d$ a single digit, so that its product follows from the multiplication table by shifting place value, and the person may add numbers they know separately. Serviceability is a yes-or-no property relative to a stated repertoire. We do not rank serviceable references, and we do not count steps, because the length of a trace depends on how finely its steps are written and because comfort is a property of a person.
+
+Table~\ref{tab:refs} lists decompositions for five products, with every value produced by the tool. The last column applies the default repertoire.
+
+\begin{table}[t]
+\centering
+\small
+\setlength{\tabcolsep}{5pt}
+\begin{tabular}{@{}lrrrrrrrc@{}}
+\toprule
+Product & $m$ & $u$ & $v$ & $m^2$ & $m(u+v)$ & $uv$ & $ab$ & Serviceable \\
+\midrule
+$48\times 52$ & $50$ & $-2$ & $2$ & $2500$ & $0$ & $-4$ & $2496$ & yes \\
+\addlinespace
+$47\times 58$ & $50$ & $-3$ & $8$ & $2500$ & $250$ & $-24$ & $2726$ & yes \\
+$47\times 58$ & $60$ & $-13$ & $-2$ & $3600$ & $-900$ & $26$ & $2726$ & no \\
+$47\times 58$ & $52.5$ & $-5.5$ & $5.5$ & $2756.25$ & $0$ & $-30.25$ & $2726$ & no \\
+\addlinespace
+$48\times 53$ & $50$ & $-2$ & $3$ & $2500$ & $50$ & $-6$ & $2544$ & yes \\
+\addlinespace
+$98\times 97$ & $100$ & $-2$ & $-3$ & $10000$ & $-500$ & $6$ & $9506$ & yes \\
+\addlinespace
+$13\times 17$ & $15$ & $-2$ & $2$ & $225$ & $0$ & $-4$ & $221$ & no \\
+$13\times 17$ & $10$ & $3$ & $7$ & $100$ & $100$ & $21$ & $221$ & yes \\
+$13\times 17$ & $20$ & $-7$ & $-3$ & $400$ & $-200$ & $21$ & $221$ & yes \\
+\bottomrule
+\end{tabular}
+\caption{Reference decompositions and their serviceability under the default repertoire (zero, or a digit times a power of ten). The product column was computed independently of the decomposition.}
+\label{tab:refs}
+\end{table}
+
+Several features of the table are worth stating plainly. For $48\times 52$, searching integer references from $38$ to $62$ finds exactly one serviceable reference, $50$, and it is also the midpoint. For $47\times 58$ the midpoint $52.5$ is valid and, under this repertoire, not serviceable, since both $52.5^2$ and $5.5^2$ fall outside it. The reference $50$ is serviceable at the price of a retained linear term, $250$, and the reference $60$ is valid but not serviceable because $u=-13$ is outside the repertoire. For $13\times 17$ the midpoint $15$ is not serviceable, yet both $10$ and $20$ are, and enlarging the repertoire by a single number, $15$, makes all three serviceable. The pair $98\times 97$ is served by $100$ with a linear term of $-500$, and $48\times 53$ is served by $50$ with a linear term of $50$, a case in which the midpoint recipe applied to the nearby round number would be wrong by exactly that term. None of this supports the advice to use the midpoint. It supports the narrower advice to ask which reference the available repertoire supports and to retain every correction that the choice creates.
+
+\section{Traces as records of obligations}
+
+A \emph{trace} is an ordered list of equalities, each paired with a statement of why it holds. For a reference decomposition the equalities are $a=m+u$, $b=m+v$, the expansion $(m+u)(m+v)=m^2+m(u+v)+uv$, and the equality of the total with $ab$. In the midpoint case two more are added: that the linear term vanishes, and that $ab=m^2-d^2$. A trace is \emph{verified} when every equality holds exactly. The tool evaluates each side in exact rational arithmetic, so that a half-integer reference introduces no rounding, and it computes $ab$ from the numerators and denominators of $a$ and $b$ directly, not from the decomposition, so that the final check is not circular. Appendix~B reproduces the output for two traces.
+
+The tool also accepts a proposed expression for the product and compares it with the exact value. If the two differ, the tool refuses the proposal and reports the residual, the claimed value minus the actual one. It does not correct the proposal. A silent repair would remove the very information a learner most needs, which is the size and sign of the discrepancy. The residual is then compared with a small catalogue of slips, each defined by the effect it has on the total. If a subset $S$ of the three terms is omitted, the residual is $-\sum S$. If the signs of the terms in $S$ are reversed, it is $-2\sum S$. If the product $uv$ is replaced by a single factor $f\in\{u,v,-u,-v\}$, as when a correction is written down but not squared or multiplied, it is $f-uv$. Terms equal to zero are excluded from the candidates, since omitting or reversing a zero changes nothing.
+
+Three refusals illustrate the catalogue. For $48\times 52$ the claim $50^2-2$ evaluates to $2498$ against the exact $2496$, a residual of $2$, and the tool reports that this matches replacing $uv=-4$ by the single factor $-2$, which is both $u$ and $-v$. This is the familiar slip of writing the correction but not squaring it. For $48\times 53$ with reference $50$, the claim $50^2-2\cdot 3$ evaluates to $2494$ against $2544$, a residual of $-50$, which is minus the linear term $m(u+v)=50$, so the linear term was omitted. For $98\times 97$ with reference $100$, the claim $100^2-500-6$ evaluates to $9494$ against $9506$, a residual of $-12$, which is $-2\cdot 6$, so the sign of $uv$ was reversed. Appendix~B gives the full output.
+
+The catalogue produces hypotheses and not diagnoses. A residual is a single number, and distinct slips can produce the same one. For $5\times 6$ with reference $10$, the claim $10$ against the exact $30$ leaves a residual of $-20$, which the tool matches both to omitting $uv=20$ and to reversing the signs of $m^2+m(u+v)=10$. The output says so explicitly. A slip outside the catalogue, such as an arithmetic error inside $m^2$, is reported as unexplained, and the catalogue says nothing about why a slip was made.
+
+Each check can be appended to a log as a line of structured text holding the numbers, the reference, the proposed expression, the justification the person gave in words, the claimed and actual values, the residual, the verdict and the matched hypotheses. Keeping the justification beside the proposal is what allows the two decisions of Section~1 to be examined separately later.
+
+\section{Relation to the circle calculus}
+
+The tool realizes one piece of what a trace-based reading of the circle calculus would provide: each rewrite is a step whose obligation stays attached to the step, so that the path from the exploratory choice to the exact result is inspectable. It does not implement the calculus, and the correspondence with its operators is not worked out here.
+
+A narrower connection concerns duplication. Before expansion, the product $(m+u)(m+v)$ uses $m$ twice and each of $u$ and $v$ once. After expansion, across the three terms $m$ is used three times, $u$ twice and $v$ twice. Distributivity has copied operands, and in a setting where copying is an explicit event, as with the duplicating rule of the $S$ combinator in the companion essay, that multiplicity is what the expansion costs. Whether such a count bears on how hard the arithmetic is for a person is a separate empirical question, and we take no position on it.
+
+\section{An experiment on strategy choice}
+
+The tool supports a small study of how people choose references, organized around questions and not around predicted effects. A participant is shown a product and asked to propose a reference, then to fill in $u$, $v$ and the three terms, and finally to state the total. Every proposal is checked, every refusal is shown with its residual, and the participant may revise. The participant is also asked, before the task, which products of the relevant size they can state without working, so that a repertoire can be estimated from the same person and not assumed. The items include symmetric pairs, near-symmetric pairs, pairs whose midpoint is a half-integer, and pairs near a power of ten.
+
+The recorded variables are the chosen reference, whether it is serviceable relative to that participant's own repertoire, whether the midpoint was chosen when it was serviceable and when it was not, the class of any slip according to the catalogue, whether a refusal was followed by a corrected proposal, and the justification text. The questions are: whether participants choose serviceable references more often than non-serviceable ones when both are available; whether the linear term is dropped more often for asymmetric pairs; whether showing the residual leads to a corrected proposal more often than showing only that the answer is wrong, which requires a condition in which the residual is withheld; and how much of the observed slips the catalogue covers, which can only be estimated by coding the justification text by hand.
+
+Trace length is logged as a description and is not interpreted as difficulty. The principal threats are that eliciting a repertoire may change what participants do, that asking for justifications may change how they think, that the default round-number repertoire is a proxy for something harder to observe, and that any study of this size will be small. No effect sizes are specified in advance and none are assumed.
+
+\section{What is not claimed}
+
+The identity is classical, and its midpoint form is the one behind quarter-square multiplication; it is not presented as a discovery. The essay does not claim that the midpoint recipe is the best method, that reference decompositions are easier than other mental strategies, or that learners who keep explicit traces learn faster. The tool verifies arithmetic and does not assess understanding: a learner can supply a correct proposal for poor reasons, and the justification field records what was said, not what was meant. The repertoire is a modelling choice. The hypothesis catalogue is short and was chosen because its members are easy to state, not because it is known to cover the slips people make.
+
+\section{Conclusion}
+
+Choosing a reference and verifying that its corrections preserve the problem are separate decisions. The second is guaranteed by an identity for every reference, and it fails only through bookkeeping; the first is justified relative to what a particular person can compute comfortably. Keeping the two apart makes it possible to say what a method requires of a learner, to check mechanically that the requirement was met, and to ask empirically which references people choose and why. The tool and its tests accompany this essay, and the questions in Section~6 remain open.
+
+\appendix
+
+\section{Running the tool}
+
+The tool is a single Python file with no dependencies outside the standard library, accompanied by a test suite. The commands are:
+\begin{verbatim}
+python3 averaging.py trace 48 52
+python3 averaging.py trace 47 58 --ref 50
+python3 averaging.py check 48 53 --ref 50 --claim "50^2 - 2*3" \
+        --justification "50 is the nearest round number" --log session.jsonl
+python3 averaging.py explore 13 17 --extra-known 15
+python3 -m unittest
+\end{verbatim}
+In expressions the caret denotes exponentiation, and only numbers, the four arithmetic operations, exponentiation with an integer exponent of modest size, and parentheses are accepted. The exploration command lists, in increasing order, the references in a stated range for which all three terms lie inside the repertoire, and it prints the repertoire it used.
+
+\section{Selected output}
+
+\medskip
+\noindent\begin{minipage}{\linewidth}
+\noindent\textbf{Trace for $48\times 52$ (midpoint reference).}
+\begin{small}
+\VerbatimInput{out/trace_48_52.txt}
+\end{small}
+\end{minipage}
+
+\medskip
+\noindent\begin{minipage}{\linewidth}
+\noindent\textbf{Trace for $47\times 58$ with reference $50$.}
+\begin{small}
+\VerbatimInput{out/trace_47_58_ref50.txt}
+\end{small}
+\end{minipage}
+
+\medskip
+\noindent\begin{minipage}{\linewidth}
+\noindent\textbf{Refused claim for $48\times 52$.}
+\begin{small}
+\VerbatimInput{out/check_48_52.txt}
+\end{small}
+\end{minipage}
+
+\medskip
+\noindent\begin{minipage}{\linewidth}
+\noindent\textbf{Refused claim for $48\times 53$ with reference $50$.}
+\begin{small}
+\VerbatimInput{out/check_48_53.txt}
+\end{small}
+\end{minipage}
+
+\medskip
+\noindent\begin{minipage}{\linewidth}
+\noindent\textbf{Refused claim for $98\times 97$ with reference $100$.}
+\begin{small}
+\VerbatimInput{out/check_98_97.txt}
+\end{small}
+\end{minipage}
+
+\medskip
+\noindent\begin{minipage}{\linewidth}
+\noindent\textbf{A residual with two competing explanations.}
+\begin{small}
+\VerbatimInput{out/check_5_6.txt}
+\end{small}
+\end{minipage}
+
+\end{document}
