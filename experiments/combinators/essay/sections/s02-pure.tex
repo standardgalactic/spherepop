@@ -1,18 +1,20 @@
 \section{The pure fragment}\label{sec:pure}
 
+For the exact pop counts and ordering formulas in this section, restrict attention to closed numerical terms over deterministic, total computable operators. Thus every tuple of numerical operands is admissible for its operator. In the broader fragment of the introduction, operators may be partial and an inert circle may remain: every reduction still has at most $\size{t}$ pops, but reaching a numeral in exactly that many pops requires admissibility throughout. A ready circle is eligible for a pop only when its operand tuple is admissible.
+
 \begin{definition}
 A \emph{pure term} is defined inductively: a numeral is a pure term, and if $o$ is an operator of arity $k$ and $t_1,\dots,t_k$ are pure terms then the circle $o(t_1,\dots,t_k)$ is a pure term. A circle is \emph{ready} when every operand is a numeral. A \emph{pop} replaces a ready circle by the numeral that its operator computes from its operands. The \emph{size} $\size{t}$ is the number of circles in $t$.
 \end{definition}
 
 \begin{proposition}[Termination in exactly $\size{t}$ pops]\label{prop:pure-term}
-Every pop strictly decreases $\size{t}$ by exactly one. Consequently every sequence of pops from a pure term $t$ ends, after exactly $\size{t}$ pops, in a numeral, and the numeral does not depend on the order of pops.
+Every pop strictly decreases $\size{t}$ by exactly one. Consequently every maximal sequence of pops from a pure term $t$ ends, after exactly $\size{t}$ pops, in a numeral, and the numeral does not depend on the order of pops.
 \end{proposition}
 
 \begin{proof}
 A pop removes one circle, the ready one, and leaves every other circle in place, so the size drops by one. A term with no circles is a numeral, and a term with a circle has a ready circle (take a circle of greatest depth, all of whose operands are then numerals), so the process continues until size zero. For the independence of the order, suppose two distinct circles $c_1$ and $c_2$ are ready in $t$. They are disjoint, since a ready circle has only numerals inside it, and popping one does not alter the other or its operands, so the two pops commute and yield the same term. A standard argument on the number of pops (the diamond property for a terminating system with commuting local steps, Newman's lemma in its simplest form) then gives that all maximal pop sequences end in the same numeral.
 \end{proof}
 
-The proposition is the entire termination story of the pure fragment, and the extension of Section~\ref{sec:application} is judged against it. A computation whose length is determined by the shape of its input cannot decide anything that depends on the values: no pure term loops, and no pure term can be asked a question whose answer requires running for an unbounded time.
+The proposition establishes termination for this fragment, and the extension of Section~\ref{sec:application} is judged against it. Values and predicates can depend on numerical inputs, but the fixed expression supplies no internal unbounded iteration or search. Pop counts measure invocations of the chosen primitives, not their internal arithmetic cost.
 
 \subsection{Counting evaluation orders}
 

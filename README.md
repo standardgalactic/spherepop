@@ -4,6 +4,11 @@
 
 [An Introduction to Spherepop](https://standardgalactic.github.io/spherepop/an_introduction_to_spherepop.pdf)
 
+
+[Duplication and Universality in the Circle Calculus](https://standardgalactic.github.io/spherepop/experiments/combinators/essay/duplication-and-universality.pdf)
+
+An exploration of how duplication takes Spherepop from a terminating circle calculus to universal computation, with formal proofs, executable experiments, and an explicit account of the remaining proof obligations.
+
 [Choose the Next Pop](experiments/circles/) — an interactive companion to the introduction: select reductions, substitute symbols, compose images, and compare evaluation orders.
 
 [Spherepop Theory](https://standardgalactic.github.io/spherepop/dynamics/spherepop.pdf)

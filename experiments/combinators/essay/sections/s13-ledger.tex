@@ -8,7 +8,7 @@ The following table lists every substantive claim of the essay with its status. 
 claim & status & basis \\
 \midrule
 \endhead
-Pure fragment terminates in exactly $\size{t}$ pops, independent of order & proved & Proposition~\ref{prop:pure-term} \\
+Total numerical pure fragment terminates in exactly $\size{t}$ pops, independent of order & proved & Proposition~\ref{prop:pure-term} \\
 Pop orderings counted by the hook length formula; states by ideals & proved; checked & Theorem~\ref{thm:hook}, Proposition~\ref{prop:ideals}; random trees, memoized dynamic program \\
 Size laws: $\Kc$ changes size by $-(2+\size{y})$, $\Sc$ by $+\size{z}$ & proved; checked & Proposition~\ref{prop:sizelaw}; every redex occurrence in the survey \\
 No circle-count measure decreases along reduction & proved & Corollary~\ref{cor:nomeasure} \\
@@ -29,7 +29,7 @@ Weak $\beta$ steps simulated exactly & proved; checked & Theorem~\ref{thm:weaksi
 Reduction under a binder is not simulated; $\TT$ agrees with lambda calculus only up to extensionality & proved for the example; cited for equivalence & Proposition~\ref{prop:xi}; classification survey \\
 Counter machines are universal & cited & Minsky 1967 \\
 Halting machine yields the correct numeral in circles & proved; checked & Theorem~\ref{thm:halting}; runs against three independent evaluators \\
-Non-halting machine yields no normal form & partly cited & depends on the head-reduction correspondence and leftmost normalization; budget evidence only \\
+Non-halting machine yields no normal form & conditional & requires compiler weak-head divergence and translation reflection; neither is proved here; finite budget evidence only \\
 Undecidability of normal-form existence for circle terms & conditional & Corollary~\ref{cor:undec} \\
 Bellman recursions for shortest, longest and path counts & proved; checked & Section~\ref{sec:dp}; brute-force comparison \\
 Sharing as memoization reduces work & checked & measured ratios; mechanism stated, not an asymptotic law \\
@@ -40,7 +40,7 @@ Exactness of centre-and-correct decompositions & proved; checked & Proposition~\
 
 \subsection{What is not claimed}
 
-The essay does not claim that the four-event history kernel used elsewhere in the SpherePOP repository simulates lambda reduction, and no statement above is about that kernel. It does not claim that any particular non-halting program fails to terminate, beyond a budget exhausted and the argument of Section~\ref{sec:universality}. It does not claim that the translation of Section~\ref{sec:lambda} is an equivalence of calculi, since it is not, as Proposition~\ref{prop:xi} shows. It makes no claim about efficiency beyond the measured tables. It does not claim that construction traces help anyone learn, only that they can be written down and checked. And it does not claim that the pure fragment of the book is Turing complete: the extension by an application circle is exactly what is shown to be, and the pure fragment is shown not to be.
+The essay does not claim that the four-event history kernel used elsewhere in the SpherePOP repository simulates lambda reduction, and no statement above is about that kernel. It does not claim that any particular non-halting program fails to terminate, beyond a budget exhausted and the argument of Section~\ref{sec:universality}. It does not claim that the translation of Section~\ref{sec:lambda} is an equivalence of calculi, since it is not, as Proposition~\ref{prop:xi} shows. It makes no claim about efficiency beyond the measured tables. It does not claim that construction traces help anyone learn, only that they can be written down and checked. And it does not claim that the pure fragment of the book is Turing complete: the classical application-circle extension is universal, while the compiler-specific converse remains conditional as stated above.
 
 \subsection{How to try to break it}
 

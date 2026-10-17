@@ -15,8 +15,12 @@ The redex $\Kc\,x\,y=\App(\App(\Kc,x),y)$ has $2+\size{x}+\size{y}$ circles and 
 \end{proof}
 
 \begin{corollary}[No circle-count measure]\label{cor:nomeasure}
-Circle count is not monotone along reduction, and no function of circle count alone decreases at every step. A contraction of a $\Kc$ redex always decreases the count, and a contraction of an $\Sc$ redex increases it whenever $\size{z}>0$, that is, whenever the third argument is not an atom.
+Circle count is not monotone along reduction, and no function of circle count alone strictly decreases at every step. A contraction of a $\Kc$ redex always decreases the count, and a contraction of an $\Sc$ redex increases it whenever $\size{z}>0$, that is, whenever the third argument is not an atom.
 \end{corollary}
+
+\begin{proof}
+The size laws show both decreasing and increasing contractions. For the stronger claim about any function of circle count, take distinct atoms $a,b,c$. The contraction $\Sc\,a\,b\,c\red a\,c\,(b\,c)$ has three circles on each side. Every measure of the form $f(\size{t})$ therefore has equal values on its endpoints and cannot strictly decrease at every contraction.
+\end{proof}
 
 \begin{example}
 The term $\Sc\,a\,b\,(\Kc\,c\,d)$ has $\factGrowSizeBefore$ circles and the single contraction at the root gives $\factGrowAfter$ with $\factGrowSizeAfter$ circles, since $z=\Kc\,c\,d$ has two circles and appears twice afterwards. In the exhaustive survey the laws were checked on every redex occurrence in every term up to the stated bound, \factRedexes{} occurrences in all, of which \factKRedexes{} were $\Kc$ redexes and \factSRedexes{} were $\Sc$ redexes, and \factGrowing{} of the contractions were strictly growing.
