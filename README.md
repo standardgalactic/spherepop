@@ -9,6 +9,12 @@
 
 An exploration of how duplication takes Spherepop from a terminating circle calculus to universal computation, with formal proofs, executable experiments, and an explicit account of the remaining proof obligations.
 
+[Averaging and Correcting](https://standardgalactic.github.io/spherepop/averaging_and_correcting.pdf)
+
+[Curriculum Overview](https://standardgalactic.github.io/spherepop/curriculum-overview.pdf) — *In Progress*
+
+A beginner curriculum in five subjects: forty-five short illustrated books with stories, experiments and puzzles. Each one teaches how to check, correct and explain your work.
+
 [Choose the Next Pop](experiments/circles/) — an interactive companion to the introduction: select reductions, substitute symbols, compose images, and compare evaluation orders.
 
 [Spherepop Theory](https://standardgalactic.github.io/spherepop/dynamics/spherepop.pdf)

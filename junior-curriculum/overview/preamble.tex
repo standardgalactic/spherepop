@@ -1,0 +1,151 @@
+% Prototype spread: The Work That Vanishes, Chapter 1 (XeLaTeX)
+\usepackage[paperwidth=7in,paperheight=10in,left=0.75in,top=0.85in,bottom=0.95in,textwidth=4.25in,marginparwidth=1.3in,marginparsep=0.15in]{geometry}
+\usepackage{fontspec}
+\setmainfont{DejaVu Sans}
+\setsansfont{DejaVu Sans}
+\setmonofont{DejaVu Sans Mono}[Scale=0.88]
+\usepackage{unicode-math}
+\setmathfont{DejaVu Math TeX Gyre}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{calc,decorations.pathmorphing,shapes.geometric}
+\usepackage[most]{tcolorbox}
+\usepackage{fancyvrb}
+\usepackage{graphicx}
+\usepackage{marginnote}
+\usepackage{eso-pic}
+\usepackage{enumitem}
+\usepackage{microtype}
+\usepackage{booktabs}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.45em}
+\renewcommand{\footnoterule}{\kern-3pt\hrule width 2.5cm height 0.8pt\kern 3pt}
+\pagestyle{empty}
+
+% ---------- palette ----------
+\definecolor{paper}{HTML}{FFF4CF}
+\definecolor{inkbrown}{HTML}{7A3E12}
+\definecolor{hudbg}{HTML}{06140D}
+\definecolor{hudgreen}{HTML}{4DFF88}
+\definecolor{hudamber}{HTML}{FFC233}
+\definecolor{hudred}{HTML}{FF6A55}
+\definecolor{hudorange}{HTML}{FF8A1F}
+\definecolor{hudnavy}{HTML}{1F3A5F}
+\definecolor{slateA}{HTML}{6F7F94}
+\definecolor{slateB}{HTML}{4B5B6E}
+\definecolor{slateC}{HTML}{93A6BB}
+\definecolor{slateD}{HTML}{2E3B49}
+\definecolor{keepblue}{HTML}{E4F0FF}
+\definecolor{trustgreen}{HTML}{E6F7E6}
+
+% ---------- page border ----------
+\AddToShipoutPictureBG{%
+ \begin{tikzpicture}[remember picture,overlay]
+  \draw[line width=2.2pt,hudnavy,rounded corners=6pt]
+   ([shift={(0.3in,0.3in)}]current page.south west) rectangle ([shift={(-0.3in,-0.3in)}]current page.north east);
+  \draw[line width=0.6pt,hudorange,rounded corners=4pt]
+   ([shift={(0.37in,0.37in)}]current page.south west) rectangle ([shift={(-0.37in,-0.37in)}]current page.north east);
+ \end{tikzpicture}}
+
+% ---------- the guide robot (original design) ----------
+\newcommand{\tallybot}[1][hudgreen]{%
+ \begin{tikzpicture}[scale=0.42,line join=round,line width=0.4pt,baseline=(current bounding box.center)]
+  \coordinate (T) at (0,1.3); \coordinate (UL) at (-1,0.6); \coordinate (UR) at (1,0.6);
+  \coordinate (LL) at (-0.9,-0.6); \coordinate (LR) at (0.9,-0.6); \coordinate (B) at (0,-1.1); \coordinate (C) at (0,0.05);
+  \fill[hudorange] (-0.28,-1.12)--(0.28,-1.12)--(0,-1.85)--cycle;
+  \fill[hudamber] (-0.14,-1.12)--(0.14,-1.12)--(0,-1.5)--cycle;
+  \fill[hudorange] (-1,0.5)--(-1.6,0.1)--(-1,-0.25)--cycle;
+  \fill[hudorange] (1,0.5)--(1.6,0.1)--(1,-0.25)--cycle;
+  \fill[slateC] (T)--(UL)--(C)--cycle;
+  \fill[slateA] (T)--(UR)--(C)--cycle;
+  \fill[slateB] (UL)--(LL)--(C)--cycle;
+  \fill[slateC!70!slateA] (UR)--(LR)--(C)--cycle;
+  \fill[slateD] (LL)--(B)--(C)--cycle;
+  \fill[slateB!80!black] (LR)--(B)--(C)--cycle;
+  \draw[slateD] (T)--(UL)--(LL)--(B)--(LR)--(UR)--cycle;
+  \draw[slateD,line width=0.9pt] (T)--(0,1.85);
+  \fill[hudorange] (0,1.9) circle (0.14);
+  \fill[black] (0,0.1) circle (0.44);
+  \fill[#1] (0,0.1) circle (0.29);
+  \fill[white] (0.09,0.2) circle (0.09);
+ \end{tikzpicture}}
+
+% ---------- HUD-style aside ----------
+\newtcolorbox{hudbox}{enhanced,colback=hudbg,colframe=hudbg,boxrule=0pt,arc=0pt,
+ left=6pt,right=6pt,top=5pt,bottom=5pt,
+ frame code={\path[draw=hudgreen,line width=1pt,fill=hudbg]
+  ([xshift=7pt]frame.south west)--([xshift=-7pt]frame.south east)--([yshift=7pt]frame.south east)
+  --([yshift=-7pt]frame.north east)--([xshift=-7pt]frame.north east)--([xshift=7pt]frame.north west)
+  --([yshift=-7pt]frame.north west)--([yshift=7pt]frame.south west)--cycle;},
+ interior code={}}
+\newenvironment{tally}[2][hudgreen]{%
+ \par\medskip\noindent\begin{hudbox}%
+ \begin{minipage}[c]{1.45cm}\centering\tallybot[#1]\end{minipage}\hfill
+ \begin{minipage}[c]{\dimexpr\linewidth-2.1cm\relax}\ttfamily\footnotesize\color{#1}\textbf{MULTIX\,//\,#2}\\\ignorespaces}%
+ {\end{minipage}\end{hudbox}\par\medskip}
+
+\newcommand{\owes}[1]{\colorbox{hudbg}{\ttfamily\color{hudamber}\footnotesize\ OWES:~#1\ }}
+\newcommand{\paidstamp}{\colorbox{hudbg}{\ttfamily\color{hudgreen}\footnotesize\ OWES:~0\ }}
+\newcommand{\lightgreen}{\colorbox{hudbg}{\ttfamily\color{hudgreen}\footnotesize\ \(\bullet\) HAS A REASON\ }}
+\newcommand{\lightamber}{\colorbox{hudbg}{\ttfamily\color{hudamber}\footnotesize\ \(\bullet\) ONLY SEEN SO FAR\ }}
+\newcommand{\lightred}{\colorbox{hudbg}{\ttfamily\color{hudred}\footnotesize\ \(\bullet\) REFUTED\ }}
+
+% ---------- content boxes ----------
+\newtcolorbox{storybox}{enhanced,breakable,colback=paper,colframe=inkbrown,boxrule=1.6pt,arc=3mm,
+ drop fuzzy shadow=black!25,left=8pt,right=8pt,top=10pt,bottom=7pt,
+ attach boxed title to top left={xshift=8mm,yshift*=-\tcboxedtitleheight/2},
+ boxed title style={colback=inkbrown,colframe=inkbrown,arc=1.5mm,boxrule=0pt},
+ fonttitle=\bfseries\sffamily\footnotesize\color{white},title={STORY}}
+\newtcolorbox{tracebox}{enhanced,breakable,colback=hudbg,colframe=hudgreen!80!black,boxrule=1pt,sharp corners,
+ left=6pt,right=6pt,top=4pt,bottom=4pt,
+ attach boxed title to top left={xshift=6mm,yshift*=-\tcboxedtitleheight/2},
+ boxed title style={colback=hudgreen!80!black,colframe=hudgreen!80!black,sharp corners,boxrule=0pt},
+ fonttitle=\bfseries\ttfamily\footnotesize\color{hudbg},title={TRACE}}
+\newtcolorbox{keepbox}{enhanced,colback=keepblue,colframe=hudnavy,boxrule=1.4pt,arc=3mm,
+ left=8pt,right=8pt,top=9pt,bottom=6pt,
+ attach boxed title to top left={xshift=8mm,yshift*=-\tcboxedtitleheight/2},
+ boxed title style={colback=hudnavy,colframe=hudnavy,arc=1.5mm,boxrule=0pt},
+ fonttitle=\bfseries\sffamily\footnotesize\color{white},title={WHAT DID WE KEEP?}}
+\newtcolorbox{trustbox}{enhanced,colback=trustgreen,colframe=green!45!black,boxrule=1.4pt,arc=3mm,
+ left=8pt,right=8pt,top=9pt,bottom=6pt,
+ attach boxed title to top left={xshift=8mm,yshift*=-\tcboxedtitleheight/2},
+ boxed title style={colback=green!45!black,colframe=green!45!black,arc=1.5mm,boxrule=0pt},
+ fonttitle=\bfseries\sffamily\footnotesize\color{white},title={WHAT MAKES THIS TRUSTWORTHY?}}
+\newtcolorbox{braveaside}{enhanced,colback=white,colframe=hudorange,boxrule=1.2pt,arc=3mm,
+ borderline={0.4pt}{1.5pt}{hudorange,dashed},left=8pt,right=8pt,top=8pt,bottom=5pt,
+ attach boxed title to top right={xshift=-8mm,yshift*=-\tcboxedtitleheight/2},
+ boxed title style={colback=hudorange,colframe=hudorange,arc=1.5mm,boxrule=0pt},
+ fonttitle=\bfseries\sffamily\footnotesize\color{white},title={FOR BRAVE READERS}}
+
+% margin sticky note
+\newcommand{\mnote}[1]{\marginnote{\begin{tcolorbox}[enhanced,colback=yellow!22,colframe=hudamber!70!black,
+ boxrule=0.7pt,arc=1.2mm,left=3pt,right=3pt,top=2pt,bottom=2pt,width=\marginparwidth,rotate=-1.5,
+ fontupper=\scriptsize\sffamily\raggedright]#1\end{tcolorbox}}}
+
+% chapter banner
+\newcommand{\chapterbanner}[3]{%
+ \begin{tikzpicture}
+  \node[inner sep=0pt] (b) {\begin{minipage}{\textwidth}\centering
+   {\sffamily\scriptsize\bfseries\color{hudnavy}#1}\\[2pt]
+   {\sffamily\small\color{hudorange}\bfseries CHAPTER #2}\\[3pt]
+   {\sffamily\LARGE\bfseries\color{inkbrown}#3}
+  \end{minipage}};
+  \draw[hudnavy,line width=1.6pt,decorate,decoration={zigzag,segment length=6pt,amplitude=1.2pt}]
+   ($(b.south west)+(-0.1,-0.25)$)--($(b.south east)+(0.1,-0.25)$);
+  \draw[hudnavy,line width=1.6pt,decorate,decoration={zigzag,segment length=6pt,amplitude=1.2pt}]
+   ($(b.north west)+(-0.1,0.3)$)--($(b.north east)+(0.1,0.3)$);
+ \end{tikzpicture}\par\medskip}
+
+% puzzle page banner
+\newcommand{\puzzlebanner}[2]{%
+ \begin{tcolorbox}[enhanced,colback=hudnavy,colframe=hudorange,boxrule=2pt,arc=4mm,
+  left=8pt,right=8pt,top=5pt,bottom=5pt,fontupper=\sffamily\color{white}]
+  {\scriptsize\bfseries\color{hudamber}PUZZLE PAGE}\\[1pt]{\large\bfseries #1}\\[1pt]{\footnotesize #2}
+ \end{tcolorbox}\par\smallskip}
+
+
+\definecolor{balloonorange}{HTML}{FF9F43}
+\definecolor{balloongreen}{HTML}{6CCB5F}
+\definecolor{balloonblue}{HTML}{5BA8FF}
+\definecolor{balloonpurple}{HTML}{A98BF0}
+\definecolor{balloonpink}{HTML}{FF8FC0}
