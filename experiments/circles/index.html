@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Choose the Next Pop · SpherePOP</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header>
+      <a class="wordmark" href="../../">SPHEREPOP <span>/ CIRCLES LAB</span></a
+      ><a href="../../an_introduction_to_spherepop.pdf"
+        >Read the introduction ↗</a
+      >
+    </header>
+    <main>
+      <section class="intro">
+        <div class="eyebrow">AN EXECUTABLE COMPANION · CHAPTERS 1–7</div>
+        <h1>Choose the next pop.</h1>
+        <p>
+          A circle becomes a value when its operands are values and its operator
+          admits them. Choose an eligible circle and watch the expression
+          change.
+        </p>
+      </section>
+      <div class="workspace">
+        <aside class="panel examples">
+          <h2>Start with an expression</h2>
+          <div id="presets"></div>
+          <p class="quiet">
+            Pure terms, typed operators, explicit grouping. This experiment uses
+            the book’s core calculus.
+          </p>
+        </aside>
+        <section class="panel laboratory" aria-label="Reduction laboratory">
+          <div class="lab-heading">
+            <div>
+              <div id="chapter" class="eyebrow"></div>
+              <h2 id="title"></h2>
+            </div>
+            <span id="status" class="badge"></span>
+          </div>
+          <p id="note"></p>
+          <div class="metrics">
+            <div>
+              <strong id="remaining">0</strong><span>circles left</span>
+            </div>
+            <div><strong id="pops">0</strong><span>pops taken</span></div>
+            <div>
+              <strong id="rounds">0</strong><span>parallel rounds</span>
+            </div>
+            <div><strong id="height">0</strong><span>current depth</span></div>
+          </div>
+          <div id="canvas" aria-label="Nested expression"></div>
+          <div class="expression">
+            <span>LINEAR NOTATION</span><code id="expression"></code>
+          </div>
+          <div class="controls">
+            <button id="pop" class="primary">
+              Pop selected <kbd>Enter</kbd></button
+            ><button id="parallel">Pop one round <kbd>P</kbd></button
+            ><button id="undo">Undo <kbd>U</kbd></button
+            ><button id="reset">Reset <kbd>R</kbd></button>
+          </div>
+          <p id="selection" class="selection" aria-live="polite"></p>
+          <div id="message" role="status" aria-live="polite"></div>
+          <div id="substitution" class="substitution"></div>
+          <div class="tools">
+            <button id="compare">Compare evaluation orders</button
+            ><button id="export">Export trace ↓</button>
+          </div>
+          <div id="comparison" aria-live="polite"></div>
+        </section>
+        <aside class="panel history">
+          <h2>Experiment trace</h2>
+          <p class="quiet">
+            Each action records its input and output. Undo returns to the
+            preceding expression.
+          </p>
+          <ol id="trace"></ol>
+        </aside>
+      </div>
+      <details class="panel editor">
+        <summary>Edit a typed expression</summary>
+        <p>
+          Numbers use decimal strings, preserving exact integers. Symbols use
+          <code>{"kind":"sym","name":"x"}</code>. Unknown operators and
+          ill-sorted circles stay inert. Input and arithmetic budgets keep this
+          browser session bounded.
+        </p>
+        <label for="source">Term as JSON</label
+        ><textarea id="source" rows="12" spellcheck="false"></textarea
+        ><button id="load">Load expression</button>
+      </details>
+      <footer>
+        <p>
+          <strong>Explore the claim, inspect the conditions.</strong> In the
+          pure fragment every pop removes one circle, and independent ready pops
+          commute. An admissible closed tree takes its depth in simultaneous
+          rounds. Pop counts measure reductions, not the computational cost of
+          integer arithmetic.
+        </p>
+        <p>
+          Use <kbd>J</kbd>/<kbd>K</kbd> to select ready circles,
+          <kbd>Enter</kbd> to pop, <kbd>P</kbd> for a parallel round,
+          <kbd>U</kbd> to undo and <kbd>R</kbd> to reset. Shortcuts are inactive
+          while editing. The experiment trace is a record of interaction,
+          separate from the repository’s event-history kernel.
+          <a href="README.md">Methods and verification</a>
+        </p>
+      </footer>
+    </main>
+    <script type="module" src="app.mjs"></script>
+  </body>
+</html>

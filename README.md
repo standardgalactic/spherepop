@@ -1,6 +1,10 @@
 # Spherepop
 
+[Circle Laboratory](https://standardgalactic.github.io/spherepop/experiments/circles/) — *Interactive Experiments*
+
 [An Introduction to Spherepop](https://standardgalactic.github.io/spherepop/an_introduction_to_spherepop.pdf)
+
+[Choose the Next Pop](experiments/circles/) — an interactive companion to the introduction: select reductions, substitute symbols, compose images, and compare evaluation orders.
 
 [Spherepop Theory](https://standardgalactic.github.io/spherepop/dynamics/spherepop.pdf)
 

@@ -1,0 +1,1656 @@
+# Choose the Next Pop
+
+An interactive companion to *An Introduction to SpherePOP: Nested Circles,
+Typed Operators, and Reduction*, chapters 1–7. Open
+[`index.html`](index.html) through a static HTTP server. No package install,
+external assets, build step, or service is needed.
+
+From the repository root:
+
+```sh
+python3 -m http.server 8000
+```
+
+Visit <http://localhost:8000/experiments/circles/>. Select an eligible circle
+and pop it, reduce a simultaneous frontier, undo an action, substitute an
+integer for a free symbol, or compare leftmost, rightmost and parallel
+strategies. The JSON editor accepts typed terms, never executable Python or
+JavaScript. Export preserves exact input and output terms for every action.
+
+The presets cover explicit grouping, disjoint redexes, balanced parallel
+reduction, partial evaluation, inert terms, power towers, immutable images,
+recolouring, clockwise rotation, composition and domain restrictions.
+J/K selects ready circles, Enter pops, P performs one simultaneous round,
+U undoes, and R resets. Buttons and circle selection also support keyboard
+focus. Editing fields do not trigger these shortcuts. The layout supports
+small screens and uses no animation or audio.
+
+## What the experiment establishes
+
+`engine.mjs` implements pure value-returning operators using exact BigInt
+arithmetic. A normal form may still be an inert circle: unknown operators,
+wrong arities, unsupplied symbols, sort mismatches and inadmissible operand
+tuples do not become successful values. The resource budget is reported
+separately; an admissible operation can exceed browser limits.
+
+Each ordinary pop removes exactly one circle. The simultaneous operation
+captures all ready positions before modifying the term, so newly enabled
+parents wait until the next round. Left/right/parallel comparisons start
+from the current expression. Bounded exploration deduplicates identical
+terms, counts distinct states and transitions, and explicitly reports when
+its state budget prevents exhaustive exploration. It does not count all
+paths and is not a proof of general confluence. Parallel rounds measure
+logical dependency depth, not actual parallel execution or wall-clock time.
+
+Input is limited to 255 terms, depth 24, 100 KB of JSON, and rectangular
+images up to 16 × 16. Arithmetic has a 20,000-decimal-digit result limit
+and a conservative exponent budget. The book's five-two tower, 2**65536,
+fits. Display abbreviates large numbers while exported traces retain them.
+The total-pops metric includes every recorded pop, including ones taken
+before a substitution. The parallel-rounds metric counts only explicitly
+requested simultaneous rounds, not mixed sequential actions.
+
+This core experiment does not implement the symbolic rewriting extension
+of chapter 8, lambda binding, mutable instruction bubbles, or the canonical
+event-history kernel in `experiments/flat`. In particular, an inert circle
+is not a REFUSE event and a pop here is not a historical commitment event.
+The existing `reduction-engine/` remains a separate teaching model.
+
+## Verification
+
+With Node.js 20+ and Python 3.10+ available, run from the repository root:
+
+```sh
+node experiments/circles/test.mjs
+```
+
+`oracle.py` explicitly loads `spherepop-book-source/spherepop.py` by path,
+avoiding collisions with older packages named `spherepop`. Presets,
+deterministically generated arithmetic and symbolic terms, substitutions,
+invalid operator applications, images and a large integer are compared
+against the book for their first reduction, normal form, size and pop count.
+Independent checks exercise disjoint-pop diamonds, size decrease, strategy
+agreement, parallel-frontier timing, image orientation and persistence,
+exploration cutoffs and resource/input limits.
+
+The dedicated `circle-laboratory.yml` workflow checks changes to this
+experiment, the book interpreter, or its own definition. It uses sparse
+checkout and read-only permissions. The existing C/cross-language workflow
+and its conformance report are unaffected.
+import {
+  presets,
+  ready,
+  pop,
+  parallel,
+  size,
+  depth,
+  show,
+  reason,
+  substitute,
+  symbols,
+  num,
+  normalize,
+  explore,
+  equal,
+  validate,
+} from "./engine.mjs";
+const $ = (id) => document.getElementById(id);
+const el = (tag, text, className) => {
+  const e = document.createElement(tag);
+  if (text !== undefined) e.textContent = text;
+  if (className) e.className = className;
+  return e;
+};
+let initial = presets[0].term,
+  current = initial,
+  example = presets[0],
+  selected = 0,
+  actions = [],
+  undo = [],
+  comparison = "";
+function message(text = "") {
+  $("message").textContent = text;
+}
+const pathName = (p) => (p.length ? p.map((i) => i + 1).join(".") : "root");
+function load(term, meta) {
+  initial = term;
+  current = term;
+  example = meta;
+  selected = 0;
+  actions = [];
+  undo = [];
+  comparison = "";
+  $("source").value = JSON.stringify(term, null, 2);
+  message();
+  render();
+}
+function commit(term, label, pops = 0, rounds = 0, paths = []) {
+  undo.push({ current, actions: [...actions], selected, comparison });
+  actions.push({
+    action: label,
+    paths,
+    input: current,
+    output: term,
+    pops,
+    parallelRounds: rounds,
+  });
+  current = term;
+  selected = 0;
+  comparison = "";
+  message();
+  render();
+}
+function safely(fn) {
+  try {
+    fn();
+  } catch (error) {
+    message(error.message);
+  }
+}
+function choosePop() {
+  safely(() => {
+    const r = ready(current)[selected];
+    if (r)
+      commit(
+        pop(current, r.path),
+        `Pop ${r.term.op} at ${pathName(r.path)}`,
+        1,
+        0,
+        [r.path],
+      );
+  });
+}
+function oneRound() {
+  safely(() => {
+    const frontier = ready(current);
+    if (!frontier.length) return;
+    const next = parallel(current);
+    commit(
+      next.term,
+      `Parallel round: ${next.pops} pops`,
+      next.pops,
+      1,
+      frontier.map((r) => r.path),
+    );
+  });
+}
+function back() {
+  const state = undo.pop();
+  if (state) {
+    ({ current, actions, selected, comparison } = state);
+    message();
+    render();
+  }
+}
+const palette = {
+  red: "#e87366",
+  blue: "#79aef2",
+  green: "#92ca79",
+  yellow: "#f1d17b",
+  x: "#c8dbbd",
+  y: "#bd9ae5",
+  z: "#e6b176",
+};
+function draw(t, path = []) {
+  if (t.kind === "circle") {
+    const rs = ready(current),
+      index = rs.findIndex(
+        (r) => JSON.stringify(r.path) === JSON.stringify(path),
+      );
+    const box = el(
+      "div",
+      undefined,
+      `circle${index >= 0 ? " ready" : ""}${index === selected ? " selected" : ""}`,
+    );
+    box.append(el("span", t.op, "operator"));
+    const args = el("div", undefined, "operands");
+    t.args.forEach((a, i) => args.append(draw(a, [...path, i])));
+    box.append(args);
+    box.title = reason(t) ?? `Ready: ${t.op}. Select, then pop.`;
+    if (index >= 0) {
+      box.tabIndex = 0;
+      box.setAttribute("role", "button");
+      box.setAttribute(
+        "aria-label",
+        `Select ready ${t.op} at ${pathName(path)}`,
+      );
+      box.setAttribute("aria-pressed", String(index === selected));
+      box.addEventListener("click", (event) => {
+        event.stopPropagation();
+        selected = index;
+        render();
+      });
+      box.addEventListener("keydown", (event) => {
+        if (event.key === " " || event.key === "Enter") {
+          event.preventDefault();
+          event.stopPropagation();
+          selected = index;
+          render();
+          $("pop").focus();
+        }
+      });
+    }
+    return box;
+  }
+  if (t.kind === "image") {
+    const grid = el("div", undefined, "pixel-image");
+    grid.style.gridTemplateColumns = `repeat(${t.rows[0].length},1fr)`;
+    grid.setAttribute("role", "img");
+    grid.setAttribute(
+      "aria-label",
+      `Image: ${t.rows.map((r) => r.join(" ")).join("; ")}`,
+    );
+    t.rows.flat().forEach((p) => {
+      const cell = el("span", undefined, "pixel");
+      cell.style.background =
+        p === "." ? "transparent" : (palette[p] ?? "#d4bd91");
+      cell.title = p === "." ? "transparent" : p;
+      grid.append(cell);
+    });
+    return grid;
+  }
+  const atom = el(
+    "span",
+    show(t),
+    `atom${t.kind === "sym" ? " symbol" : ""}${t.kind === "num" && t.value.length > 70 ? " long-number" : ""}`,
+  );
+  if (t.kind === "color") atom.style.color = palette[t.name] ?? "#d4bd91";
+  return atom;
+}
+function render() {
+  const rs = ready(current);
+  selected = Math.max(0, Math.min(selected, rs.length - 1));
+  $("title").textContent = example.name;
+  $("chapter").textContent = `BOOK CHAPTERS ${example.chapter}`;
+  $("note").textContent = example.note;
+  $("status").textContent =
+    current.kind !== "circle"
+      ? "Value"
+      : rs.length
+        ? "Ready to pop"
+        : "Inert normal form";
+  $("status").className =
+    `badge${current.kind === "circle" && !rs.length ? " blocked" : ""}`;
+  $("remaining").textContent = size(current);
+  $("height").textContent = depth(current);
+  $("pops").textContent = actions.reduce((n, a) => n + a.pops, 0);
+  $("rounds").textContent = actions.reduce((n, a) => n + a.parallelRounds, 0);
+  $("canvas").replaceChildren(draw(current));
+  $("expression").textContent = show(current);
+  $("pop").disabled = !rs.length;
+  $("parallel").disabled = !rs.length;
+  $("undo").disabled = !undo.length;
+  $("selection").textContent = rs.length
+    ? `${rs.length} ready ${rs.length === 1 ? "circle" : "circles"}. Selected ${rs[selected].term.op} at ${pathName(rs[selected].path)}.`
+    : current.kind === "circle"
+      ? reason(current)
+      : "Evaluation has reached a value.";
+  $("presets")
+    .querySelectorAll("button")
+    .forEach((b, i) => {
+      b.classList.toggle("active", presets[i] === example);
+      b.setAttribute("aria-pressed", String(presets[i] === example));
+    });
+  $("substitution").replaceChildren();
+  const names = symbols(current);
+  if (names.length) {
+    $("substitution").append(
+      el(
+        "p",
+        "Supply integer values for free symbols. Blank fields leave symbols unchanged.",
+        "quiet",
+      ),
+    );
+    const inputs = {};
+    names.forEach((name) => {
+      const label = el("label", `${name} =`);
+      const input = el("input");
+      input.inputMode = "numeric";
+      input.setAttribute("aria-label", `Integer value for ${name}`);
+      inputs[name] = input;
+      label.append(input);
+      $("substitution").append(label);
+    });
+    const apply = el("button", "Substitute");
+    apply.onclick = () =>
+      safely(() => {
+        const env = {};
+        for (const [name, input] of Object.entries(inputs)) {
+          const value = input.value.trim();
+          if (value) {
+            if (!/^-?\d{1,100}$/.test(value))
+              throw Error("Enter integers of at most 100 digits.");
+            env[name] = num(value);
+          }
+        }
+        if (Object.keys(env).length)
+          commit(
+            substitute(current, env),
+            `Substitute ${Object.entries(env)
+              .map(([k, v]) => `${k} = ${v.value}`)
+              .join(", ")}`,
+          );
+      });
+    $("substitution").append(apply);
+  }
+  $("trace").replaceChildren();
+  if (!actions.length)
+    $("trace").append(el("li", "No actions yet. Choose a ready circle."));
+  actions.forEach((a) => {
+    const li = el("li");
+    li.append(el("strong", a.action), el("code", show(a.output)));
+    $("trace").append(li);
+  });
+  $("comparison").replaceChildren();
+  if (comparison) $("comparison").append(comparison);
+}
+presets.forEach((p) => {
+  const button = el("button", p.name);
+  button.onclick = () => load(p.term, p);
+  $("presets").append(button);
+});
+$("pop").onclick = choosePop;
+$("parallel").onclick = oneRound;
+$("undo").onclick = back;
+$("reset").onclick = () => load(initial, example);
+$("load").onclick = () =>
+  safely(() => {
+    if ($("source").value.length > 100000)
+      throw Error("Expression JSON exceeds the input budget.");
+    load(validate(JSON.parse($("source").value)), {
+      name: "Your expression",
+      chapter: "1–7",
+      note: "Select a ready circle, explore alternative orders, or supply a free symbol.",
+    });
+  });
+$("compare").onclick = () =>
+  safely(() => {
+    const results = ["left", "right", "parallel"].map((strategy) => ({
+      strategy,
+      ...normalize(current, strategy),
+    }));
+    const graph = explore(current);
+    const box = el("div");
+    box.append(el("strong", "Comparison from the current expression"));
+    const table = el("table");
+    const head = el("thead");
+    const hr = el("tr");
+    ["Strategy", "Pops", "Rounds / steps", "Normal form"].forEach((s) =>
+      hr.append(el("th", s)),
+    );
+    head.append(hr);
+    table.append(head);
+    const body = el("tbody");
+    results.forEach((r) => {
+      const row = el("tr");
+      [r.strategy, r.pops, r.rounds, show(r.term)].forEach((v) =>
+        row.append(el("td", v)),
+      );
+      body.append(row);
+    });
+    table.append(body);
+    box.append(table);
+    box.append(
+      el(
+        "p",
+        `${results.every((r) => equal(r.term, results[0].term)) ? "All three strategies agree." : "The strategies disagree."} ${graph.complete ? "Complete bounded exploration" : "Exploration stopped at its state budget"}: ${graph.states} distinct expressions, ${graph.edges} transitions, ${graph.normalForms.length} ${graph.complete ? "" : "observed "}normal form(s). This checks this expression; it does not prove a general theorem.`,
+      ),
+    );
+    comparison = box;
+    render();
+  });
+$("export").onclick = () => {
+  const data = {
+    format: "spherepop-circle-experiment/1",
+    semantics: "pure typed value-returning operators, book chapters 1–7",
+    initial,
+    actions,
+    final: current,
+  };
+  const url = URL.createObjectURL(
+    new Blob([JSON.stringify(data, null, 2)], { type: "application/json" }),
+  );
+  const a = el("a");
+  a.href = url;
+  a.download = "spherepop-circle-trace.json";
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+};
+document.addEventListener("keydown", (event) => {
+  if (
+    event.ctrlKey ||
+    event.metaKey ||
+    event.altKey ||
+    ["INPUT", "TEXTAREA", "SELECT", "BUTTON", "SUMMARY", "A"].includes(
+      event.target.tagName,
+    ) ||
+    event.target.isContentEditable
+  )
+    return;
+  const k = event.key.toLowerCase();
+  if (["j", "k", "enter", "p", "u", "r"].includes(k)) {
+    event.preventDefault();
+    if (k === "j" || k === "k") {
+      const n = ready(current).length;
+      if (n) {
+        selected = (selected + (k === "j" ? 1 : n - 1)) % n;
+        render();
+      }
+    }
+    if (k === "enter") choosePop();
+    if (k === "p") oneRound();
+    if (k === "u") back();
+    if (k === "r") load(initial, example);
+  }
+});
+load(initial, example);
+// The pure, many-sorted fragment of An Introduction to SpherePOP, chapters 1–7.
+// BigInt keeps numerical values integral, including the book's power towers.
+export const num = (value) => ({ kind: "num", value: String(BigInt(value)) });
+export const sym = (name) => ({ kind: "sym", name });
+export const color = (name) => ({ kind: "color", name });
+export const image = (rows) => ({ kind: "image", rows });
+export const circle = (op, ...args) => ({ kind: "circle", op, args });
+const signatures = {
+  add: ["num", "num"],
+  sub: ["num", "num"],
+  mul: ["num", "num"],
+  pow: ["num", "num"],
+  rotate: ["image", "num"],
+  recolor: ["image", "color"],
+  beside: ["image", "image"],
+};
+export const size = (t) =>
+  t.kind === "circle" ? 1 + t.args.reduce((n, a) => n + size(a), 0) : 0;
+export const depth = (t) =>
+  t.kind === "circle" ? 1 + Math.max(0, ...t.args.map(depth)) : 0;
+export const key = (t) => JSON.stringify(t);
+export const equal = (a, b) => key(a) === key(b);
+export function show(t) {
+  if (t.kind === "circle")
+    return `<${t.op}${t.args.length ? " " : ""}${t.args.map(show).join(" ")}>`;
+  if (t.kind === "num")
+    return t.value.length > 70
+      ? `${t.value.slice(0, 28)}… (${t.value.length} digits)`
+      : t.value;
+  if (t.kind === "image")
+    return `image(${t.rows.map((r) => r.join("")).join("/")})`;
+  return t.name;
+}
+export function validate(t, level = 0, counter = { n: 0 }) {
+  if (++counter.n > 255 || level > 24)
+    throw Error("Use at most 255 terms and nesting depth 24.");
+  if (!t || typeof t !== "object")
+    throw Error("A term must be a typed object.");
+  if (t.kind === "num") {
+    if (typeof t.value !== "string" || !/^-?\d{1,20000}$/.test(t.value))
+      throw Error(
+        "Numbers must be decimal integer strings (at most 20,000 digits).",
+      );
+    return num(t.value);
+  }
+  if (t.kind === "sym" || t.kind === "color") {
+    if (
+      typeof t.name !== "string" ||
+      !/^[A-Za-z][A-Za-z0-9_-]{0,31}$/.test(t.name)
+    )
+      throw Error(
+        "Names must contain letters, digits, underscores or hyphens.",
+      );
+    return { kind: t.kind, name: t.name };
+  }
+  if (t.kind === "image") {
+    if (
+      !Array.isArray(t.rows) ||
+      !t.rows.length ||
+      t.rows.length > 16 ||
+      !Array.isArray(t.rows[0]) ||
+      !t.rows[0].length ||
+      t.rows[0].length > 16 ||
+      !t.rows.every(
+        (r) =>
+          Array.isArray(r) &&
+          r.length === t.rows[0].length &&
+          r.every(
+            (p) =>
+              typeof p === "string" &&
+              /^(\.|[A-Za-z][A-Za-z0-9_-]{0,31})$/.test(p),
+          ),
+      )
+    )
+      throw Error(
+        "Images must be rectangular, nonempty grids no larger than 16 × 16.",
+      );
+    return image(t.rows.map((r) => [...r]));
+  }
+  if (t.kind === "circle") {
+    if (
+      typeof t.op !== "string" ||
+      !/^[A-Za-z][A-Za-z0-9_-]{0,31}$/.test(t.op) ||
+      !Array.isArray(t.args) ||
+      t.args.length > 8
+    )
+      throw Error("Invalid circle operator or operands.");
+    return circle(t.op, ...t.args.map((a) => validate(a, level + 1, counter)));
+  }
+  throw Error("Unknown term kind.");
+}
+export function reason(t) {
+  if (t.kind !== "circle") return "Already a value.";
+  const sig = signatures[t.op];
+  if (!sig) return `Unknown operator: ${t.op}.`;
+  if (t.args.length !== sig.length)
+    return `${t.op} needs ${sig.length} operands.`;
+  if (t.args.some((a) => a.kind === "circle"))
+    return "Waiting for an inner circle.";
+  if (t.args.some((a, i) => a.kind !== sig[i]))
+    return `Requires ${sig.join(" × ")}; symbols need substitution.`;
+  if (t.op === "pow" && BigInt(t.args[1].value) < 0n)
+    return "Negative exponents are outside the integer carrier.";
+  if (t.op === "rotate" && BigInt(t.args[1].value) % 90n !== 0n)
+    return "Rotation requires a multiple of 90 degrees.";
+  if (t.op === "beside" && t.args[0].rows.length !== t.args[1].rows.length)
+    return "Images must have equal heights.";
+  return null;
+}
+export class BudgetError extends Error {}
+export function evaluate(t) {
+  const why = reason(t);
+  if (why) throw Error(why);
+  const [a, b] = t.args;
+  if (["add", "sub", "mul", "pow"].includes(t.op)) {
+    const x = BigInt(a.value),
+      y = BigInt(b.value);
+    let v;
+    if (t.op === "add") v = x + y;
+    if (t.op === "sub") v = x - y;
+    if (t.op === "mul") v = x * y;
+    if (t.op === "pow") {
+      // A resource boundary, never a semantic refusal. Allow the five-two tower.
+      if (
+        y > 100000n ||
+        (x !== 0n &&
+          x !== 1n &&
+          x !== -1n &&
+          BigInt((x < 0n ? -x : x).toString(2).length) * y > 140000n)
+      )
+        throw new BudgetError(
+          "Power exceeds the browser arithmetic budget; the circle is admissible but has not been evaluated.",
+        );
+      v = x ** y;
+    }
+    if (v.toString().length > 20000)
+      throw new BudgetError("Result exceeds the 20,000-digit display budget.");
+    return num(v);
+  }
+  if (t.op === "recolor")
+    return image(a.rows.map((r) => r.map((p) => (p === "." ? "." : b.name))));
+  if (t.op === "beside") {
+    if (a.rows[0].length + b.rows[0].length > 16)
+      throw new BudgetError("Result exceeds the 16-column image budget.");
+    return image(a.rows.map((r, i) => [...r, ...b.rows[i]]));
+  }
+  let rows = a.rows.map((r) => [...r]),
+    turns = Number((((BigInt(b.value) / 90n) % 4n) + 4n) % 4n);
+  while (turns--) rows = rows[0].map((_, i) => rows.map((r) => r[i]).reverse());
+  return image(rows);
+}
+export function ready(t, path = []) {
+  if (t.kind !== "circle") return [];
+  const children = t.args.flatMap((a, i) => ready(a, [...path, i]));
+  return reason(t) === null ? [...children, { path, term: t }] : children;
+}
+export function at(t, path) {
+  return path.reduce((a, i) => a.args[i], t);
+}
+export function replace(t, path, value) {
+  if (!path.length) return value;
+  const [i, ...rest] = path;
+  return circle(
+    t.op,
+    ...t.args.map((a, j) => (j === i ? replace(a, rest, value) : a)),
+  );
+}
+export function pop(t, path) {
+  return replace(t, path, evaluate(at(t, path)));
+}
+export function parallel(t) {
+  // Capture the frontier before reducing: parents newly enabled wait one round.
+  const frontier = ready(t);
+  return {
+    term: frontier.reduce((out, r) => pop(out, r.path), t),
+    pops: frontier.length,
+  };
+}
+export function substitute(t, env) {
+  if (t.kind === "sym") return env[t.name] ?? t;
+  return t.kind === "circle"
+    ? circle(t.op, ...t.args.map((a) => substitute(a, env)))
+    : t;
+}
+export function symbols(t) {
+  return [
+    ...new Set(
+      t.kind === "sym"
+        ? [t.name]
+        : t.kind === "circle"
+          ? t.args.flatMap(symbols)
+          : [],
+    ),
+  ].sort();
+}
+export function normalize(t, strategy = "left") {
+  let pops = 0,
+    rounds = 0;
+  while (ready(t).length) {
+    if (strategy === "parallel") {
+      const next = parallel(t);
+      t = next.term;
+      pops += next.pops;
+    } else {
+      const rs = ready(t);
+      t = pop(t, rs[strategy === "right" ? rs.length - 1 : 0].path);
+      pops++;
+    }
+    rounds++;
+    if (rounds > 255) throw new BudgetError("Reduction budget reached.");
+  }
+  return { term: t, pops, rounds };
+}
+export function explore(t, limit = 1200) {
+  const queue = [t],
+    seen = new Set([key(t)]),
+    normalForms = new Map();
+  let edges = 0;
+  for (let i = 0; i < queue.length; i++) {
+    const rs = ready(queue[i]);
+    if (!rs.length) normalForms.set(key(queue[i]), queue[i]);
+    for (const r of rs) {
+      const next = pop(queue[i], r.path);
+      edges++;
+      if (!seen.has(key(next))) {
+        if (seen.size >= limit)
+          return {
+            complete: false,
+            states: seen.size,
+            edges,
+            normalForms: [...normalForms.values()],
+          };
+        seen.add(key(next));
+        queue.push(next);
+      }
+    }
+  }
+  return {
+    complete: true,
+    states: seen.size,
+    edges,
+    normalForms: [...normalForms.values()],
+  };
+}
+const N = num,
+  S = sym,
+  C = circle;
+const I = image([
+  ["x", ".", "x"],
+  [".", "x", "."],
+]);
+export const presets = [
+  {
+    name: "Two independent pops",
+    chapter: "1, 4",
+    note: "Choose either multiplication. Both choices leave the other ready and converge to 26.",
+    term: C("add", C("mul", N(2), N(3)), C("mul", N(4), N(5))),
+  },
+  {
+    name: "Grouping changes the answer",
+    chapter: "1",
+    note: "The explicit grouping 2 + (3 × 4) yields 14. Edit the JSON to move add inside mul and obtain 20.",
+    term: C("add", N(2), C("mul", N(3), N(4))),
+  },
+  {
+    name: "Seven circles, three rounds",
+    chapter: "4",
+    note: "A balanced tree takes seven individual pops, or three simultaneous rounds. Rounds are logical depth, not a wall-clock benchmark.",
+    term: C(
+      "add",
+      C("add", C("add", N(1), N(1)), C("add", N(1), N(1))),
+      C("add", C("add", N(1), N(1)), C("add", N(1), N(1))),
+    ),
+  },
+  {
+    name: "A symbol waits",
+    chapter: "6",
+    note: "The numerical multiplication can pop now. Supply x = 5 to enable the remaining addition.",
+    term: C("add", S("x"), C("mul", N(3), N(4))),
+  },
+  {
+    name: "An inert integer expression",
+    chapter: "5",
+    note: "A negative exponent is outside this integer operator’s domain. No ready circles does not necessarily mean a value.",
+    term: C("add", N(1), C("pow", N(2), N(-1))),
+  },
+  {
+    name: "Right-nested tower",
+    chapter: "4, 6",
+    note: "Four twos, three circles, result 65536. Each pop counts once, although arithmetic costs differ.",
+    term: C("pow", N(2), C("pow", N(2), C("pow", N(2), N(2)))),
+  },
+  {
+    name: "Left-nested tower",
+    chapter: "4",
+    note: "The same four twos with different grouping give 256, again in three pops.",
+    term: C("pow", C("pow", C("pow", N(2), N(2)), N(2)), N(2)),
+  },
+  {
+    name: "Recolour, then rotate",
+    chapter: "7",
+    note: "Red replaces occupied cells; dots stay transparent. Rotation is clockwise and the original value is immutable.",
+    term: C("rotate", C("recolor", I, color("red")), N(90)),
+  },
+  {
+    name: "Compose two images",
+    chapter: "7",
+    note: "Independent image operations can pop in either order before beside combines their equal-height results.",
+    term: C(
+      "beside",
+      C(
+        "rotate",
+        image([
+          ["x", "y"],
+          ["z", "."],
+        ]),
+        N(90),
+      ),
+      C(
+        "recolor",
+        image([
+          ["x", "."],
+          [".", "x"],
+        ]),
+        color("blue"),
+      ),
+    ),
+  },
+  {
+    name: "Rotation waits for admissibility",
+    chapter: "5, 7",
+    note: "Forty-five degrees is outside the grid operator’s domain. The expression remains available for editing.",
+    term: C("rotate", I, N(45)),
+  },
+];
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Choose the Next Pop · SpherePOP</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header>
+      <a class="wordmark" href="../../">SPHEREPOP <span>/ CIRCLES LAB</span></a
+      ><a href="../../an_introduction_to_spherepop.pdf"
+        >Read the introduction ↗</a
+      >
+    </header>
+    <main>
+      <section class="intro">
+        <div class="eyebrow">AN EXECUTABLE COMPANION · CHAPTERS 1–7</div>
+        <h1>Choose the next pop.</h1>
+        <p>
+          A circle becomes a value when its operands are values and its operator
+          admits them. Choose an eligible circle and watch the expression
+          change.
+        </p>
+      </section>
+      <div class="workspace">
+        <aside class="panel examples">
+          <h2>Start with an expression</h2>
+          <div id="presets"></div>
+          <p class="quiet">
+            Pure terms, typed operators, explicit grouping. This experiment uses
+            the book’s core calculus.
+          </p>
+        </aside>
+        <section class="panel laboratory" aria-label="Reduction laboratory">
+          <div class="lab-heading">
+            <div>
+              <div id="chapter" class="eyebrow"></div>
+              <h2 id="title"></h2>
+            </div>
+            <span id="status" class="badge"></span>
+          </div>
+          <p id="note"></p>
+          <div class="metrics">
+            <div>
+              <strong id="remaining">0</strong><span>circles left</span>
+            </div>
+            <div><strong id="pops">0</strong><span>pops taken</span></div>
+            <div>
+              <strong id="rounds">0</strong><span>parallel rounds</span>
+            </div>
+            <div><strong id="height">0</strong><span>current depth</span></div>
+          </div>
+          <div id="canvas" aria-label="Nested expression"></div>
+          <div class="expression">
+            <span>LINEAR NOTATION</span><code id="expression"></code>
+          </div>
+          <div class="controls">
+            <button id="pop" class="primary">
+              Pop selected <kbd>Enter</kbd></button
+            ><button id="parallel">Pop one round <kbd>P</kbd></button
+            ><button id="undo">Undo <kbd>U</kbd></button
+            ><button id="reset">Reset <kbd>R</kbd></button>
+          </div>
+          <p id="selection" class="selection" aria-live="polite"></p>
+          <div id="message" role="status" aria-live="polite"></div>
+          <div id="substitution" class="substitution"></div>
+          <div class="tools">
+            <button id="compare">Compare evaluation orders</button
+            ><button id="export">Export trace ↓</button>
+          </div>
+          <div id="comparison" aria-live="polite"></div>
+        </section>
+        <aside class="panel history">
+          <h2>Experiment trace</h2>
+          <p class="quiet">
+            Each action records its input and output. Undo returns to the
+            preceding expression.
+          </p>
+          <ol id="trace"></ol>
+        </aside>
+      </div>
+      <details class="panel editor">
+        <summary>Edit a typed expression</summary>
+        <p>
+          Numbers use decimal strings, preserving exact integers. Symbols use
+          <code>{"kind":"sym","name":"x"}</code>. Unknown operators and
+          ill-sorted circles stay inert. Input and arithmetic budgets keep this
+          browser session bounded.
+        </p>
+        <label for="source">Term as JSON</label
+        ><textarea id="source" rows="12" spellcheck="false"></textarea
+        ><button id="load">Load expression</button>
+      </details>
+      <footer>
+        <p>
+          <strong>Explore the claim, inspect the conditions.</strong> In the
+          pure fragment every pop removes one circle, and independent ready pops
+          commute. An admissible closed tree takes its depth in simultaneous
+          rounds. Pop counts measure reductions, not the computational cost of
+          integer arithmetic.
+        </p>
+        <p>
+          Use <kbd>J</kbd>/<kbd>K</kbd> to select ready circles,
+          <kbd>Enter</kbd> to pop, <kbd>P</kbd> for a parallel round,
+          <kbd>U</kbd> to undo and <kbd>R</kbd> to reset. Shortcuts are inactive
+          while editing. The experiment trace is a record of interaction,
+          separate from the repository’s event-history kernel.
+          <a href="README.md">Methods and verification</a>
+        </p>
+      </footer>
+    </main>
+    <script type="module" src="app.mjs"></script>
+  </body>
+</html>
+"""JSON bridge to the book's actual Python interpreter, not a second oracle."""
+import importlib.util
+import json
+from pathlib import Path
+import sys
+
+SOURCE = Path(__file__).resolve().parents[2] / 'spherepop-book-source' / 'spherepop.py'
+spec = importlib.util.spec_from_file_location('spherepop_book_reference', SOURCE)
+book = importlib.util.module_from_spec(spec)
+sys.modules[spec.name] = book
+spec.loader.exec_module(book)
+if hasattr(sys, 'set_int_max_str_digits'):
+    sys.set_int_max_str_digits(0)
+
+
+def decode(term):
+    kind = term['kind']
+    if kind == 'num':
+        return int(term['value'])
+    if kind == 'sym':
+        return book.Sym(term['name'])
+    if kind == 'color':
+        return book.Color(term['name'])
+    if kind == 'image':
+        return book.Image(tuple(tuple(row) for row in term['rows']))
+    return book.Circle(term['op'], tuple(decode(a) for a in term['args']))
+
+
+def encode(term):
+    if isinstance(term, int):
+        return {'kind': 'num', 'value': str(term)}
+    if isinstance(term, book.Sym):
+        return {'kind': 'sym', 'name': term.name}
+    if isinstance(term, book.Color):
+        return {'kind': 'color', 'name': term.name}
+    if isinstance(term, book.Image):
+        return {'kind': 'image', 'rows': [list(row) for row in term.rows]}
+    return {'kind': 'circle', 'op': term.op, 'args': [encode(a) for a in term.args]}
+
+
+def run(case):
+    term = decode(case['term'])
+    if 'env' in case:
+        term = book.substitute(term, {k: decode(v) for k, v in case['env'].items()})
+    result, pops = book.normalize(term)
+    step = book.step(term)
+    return {'term': encode(result), 'pops': pops, 'size': book.size(term),
+            'step': None if step is None else encode(step)}
+
+
+if __name__ == '__main__':
+    print(json.dumps([run(case) for case in json.load(sys.stdin)]))
+:root {
+  color-scheme: dark;
+  --bg: #101514;
+  --panel: #17201d;
+  --line: #30413a;
+  --text: #e3eae4;
+  --muted: #a4b6a9;
+  --accent: #c2ed91;
+  --gold: #efce8b;
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+}
+a {
+  color: var(--accent);
+  text-underline-offset: 4px;
+}
+button,
+input,
+textarea {
+  font: inherit;
+}
+button {
+  cursor: pointer;
+  border: 1px solid #53665a;
+  background: #25342c;
+  color: var(--text);
+  border-radius: 7px;
+  padding: 10px 13px;
+  min-height: 42px;
+}
+button:hover {
+  background: #334737;
+}
+button:disabled {
+  opacity: 0.42;
+  cursor: default;
+}
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 3px;
+}
+header {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 23px 4vw;
+  border-bottom: 1px solid var(--line);
+  font-size: 13px;
+}
+.wordmark {
+  text-decoration: none;
+  letter-spacing: 0.12em;
+  font-weight: 750;
+}
+.wordmark span {
+  color: var(--muted);
+  font-weight: 400;
+}
+main {
+  max-width: 1600px;
+  margin: auto;
+  padding: 0 4vw 25px;
+}
+.intro {
+  padding: 45px 0 28px;
+  max-width: 770px;
+}
+.eyebrow {
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  color: var(--accent);
+  font-weight: 700;
+}
+h1 {
+  font-family: Georgia, serif;
+  font-weight: 400;
+  font-size: clamp(36px, 4vw, 57px);
+  letter-spacing: -0.035em;
+  margin: 10px 0 15px;
+}
+p {
+  line-height: 1.65;
+  color: var(--muted);
+  font-size: 14px;
+}
+h2 {
+  font-size: 15px;
+  font-weight: 650;
+  margin: 0 0 15px;
+}
+.workspace {
+  display: grid;
+  grid-template-columns: 230px minmax(0, 1fr) 240px;
+  gap: 16px;
+  align-items: start;
+}
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 20px;
+}
+.examples button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: 1px solid transparent;
+  font-size: 13px;
+  margin-bottom: 4px;
+  padding: 10px;
+}
+.examples button.active {
+  background: #2b3c2e;
+  border-color: #65784e;
+  color: var(--accent);
+}
+.quiet {
+  font-size: 12px;
+}
+.lab-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+.lab-heading h2 {
+  font-size: 20px;
+  margin: 9px 0;
+}
+.badge {
+  font-size: 11px;
+  padding: 6px 9px;
+  border: 1px solid #65784e;
+  border-radius: 30px;
+  white-space: nowrap;
+  color: var(--accent);
+}
+.badge.blocked {
+  color: var(--gold);
+  border-color: #786847;
+}
+.metrics {
+  display: flex;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  margin: 22px 0;
+}
+.metrics > div {
+  flex: 1;
+  padding: 14px 6px;
+}
+.metrics strong {
+  display: block;
+  font-family: Georgia, serif;
+  font-size: 27px;
+  font-weight: 400;
+}
+.metrics span {
+  font-size: 10px;
+  color: var(--muted);
+}
+#canvas {
+  padding: 22px 2px;
+  min-height: 210px;
+  overflow: auto;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+.circle {
+  flex-shrink: 0;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  border: 1px solid #61776a;
+  border-radius: 35px;
+  padding: 13px 15px 16px;
+  min-width: 84px;
+  gap: 10px;
+  background: rgba(170, 210, 165, 0.025);
+}
+.circle .operator {
+  font:
+    12px ui-monospace,
+    monospace;
+  color: #b1c2b5;
+  letter-spacing: 0.04em;
+}
+.operands {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+.circle.ready {
+  border-color: #9ec875;
+  background: #293a27;
+  cursor: pointer;
+}
+.circle.selected {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+.circle.ready .operator {
+  color: var(--accent);
+}
+.atom {
+  font:
+    18px ui-monospace,
+    monospace;
+  padding: 6px;
+  white-space: nowrap;
+}
+.atom.symbol {
+  color: var(--gold);
+  font-style: italic;
+}
+.atom.long-number {
+  font-size: 13px;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  max-width: 250px;
+}
+.pixel-image {
+  display: grid;
+  gap: 2px;
+  padding: 5px;
+  background: #0e1510;
+  border-radius: 4px;
+}
+.pixel {
+  width: 17px;
+  height: 17px;
+  border-radius: 2px;
+  border: 1px solid #ffffff12;
+}
+.expression {
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
+  overflow-wrap: anywhere;
+}
+.expression > span {
+  display: block;
+  font-size: 9px;
+  letter-spacing: 0.13em;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+code {
+  font:
+    12px ui-monospace,
+    monospace;
+}
+kbd {
+  font:
+    10px ui-monospace,
+    monospace;
+  border: 1px solid #60715d;
+  padding: 1px 4px;
+  border-radius: 3px;
+  margin-left: 3px;
+  color: var(--muted);
+}
+.controls,
+.tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 20px;
+}
+.primary {
+  background: var(--accent);
+  color: #172313;
+  border-color: var(--accent);
+  font-weight: 650;
+}
+.primary:hover {
+  background: #d0f7ab;
+}
+.primary kbd {
+  color: #30422b;
+}
+.selection {
+  font-size: 12px;
+  min-height: 20px;
+}
+#message {
+  color: var(--gold);
+  font-size: 13px;
+  line-height: 1.6;
+}
+.substitution:not(:empty) {
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+.substitution label {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  margin-right: 10px;
+  font:
+    13px ui-monospace,
+    monospace;
+}
+.substitution input {
+  width: 100px;
+  padding: 9px;
+  background: #101b14;
+  border: 1px solid #5b6d60;
+  border-radius: 4px;
+  color: var(--text);
+}
+.tools button {
+  font-size: 12px;
+  background: none;
+}
+#comparison {
+  margin-top: 15px;
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--muted);
+}
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 12px 0;
+  font-size: 12px;
+}
+td,
+th {
+  text-align: left;
+  border-bottom: 1px solid var(--line);
+  padding: 7px 5px;
+}
+.history ol {
+  padding-left: 22px;
+  max-height: 540px;
+  overflow: auto;
+  margin-bottom: 0;
+}
+.history li {
+  padding: 0 0 15px 5px;
+  font-size: 12px;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+.history li strong {
+  display: block;
+  color: var(--text);
+  font-size: 12px;
+  margin-bottom: 5px;
+}
+.editor {
+  margin-top: 20px;
+}
+.editor summary {
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--accent);
+}
+.editor label {
+  display: block;
+  font-size: 12px;
+  margin: 12px 0;
+}
+.editor textarea {
+  display: block;
+  width: 100%;
+  background: #0f1712;
+  color: var(--text);
+  border: 1px solid #52675a;
+  border-radius: 6px;
+  padding: 15px;
+  font:
+    12px ui-monospace,
+    monospace;
+  resize: vertical;
+  margin-bottom: 14px;
+}
+footer {
+  max-width: 1000px;
+  padding: 22px 0;
+}
+footer p {
+  font-size: 12px;
+}
+footer strong {
+  color: var(--text);
+}
+@media (min-width: 1400px) {
+  .workspace {
+    grid-template-columns: 250px minmax(0, 1fr) 260px;
+  }
+}
+@media (max-width: 1150px) {
+  .workspace {
+    grid-template-columns: 210px minmax(0, 1fr);
+  }
+  .history {
+    grid-column: 1/-1;
+  }
+  .history ol {
+    max-height: 230px;
+  }
+}
+@media (max-width: 720px) {
+  header {
+    padding: 18px 5vw;
+    font-size: 11px;
+  }
+  .wordmark span {
+    display: none;
+  }
+  main {
+    padding: 0 4vw 20px;
+  }
+  .intro {
+    padding: 32px 0 20px;
+  }
+  .workspace {
+    display: flex;
+    flex-direction: column;
+  }
+  .panel {
+    width: 100%;
+    padding: 16px;
+  }
+  .examples #presets {
+    display: flex;
+    overflow: auto;
+    gap: 6px;
+  }
+  .examples button {
+    min-width: 155px;
+    max-width: 170px;
+    font-size: 12px;
+  }
+  .examples .quiet {
+    display: none;
+  }
+  .circle {
+    padding: 11px 10px;
+    border-radius: 27px;
+    gap: 8px;
+  }
+  .operands {
+    gap: 8px;
+  }
+  .atom {
+    font-size: 16px;
+    padding: 3px;
+  }
+  .lab-heading {
+    align-items: flex-start;
+  }
+  .lab-heading h2 {
+    font-size: 18px;
+  }
+  .badge {
+    font-size: 10px;
+  }
+  .metrics span {
+    font-size: 9px;
+  }
+  .controls button {
+    font-size: 12px;
+  }
+  #canvas {
+    min-height: 180px;
+  }
+  .pixel {
+    width: 14px;
+    height: 14px;
+  }
+}
+import assert from "node:assert/strict";
+import { spawnSync } from "node:child_process";
+import { fileURLToPath } from "node:url";
+import {
+  num as N,
+  sym as S,
+  color,
+  image,
+  circle as C,
+  presets,
+  normalize,
+  ready,
+  pop,
+  parallel,
+  size,
+  depth,
+  equal,
+  key,
+  substitute,
+  explore,
+  validate,
+  BudgetError,
+} from "./engine.mjs";
+
+let checks = 0;
+function check(name, fn) {
+  fn();
+  checks++;
+  console.log(`PASS ${name}`);
+}
+function freeze(t) {
+  Object.freeze(t);
+  if (t.kind === "circle") t.args.forEach(freeze);
+  for (const v of Object.values(t))
+    if (Array.isArray(v)) {
+      Object.freeze(v);
+      v.filter(Array.isArray).forEach(Object.freeze);
+    }
+  return t;
+}
+const cases = presets.map((p) => ({ term: p.term }));
+let seed = 20261017;
+function random(n) {
+  seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
+  return seed % n;
+}
+function generated(d) {
+  if (!d || random(3) === 0) return random(5) === 0 ? S("x") : N(random(9) - 4);
+  return C(
+    ["add", "sub", "mul"][random(3)],
+    generated(d - 1),
+    generated(d - 1),
+  );
+}
+for (let i = 0; i < 160; i++) {
+  const term = generated(3);
+  cases.push({ term }, { term, env: { x: N(random(7)) } });
+}
+for (const term of [
+  C("pow", N(0), N(0)),
+  C("pow", N(2), N(-1)),
+  C("add", color("red"), N(2)),
+  C("add", N(2)),
+  C("unknown", N(1)),
+  C(
+    "rotate",
+    image([
+      ["a", "b", "c"],
+      ["d", "e", "f"],
+    ]),
+    N(-90),
+  ),
+  C("beside", image([["a"]]), image([["b"], ["c"]])),
+  C("pow", N(2), N(65536)),
+])
+  cases.push({ term });
+const oracle = spawnSync(
+  "python3",
+  [fileURLToPath(new URL("oracle.py", import.meta.url))],
+  {
+    input: JSON.stringify(cases),
+    encoding: "utf8",
+    maxBuffer: 20 * 1024 * 1024,
+  },
+);
+assert.equal(oracle.status, 0, oracle.stderr);
+const expected = JSON.parse(oracle.stdout);
+check(
+  `${cases.length} cases agree with the book interpreter (result, step, pop count, size)`,
+  () =>
+    cases.forEach((c, i) => {
+      const term = c.env ? substitute(c.term, c.env) : c.term;
+      const before = key(term);
+      freeze(term);
+      assert.deepEqual(normalize(term).term, expected[i].term, `case ${i}`);
+      assert.equal(normalize(term).pops, expected[i].pops, `pop count ${i}`);
+      assert.equal(size(term), expected[i].size);
+      const rs = ready(term);
+      assert.deepEqual(
+        rs.length ? pop(term, rs[0].path) : null,
+        expected[i].step,
+        `step ${i}`,
+      );
+      assert.equal(key(term), before, "input mutated");
+    }),
+);
+check(
+  "every ready pop removes exactly one circle, including partial terms",
+  () =>
+    cases
+      .slice(0, 330)
+      .forEach((c) =>
+        ready(c.term).forEach((r) =>
+          assert.equal(size(pop(c.term, r.path)), size(c.term) - 1),
+        ),
+      ),
+);
+check("independent pops form diamonds", () =>
+  cases.slice(0, 330).forEach((c) => {
+    const rs = ready(c.term);
+    for (let i = 0; i < rs.length; i++)
+      for (let j = i + 1; j < rs.length; j++)
+        assert(
+          equal(
+            pop(pop(c.term, rs[i].path), rs[j].path),
+            pop(pop(c.term, rs[j].path), rs[i].path),
+          ),
+        );
+  }),
+);
+check("left, right and parallel strategies agree on values and work", () =>
+  cases.slice(0, 330).forEach((c) => {
+    const a = normalize(c.term),
+      b = normalize(c.term, "right"),
+      p = normalize(c.term, "parallel");
+    assert(equal(a.term, b.term));
+    assert(equal(a.term, p.term));
+    assert.equal(a.pops, b.pops);
+    assert.equal(a.pops, p.pops);
+    assert.equal(a.pops, size(c.term) - size(a.term));
+  }),
+);
+check("balanced expression: seven pops, three rounds, value eight", () => {
+  const t = presets[2].term,
+    r = normalize(t, "parallel");
+  assert.deepEqual(r, { term: N(8), pops: 7, rounds: 3 });
+  assert.equal(r.rounds, depth(t));
+  assert.equal(size(parallel(t).term), 3);
+});
+check(
+  "substitution enables inert terms and commutes with an existing pop",
+  () => {
+    const t = C("add", S("x"), C("mul", N(3), N(4))),
+      env = { x: N(5) };
+    assert(equal(substitute(pop(t, [1]), env), pop(substitute(t, env), [1])));
+    assert.deepEqual(normalize(substitute(t, env)), {
+      term: N(17),
+      pops: 2,
+      rounds: 2,
+    });
+    assert.equal(ready(C("add", S("x"), N(1))).length, 0);
+  },
+);
+check("grouping changes values without changing the three-pop count", () => {
+  assert.equal(normalize(presets[5].term).term.value, "65536");
+  assert.equal(normalize(presets[6].term).term.value, "256");
+  assert.equal(normalize(presets[5].term).pops, 3);
+  assert.equal(normalize(presets[6].term).pops, 3);
+});
+check(
+  "image rotation orientation, four turns, transparency and persistence",
+  () => {
+    const i = image([
+        ["a", "b", "c"],
+        ["d", "e", "f"],
+      ]),
+      before = key(i);
+    assert.deepEqual(
+      normalize(C("rotate", i, N(90))).term,
+      image([
+        ["d", "a"],
+        ["e", "b"],
+        ["f", "c"],
+      ]),
+    );
+    assert(equal(normalize(C("rotate", i, N(360))).term, i));
+    const j = image([["x", "."]]);
+    assert.deepEqual(
+      normalize(C("recolor", j, color("red"))).term,
+      image([["red", "."]]),
+    );
+    assert.equal(key(i), before);
+  },
+);
+check("bounded exploration reports completeness honestly", () => {
+  const r = explore(presets[0].term);
+  assert.equal(r.complete, true);
+  assert.equal(r.states, 5);
+  assert.equal(r.normalForms.length, 1);
+  assert(equal(r.normalForms[0], N(26)));
+  assert.equal(explore(presets[2].term, 2).complete, false);
+});
+check("resource limits are distinguishable from inadmissibility", () => {
+  const t = C("pow", N(2), N(100001));
+  assert.equal(ready(t).length, 1);
+  assert.throws(() => normalize(t), BudgetError);
+});
+check("typed input rejects malformed values without executing source", () => {
+  assert.throws(() => validate({ kind: "num", value: "1.5" }));
+  assert.throws(() => validate({ kind: "num", value: true }));
+  assert.throws(() => validate(image([["a"], ["a", "b"]])));
+  assert.throws(() => validate(S("<script>")));
+  assert.deepEqual(validate(presets[0].term), presets[0].term);
+});
+console.log(
+  `\n${checks} verification groups passed; ${cases.length} Python-reference comparisons.`,
+);

@@ -1,0 +1,126 @@
+{
+  "format": "spherepop-circle-experiment/1",
+  "semantics": "pure typed value-returning operators, book chapters 1–7",
+  "initial": {
+    "kind": "circle",
+    "op": "add",
+    "args": [
+      {
+        "kind": "sym",
+        "name": "x"
+      },
+      {
+        "kind": "circle",
+        "op": "mul",
+        "args": [
+          {
+            "kind": "num",
+            "value": "3"
+          },
+          {
+            "kind": "num",
+            "value": "4"
+          }
+        ]
+      }
+    ]
+  },
+  "actions": [
+    {
+      "action": "Parallel round: 1 pops",
+      "paths": [
+        [
+          1
+        ]
+      ],
+      "input": {
+        "kind": "circle",
+        "op": "add",
+        "args": [
+          {
+            "kind": "sym",
+            "name": "x"
+          },
+          {
+            "kind": "circle",
+            "op": "mul",
+            "args": [
+              {
+                "kind": "num",
+                "value": "3"
+              },
+              {
+                "kind": "num",
+                "value": "4"
+              }
+            ]
+          }
+        ]
+      },
+      "output": {
+        "kind": "circle",
+        "op": "add",
+        "args": [
+          {
+            "kind": "sym",
+            "name": "x"
+          },
+          {
+            "kind": "num",
+            "value": "12"
+          }
+        ]
+      },
+      "pops": 1,
+      "parallelRounds": 1
+    },
+    {
+      "action": "Substitute x = 3",
+      "paths": [],
+      "input": {
+        "kind": "circle",
+        "op": "add",
+        "args": [
+          {
+            "kind": "sym",
+            "name": "x"
+          },
+          {
+            "kind": "num",
+            "value": "12"
+          }
+        ]
+      },
+      "output": {
+        "kind": "circle",
+        "op": "add",
+        "args": [
+          {
+            "kind": "num",
+            "value": "3"
+          },
+          {
+            "kind": "num",
+            "value": "12"
+          }
+        ]
+      },
+      "pops": 0,
+      "parallelRounds": 0
+    }
+  ],
+  "final": {
+    "kind": "circle",
+    "op": "add",
+    "args": [
+      {
+        "kind": "num",
+        "value": "3"
+      },
+      {
+        "kind": "num",
+        "value": "12"
+      }
+    ]
+  }
+}
