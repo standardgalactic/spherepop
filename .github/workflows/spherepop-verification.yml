@@ -1,0 +1,74 @@
+name: Spherepop verification
+
+on:
+  push:
+    paths:
+      - 'compiler/**'
+      - 'spherepop-kernel/**'
+      - 'spherepop-go/**'
+      - 'experiments/flat/**'
+      - '.github/workflows/spherepop-verification.yml'
+  pull_request:
+    paths:
+      - 'compiler/**'
+      - 'spherepop-kernel/**'
+      - 'spherepop-go/**'
+      - 'experiments/flat/**'
+      - '.github/workflows/spherepop-verification.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  conformance:
+    name: C tests and cross-language conformance
+    runs-on: ubuntu-22.04
+    timeout-minutes: 20
+    steps:
+      - name: Check out only the implementation surfaces
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          filter: blob:none
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /compiler/
+            /spherepop-kernel/
+            /spherepop-go/
+            /experiments/flat/
+
+      - name: Record exact tested checkout
+        run: git rev-parse HEAD
+
+      - name: Remove committed report to prevent stale evidence
+        run: rm -f experiments/flat/CONFORMANCE.md
+
+      - name: Set up Go from the checked-in module
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: spherepop-go/go.mod
+          cache: false
+
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Configure C interpreter and its tests
+        run: cmake -S compiler -B compiler/build -DSP_ENABLE_TESTS=ON -DCMAKE_BUILD_TYPE=Debug
+
+      - name: Compile C interpreter and fixture adapter
+        run: cmake --build compiler/build --parallel 2
+
+      - name: Run native C unit and integration tests
+        run: ctest --test-dir compiler/build --output-on-failure
+
+      - name: Run Python, Rust, Go and C conformance fixtures
+        run: sh experiments/flat/run_all.sh
+
+      - name: Preserve generated conformance evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: spherepop-conformance
+          path: experiments/flat/CONFORMANCE.md
+          if-no-files-found: warn
