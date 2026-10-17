@@ -1,0 +1,38 @@
+name: Circle laboratory
+
+on:
+  push:
+    paths:
+      - "experiments/circles/**"
+      - "spherepop-book-source/spherepop.py"
+      - ".github/workflows/circle-laboratory.yml"
+  pull_request:
+    paths:
+      - "experiments/circles/**"
+      - "spherepop-book-source/spherepop.py"
+      - ".github/workflows/circle-laboratory.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  book-reference:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          filter: blob:none
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /experiments/circles/
+            /spherepop-book-source/spherepop.py
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Check browser module syntax
+        run: node --check experiments/circles/app.mjs
+      - name: Compare with the book and check reduction invariants
+        run: node experiments/circles/test.mjs
