@@ -50,6 +50,10 @@ jobs:
           go-version-file: spherepop-go/go.mod
           cache: false
 
+      - name: SPHIST/1 malformed-wire regression gate (Go race detector)
+        working-directory: spherepop-go
+        run: go test -race ./... -run '^TestWire' -count=1
+
       - name: Set up Rust
         uses: dtolnay/rust-toolchain@stable
 
