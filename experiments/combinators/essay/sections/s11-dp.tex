@@ -1,0 +1,55 @@
+\section{The dynamic-programming reading}\label{sec:dp}
+
+A dynamic program is a recurrence over a space of subproblems in which the answer to a problem is assembled from answers to smaller problems that overlap. Reduction in the circle calculus supplies such a space in four distinct ways, each with its own recurrence, and the section takes them in turn: the graph of reductions, the pure fragment's ideals, sharing as memoization, and the intervals of a flat expression.
+
+\subsection{The reduction graph and its Bellman recursions}
+
+\begin{definition}[Reduction graph]
+For a term $t$, the \emph{reduction graph} $G(t)$ has as vertices the terms reachable from $t$ by $\reds$ and as edges the single contractions. A vertex with no outgoing edge is a normal form. Since terms are interned, vertices are identified by the identity of the node.
+\end{definition}
+
+The graph is finite for the terms studied in the exhaustive survey except for the explicit nonterminating cases, for which the exploration is cut off at a budget and reported as incomplete. When the graph is finite and acyclic, three quantities are defined by recurrences over successors. With $\mathrm{succ}(u)$ the set of terms reachable by one contraction from $u$:
+\begin{align*}
+d(u)&=\begin{cases}0&u\text{ normal},\\ 1+\min_{v\in\mathrm{succ}(u)}d(v)&\text{otherwise,}\end{cases}\\
+\ell(u)&=\begin{cases}0&u\text{ normal},\\ 1+\max_{v\in\mathrm{succ}(u)}\ell(v)&\text{otherwise,}\end{cases}\\
+\pi(u)&=\begin{cases}1&u\text{ normal},\\ \sum_{v\in\mathrm{succ}(u)}\pi(v)&\text{otherwise.}\end{cases}
+\end{align*}
+Here $d(u)$ is the length of a shortest reduction to a normal form, $\ell(u)$ the length of a longest, and $\pi(u)$ the number of distinct reduction sequences. Each is an instance of Bellman's principle of optimality \cite{bellman}: a shortest (respectively longest) reduction from $u$ begins with some contraction to a successor $v$ and continues with a shortest (respectively longest) reduction from $v$, since any other continuation could be exchanged for it without lengthening (respectively shortening) the whole. Acyclicity makes the recursion well founded, and memoization over the vertices evaluates it in time proportional to the number of edges.
+
+When cycles occur, as they do for $\Omega$ under the innermost strategies and may occur in the graph of a term under all strategies simultaneously, shortest distances can instead be computed by initializing normal forms at $0$ and other vertices at $\infty$, then propagating improvements backwards. For a finite explored graph with unit-cost edges this yields the shortest-path distances; a vertex with no route to a normal form retains distance $\infty$. Cycles alone do not justify a claim of multiple solutions. The engine computes it twice, by Bellman value iteration and by breadth-first search backwards from the normal forms along reversed edges, and requires agreement; the number of paths is reported as infinite when a cycle lies on a path to a normal form, and as a finite natural number, in arbitrary precision, otherwise. On \factBellmanGraphs{} acyclic graphs (every acyclic complete graph among the terms of at most four leaves) the three recurrences were compared with brute-force enumeration of all paths and agreed.
+
+\paragraph{Strategies as policies.} In the language of dynamic programming a strategy is a \emph{policy}, a rule that selects a successor at each vertex, and the table of Section~\ref{sec:confluence} is a measurement of how far four particular policies fall from the optimal policy $d$. The optimal policy exists, depends on the whole graph, and is not computable from the local view of a term that a strategy has. The leftmost-outermost policy is optimal on \factLoOptPct{} of the terms surveyed, the rightmost-outermost policy on \factRoOptPct{}, and the two innermost policies on \factLiOptPct{}. These figures describe the surveyed words, which are short and chosen exhaustively, and they should not be read as predicting the behaviour of large programs.
+
+\subsection{The pure fragment: orderings against states}
+
+Section~\ref{sec:pure} gave two counts for the same tree, the number of pop sequences from the hook length formula and the number of states from the ideal recursion. They are the two natural dynamic programs on the pure fragment. The first counts paths and the second counts vertices of the graph of partial evaluations, and the contrast between them, $\factBalancedOrderings$ against $\factBalancedIdeals$ for the balanced tree of seven circles, grows without bound with the size of the tree. A computation over the states can recover any quantity that is defined by a recurrence over paths, such as the number of paths itself, in time proportional to the number of states. This is the same compression that graph reduction achieves, and it is for the same reason: the subproblems overlap.
+
+\subsection{Sharing is memoization}
+
+In a tree representation a duplicated subterm is copied, and each copy is reduced separately. In a graph representation the duplicated subterm is a single node with two incoming edges, and a reduction of the node is performed once and seen by both. The engine represents terms by interned nodes, so every term is already a graph, and a reduction procedure that records the result of reducing each node, by the identity of the node, is exactly a memo table over subproblems. This is Wadsworth's observation \cite{wadsworth}, and the engine implements two forms of it: a table of head normal forms indexed by node, and a table of normal forms indexed by node.
+
+The first measurement compares the tree evaluator with the graph evaluator on terms that can be normalized by both. Over \factMachineCompared{} terms with a normal form the two always agreed on the result, and the number of contractions performed with normal-form memoization was strictly smaller on \factSharedLess{} of them. A second measurement isolates the effect. Let $d=\lambda x.\,\mathrm{plus}\,x\,x$ be doubling on Church numerals and let $d^n(1)$ be its $n$-fold iterate, translated to circles and applied to two variables to read off the numeral.
+
+\begin{center}
+\tableSharing
+\end{center}
+
+The measured contraction counts in both columns grow rapidly over the tested range. The explicit output of $d^n(1)$ is a unary numeral with $2^n$ application circles, so materializing that tree entails output work proportional to its size. This is not a lower bound of $2^n$ combinator contractions: one contraction may duplicate a large subterm, and contraction count differs from allocation, traversal and output-writing cost. The ratio of tree contractions to shared contractions increases monotonically over the measured range, from \factShareRatioFirst{} at $n=\factShareNFirst$ to \factShareRatioLast{} at $n=\factShareNLast$. These are measured ratios, not an asymptotic law or an evaluator-independent lower bound. Memoization avoids recomputing head normal forms already cached for a node; the reported costs belong to these particular evaluators and representations.
+
+\subsection{Interval programs over a flat expression}
+
+The last dynamic program is the oldest. A flat expression $a_0\,\circ_1\,a_1\,\circ_2\cdots\circ_n\,a_n$, written without parentheses, becomes a circle term only after a choice of structure, and the possible structures are the full binary trees with $n+1$ leaves, which are the parenthesizations. The set $V(i,j)$ of values obtainable from the interval $a_i\cdots a_j$ satisfies
+\[
+V(i,i)=\{a_i\},
+\qquad
+V(i,j)=\bigcup_{i\le k<j}\{\,x\circ_{k+1}y\ :\ x\in V(i,k),\ y\in V(k+1,j)\,\},
+\]
+the recurrence of matrix-chain multiplication, and the number of parenthesizations $C(i,j)$ obeys $C(i,i)=1$ and $C(i,j)=\sum_{k}C(i,k)\,C(k+1,j)$, whose solution for $n+1$ operands is the Catalan number $C_n=\frac1{n+1}\binom{2n}{n}$. The same recurrence counts the circle structures of a flat word of $n$ leaves over an alphabet of $a$ letters: it is $C_{n-1}\,a^{n}$, a closed form that agrees with the exhaustive enumeration for $n\le7$ over $\{\Sc,\Kc,x\}$, where the counts are \factEnumSeven{} at seven leaves.
+
+\begin{center}
+\tableGrouping
+\end{center}
+
+The first row is the familiar ambiguity of $2+3\times4$, in which the two groupings give $14$ and $20$. The notation of circles removes the ambiguity by making the structure part of the expression, so that the two values belong to two different circle terms. The second row shows that the interval program is a computation over distinct \emph{values} and not only over structures: of the five ways of grouping a tower of four twos, three give $256$ and two give $65536$. The recurrence was verified against brute-force enumeration of all parenthesizations on \factGroupingExpressions{} expressions and the counts agree with the Catalan numbers.
+
+A remark on interpretation links the section to the next. The recurrence for $V$ has the form of a decision problem: at each interval a split point $k$ is chosen, and the value of the whole depends on the choice. A dynamic program does not make the choice for the user. It exhibits the space in which the choice is made and the cost, in subproblems, of exploring it. This is the sense in which the introduction of a circle, which is a record of a choice of structure, is already the first move of a construction trace.

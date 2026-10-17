@@ -1,0 +1,33 @@
+\section{Relationship to Lisp}\label{sec:lisp}
+
+The relationship between circles and Lisp is stated in one sentence and then qualified at length, because the sentence is true and the qualifications are where the content lies. \emph{Circles and S-expressions are the same tree representation with different computational commitments.} A circle $o(t_1,\dots,t_k)$ and the S-expression $(o\ t_1\ \cdots\ t_k)$ are the same finite ordered tree, with the operator in the first position and the operands following, and the pure fragment, which uses only a fixed table of operators applied to numerals and to further circles, is a restriction of the set of S-expressions. The application circle $\App(f,x)$ is the binary S-expression $(f\ x)$ and a left-associated chain $f\,x\,y\,z$ is the spine of the nested pairs of the same tree, which Lisp abbreviates as the list $(f\ x\ y\ z)$ by the convention of currying.
+
+\subsection{The restricted fragment}
+
+On the pure fragment the correspondence extends from the representation to the evaluation. Let $\mathrm{eval}$ be the evaluator of a Lisp with applicative-order evaluation of operands and with a fixed table of primitive arithmetic procedures, and restrict it to S-expressions built from numerals and symbols in the table. Evaluating $(o\ t_1\ \cdots\ t_k)$ evaluates each $t_i$ and then applies $o$ to the values, which is exactly a sequence of pops, in the order chosen by the evaluator, and the result is the numeral that the pops produce. By Proposition~\ref{prop:pure-term} the result does not depend on the order. This correspondence is a matter of inspection and was not machine-checked, and it is a statement about the restricted fragment only.
+
+\subsection{What is added or absent}
+
+Beyond this fragment the two systems diverge, and the divergences are substantive. They are listed below, together with where each appears in the circle calculus of this essay.
+
+\begin{center}
+\begin{tabular}{p{0.20\linewidth}p{0.36\linewidth}p{0.36\linewidth}}
+\toprule
+feature & Lisp & circle calculus \\
+\midrule
+computed function position & the head of a form may be any expression, and evaluating it yields a procedure & present once the application circle is admitted; absent in the pure fragment, where the operator is a fixed symbol \\
+binding & \texttt{lambda}, \texttt{let} and an environment of bindings & absent; simulated by bracket abstraction (Section~\ref{sec:abstraction}), which erases names \\
+recursion & named procedures, \texttt{define}, \texttt{labels}; or fixed-point combinators & only through duplication, as in $\Mc$ and $\Omega$ and the compiled fixed point $Y\,F$ \\
+special forms & \texttt{if}, \texttt{cond}, \texttt{and}, \texttt{quote}: operands are not all evaluated & the $\Kc$ rule discards an operand unevaluated, and under the outermost strategies every operand is lazy, so strictness is a property of the strategy and not of the form \\
+quotation & \texttt{quote} turns code into data and \texttt{eval} turns data into code & absent; terms are data only at the meta level, in the sense that the engine manipulates them \\
+effects & assignment, input and output, mutation of shared structure & absent; reduction is a purely functional rewriting of immutable terms \\
+default strategy & applicative order & none; confluence makes the result independent of strategy when it exists, and the strategy decides whether it is found \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Several of these entries bear on how the two systems are compared. A Lisp program that avoids special forms, effects and quotation, and that is evaluated under normal order, is closer to the calculus of this essay than to Lisp as it is usually run, and the difference is not cosmetic. The special form \texttt{if} is the Lisp mechanism for obtaining the effect of the $\Kc$ rule, which discards the unevaluated branch: it is the place where applicative order is suspended by fiat. In the circle calculus there is no special form, because under outermost reduction no operand is evaluated until its value is needed, and the lazy behaviour that Lisp obtains by exception is the rule. The cost, which is the subject of Section~\ref{sec:nontermination}, is that the evaluation order matters to termination, whereas in the restricted fragment it does not.
+
+\subsection{What is not claimed}
+
+McCarthy's 1960 paper \cite{mccarthy} shows that a small set of primitives, together with \texttt{lambda}, conditional expressions and recursion, suffices for a universal function \texttt{eval} written in the language itself. No SpherePOP counterpart of that construction is given here: the essay does not define a self-interpreter for circles, and it makes no claim about the existence of one beyond what follows from universality, namely that some circle term computes any partial recursive function, including the function that interprets an encoding of circle reduction. The claim of Section~\ref{sec:universality} is a statement about what functions can be computed, and says nothing about the clarity or economy of any particular program.

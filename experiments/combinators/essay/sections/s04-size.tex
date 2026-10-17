@@ -1,0 +1,31 @@
+\section{The size measure and why it fails}\label{sec:size}
+
+The termination argument of the pure fragment is a measure, a function from terms to the natural numbers that decreases at every step. The extension must be examined to see whether the same function, circle count, still decreases. It does not, and the way in which it fails is exact.
+
+\begin{proposition}[Size laws]\label{prop:sizelaw}
+Let $t\red t'$ by contracting a redex occurrence.
+\begin{enumerate}[label=(\roman*)]
+\item If the redex is $\Kc\,x\,y\red x$, then $\size{t'}-\size{t}=-(2+\size{y})$.
+\item If the redex is $\Sc\,x\,y\,z\red x\,z\,(y\,z)$, then $\size{t'}-\size{t}=+\size{z}$.
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+The redex $\Kc\,x\,y=\App(\App(\Kc,x),y)$ has $2+\size{x}+\size{y}$ circles and its contractum has $\size{x}$. The redex $\Sc\,x\,y\,z$ has $3+\size{x}+\size{y}+\size{z}$ circles and its contractum $\App(\App(x,z),\App(y,z))$ has $3+\size{x}+\size{y}+2\size{z}$. All other circles of $t$ are untouched, since a contraction replaces one subterm by another. Subtracting gives the stated differences.
+\end{proof}
+
+\begin{corollary}[No circle-count measure]\label{cor:nomeasure}
+Circle count is not monotone along reduction, and no function of circle count alone strictly decreases at every step. A contraction of a $\Kc$ redex always decreases the count, and a contraction of an $\Sc$ redex increases it whenever $\size{z}>0$, that is, whenever the third argument is not an atom.
+\end{corollary}
+
+\begin{proof}
+The size laws show both decreasing and increasing contractions. For the stronger claim about any function of circle count, take distinct atoms $a,b,c$. The contraction $\Sc\,a\,b\,c\red a\,c\,(b\,c)$ has three circles on each side. Every measure of the form $f(\size{t})$ therefore has equal values on its endpoints and cannot strictly decrease at every contraction.
+\end{proof}
+
+\begin{example}
+The term $\Sc\,a\,b\,(\Kc\,c\,d)$ has $\factGrowSizeBefore$ circles and the single contraction at the root gives $\factGrowAfter$ with $\factGrowSizeAfter$ circles, since $z=\Kc\,c\,d$ has two circles and appears twice afterwards. In the exhaustive survey the laws were checked on every redex occurrence in every term up to the stated bound, \factRedexes{} occurrences in all, of which \factKRedexes{} were $\Kc$ redexes and \factSRedexes{} were $\Sc$ redexes, and \factGrowing{} of the contractions were strictly growing.
+\end{example}
+
+Corollary~\ref{cor:nomeasure} excludes the particular proof of termination used for the pure fragment, and nothing more. It does not by itself show that any term fails to terminate. To show that, an explicit infinite reduction is needed, and that is the subject of the next section. The two statements are logically independent, and it is worth saying so plainly because the first is sometimes presented as if it were the second. A calculus can have no decreasing measure of one kind and still be terminating, by a different measure, as the simply typed lambda calculus is. The failure of circle count is a failure of one argument, and the existence of $\Omega$ is the failure of the conclusion.
+
+The two laws also locate where the power comes from. The $\Kc$ rule erases, and erasure is what allows a strategy to discard a divergent argument. The $\Sc$ rule duplicates, and duplication is what allows an argument to be consumed more than once. A calculus with erasure alone has the size measure and terminates. Duplication without erasure is the situation of the $\lambda I$-calculus of Church, in which a term that has a normal form is strongly normalizing; that comparison is mentioned only to show that the strategy-dependence examined next is a consequence of erasure and duplication occurring together, and it is not pursued further.

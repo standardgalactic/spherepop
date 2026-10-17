@@ -1,0 +1,40 @@
+\section{The application circle}\label{sec:application}
+
+\begin{definition}[Circle terms]\label{def:terms}
+Fix an infinite set of variables. The set of \emph{circle terms} is the least set containing the constants $\Sc$ and $\Kc$, every variable, and, whenever $f$ and $x$ are circle terms, the \emph{application circle} $\App(f,x)$. Application is written by juxtaposition and associates to the left, so $f\,x\,y$ abbreviates $\App(\App(f,x),y)$. The size $\size{t}$ is the number of application circles in $t$, so atoms have size $0$. Write $\Ic$ for $\Sc\,\Kc\,\Kc$.
+\end{definition}
+
+\begin{definition}[Contraction]\label{def:contraction}
+A \emph{redex} is a subterm of the form $\Kc\,x\,y$ or $\Sc\,x\,y\,z$ for arbitrary terms $x,y,z$. Its \emph{contractum} is $x$, respectively $x\,z\,(y\,z)$. Replacing a redex occurrence by its contractum is a \emph{contraction}, written $t\red t'$, and $\reds$ is its reflexive transitive closure. A term with no redex is a \emph{normal form}.
+\end{definition}
+
+Three remarks fix what is and is not being assumed.
+
+\begin{remark}[Operands need not be values]
+There is no requirement that $x$, $y$ or $z$ be normal, and this is the departure from the book noted in the introduction. In the pure fragment an operator waits for values. Here $\Kc\,x\,y$ may be contracted although $y$ contains redexes of its own, and $\Sc\,x\,y\,z$ may be contracted although $z$ is an unevaluated circle that the contraction will copy. A reader who prefers to keep the book's discipline can ask for a value-restricted variant in which contraction is allowed only when $x$, $y$ and $z$ are normal. That variant is the call-by-value strategy and is analysed below as one of the four strategies; it is a restriction of the order of contractions, not a different set of rules.
+\end{remark}
+
+\begin{remark}[Fixed arity]
+Because $\Kc$ needs two arguments and $\Sc$ needs three, the ``operator'' of an application circle is not statically known. In $f\,x$ the function position $f$ is itself an arbitrary term that may reduce to $\Kc\,a$, to $\Sc\,a\,b$ or to a variable. This is the sense in which the calculus has computed function position, a feature the pure fragment lacks and Lisp possesses; Section~\ref{sec:lisp} returns to it.
+\end{remark}
+
+\begin{remark}[Interning]
+In the implementation, terms are hash-consed: two syntactically equal terms are the same object. Reduction is unaffected, since terms are immutable. The effect is that a term has two sizes, the number of circles in its tree reading $\size{t}$, and the number of distinct nodes in its directed acyclic graph. The second is the memory cost of a sharing implementation and appears in the tables of Section~\ref{sec:universality} and Section~\ref{sec:dp}.
+\end{remark}
+
+\subsection{Strategies}
+
+A term in general has several redex occurrences, and a \emph{strategy} chooses one. Four sequential strategies are used throughout. Let a redex be \emph{outermost} if it is not properly contained in another redex, and \emph{innermost} if it contains no other redex. Leftmost and rightmost refer to the position of the head symbol, reading the term as a string.
+\begin{center}
+\begin{tabular}{ll}
+\toprule
+name & choice \\
+\midrule
+\texttt{lo} & leftmost outermost \\
+\texttt{li} & leftmost innermost \\
+\texttt{ri} & rightmost innermost \\
+\texttt{ro} & rightmost outermost \\
+\bottomrule
+\end{tabular}
+\end{center}
+In addition, the \emph{Gross--Knuth} step contracts every redex occurrence simultaneously, in the sense defined in Section~\ref{sec:confluence}. The leftmost-outermost redex of a term is also the redex found by head reduction when the term is a redex in head position, and is the one that an abstract machine finds by unwinding the spine; the equivalence is exploited by the machine of Section~\ref{sec:dp}.

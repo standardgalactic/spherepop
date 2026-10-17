@@ -1,0 +1,63 @@
+\section{The lambda calculus as a source language}\label{sec:lambda}
+
+Lambda terms are built from variables, application, and abstraction $\lambda x.M$, which binds $x$ in $M$. Terms are identified up to renaming of bound variables, written $\equiv_\alpha$, and $M[x:=N]$ denotes capture-avoiding substitution. The $\beta$ rule is $(\lambda x.M)\,N\to M[x:=N]$. A \emph{weak} step is a $\beta$ step whose redex does not lie inside any abstraction. Weak reduction is the notion of evaluation of a functional programming language, and, as this section shows, it is exactly what the circle calculus simulates.
+
+\begin{definition}[Translation]\label{def:translation}
+The translation $\TT$ from lambda terms to circle terms is $\TT(x)=x$, $\TT(M\,N)=\TT(M)\,\TT(N)$, and $\TT(\lambda x.M)=\br{x}\TT(M)$, using the plain bracket abstraction of Definition~\ref{def:abstraction}. Since the abstraction operation erases the bound variable, $\FV(\TT(M))$ equals the set of free variables of $M$.
+\end{definition}
+
+\begin{lemma}[Invariance under renaming]\label{lem:alpha}
+If $M\equiv_\alpha M'$ then $\TT(M)=\TT(M')$ as circle terms.
+\end{lemma}
+
+\begin{proof}
+By induction on the structure of $M$. Variables and applications are immediate. If $M=\lambda x.P$ and $M'=\lambda x'.P'$ with $P'\equiv_\alpha P[x:=x']$, then in $\br{x}\TT(P)$ the variable $x$ occurs only to determine, at each node, whether the $\Kc$, $\Ic$ or $\Sc$ clause applies, and the same pattern of clauses is selected for $x'$ in $\TT(P')$ by the induction hypothesis. The two results are then equal term by term.
+\end{proof}
+
+\begin{lemma}[Abstraction commutes with substitution]\label{lem:abscommute}
+Let $y\ne x$ and $y\notin\FV(N)$. For every circle term $P$, $(\br{y}P)[x:=N]=\br{y}(P[x:=N])$.
+\end{lemma}
+
+\begin{proof}
+By induction on $P$. If $y\notin\FV(P)$ then $y\notin\FV(P[x:=N])$ either, because the substitution introduces only variables of $N$, so both sides are $\Kc\,(P[x:=N])$. If $P=y$ then both sides are $\Ic$, since $x$ does not occur in $\Ic$ and $y\neq x$ gives $y[x:=N]=y$. If $P=P_1\,P_2$ with $y\in\FV(P)$, then $y\in\FV(P[x:=N])$, because the occurrences of $y$ in $P$ are not touched, and both sides equal $\Sc\,(\br{y}P_1)[x:=N]\,(\br{y}P_2)[x:=N]$ and $\Sc\,\br{y}(P_1[x:=N])\,\br{y}(P_2[x:=N])$ respectively, which agree by the induction hypothesis.
+\end{proof}
+
+\begin{theorem}[Substitution lemma]\label{thm:substlemma}
+For all lambda terms $M$ and $N$, $\TT(M[x:=N])=\TT(M)[x:=\TT(N)]$.
+\end{theorem}
+
+\begin{proof}
+By induction on $M$, after renaming bound variables (which does not change the translation, by Lemma~\ref{lem:alpha}) so that every bound variable of $M$ is distinct from $x$ and from the free variables of $N$. For a variable the claim is the definition of substitution. For an application it follows from the induction hypothesis. For $M=\lambda y.P$ with $y\ne x$ and $y\notin\FV(N)$,
+\[
+\TT\bigl((\lambda y.P)[x:=N]\bigr)=\br{y}\,\TT(P[x:=N])=\br{y}\bigl(\TT(P)[x:=\TT(N)]\bigr)=\bigl(\br{y}\TT(P)\bigr)[x:=\TT(N)],
+\]
+where the second equality is the induction hypothesis and the third is Lemma~\ref{lem:abscommute}, applicable because $\FV(\TT(N))=\FV(N)\not\ni y$.
+\end{proof}
+
+\begin{theorem}[Weak $\beta$ steps are simulated]\label{thm:weaksim}
+If $M\to M'$ by contracting a $\beta$ redex that lies inside no abstraction, then $\TT(M)\reds\TT(M')$. If the redex is $(\lambda x.P)\,Q$, the number of contractions is exactly $\steps(\TT(P),x)$, they are given by the designated reduction of Theorem~\ref{thm:abstraction}, and they all take place inside the image of the redex.
+\end{theorem}
+
+\begin{proof}
+Because the redex is inside no abstraction, $M=C[(\lambda x.P)\,Q]$ for a context $C$ built from applications only, and $\TT(M)=\TT(C)[\TT((\lambda x.P)\,Q)]$, where the translation of a context made of applications is the context of the translations. The translation of the redex is $(\br{x}\TT(P))\,\TT(Q)$, which reduces by Theorem~\ref{thm:abstraction} in $\steps(\TT(P),x)$ contractions to $\TT(P)[x:=\TT(Q)]$, and this equals $\TT(P[x:=Q])$ by Theorem~\ref{thm:substlemma}. Replacing the redex by its reduct inside $C$ gives $\TT(M')$.
+\end{proof}
+
+\paragraph{What the machine checked.} The substitution lemma was verified on all lambda terms up to a size bound over two variables, on \factSubstChecked{} substitutions. Theorem~\ref{thm:weaksim} was verified constructively, as an explicit contraction sequence, on \factWeakSim{} weak $\beta$ steps in the same universe, with \factWeakContractions{} contractions in all: for each step the engine wrote out the designated contractions, applied them inside the translated term at the position of the translated redex, and compared the result with the translation of the contractum.
+
+\subsection{Reduction under a binder is not simulated}
+
+The restriction to weak steps in Theorem~\ref{thm:weaksim} is not a limitation of the proof. It is a fact about the translation, and it can be exhibited with one example.
+
+\begin{proposition}[The $\xi$ rule fails]\label{prop:xi}
+Let $M=\lambda x.(\lambda y.y)\,x$ and $M'=\lambda x.x$. Then $M\to_\beta M'$ by a $\beta$ step under a binder, but $\TT(M)=\Sc\,(\Kc\,\Ic)\,\Ic$ and $\TT(M')=\Ic$ are distinct normal forms, so $\TT(M)$ does not reduce to $\TT(M')$, nor the reverse, nor do the two have a common reduct.
+\end{proposition}
+
+\begin{proof}
+Compute $\TT((\lambda y.y)\,x)=\Ic\,x$, so $\TT(M)=\br{x}(\Ic\,x)$. Since $x\in\FV(\Ic\,x)$ and the term is an application, $\br{x}(\Ic\,x)=\Sc\,(\br{x}\Ic)\,(\br{x}x)=\Sc\,(\Kc\,\Ic)\,\Ic$, because $x\notin\FV(\Ic)$. This term has the head $\Sc$ applied to two arguments only, so it is not a redex, and neither of the arguments $\Kc\,\Ic$ and $\Ic$ contains a redex ($\Kc\,\Ic$ has one argument and $\Ic=\Sc\,\Kc\,\Kc$ has two). So $\TT(M)$ is normal. The term $\TT(M')=\Ic$ is normal for the same reason. They are distinct as circle terms, and two distinct normal forms have no common reduct, since a normal form reduces only to itself.
+\end{proof}
+
+The two terms are equal in a weaker sense that the circle calculus does not see by reduction alone. Applied to any term $a$, both reduce to $a$: $\Sc\,(\Kc\,\Ic)\,\Ic\,a\red\Kc\,\Ic\,a\,(\Ic\,a)\red\Ic\,(\Ic\,a)\reds a$ and $\Ic\,a\reds a$. The identification of functions that agree on all arguments is the rule of \emph{extensionality}, and it is known that weak combinatory equality together with extensionality is equivalent to $\beta\eta$-equality for the lambda calculus \cite{curry-feys,hindley-seldin,barendregt}. This is the correct statement of the relationship between the two calculi: $\TT$ preserves weak evaluation exactly and preserves reduction under binders only up to extensionality. The distinction is immaterial for the programs studied in Section~\ref{sec:universality}, which are closed terms applied to arguments, evaluated by weak reduction, and decoded by applying the result to two fresh variables, but it is material for any claim that the circle calculus \emph{is} the lambda calculus, and no such claim is made.
+
+\subsection{How often the failure occurs}
+
+For a small survey, the lambda terms of at most seven nodes over two variables were examined whose only $\beta$ redexes lie under binders, and the first normal-order step (which does reduce under a binder) was compared with the translation. Of the \factUnderTerms{} such terms, \factUnderDirect{} had a translation that already reduced or joined to that of the result. For the remaining \factUnderNotJoinable{} terms the two translations had no common reduct as they stand, and applying both to as many fresh variables as the term has leading abstractions made them join in \factUnderJoinable{} cases. In the final \factUnderNever{} cases no such application helps, and in every one of them the two translations are distinct normal forms (\factUnderNeverDistinct{} of \factUnderNever). The cases printed by the engine all have the shape $x\,(\lambda y.(\lambda z.z)\,y)\to x\,(\lambda y.y)$, a head variable applied to an abstraction that contains the redex, so that no application of fresh variables to the whole term exposes it. They are the generic situation of Proposition~\ref{prop:xi}, and they agree with each other only extensionally. The survey does not measure how likely this situation is in realistic programs. It shows only that it occurs in \factUnderNever{} of the \factUnderTerms{} small terms examined, and that for the rest a suitable number of fresh arguments suffices.
