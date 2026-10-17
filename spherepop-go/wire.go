@@ -18,6 +18,9 @@ type WireWorld struct {
 }
 
 func putString(out *bytes.Buffer, value string) error {
+	if !utf8.ValidString(value) {
+		return errors.New("invalid UTF-8 in SPHIST/1 envelope")
+	}
 	data := []byte(value)
 	if uint64(len(data)) > uint64(^uint32(0)) {
 		return errors.New("SPHIST/1 string too long")
@@ -52,16 +55,20 @@ func EncodeHistory(initial []ObjectID, rules []RuleID, history History) ([]byte,
 		out.WriteByte(byte(event.Kind))
 		switch event.Kind {
 		case Pop:
+			if event.A == nil { return nil, errors.New("Pop missing a") }
 			_ = binary.Write(out, binary.BigEndian, uint64(*event.A))
 		case Refuse:
+			if event.A == nil || event.Reason == nil { return nil, errors.New("Refuse missing a/reason") }
 			_ = binary.Write(out, binary.BigEndian, uint64(*event.A))
 			if event.B == nil { out.WriteByte(0) } else { out.WriteByte(1); _ = binary.Write(out, binary.BigEndian, uint64(*event.B)) }
 			if err := putString(out, *event.Reason); err != nil { return nil, err }
 		case Bind:
+			if event.A == nil || event.B == nil || event.Tag == nil { return nil, errors.New("Bind missing a/b/tag") }
 			_ = binary.Write(out, binary.BigEndian, uint64(*event.A))
 			_ = binary.Write(out, binary.BigEndian, uint64(*event.B))
 			if err := putString(out, *event.Tag); err != nil { return nil, err }
 		case Collapse:
+			if event.Rule == nil { return nil, errors.New("Collapse missing rule") }
 			if err := putString(out, string(*event.Rule)); err != nil { return nil, err }
 		default:
 			return nil, fmt.Errorf("unknown event kind %d", event.Kind)
@@ -71,7 +78,7 @@ func EncodeHistory(initial []ObjectID, rules []RuleID, history History) ([]byte,
 }
 
 type wireReader struct { data []byte; offset int }
-func (r *wireReader) take(n int) ([]byte, error) { if n < 0 || r.offset+n > len(r.data) { return nil, errors.New("truncated SPHIST/1 envelope") }; b:=r.data[r.offset:r.offset+n]; r.offset+=n; return b,nil }
+func (r *wireReader) take(n int) ([]byte, error) { if n < 0 || n > len(r.data)-r.offset { return nil, errors.New("truncated SPHIST/1 envelope") }; b:=r.data[r.offset:r.offset+n]; r.offset+=n; return b,nil }
 func (r *wireReader) u8() (byte,error) { b,e:=r.take(1); if e!=nil{return 0,e}; return b[0],nil }
 func (r *wireReader) u32() (uint32,error) { b,e:=r.take(4); if e!=nil{return 0,e}; return binary.BigEndian.Uint32(b),nil }
 func (r *wireReader) u64() (uint64,error) { b,e:=r.take(8); if e!=nil{return 0,e}; return binary.BigEndian.Uint64(b),nil }
@@ -80,11 +87,11 @@ func (r *wireReader) str() (string,error) { n,e:=r.u32(); if e!=nil{return "",e}
 func DecodeHistory(data []byte) (WireWorld, error) {
 	r := &wireReader{data:data}
 	magic, err := r.take(len(wireMagic)); if err != nil || !bytes.Equal(magic, wireMagic[:]) { return WireWorld{}, errors.New("invalid SPHIST/1 magic") }
-	nOmega,err:=r.u32(); if err!=nil{return WireWorld{},err}; omega:=make([]ObjectID,nOmega)
+	nOmega,err:=r.u32(); if err!=nil{return WireWorld{},err}; if uint64(nOmega)>uint64(len(data)-r.offset)/8{return WireWorld{},errors.New("truncated SPHIST/1 option space")}; omega:=make([]ObjectID,nOmega)
 	for i:=range omega { v,e:=r.u64(); if e!=nil{return WireWorld{},e}; omega[i]=ObjectID(v); if i>0 && omega[i]<=omega[i-1]{return WireWorld{},errors.New("non-canonical option ordering")} }
-	nRules,err:=r.u32(); if err!=nil{return WireWorld{},err}; rules:=make([]RuleID,nRules)
+	nRules,err:=r.u32(); if err!=nil{return WireWorld{},err}; if uint64(nRules)>uint64(len(data)-r.offset)/4{return WireWorld{},errors.New("truncated SPHIST/1 rule list")}; rules:=make([]RuleID,nRules)
 	for i:=range rules { v,e:=r.str(); if e!=nil{return WireWorld{},e}; rules[i]=RuleID(v); if i>0 && rules[i]<=rules[i-1]{return WireWorld{},errors.New("non-canonical rule ordering")} }
-	nEvents,err:=r.u32(); if err!=nil{return WireWorld{},err}; history:=NewHistory()
+	nEvents,err:=r.u32(); if err!=nil{return WireWorld{},err}; if uint64(nEvents)>uint64(len(data)-r.offset){return WireWorld{},errors.New("truncated SPHIST/1 event list")}; history:=NewHistory()
 	for i:=uint32(0); i<nEvents; i++ {
 		kind,e:=r.u8(); if e!=nil{return WireWorld{},e}; var event Event
 		switch EventKind(kind) {
