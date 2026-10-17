@@ -1,0 +1,51 @@
+# Copy to .github/workflows/combinators.yml at the repository root.
+name: Combinators laboratory
+
+on:
+  push:
+    paths:
+      - "experiments/combinators/**"
+      - "experiments/circles/engine.mjs"
+      - ".github/workflows/combinators.yml"
+  pull_request:
+    paths:
+      - "experiments/combinators/**"
+      - "experiments/circles/engine.mjs"
+      - ".github/workflows/combinators.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      NODE_OPTIONS: --max-old-space-size=6144
+    defaults:
+      run:
+        working-directory: experiments/combinators
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          filter: blob:none
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /experiments/combinators/
+            /experiments/circles/engine.mjs
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Verification suite (exhaustive corpora, Python oracle)
+        run: node test.mjs
+      - name: Generate LaTeX facts and tables
+        run: node report.mjs
+      - name: Generated files are current
+        run: |
+          git ls-files --error-unmatch generated/facts.tex generated/tables.tex
+          git diff --exit-code -- generated/facts.tex generated/tables.tex

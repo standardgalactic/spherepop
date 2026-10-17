@@ -1,0 +1,77 @@
+\section{Universality}\label{sec:universality}
+
+The route to universality follows the chain of translations that the preceding sections prepared. A counter machine is compiled to a lambda term. The lambda term is translated to a circle term by bracket abstraction. Weak evaluation of the lambda term is simulated, contraction by contraction, by reduction of the circle term, and the output is read from the resulting term by applying it to two fresh variables. Each link is either proved here, cited, or checked, and the three kinds of link are marked.
+
+\subsection{Counter machines}
+
+A \emph{counter machine} with $k$ registers holds natural numbers $r_0,\dots,r_{k-1}$ and has a finite program of numbered instructions, each of one of three forms: $\mathrm{inc}\ i\ j$ increments register $i$ and continues at instruction $j$; $\mathrm{dec}\ i\ j\ j'$ decrements register $i$ and continues at $j$ if the register was positive, and otherwise leaves it and continues at $j'$; and $\mathrm{halt}$ stops. The machine starts at instruction $0$ with the inputs in the first registers and zeros elsewhere, and when it halts the output is the content of register $0$. A step is the execution of one instruction.
+
+\begin{theorem}[Minsky \cite{minsky}]\label{thm:minsky}
+The functions computed by counter machines in this sense are exactly the partial recursive functions. Already two registers suffice, given a suitable encoding of the input and output.
+\end{theorem}
+
+This is cited. It is the point at which the essay depends on classical computability theory, and the dependence is intended: the theorem converts the question of universality into the question of whether the circle calculus can simulate counter machines. For the purposes of this essay the number of registers is arbitrary and the compiler is uniform in it.
+
+\subsection{Compilation to lambda terms}
+
+Numbers are represented by \emph{Scott numerals}, $\overline{0}=\lambda z\,t.\,z$ and $\overline{n+1}=\lambda z\,t.\,t\,\overline{n}$, so that a numeral selects between its two arguments according to whether it is zero, and passes the predecessor to the second argument in the successor case. The successor function is $\mathrm{succ}=\lambda n\,z\,t.\,t\,n$, and $\mathrm{succ}\,\overline{n}$ weakly reduces to $\overline{n+1}$ in one step. Scott numerals (see \cite{mogensen}) are used in place of the more familiar Church numerals because the predecessor is a constant-time operation on them, which keeps the compiled terms small. The compiler uses a fixed-point combinator that is sound for call-by-name evaluation, $Y=\lambda f.\,(\lambda x.\,f\,(x\,x))\,(\lambda x.\,f\,(x\,x))$.
+
+For a program with $m$ instructions the compiler builds the term
+\[
+F=\lambda f\,s\,r_0\cdots r_{k-1}.\ \mathrm{dispatch}_0(s),
+\qquad
+\mathrm{dispatch}_i(s_i)=s_i\;B_i\;\bigl(\lambda p_i.\,\mathrm{dispatch}_{i+1}(p_i)\bigr),
+\]
+where the last dispatch continues with a halting body, and the body $B_i$ of instruction $i$ is as follows. For $\mathrm{inc}\ r\ j$ it is $f\ \overline{j}\ r_0\cdots(\mathrm{succ}\ r_r)\cdots r_{k-1}$. For $\mathrm{dec}\ r\ j\ j'$ it is $r_r\ (f\ \overline{j'}\ r_0\cdots r_{k-1})\ \bigl(\lambda q.\ f\ \overline{j}\ r_0\cdots q\cdots r_{k-1}\bigr)$. For $\mathrm{halt}$ it is $r_0$. The compiled program applied to inputs $n_0,\dots$ is
+\[
+\mathsf{Init}=(Y\,F)\ \overline{0}\ \overline{n_0}\cdots\overline{n_{k-1}},
+\]
+and its image in the circle calculus is $\TT(\mathsf{Init})$. The state of the machine is the first argument, a Scott numeral that the dispatch chain consumes one predecessor at a time until it reaches zero, at which point the body $B_i$ is selected. All the numerals are closed terms, so $\TT(\mathsf{Init})$ is a closed circle term.
+
+\subsection{The simulation theorem}
+
+Say that a lambda term $a$ \emph{represents} $n$ if $a\to_w^*\overline{n}$ by weak steps, and write $P=U\,U$ with $U=\lambda x.\,F\,(x\,x)$. Then $Y\,F\to_w P$ and $P\to_w F\,P$, since $U\,U\to_w F\,(U\,U)$.
+
+\begin{lemma}[One machine step]\label{lem:onestep}
+Let $a_0$ represent the number of an instruction $i$ and let $a_1,\dots,a_k$ represent the registers $r_0,\dots,r_{k-1}$ of a configuration, and let the machine move in one step to the configuration $(j,r')$. Then $P\,a_0\,a_1\cdots a_k\to_w^+P\,b_0\,b_1\cdots b_k$ for terms $b_0,\dots,b_k$ representing $j$ and $r'_0,\dots,r'_{k-1}$.
+\end{lemma}
+
+\begin{proof}
+The weak step $P\to_w F\,P$ and $k+2$ further contractions instantiate $f:=P$ and the arguments in the body of $F$, giving $\mathrm{dispatch}_0(a_0)$ with the arguments substituted. Reducing the argument $a_0$ weakly to $\overline{i}$, which is allowed since an argument is not under an abstraction, each skipped instruction costs a fixed number of steps: $\overline{n+1}\,B\,N\to_w^2 N\,\overline{n}$ and $N\,\overline{n}$ contracts to the next dispatch with $p:=\overline{n}$. After $i$ such stages the dispatch is $\overline{0}\,B_i\,N_i\to_w^2 B_i$ with the substitutions in place. Now case on the instruction. For $\mathrm{inc}$ the body is a term $P\,\overline{j}\,\cdots$ with one register replaced by $\mathrm{succ}\,a_r$, and $\mathrm{succ}\,a_r\to_w^*\mathrm{succ}\,\overline{n}\to_w\overline{n+1}$ when $a_r$ represents $n$, so the new register represents $n+1$. For $\mathrm{dec}$, if $a_r$ represents $0$ then $a_r\,Z\,S\to_w^*\overline{0}\,Z\,S\to_w^2 Z$ where $Z$ is the zero branch, and the term is $P\,\overline{j'}\,a_1\cdots a_k$; if $a_r$ represents $n+1$ then $a_r\,Z\,S\to_w^*\overline{n+1}\,Z\,S\to_w^2 S\,\overline{n}\to_w P\,\overline{j}\cdots\overline{n}\cdots$. In every case the resulting term has the claimed form, with the numbers of the new configuration.
+\end{proof}
+
+\begin{theorem}[Halting direction]\label{thm:halting}
+Suppose the machine started on inputs $n_0,\dots,n_{j-1}$ halts after $m$ steps with $r_0=n$. Then $\mathsf{Init}\to_w^*a$ for a term $a$ representing $n$, and consequently $\TT(\mathsf{Init})\reds\TT(a)\reds\TT(\overline{n})$. Applying $\TT(\overline{n})$ to two distinct variables $z$ and $s$ gives a reduction to $z$ if $n=0$ and to $s\,u$ for a term $u$ such that $\TT(\overline{n-1})$ is the normal form of $u$ otherwise.
+\end{theorem}
+
+\begin{proof}
+The initial configuration is represented by the numerals themselves, with $Y\,F\to_w P$ giving the shape $P\,\overline{0}\cdots$. By induction on $m$ using Lemma~\ref{lem:onestep}, the term $\mathsf{Init}$ weakly reduces to a term $P\,b_0\cdots b_k$ representing the configuration after $m$ steps. At that point $b_0$ represents the number of a halting instruction, the same weak reductions as in the proof of the lemma apply, and the halting body $r_0$ is reached, which represents $n$. The step from lambda terms to circle terms is Theorem~\ref{thm:weaksim}, applied to each weak contraction in the sequence; all the contractions in the proof are weak, since none lies under an abstraction. The last sentence is the computation $\TT(\overline{n+1})\,z\,s\reds s\,\TT(\overline{n})$, which is Theorem~\ref{thm:weaksim} applied to $\overline{n+1}\,z\,s\to_w^2 s\,\overline{n}$, together with uniqueness of normal forms (Corollary~\ref{cor:unique}).
+\end{proof}
+
+\paragraph{Checked.} The halting direction was verified end to end on \factMachineRuns{} runs of the five programs listed in Appendix~\ref{app:programs}, over a range of inputs including the boundary values. For each run four independent evaluators agreed on the output: a direct interpreter of the machine, the independent Python implementation, weak $\beta$ reduction of the compiled lambda term, and leftmost-outermost reduction of its circle translation, decoded by repeated application to two fresh variables. The table gives representative step counts, where the circle count is the number of contractions performed by the abstract machine, summed over the layers of the decoding.
+
+\begin{center}
+\tableMachines
+\end{center}
+
+The ratios are large, and honest accounting requires saying so. A step of the machine costs roughly ten to twenty lambda steps in these examples and roughly a hundred to five hundred circle contractions; compilation to $\Sc,\Kc$ by bracket abstraction is not an efficient implementation, and no claim of efficiency is made. The sizes are also considerable, as the table below shows. The column of shared nodes counts the nodes of the directed acyclic graph of the interned term, which is the memory used by an implementation that shares identical subterms, and the last column is the size with the $\eta$-optimized abstraction.
+
+\begin{center}
+\tableSizes
+\end{center}
+
+\subsection{The non-halting direction}
+
+The converse requires more care, and the status of each step must be stated precisely. Suppose the machine does not halt on the given inputs. By Lemma~\ref{lem:onestep} the compiled lambda term has an infinite weak reduction in which every machine step contributes at least one contraction. The weak reduction of the lambda term in which the leftmost redex outside every abstraction is contracted is deterministic, and so is the machine, so the lambda term has an infinite weak-head reduction, and therefore has no head normal form. The statement that the circle term then has no normal form depends on the correspondence between head reduction of a lambda term and leftmost-outermost reduction of its translation, together with Theorem~\ref{thm:leftmost}. That correspondence is classical for the translation by bracket abstraction, but it is \emph{cited} here and not proved: this essay proves the halting direction and the structure of the simulation, and treats the converse as a consequence of Theorem~\ref{thm:leftmost} and the cited correspondence.
+
+The evidence in the non-halting case is therefore of two kinds. First, for the program \texttt{loop}, which increments register $0$ forever, the lambda term and the circle term were run under a large budget and neither produced a normal form, and the leftmost-outermost sequence of the circle term was extended for \factDivergencePrefix{} steps, at each of which a redex was present. This is a statement about a finite prefix, which no finite computation can strengthen into non-termination, and it is reported as such. Second, a program was constructed whose halting depends on its input: it counts register $0$ down by two and halts exactly on even inputs. On the inputs $0,2,4,6$ the reference machine halts and the circle evaluation decodes a numeral, and on the inputs $1,3,5$ the reference machine does not halt and the circle evaluation exhausts a budget of $200{,}000$ contractions. This shows that the behaviour of the compiled term is not a property of the program alone, and again it is a statement about the inputs tried.
+
+\begin{corollary}[Undecidability for circle terms, conditional]\label{cor:undec}
+Granted Theorem~\ref{thm:minsky}, Theorem~\ref{thm:halting} and the cited head-reduction correspondence, there is no algorithm that decides, for a closed circle term, whether it has a normal form. Moreover every partial recursive function is computed by some circle term in the sense that, when the function is defined at an input, the term applied to the numeral of the input reduces to the numeral of the value, and when it is undefined the term has no normal form.
+\end{corollary}
+
+The corollary has the standard proof: an algorithm for normal-form existence would decide the halting problem for counter machines, which is undecidable. The corollary is stated conditionally and the condition is the one identified above.
+
+\subsection{What universality does and does not establish}
+
+The result is universality in the weak, classical sense of Church and Turing: the set of functions that the calculus computes is the set of partial recursive functions. It says nothing about the efficiency with which they are computed, as the tables show, and nothing about the pure fragment, which remains strongly normalizing and computes only functions determined by a fixed pattern of operations. It does not say that the pure fragment, as presented in the book, is Turing complete. What it says is that the pure fragment together with one binary application circle and two rules is. The introductory text defines a repertoire of operators and a pop rule; the extension adds application and the two rules $\Kc$ and $\Sc$ as new circle kinds, and that addition is the entire content of the claim.

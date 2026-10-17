@@ -1,0 +1,46 @@
+\section{Construction traces: recording how a decomposition was chosen}\label{sec:traces}
+
+Everything so far has treated a circle term as something to be reduced. A circle term can also be read as a \emph{record}, in the sense that its structure preserves a choice that could have been made otherwise, and the recurrence of the preceding section makes the sense precise: the parenthesization is the record of a choice of split. This section develops one consequence. A method of solving a problem, by identifying a part that can be handled, acting on it, and reorganizing what remains, can be written down as a sequence of circle terms together with the obligations that justify each move, and the record can be inspected, compared with alternatives, and checked.
+
+\subsection{A schema}
+
+The schema has four moves. \emph{Split}: replace a problem by a combination of a part that is manageable and a remainder, in such a way that the combination equals the original. \emph{Rewrite}: replace an expression by an equal one, licensed by an identity. \emph{Estimate}: solve the manageable part, exactly or approximately, with a stated bound on the error if approximately. \emph{Correct}: account for the remainder, either exactly, which restores exactness, or by a bound, which leaves the result as an interval. A \emph{trace} is the list of these moves with, for each, the equation or inequality that licenses it and a status, discharged when the equation has been verified and pending when it has only been asserted. The invariant of a trace is that its value is the sum of its estimate and its corrections, and that the value is exact if and only if every correction is discharged.
+
+\begin{definition}[Trace entry]
+A \emph{trace entry} is a triple $(\kappa,\varepsilon,\sigma)$ consisting of a kind $\kappa\in\{\text{split},\text{rewrite},\text{estimate},\text{correct}\}$, an obligation $\varepsilon$ (an equation or inequality between terms), and a status $\sigma\in\{\text{discharged},\text{pending}\}$. A \emph{trace} is a finite sequence of entries.
+\end{definition}
+
+The definition is deliberately light. It does not say how a decomposition is found, which remains a matter of judgment, and it does not say that the sequence is a proof. What it provides is that the judgment is separated from the justification: the choice of a split is recorded as a choice, and the justification, which can be verified mechanically, is recorded as an obligation attached to it. The movement between exploratory judgment and exact justification is thereby made visible, and a reader can see at which entries the justification is complete and at which it is only promised.
+
+\subsection{The example of $48\times52$}
+
+Consider the product $48\times52$. A decomposition that a person doing the calculation without aids would naturally try is to notice that both factors lie near $50$. The trace is as follows.
+
+\begin{enumerate}[label=\textbf{\arabic*.}]
+\item \emph{Split.} Write the factors as $50-2$ and $50+2$. The obligation is $48=50-2$ and $52=50+2$, which is discharged by arithmetic.
+\item \emph{Rewrite.} The obligation $(c-d)(c+d)=c^2-d^2$ is the difference of squares, an identity of polynomials in $c$ and $d$. It was verified by expanding both sides symbolically with integer coefficients, not by instance. Instantiating $c=50$, $d=2$ gives $48\times52=50^2-2^2$.
+\item \emph{Estimate.} Evaluate the manageable part, $50^2=\factDecompEstimate$.
+\item \emph{Correct.} Apply the correction $-2^2=\factDecompCorrection$ for the remainder, giving $\factDecompValue$.
+\end{enumerate}
+
+The trace thus has the estimate \factDecompEstimate{} and the exact correction $\factDecompCorrection$, and the sum is the product. In terms of circles the original problem is one multiplication circle with $\factDecompPopsOriginal$ circle, the split form $(50-2)\times(50+2)$ has $\factDecompPopsSplit$ circles, and the squared form $50^2-2^2$ has $\factDecompPopsSquares$ circles. The point of recording the circle counts is also to disclaim them: the number of pops is not a measure of difficulty, and the version with more pops is in this case the easier one for a human calculator, because the pops involved are on numbers that are easy to multiply. The cost model in which every pop is unit cost is inadequate for this purpose, and nothing in this section claims otherwise.
+
+\begin{proposition}[Exactness of centre-and-correct]\label{prop:centre}
+Let $a$ and $b$ be integers of the same parity, $m=(a+b)/2$ and $d=(b-a)/2$. Then $a=m-d$, $b=m+d$ and $ab=m^2-d^2$. Moreover for any $\delta\ge|d|$ the estimate $m^2$ satisfies $m^2-\delta^2\le ab\le m^2$.
+\end{proposition}
+
+\begin{proof}
+Adding and subtracting give $m-d=a$ and $m+d=b$, so $ab=(m-d)(m+d)=m^2-d^2$ by the polynomial identity. Since $0\le d^2\le\delta^2$ the inequalities follow.
+\end{proof}
+
+The interval form is the reason an estimate can be useful before the correction is known: if only the bound $\delta$ on the offset is available, the product lies in an interval whose width is $\delta^2$, and the estimate is an upper bound. The pending status in a trace is the formal counterpart of this situation.
+
+For products whose factors differ in parity, the same idea uses the polarization identity $4ab=(a+b)^2-(a-b)^2$, valid for all integers; it was likewise verified symbolically. The polarization identity was checked numerically on every pair of integers from $1$ to $99$, and for the \factPolyPairs{} pairs of equal parity in that range the centre-and-correct trace was constructed and every step verified as exact.
+
+\subsection{Why the traces fit the circle calculus}
+
+A circle term is a tree whose structure is a choice, and a trace is a sequence of such trees related by identities, so the representation already carries what a trace needs. A reduction, in the pure fragment, is a sequence of trees related by pops. A trace is a sequence of trees related by \emph{decompositions}, which are rewrites in the opposite direction, from a term to an equal term of larger size, licensed by an identity. The circle calculus thus can express the two kinds of move that a method of solution needs, the reduction that simplifies and the decomposition that reorganizes, and can keep them in one record. The obligations are written in the same notation as the terms, and they are decidable in the cases above, by evaluation for instances and by symbolic expansion for identities.
+
+\subsection{What is claimed and what is not}
+
+The claim is representational and limited: that a trace with the stated entries can be recorded, that each obligation in the example is discharged by a verified computation, and that the record distinguishes exact steps from approximate ones. The essay does not claim that the method is the best method for the product, that the method generalizes to problems whose decompositions have no polynomial identity behind them, or that recording a trace helps a person learn. The last is an empirical question. A test would present two groups with the same problems, one with traces and one without, and compare accuracy and transfer on problems that require a new decomposition. No such study has been run, and the section is offered as a notation in which such a study could be set up, with the strategies themselves stated explicitly enough that others can try them, vary them, and report where they fail.

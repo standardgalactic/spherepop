@@ -1,0 +1,47 @@
+\section{The skeptic's ledger}\label{sec:ledger}
+
+The following table lists every substantive claim of the essay with its status. The purpose is to make it possible to disagree with a particular claim without disagreeing with all of them. The bounds in the third column are the bounds of the executable companion as of this writing, and a reader may raise them.
+
+{\small
+\begin{longtable}{p{0.30\linewidth}p{0.16\linewidth}p{0.44\linewidth}}
+\toprule
+claim & status & basis \\
+\midrule
+\endhead
+Pure fragment terminates in exactly $\size{t}$ pops, independent of order & proved & Proposition~\ref{prop:pure-term} \\
+Pop orderings counted by the hook length formula; states by ideals & proved; checked & Theorem~\ref{thm:hook}, Proposition~\ref{prop:ideals}; random trees, memoized dynamic program \\
+Size laws: $\Kc$ changes size by $-(2+\size{y})$, $\Sc$ by $+\size{z}$ & proved; checked & Proposition~\ref{prop:sizelaw}; every redex occurrence in the survey \\
+No circle-count measure decreases along reduction & proved & Corollary~\ref{cor:nomeasure} \\
+Exact leftmost-outermost sequence of $\Wc\,(\Ic^n\Wc)$ and its growth & proved; checked & Lemma~\ref{lem:omega}; table \\
+$\Omega$ cycles under three other strategies with period five & machine-checked & finite check; not stated as a theorem \\
+$\Kc\,a\,\Omega$ has a normal form under outermost and not under innermost reduction & proved by inspection; checked & Section~\ref{sec:nontermination} \\
+$\Mc\,\Mc$ has an infinite reduction with unbounded size & proved & $\Mc^k\reds\Mc^{k+1}$ \\
+The engine's strategies follow that reduction without repeating & machine-checked & finite prefix only \\
+Church--Rosser; unique normal forms & proved & Theorem~\ref{thm:cr}, parallel reduction \\
+Triangle property of complete developments & proved; checked & Lemma~\ref{lem:triangle}; every term of at most five leaves over $\{\Sc,\Kc,x\}$ \\
+One-step diamond fails; smallest failures have six leaves & machine-checked & exhaustive up to six leaves; witness exhibited \\
+Leftmost-outermost reduction finds the normal form whenever one exists & cited & Curry and Feys; O'Donnell; Huet and L\'evy \\
+Finite consequence of the above on the \factNormTerms-term corpus & machine-checked & no violation in budgeted runs, with no claim beyond the budget \\
+Bracket abstraction theorem with exact step count & proved; checked & Theorem~\ref{thm:abstraction}; contraction by contraction on every pair of the survey \\
+Cubic growth of nested plain abstraction on $v_0\cdots v_{n-1}$ & machine-checked & asserted for $n=1,\dots,16$; not proved \\
+Substitution lemma for $\TT$ & proved; checked & Theorem~\ref{thm:substlemma} \\
+Weak $\beta$ steps simulated exactly & proved; checked & Theorem~\ref{thm:weaksim} \\
+Reduction under a binder is not simulated; $\TT$ agrees with lambda calculus only up to extensionality & proved for the example; cited for equivalence & Proposition~\ref{prop:xi}; classification survey \\
+Counter machines are universal & cited & Minsky 1967 \\
+Halting machine yields the correct numeral in circles & proved; checked & Theorem~\ref{thm:halting}; runs against three independent evaluators \\
+Non-halting machine yields no normal form & partly cited & depends on the head-reduction correspondence and leftmost normalization; budget evidence only \\
+Undecidability of normal-form existence for circle terms & conditional & Corollary~\ref{cor:undec} \\
+Bellman recursions for shortest, longest and path counts & proved; checked & Section~\ref{sec:dp}; brute-force comparison \\
+Sharing as memoization reduces work & checked & measured ratios; mechanism stated, not an asymptotic law \\
+Interval program counts Catalan numbers; flat words $C_{n-1}a^n$ & proved; checked & recurrence; enumeration to seven leaves \\
+Exactness of centre-and-correct decompositions & proved; checked & Proposition~\ref{prop:centre}; symbolic identity and evaluation \\
+\bottomrule
+\end{longtable}}
+
+\subsection{What is not claimed}
+
+The essay does not claim that the four-event history kernel used elsewhere in the SpherePOP repository simulates lambda reduction, and no statement above is about that kernel. It does not claim that any particular non-halting program fails to terminate, beyond a budget exhausted and the argument of Section~\ref{sec:universality}. It does not claim that the translation of Section~\ref{sec:lambda} is an equivalence of calculi, since it is not, as Proposition~\ref{prop:xi} shows. It makes no claim about efficiency beyond the measured tables. It does not claim that construction traces help anyone learn, only that they can be written down and checked. And it does not claim that the pure fragment of the book is Turing complete: the extension by an application circle is exactly what is shown to be, and the pure fragment is shown not to be.
+
+\subsection{How to try to break it}
+
+A skeptic with an afternoon can do the following. Raise the leaf bound of the exhaustive survey from eight to nine and compare the verdicts of the strategies, noting that the interning table grows with the survey, and that enumerating all words of eight leaves over three atoms already exhausts the table of the JavaScript engine. Replace the compiler's fixed-point combinator with another and rerun the machine comparison. Add a program to the list and run it through the three evaluators. Read the independent Python implementation and look for a place where it shares an assumption with the JavaScript. Run the suite with a perturbed rule, for instance with the $\Kc$ rule returning its second argument, and confirm that it fails; a verification that cannot fail is not one.

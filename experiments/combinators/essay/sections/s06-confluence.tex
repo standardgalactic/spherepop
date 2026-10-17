@@ -1,0 +1,103 @@
+\section{Confluence, uniqueness of results, and the difference between agreement and discovery}\label{sec:confluence}
+
+Two questions are easily conflated. The first is whether two different orders of popping can lead to different results. The second is whether a given order of popping is guaranteed to reach a result when one exists. The first is a statement about agreement and the second is a statement about discovery, and the calculus answers them differently. Agreement holds, by the Church--Rosser theorem proved below. Discovery depends on the strategy, as the examples of Section~\ref{sec:nontermination} have already shown, and a positive answer for one strategy is a cited theorem and not a result proved here.
+
+\subsection{Parallel reduction}
+
+The proof follows the method of Tait and Martin-L\"of as presented by Takahashi \cite{takahashi}, adapted to the two rules of the circle calculus.
+
+\begin{definition}[Parallel reduction]\label{def:parallel}
+The relation $t\pred t'$ is the least relation satisfying
+\begin{enumerate}[label=(P\arabic*)]
+\item $a\pred a$ for every atom $a$ ($\Sc$, $\Kc$, or a variable);
+\item if $f\pred f'$ and $x\pred x'$ then $f\,x\pred f'\,x'$;
+\item if $x\pred x'$ then $\Kc\,x\,y\pred x'$, for every term $y$;
+\item if $x\pred x'$, $y\pred y'$ and $z\pred z'$ then $\Sc\,x\,y\,z\pred x'\,z'\,(y'\,z')$.
+\end{enumerate}
+\end{definition}
+
+Rule (P2) applies to every application circle, including those that are redexes, so that $\pred$ is reflexive on all terms (by induction on the term). Rules (P3) and (P4) contract a redex at the root while allowing its operands to be reduced simultaneously.
+
+\begin{definition}[Complete development]\label{def:gk}
+The \emph{Gross--Knuth development} $\gk(t)$ contracts every redex occurrence of $t$ that is present in $t$, each operand reduced by development as well: $\gk(a)=a$ for an atom; $\gk(\Kc\,x\,y)=\gk(x)$; $\gk(\Sc\,x\,y\,z)=\gk(x)\,\gk(z)\,(\gk(y)\,\gk(z))$; and $\gk(f\,x)=\gk(f)\,\gk(x)$ when $f\,x$ is not a root redex.
+\end{definition}
+
+\begin{lemma}[Inclusions]\label{lem:inclusions}
+(a) If $t\red t'$ then $t\pred t'$. (b) If $t\pred t'$ then $t\reds t'$. Hence the reflexive transitive closure of $\pred$ equals $\reds$.
+\end{lemma}
+
+\begin{proof}
+(a) By induction on the position of the contracted redex. At the root use (P3) or (P4) with the operands reduced by reflexivity. Below the root use (P2) with reflexivity on the untouched side. (b) By induction on the derivation of $t\pred t'$. For (P1) there is nothing to prove, and for (P2) reduce the left part and then the right part inside the application. For (P3), contract the root redex $\Kc\,x\,y\red x$ and then reduce $x$ to $x'$. For (P4), contract $\Sc\,x\,y\,z\red x\,z\,(y\,z)$ and then reduce $x$ to $x'$, $y$ to $y'$, and each of the two copies of $z$ to $z'$ in place. The last claim follows because $\reds\subseteq\pred^*\subseteq\reds$.
+\end{proof}
+
+\begin{lemma}[Triangle property]\label{lem:triangle}
+If $t\pred a$ then $a\pred\gk(t)$.
+\end{lemma}
+
+\begin{proof}
+By induction on the structure of $t$. If $t$ is an atom then $a=t=\gk(t)$. Suppose $t=f\,x$.
+
+\emph{Case 1: $t$ is not a root redex.} Then the last rule of the derivation must be (P2), since (P3) and (P4) require a root redex. Hence $a=f'\,x'$ with $f\pred f'$ and $x\pred x'$. By the induction hypothesis, $f'\pred\gk(f)$ and $x'\pred\gk(x)$, and by (P2), $a\pred\gk(f)\,\gk(x)=\gk(t)$. (This holds even when $f'\,x'$ is itself a root redex, which can happen when an operand of $t$ reduces to a redex-forming head.)
+
+\emph{Case 2: $t=\Kc\,u\,v$.} If the derivation ends with (P3), then $a=u'$ with $u\pred u'$, and the induction hypothesis gives $a\pred\gk(u)=\gk(t)$. If it ends with (P2), then $a=f'\,v'$ with $f=\Kc\,u\pred f'$ and $v\pred v'$. Because $\Kc\,u$ is not a redex and $\Kc$ is an atom, the only way to derive $\Kc\,u\pred f'$ is (P2), so $f'=\Kc\,u'$ with $u\pred u'$. Then $a=\Kc\,u'\,v'$, the induction hypothesis gives $u'\pred\gk(u)$, and (P3) gives $a\pred\gk(u)=\gk(t)$.
+
+\emph{Case 3: $t=\Sc\,u\,v\,w$.} If the derivation ends with (P4), then $a=u'\,w'\,(v'\,w')$ and the induction hypothesis with (P2) gives $a\pred\gk(u)\,\gk(w)\,(\gk(v)\,\gk(w))=\gk(t)$. If it ends with (P2), then as before $a=\Sc\,u'\,v'\,w'$ with $u\pred u'$, $v\pred v'$, $w\pred w'$, because $\Sc\,u\,v$ and $\Sc\,u$ are not redexes, and (P4) together with the induction hypothesis gives $a\pred\gk(t)$.
+\end{proof}
+
+The triangle property is stronger than the diamond property: it exhibits a \emph{single} common reduct, $\gk(t)$, that works for every parallel reduct simultaneously.
+
+\begin{theorem}[Church--Rosser]\label{thm:cr}
+If $t\reds a$ and $t\reds b$, then there is a term $c$ with $a\reds c$ and $b\reds c$.
+\end{theorem}
+
+\begin{proof}
+By Lemma~\ref{lem:triangle}, if $t\pred a$ and $t\pred b$ then $a\pred\gk(t)$ and $b\pred\gk(t)$, so $\pred$ has the diamond property. The standard strip argument lifts the diamond property from a relation to its reflexive transitive closure: by induction on the lengths of the two chains, any two $\pred^*$ chains from $t$ can be completed. By Lemma~\ref{lem:inclusions} the closure $\pred^*$ is $\reds$.
+\end{proof}
+
+\begin{corollary}[Uniqueness of normal forms]\label{cor:unique}
+A term has at most one normal form. If $t\reds n_1$ and $t\reds n_2$ with $n_1$ and $n_2$ normal, then $n_1=n_2$.
+\end{corollary}
+
+\begin{proof}
+By Theorem~\ref{thm:cr} there is $c$ with $n_1\reds c$ and $n_2\reds c$, and a normal form reduces only to itself.
+\end{proof}
+
+\paragraph{Why the proof is short.} The argument uses nothing about the rules beyond two properties: each left side is a linear pattern (no variable occurs twice on the left of a rule), and no left side overlaps another or itself at a non-root position. The left sides $\Kc\,x\,y=\App(\App(\Kc,x),y)$ and $\Sc\,x\,y\,z$ contain no proper subterm of the form of a left side, since $\Kc\,x$, $\Sc\,x$ and $\Sc\,x\,y$ are not redexes. Rewriting systems with these two properties are called \emph{orthogonal}, and confluence of orthogonal systems is a theorem of Rosen \cite{rosen} and Huet \cite{huet}, of which Theorem~\ref{thm:cr} is a special case proved directly. The same reasoning would fail if a rule were non-linear, for instance a rule that compared two arguments for equality, and it is worth recording because the duplication in the $\Sc$ rule happens on the \emph{right} side, where it does no harm to confluence.
+
+\subsection{What the machine checked}
+
+The triangle property was verified exhaustively on every term with at most five leaves over $\{\Sc,\Kc,x\}$: \factTriTerms{} terms, with \factTriPairs{} parallel reducts altogether, of which \factTriNontrivial{} are nontrivial in the sense that they differ from the term. Every term in this range has a complete reduction graph, and in each of the \factUniqueNF{} graphs exactly one normal form is reachable, as Corollary~\ref{cor:unique} predicts. These are checks of a proved theorem and not independent evidence for it.
+
+\subsection{The one-step diamond fails}
+
+It is instructive to see why parallel reduction is used. The one-step relation $\red$ does not have the diamond property, that is, there are terms $t$ with $t\red a$ and $t\red b$ but no $c$ with $a\red c$ and $b\red c$ in a single step each. The smallest examples have six leaves, and none exists with five or fewer. One of them is
+\[
+t=\factDiamondTerm,
+\qquad
+a=\factDiamondLeft,
+\qquad
+b=\factDiamondRight .
+\]
+Contracting the root of $t$ duplicates the argument $\Kc\,\Sc\,\Sc$ and gives $a$, which contains two copies of that redex. Contracting the inner redex first gives $b$, which has a single redex at the root, and its only contractum is $\Sc\,\Sc\,(\Sc\,\Sc)$, a normal form. To close the square from $a$ one must contract \emph{both} copies of $\Kc\,\Sc\,\Sc$, which is two steps and not one. The number of terms with six leaves for which the diamond fails is \factDiamondFailing{} in the exhaustive enumeration. Parallel reduction repairs exactly this: it allows all the copies produced by a duplication to be reduced together.
+
+\subsection{Agreement is not discovery}
+
+Corollary~\ref{cor:unique} says that no two strategies can disagree about a normal form when both find one. It says nothing about whether they find one. Three observations from the earlier sections and from the survey make this concrete.
+
+First, the term $\Kc\,a\,\Omega$ has the normal form $a$, and leftmost-outermost and rightmost-outermost reduction find it in one step while leftmost-innermost and rightmost-innermost reduction cycle (Section~\ref{sec:nontermination}). Second, the strategies differ in the \emph{length} of the path even when they all succeed. Among all strongly normalizing terms in the survey (all terms up to six leaves over $\{\Sc,\Kc,x\}$ together with all seven- and eight-leaf terms over $\{\Sc,\Kc\}$, \factOptTerms{} terms in all), the number of steps taken was compared with the true minimum, which is the shortest path in the reduction graph, computed by dynamic programming (Section~\ref{sec:dp}).
+
+\begin{center}
+\tableOptimal
+\end{center}
+
+The leftmost-outermost strategy was never shorter than the minimum, which is a tautology, and it attained the minimum on \factLoOptPct{} of the terms but not on all of them: for \factLoExample, the term already seen above, it takes \factLoExampleLo{} steps where \factLoExampleBest{} suffice, because contracting the root first duplicates a redex that the inner-first order would have contracted once. The leftmost-innermost and rightmost-innermost strategies have identical counts in this survey, and are strictly worse than the minimum on \factLiWorse{} terms. For the reverse case, the term \factLiExample{} takes \factLiExampleLi{} steps under leftmost-innermost and \factLiExampleBest{} under any outermost strategy.
+
+Third, and most important, is the question of whether a strategy can \emph{miss} a result entirely. For leftmost-outermost reduction the answer is given by a theorem that is cited and not reproved.
+
+\begin{theorem}[Leftmost normalization; Curry and Feys \cite{curry-feys}, O'Donnell \cite{odonnell}, Huet and L\'evy \cite{huet-levy}; see also \cite{klop}]\label{thm:leftmost}
+If a term of combinatory logic has a normal form, then leftmost-outermost reduction reaches it in finitely many steps.
+\end{theorem}
+
+The result is a standardization theorem for combinatory logic in Curry and Feys, and was extended to the left-normal orthogonal term rewriting systems by O'Donnell, whose condition (every constant of a left side occurs before every variable when the left side is written in prefix notation) is satisfied by the applicative form $\App(\App(\Kc,x),y)$ and $\App(\App(\App(\Sc,x),y),z)$. Huet and L\'evy give the general theory of needed redexes of which it is an instance. The theorem is the reason why leftmost-outermost reduction is used as the \emph{definition} of ``the circle term halts'' in Section~\ref{sec:universality}.
+
+The machine checked a finite consequence. Over \factNormTerms{} terms (every word up to five leaves over $\{\Sc,\Kc,x\}$ and every word of seven and eight leaves over $\{\Sc,\Kc\}$, with a budget of $3{,}000$ steps and $50{,}000$ circles), leftmost-outermost reduction reached a normal form on \factNormLoNormal{} terms. On none of the rest did any of the four strategies reach a normal form within the budget, and on no term did another strategy reach a normal form that leftmost-outermost reduction failed to reach. No two strategies reached different normal forms. The strategies that missed a result found by leftmost-outermost reduction within the budget were leftmost-innermost or rightmost-innermost on \factInnermostMiss{} terms and rightmost-outermost on \factRoMiss{} terms. These are failures within a budget and not proofs of divergence, and the check on words of at most six leaves, on which all words normalize, is vacuous for this question; this is the reason the survey was extended to seven and eight leaves, where the first words without a normal form occur. The two smallest such words, each of seven leaves, are $\factSmallestNonNormalA$ and $\factSmallestNonNormalB$; under all four strategies their size exceeds the budget.

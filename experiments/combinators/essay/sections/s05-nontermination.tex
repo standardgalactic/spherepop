@@ -1,0 +1,66 @@
+\section{Nontermination and the dependence on strategy}\label{sec:nontermination}
+
+Write $\Wc=\Sc\,\Ic\,\Ic$ and $\Omega=\Wc\,\Wc$. The term $\Wc$ has six circles, because $\Ic=\Sc\,\Kc\,\Kc$ has two and $\Sc\,\Ic\,\Ic$ adds two more, and $\Omega$ has thirteen. The behaviour of $\Omega$ is the standard example of nontermination, and the point of studying it here is that its behaviour depends on how the circles are popped, in a way that can be stated exactly.
+
+\subsection{One step of $\Wc$}
+
+The term $\Wc\,x$ is a redex of the $\Sc$ rule, since $\Sc\,\Ic\,\Ic\,x\red \Ic\,x\,(\Ic\,x)$. This is the self-application: it applies $x$ to $\Ic\,x$, which is a copy of $x$ in disguise. If $x=\Wc$, then the right side is $\Ic\,\Wc\,(\Ic\,\Wc)$, and if the $\Ic$ is discarded the result is $\Wc\,(\Ic\,\Wc)$, which is $\Omega$ except that its argument is still wrapped in an identity.
+
+\begin{lemma}[Contracting an identity]\label{lem:identity}
+For every term $a$ and $b$, the term $\Ic\,a\,b$ reduces in exactly two leftmost-outermost steps to $a\,b$: first $\Sc\,\Kc\,\Kc\,a\red\Kc\,a\,(\Kc\,a)$, and then $\Kc\,a\,(\Kc\,a)\,b\red a\,b$. Similarly $\Ic\,a\reds a$ in two steps.
+\end{lemma}
+
+\begin{proof}
+Direct. In $\Ic\,a\,b=\Sc\,\Kc\,\Kc\,a\,b$ the head redex is $\Sc\,\Kc\,\Kc\,a$, with $x=\Kc$, $y=\Kc$, $z=a$, giving $\Kc\,a\,(\Kc\,a)$ applied to $b$. The leftmost-outermost redex of that term is $\Kc\,a\,(\Kc\,a)$, whose contractum is $a$.
+\end{proof}
+
+\subsection{Leftmost-outermost reduction of $\Omega$}
+
+Let $\Ic^n\Wc$ denote $\Ic$ applied $n$ times to $\Wc$, with $\Ic^0\Wc=\Wc$ and $\Ic^{n+1}\Wc=\Ic\,(\Ic^n\Wc)$. Then $\Omega=\Wc\,(\Ic^0\Wc)$.
+
+\begin{lemma}[The exact leftmost-outermost sequence]\label{lem:omega}
+For every $n\ge0$, the term $\Wc\,(\Ic^n\Wc)$ reduces under leftmost-outermost reduction in exactly $2n+3$ steps to $\Wc\,(\Ic^{n+1}\Wc)$, and has $13+3n$ circles. The term $\Omega$ has therefore an infinite leftmost-outermost reduction, in which the sizes of the terms $\Wc\,(\Ic^n\Wc)$ are strictly increasing, so that no term repeats.
+\end{lemma}
+
+\begin{proof}
+Write $x=\Ic^n\Wc$. The term $\Wc\,x=\Sc\,\Ic\,\Ic\,x$ is itself a redex, and it is both leftmost and outermost. Its contraction gives $\Ic\,x\,(\Ic\,x)$ in one step. By Lemma~\ref{lem:identity} the head of this term, $\Ic\,x$ applied to the argument $\Ic\,x$, reduces in two further steps to $x\,(\Ic\,x)$. Now $x=\Ic^n\Wc=\Ic\,(\Ic^{n-1}\Wc)$ when $n\ge1$, so this term is $\Ic\,(\Ic^{n-1}\Wc)\,(\Ic\,x)$, which by the lemma reduces in two steps to $\Ic^{n-1}\Wc\,(\Ic\,x)$. Repeating, each of the $n$ outer identities is removed at the cost of two steps, and after $2n$ steps the term is $\Wc\,(\Ic\,x)=\Wc\,(\Ic^{n+1}\Wc)$. The total is $1+2+2n=2n+3$ steps. In each of these steps the redex that was contracted was the head redex, hence outermost and leftmost, since no redex occurs to its left. For the size, $\Wc$ has six circles and each application of $\Ic$ adds three circles (the application circle together with the two circles of $\Ic$), so $\size{\Ic^n\Wc}=6+3n$ and $\size{\Wc\,(\Ic^n\Wc)}=1+6+(6+3n)=13+3n$.
+\end{proof}
+
+\begin{center}
+\tableOmega
+\end{center}
+
+The measured values reproduce the closed forms: the rows of the table above are produced by the engine, and for $n=0,1,\dots,5$ they match $2n+3$ and $13+3n$. The sequence is also an instance of a more general fact about the pure and impure calculus. Under leftmost-outermost reduction the term grows and never repeats, so a simple cycle detector that watches for a repeated term would report no cycle and would run forever, which is the correct behaviour, and not a defect of the detector. Reaching $\Wc\,(\Ic^{40}\Wc)$ takes $\sum_{n<40}(2n+3)=\factStepsToForty$ leftmost-outermost steps, and the engine's step budget reports the run as unfinished and not as cyclic.
+
+\subsection{Other strategies cycle}
+
+A different choice of redex gives a different, and in this case periodic, behaviour. Under leftmost-innermost, rightmost-innermost and rightmost-outermost reduction, the engine finds that $\Omega$ returns to itself after five contractions, and the cycle detector reports period five for each of the three. The path followed by leftmost-innermost reduction is
+\begin{lstlisting}
+S I I (S I I)
+ -> S K K (S I I) (S K K (S I I))
+ -> K (S I I) (K (S I I)) (S K K (S I I))
+ -> S I I (S K K (S I I))
+ -> S I I (K (S I I) (K (S I I)))
+ -> S I I (S I I)
+\end{lstlisting}
+where $\Ic$ is displayed unexpanded in the first and last terms. The path is as recorded by the engine. In it, after the first contraction, the left $\Ic$ has been expanded to $\Sc\,\Kc\,\Kc$ and is applied to $\Wc$ twice over, and the next three contractions evaluate the arguments to the form $\Wc\,(\Ic\,\Wc)$ and then to $\Wc\,\Wc$ once more. The comparison of all four strategies on $\Omega$ and on $\Kc\,a\,\Omega$ is given in the table below.
+
+\begin{center}
+\tableStrategies
+\end{center}
+
+The row for $\Kc\,a\,\Omega$ is the cleanest demonstration of strategy-dependence. Under the two outermost strategies the redex $\Kc\,a\,\Omega$ is contracted first, discards $\Omega$ unexamined, and yields the normal form $a$ in one step. Under the two innermost strategies the argument $\Omega$ is reduced first, and cycles. The same term therefore has a normal form that one strategy finds in a single step and another never finds. This is the exact sense in which the unrestricted application circle is call-by-name, and in which the value-restricted discipline of the pure fragment, which pops operands first, becomes unsafe: it would apply the innermost rule to a term the outermost rule handles at once.
+
+\subsection{Growth without a cycle}
+
+One more example shows that nontermination need not even be periodic. Let $\Mc=\Sc\,(\Sc\,\Ic\,\Ic)\,\Ic$. Then, for every term $x$,
+\[
+\Mc\,x\;\red\;\Sc\,\Ic\,\Ic\,x\,(\Ic\,x)\;\reds\;x\,x\,x,
+\]
+since $\Sc\,\Ic\,\Ic\,x\reds x\,x$ after the identities are contracted and $\Ic\,x\reds x$. Applying this with $x=\Mc$ gives $\Mc\,\Mc\reds\Mc\,\Mc\,\Mc$. If $\Mc^k$ denotes the left-nested application of $k$ copies of $\Mc$, the same equation applied to the leftmost two copies gives $\Mc^k\reds\Mc^{k+1}$ for every $k\ge2$, so $\Mc\,\Mc$ has an infinite reduction in which the number of circles is unbounded. Whether the particular strategies of the engine follow this reduction is a matter of measurement and not of proof, and the engine reports it: starting at a term with \factMSizeStart{} circles and \factMDagStart{} distinct nodes, the leftmost-outermost reduction of $\Mc\,\Mc$ does not repeat in \factMStepEnd{} steps, and has grown, by that step, to \factMSizeEnd{} circles in \factMDagEnd{} distinct nodes. The table gives intermediate values.
+
+\begin{center}
+\tableGrowth
+\end{center}
+
+The comparison of the two size columns repays attention. The tree grows roughly linearly in the number of steps while the number of distinct nodes grows much more slowly, which is the effect of sharing: the same subterm is copied many times, and a representation that shares copies pays for it once. The consequence is taken up in Section~\ref{sec:dp}, where the cost of reduction is separated into the number of steps and the size of the term at each step.

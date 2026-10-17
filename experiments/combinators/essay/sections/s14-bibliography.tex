@@ -1,0 +1,55 @@
+\appendix
+
+\section{The programs}\label{app:programs}
+
+The five programs run to completion are listed with their registers and the function computed on register $0$. An instruction \texttt{dec r nz z} decrements register \texttt{r} and goes to \texttt{nz} when the register was positive and to \texttt{z} otherwise; \texttt{inc r next} increments and goes to \texttt{next}.
+
+\begin{center}
+\small
+\begin{tabular}{llp{0.5\linewidth}}
+\toprule
+program & registers & function \\
+\midrule
+\texttt{add} & 2 & $r_0:=r_0+r_1$ \\
+\texttt{double} & 2 & $r_0:=2r_0$, with $r_1$ as scratch \\
+\texttt{monus} & 2 & $r_0:=\max(r_0-r_1,0)$ \\
+\texttt{mult} & 4 & $r_0:=r_0\cdot r_1$, with $r_2$ as accumulator and $r_3$ restoring $r_1$ \\
+\texttt{parity} & 1 & $r_0:=1$ if $r_0$ is odd, else $0$ \\
+\texttt{loop} & 1 & increments $r_0$ forever \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+For example \texttt{add} is the three-instruction program
+\begin{lstlisting}
+0: dec 1  nz 1  z 2
+1: inc 0  next 0
+2: halt
+\end{lstlisting}
+and multiplication uses ten instructions, nested loops that add $r_1$ into $r_2$ once for each unit of $r_0$, restoring $r_1$ from $r_3$ after each pass, and finally move $r_2$ into $r_0$. Their sizes after compilation are given in the table of Section~\ref{sec:universality}.
+
+\section{Reproducing the numbers}
+
+The companion is the directory \texttt{experiments/combinators}. Running \texttt{node test.mjs} executes the verification groups in order, prints the title and bounds of each, and writes the measured facts to \texttt{generated/facts.json}. Running \texttt{node report.mjs} converts these to \texttt{generated/facts.tex}, which defines one macro per number used in the text, and \texttt{generated/tables.tex}, which defines each table. The essay includes both files, so that rerunning the two commands regenerates every number. The independent implementation is \texttt{oracle.py}, invoked by the suite as a subprocess.
+
+\begin{thebibliography}{99}
+\bibitem{barendregt} H.~P. Barendregt, \emph{The Lambda Calculus: Its Syntax and Semantics}, revised edition, North-Holland, 1984.
+\bibitem{bellman} R. Bellman, \emph{Dynamic Programming}, Princeton University Press, 1957.
+\bibitem{church-rosser} A. Church and J.~B. Rosser, Some properties of conversion, \emph{Transactions of the American Mathematical Society} 39 (1936), 472--482.
+\bibitem{curry-feys} H.~B. Curry and R. Feys, \emph{Combinatory Logic}, volume I, North-Holland, 1958.
+\bibitem{hindley-seldin} J.~R. Hindley and J.~P. Seldin, \emph{Lambda-Calculus and Combinators: An Introduction}, Cambridge University Press, 2008.
+\bibitem{huet} G. Huet, Confluent reductions: abstract properties and applications to term rewriting systems, \emph{Journal of the ACM} 27 (1980), 797--821.
+\bibitem{huet-levy} G. Huet and J.-J. L\'evy, Computations in orthogonal rewriting systems, in J.-L. Lassez and G. Plotkin (eds.), \emph{Computational Logic: Essays in Honor of Alan Robinson}, MIT Press, 1991.
+\bibitem{klop} J.~W. Klop, Term rewriting systems, in S. Abramsky, D. Gabbay and T. Maibaum (eds.), \emph{Handbook of Logic in Computer Science}, volume 2, Oxford University Press, 1992.
+\bibitem{knuth} D.~E. Knuth, \emph{The Art of Computer Programming}, volume 3: \emph{Sorting and Searching}, section 5.1.4, Addison-Wesley.
+\bibitem{mccarthy} J. McCarthy, Recursive functions of symbolic expressions and their computation by machine, part I, \emph{Communications of the ACM} 3 (1960), 184--195.
+\bibitem{minsky} M.~L. Minsky, \emph{Computation: Finite and Infinite Machines}, Prentice-Hall, 1967.
+\bibitem{mogensen} T.~{\AE}. Mogensen, Efficient self-interpretation in lambda calculus, \emph{Journal of Functional Programming} 2 (1992), 345--364.
+\bibitem{odonnell} M.~J. O'Donnell, \emph{Computing in Systems Described by Equations}, Lecture Notes in Computer Science 58, Springer, 1977.
+\bibitem{rosen} B.~K. Rosen, Tree-manipulating systems and Church--Rosser theorems, \emph{Journal of the ACM} 20 (1973), 160--187.
+\bibitem{schonfinkel} M. Sch\"onfinkel, \"Uber die Bausteine der mathematischen Logik, \emph{Mathematische Annalen} 92 (1924), 305--316.
+\bibitem{stanley} R.~P. Stanley, \emph{Enumerative Combinatorics}, volume 2, Cambridge University Press, 1999.
+\bibitem{takahashi} M. Takahashi, Parallel reductions in $\lambda$-calculus, \emph{Information and Computation} 118 (1995), 120--127.
+\bibitem{turner} D.~A. Turner, Another algorithm for bracket abstraction, \emph{Journal of Symbolic Logic} 44 (1979), 267--270.
+\bibitem{wadsworth} C.~P. Wadsworth, \emph{Semantics and Pragmatics of the Lambda-Calculus}, DPhil thesis, University of Oxford, 1971.
+\end{thebibliography}

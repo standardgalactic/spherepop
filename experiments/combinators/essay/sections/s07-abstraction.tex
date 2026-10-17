@@ -1,0 +1,73 @@
+\section{Bracket abstraction: the exact theorem}\label{sec:abstraction}
+
+The translation of Section~\ref{sec:lambda} rests on one construction, which turns a term with a distinguished variable into a term in which that variable has been abstracted. It is the combinatory counterpart of $\lambda x.M$ (see \cite{curry-feys,turner} for the algorithm and its variants), and it is the only place where the circle calculus simulates binding. A feature of the approach followed here is that the central statement is proved by structural induction with an \emph{exact} step count, not by a uniform bound per $\beta$ step. A uniform bound would be false, because the cost of simulating one $\beta$ step depends on the structure of the body, as the cubic growth measured at the end of the section shows.
+
+\begin{definition}[Substitution and bracket abstraction]\label{def:abstraction}
+For circle terms $M$ and $N$ and a variable $x$, the term $M[x:=N]$ is obtained by replacing every occurrence of $x$ in $M$ by $N$. Since circle terms have no binders this is plain syntactic replacement. The \emph{bracket abstraction} $\br{x}M$ is defined by
+\[
+\br{x}M=\Kc\,M\ \ (x\notin\FV(M)),
+\qquad
+\br{x}x=\Ic,
+\qquad
+\br{x}(P\,Q)=\Sc\,(\br{x}P)\,(\br{x}Q)\ \ (x\in\FV(P\,Q)).
+\]
+Here $\FV(M)$ is the set of variables occurring in $M$. The \emph{$\eta$-optimized} abstraction $\br{x}_\eta M$ adds the clause $\br{x}_\eta(P\,x)=P$ whenever $x\notin\FV(P)$, applied before the third clause.
+\end{definition}
+
+\begin{definition}[Designated length]\label{def:steps}
+Define $\steps(M,x)$ by $\steps(M,x)=1$ if $x\notin\FV(M)$; $\steps(x,x)=2$; and $\steps(P\,Q,x)=1+\steps(P,x)+\steps(Q,x)$ if $x\in\FV(P\,Q)$.
+\end{definition}
+
+\begin{theorem}[Bracket abstraction]\label{thm:abstraction}
+For every term $M$, variable $x$ and term $N$, the term $(\br{x}M)\,N$ reduces to $M[x:=N]$ by a reduction of exactly $\steps(M,x)$ contractions, each of which contracts a redex whose position is determined by the structure of $M$.
+\end{theorem}
+
+\begin{proof}
+By induction on $M$, following the three clauses.
+
+\emph{Case $x\notin\FV(M)$.} Then $(\br{x}M)\,N=\Kc\,M\,N$, a redex, whose contractum is $M=M[x:=N]$. This is one contraction.
+
+\emph{Case $M=x$.} Then $(\br{x}x)\,N=\Ic\,N=\Sc\,\Kc\,\Kc\,N\red\Kc\,N\,(\Kc\,N)\red N=x[x:=N]$, two contractions.
+
+\emph{Case $M=P\,Q$ with $x\in\FV(M)$.} Then $(\br{x}M)\,N=\Sc\,(\br{x}P)\,(\br{x}Q)\,N$, and a single contraction at the root gives $(\br{x}P)\,N\,((\br{x}Q)\,N)$. By the induction hypothesis the left factor $(\br{x}P)\,N$ reduces to $P[x:=N]$ in $\steps(P,x)$ contractions. These contractions take place inside the left factor, which is a proper subterm of the term at hand; they are legitimate contractions of that term because a contraction of a subterm is a contraction of the whole, there being no binder anywhere that could obstruct it. The right factor then reduces to $Q[x:=N]$ in $\steps(Q,x)$ contractions in the same way. The result is $P[x:=N]\,Q[x:=N]=(P\,Q)[x:=N]$ and the total is $1+\steps(P,x)+\steps(Q,x)=\steps(M,x)$.
+\end{proof}
+
+\begin{remark}[Why a per-step bound would be wrong]
+The proof says that the number of contractions needed to simulate the replacement of $x$ by $N$ is a function of $M$ alone and does not depend on $N$. It grows with the number of occurrences of $x$ in $M$ and with the depth of the structure containing them. Any bound that was uniform over all $\beta$ steps would have to bound $\steps(M,x)$ over all bodies $M$, and there is no such bound. The cost is also unrelated to the size of the argument $N$ as long as the reduction is performed in the designated order; the argument is copied by the $\Sc$ rule but not reduced.
+\end{remark}
+
+\begin{remark}[The reduction is not leftmost-outermost]
+The designated reduction contracts the root first, then the contractions within the left factor, then those within the right. This is a valid reduction sequence and is leftmost in the left factor, but it is not in general the leftmost-outermost sequence for the whole term, since the redexes that the right factor contains remain unreduced throughout the left phase. Theorem~\ref{thm:abstraction} is a statement that a reduction exists with a given length and a given endpoint. By confluence (Theorem~\ref{thm:cr}), any other reduction from $(\br{x}M)\,N$ to a normal form reaches the same normal form as $M[x:=N]$ does, whenever one exists.
+\end{remark}
+
+\begin{theorem}[The $\eta$ variant]\label{thm:eta}
+The conclusion of Theorem~\ref{thm:abstraction} also holds for $\br{x}_\eta$, with a number of contractions that never exceeds $\steps(M,x)$.
+\end{theorem}
+
+\begin{proof}
+The three cases above are unchanged, except that in the recursive case the subterms are abstracted by $\br{x}_\eta$ and the induction hypothesis gives at most $\steps(P,x)$ and $\steps(Q,x)$ contractions respectively. The new clause applies to $M=P\,x$ with $x\notin\FV(P)$, and then $(\br{x}_\eta M)\,N=P\,N=(P\,x)[x:=N]$ with zero contractions, while $\steps(P\,x,x)=1+1+2$ is positive.
+\end{proof}
+
+\subsection{Size of the translation}
+
+\begin{proposition}[Linear growth of one abstraction]\label{prop:abssize}
+Let $\ell(M)$ denote the number of leaves (atoms) of $M$. Then $\ell(\br{x}M)\le4\,\ell(M)-1$.
+\end{proposition}
+
+\begin{proof}
+By induction on $M$. For an atom $x$ the left side is $\ell(\Ic)=3=4\cdot1-1$. For an atom other than $x$ it is $\ell(\Kc\,M)=2\le3$. If $x\notin\FV(M)$ then $\ell(\Kc\,M)=1+\ell(M)\le4\ell(M)-1$ because $\ell(M)\ge1$. For $M=P\,Q$ with $x\in\FV(M)$, $\ell(\Sc\,(\br{x}P)\,(\br{x}Q))=1+\ell(\br{x}P)+\ell(\br{x}Q)\le1+(4\ell(P)-1)+(4\ell(Q)-1)=4\ell(M)-1$.
+\end{proof}
+
+A single abstraction therefore costs a constant factor, but a body with $n$ nested abstractions applies the construction $n$ times and can produce a result whose size is polynomial in $n$ of degree higher than one. The extreme case is the body $v_0\,v_1\cdots v_{n-1}$, abstracted over $v_{n-1}$ first and $v_0$ last. For that family the engine measured the number of leaves for $n=1,2,\dots,16$ and found, in every case, the value
+\[
+\frac{n^3+6n^2+8n-6}{3},
+\]
+and the machine check asserts this formula for each of these sixteen values. The formula is a cubic, and the check is evidence for the cubic and not a proof of it; the reader who wishes to prove it can do so by solving the recurrence that Proposition~\ref{prop:abssize} suggests. The measured values are given below, with the $\eta$-optimized abstraction, which collapses the entire term to $\Ic$, three leaves, since $\lambda v_0\dots v_{n-1}.\,v_0\,v_1\cdots v_{n-1}$ is $\eta$-equivalent to the identity.
+
+\begin{center}
+\tableAbs
+\end{center}
+
+\subsection{What was checked}
+
+Theorem~\ref{thm:abstraction} was verified, contraction by contraction, on \factAbsCases{} pairs of a body and an argument term, drawn from \factAbsTerms{} bodies. In each instance the engine produced the derivation as an explicit log of positions, validated at each position that the rule claimed was in fact the rule applicable there, checked that the length of the log was $\steps(M,x)$, and checked that the final term was $M[x:=N]$. In all, \factAbsSteps{} contractions were verified in this way. For the $\eta$ variant, which is a different construction with the same conclusion, the check is of reachability only, and it was run on \factEtaChecked{} terms, among which the $\eta$ variant produced a strictly smaller term than the plain algorithm in \factEtaSmaller{} cases.

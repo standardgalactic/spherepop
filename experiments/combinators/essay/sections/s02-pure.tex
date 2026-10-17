@@ -1,0 +1,46 @@
+\section{The pure fragment}\label{sec:pure}
+
+\begin{definition}
+A \emph{pure term} is defined inductively: a numeral is a pure term, and if $o$ is an operator of arity $k$ and $t_1,\dots,t_k$ are pure terms then the circle $o(t_1,\dots,t_k)$ is a pure term. A circle is \emph{ready} when every operand is a numeral. A \emph{pop} replaces a ready circle by the numeral that its operator computes from its operands. The \emph{size} $\size{t}$ is the number of circles in $t$.
+\end{definition}
+
+\begin{proposition}[Termination in exactly $\size{t}$ pops]\label{prop:pure-term}
+Every pop strictly decreases $\size{t}$ by exactly one. Consequently every sequence of pops from a pure term $t$ ends, after exactly $\size{t}$ pops, in a numeral, and the numeral does not depend on the order of pops.
+\end{proposition}
+
+\begin{proof}
+A pop removes one circle, the ready one, and leaves every other circle in place, so the size drops by one. A term with no circles is a numeral, and a term with a circle has a ready circle (take a circle of greatest depth, all of whose operands are then numerals), so the process continues until size zero. For the independence of the order, suppose two distinct circles $c_1$ and $c_2$ are ready in $t$. They are disjoint, since a ready circle has only numerals inside it, and popping one does not alter the other or its operands, so the two pops commute and yield the same term. A standard argument on the number of pops (the diamond property for a terminating system with commuting local steps, Newman's lemma in its simplest form) then gives that all maximal pop sequences end in the same numeral.
+\end{proof}
+
+The proposition is the entire termination story of the pure fragment, and the extension of Section~\ref{sec:application} is judged against it. A computation whose length is determined by the shape of its input cannot decide anything that depends on the values: no pure term loops, and no pure term can be asked a question whose answer requires running for an unbounded time.
+
+\subsection{Counting evaluation orders}
+
+Although the result of a pure term is fixed, the set of ways to reach it is not. A \emph{pop sequence} is a total order on the circles of $t$ in which every circle occurs after all circles in its subtree. These are the linear extensions of the tree order in which a parent is above its children. For a rooted forest the number of linear extensions has a closed form, due to Knuth \cite{knuth} (see also \cite{stanley}), which is the hook length formula for trees.
+
+\begin{theorem}[Hook length for pop orderings]\label{thm:hook}
+Let $t$ be a pure term with $n=\size{t}$ circles and let $h(v)$ denote the number of circles in the subtree rooted at the circle $v$. The number of pop sequences of $t$ is
+\[
+\frac{n!}{\prod_{v} h(v)}.
+\]
+\end{theorem}
+
+\begin{proof}
+Consider a uniformly random total order of the $n$ circles. For a fixed circle $v$, the probability that $v$ occurs after every other circle of its subtree is $1/h(v)$, because among the $h(v)$ circles of the subtree each is equally likely to come last. These events, over the different circles $v$, are independent: the event for $v$ depends only on the relative order of the circles in the subtree of $v$, and conditioned on the relative order inside each of the subtrees of the children of $v$, the position of $v$ among those circles is uniform and independent of the internal orders. By induction on the tree the joint probability that every circle follows its subtree is $\prod_v 1/h(v)$. Multiplying by $n!$ total orders gives the count of valid ones.
+\end{proof}
+
+A second count is the number of distinct \emph{states} reachable by pops, that is, the number of distinct partial results, which is the number of down-closed sets of circles (sets closed under taking subtrees).
+
+\begin{proposition}[States as order ideals]\label{prop:ideals}
+Let $I(v)$ be the number of sets of circles in the subtree of $v$ that are closed under taking descendants. Then $I(v)=1+\prod_{c}I(c)$, where $c$ ranges over the circle children of $v$, and the empty product is $1$.
+\end{proposition}
+
+\begin{proof}
+A closed set either omits $v$, in which case it is an arbitrary choice of a closed set in each child subtree, giving $\prod_c I(c)$ possibilities, or contains $v$, in which case closure forces it to contain the whole subtree of $v$, giving one possibility.
+\end{proof}
+
+\begin{example}
+For the balanced tree with seven circles (a root, two children, each with two circle children), $h$ takes the values $7,3,3,1,1,1,1$ so Theorem~\ref{thm:hook} gives $7!/63=\factBalancedOrderings$ pop sequences. The recursion of Proposition~\ref{prop:ideals} gives $I=2$ for a bottom circle, $I=1+2\cdot 2=5$ for a middle circle, and $I=1+5\cdot 5=\factBalancedIdeals$ for the root. Both counts were verified by memoized dynamic programming over states, against the closed form, on \factPureTrees{} random trees.
+\end{example}
+
+The two counts illustrate a contrast that returns in Section~\ref{sec:dp}. The number of paths through the reduction graph is the larger quantity ($\factBalancedOrderings$ here), and the number of states is the smaller ($\factBalancedIdeals$ here). A dynamic program over states computes a quantity indexed by paths in time proportional to the number of states, and the saving, which is exponential in general, is precisely the saving that sharing provides in graph reduction.
