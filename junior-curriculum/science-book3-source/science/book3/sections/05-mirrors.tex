@@ -1,0 +1,262 @@
+\chapterhead{5}{Mirrors and Light Paths}{Where a beam goes when it hits something shiny}\label{ch5}
+
+So far light has gone straight. A mirror changes that. When light hits a mirror it bounces off, and it bounces in a predictable way. Once you know the rule, you can trace a beam through a whole maze of mirrors, and you can predict where it will land.
+
+\subhead{The rule of the bounce}
+Draw a line that sticks straight out from the mirror at the spot where the light hits. This line is called the \textbf{normal}. The angle between the incoming light and the normal equals the angle between the outgoing light and the normal. Same angle in, same angle out.
+
+\begin{center}
+\begin{tikzpicture}[scale=1.2]
+  \draw[line width=3pt,color=sky!80!black] (-3,0) -- (3,0);
+  \draw[dashed,line width=1pt,color=ink!60] (0,0) -- (0,3);
+  \node[font=\sffamily\scriptsize,anchor=south] at (0,3) {normal};
+  \draw[-{Stealth},line width=1.5pt,color=tomato] (-2.1,2.1) -- (0,0);
+  \draw[-{Stealth},line width=1.5pt,color=leaf!70!black] (0,0) -- (2.1,2.1);
+  \node[font=\sffamily\scriptsize] at (-1.3,2.4) {light in};
+  \node[font=\sffamily\scriptsize] at (1.3,2.4) {light out};
+  \draw (0,0.75) arc (90:135:0.75); \draw (0,0.75) arc (90:45:0.75);
+  \node[font=\sffamily\scriptsize] at (-0.55,1.15) {45$^\circ$}; \node[font=\sffamily\scriptsize] at (0.55,1.15) {45$^\circ$};
+\end{tikzpicture}
+\end{center}
+
+\begin{tryit}{Bounce a torch beam}
+\textbf{You need:} a small flat mirror, a torch, a sheet of paper, a ruler, a pencil, a protractor if you have one.
+\begin{enumerate}[leftmargin=1.6em]
+\item Tape the paper on a table. Draw a straight line near the middle and stand the mirror along it. Draw the normal at one point.
+\item Shine the torch along the table from one side so the beam hits that point. Mark two dots on the beam going in, and two dots on the beam coming out.
+\item Remove the mirror, join the dots, and measure the angle in and the angle out.
+\end{enumerate}
+Angle in: \wline[1.6cm]$^\circ$ \quad Angle out: \wline[1.6cm]$^\circ$
+\end{tryit}
+\adult{Keep the torch low and along the table. Never shine a mirror toward anyone's eyes, and never use sunlight on a mirror. A mirror can send bright light a long way.}
+
+\begin{worked}{Bounce results (practice numbers)}
+Three tries, angle in against angle out: 30 and 29, 45 and 46, 60 and 58 degrees. The differences are 1, 1 and 2 degrees. Each is small enough to put down to ruler and protractor error.
+\end{worked}
+
+\begin{multix}[hmm]\multixbot[hmm]\tcblower
+My angle in was 30 degrees. My angle out was 60. The rule says they should match. Obviously the rule is wrong and my protractor is perfect. Do you agree?
+\end{multix}
+
+\trust{We measured the angle in and the angle out for three bounces and compared them.}
+{Three different angles agreeing to within 2 degrees supports the rule that the angle in equals the angle out. The differences are about the size of the errors a ruler and protractor make.}
+{That the rule holds for bumpy surfaces, curved mirrors or very steep beams. Three bounces with one mirror are a small test.}
+
+\begin{keepbox}
+We drew light as a thin line with angles. \textbf{We kept} \wline[3.4cm] \textbf{and we set aside} \wline[3.4cm].
+\end{keepbox}
+
+\clearpage
+
+\subhead{A maze of mirrors}
+In the mazes below, each mirror sits on a diagonal of a square. A beam that travels along a row, column or any line of squares turns 90 degrees at a mirror. A beam going east that hits a slanting mirror that rises to the right (/) turns north. One that hits a mirror that falls to the right (\textbackslash) turns south.
+
+\begin{center}
+\begin{tikzpicture}[scale=0.66,font=\sffamily\scriptsize]
+\draw[line width=1pt] (0,0) rectangle (6,6);
+\draw[gray!50] (1,0) -- (1,6); \draw[gray!50] (0,1) -- (6,1);
+\draw[gray!50] (2,0) -- (2,6); \draw[gray!50] (0,2) -- (6,2);
+\draw[gray!50] (3,0) -- (3,6); \draw[gray!50] (0,3) -- (6,3);
+\draw[gray!50] (4,0) -- (4,6); \draw[gray!50] (0,4) -- (6,4);
+\draw[gray!50] (5,0) -- (5,6); \draw[gray!50] (0,5) -- (6,5);
+\draw[line width=2.4pt,color=sky!80!black] (4.15,2.15) -- (4.85,2.85);
+\draw[line width=2.4pt,color=sky!80!black] (4.15,0.15) -- (4.85,0.85);
+\draw[line width=2.4pt,color=sky!80!black] (5.15,2.15) -- (5.85,2.85);
+\draw[line width=2.4pt,color=sky!80!black] (3.15,5.85) -- (3.85,5.15);
+\draw[line width=2.4pt,color=sky!80!black] (2.15,1.15) -- (2.85,1.85);
+\draw[-{Stealth},line width=1.6pt,color=tomato] (-1.3,0.5) -- (-0.05,0.5); \node[font=\sffamily\bfseries\scriptsize,anchor=east] at (-1.35,0.5) {light};
+\node at (0.5,6.3) {A}; \node at (0.5,-0.3) {M}; \node at (6.3,5.5) {G};
+\node at (-0.3,5.5) {S};
+\node at (1.5,6.3) {B}; \node at (1.5,-0.3) {N}; \node at (6.3,4.5) {H};
+\node at (-0.3,4.5) {T};
+\node at (2.5,6.3) {C}; \node at (2.5,-0.3) {O}; \node at (6.3,3.5) {I};
+\node at (-0.3,3.5) {U};
+\node at (3.5,6.3) {D}; \node at (3.5,-0.3) {P}; \node at (6.3,2.5) {J};
+\node at (-0.3,2.5) {V};
+\node at (4.5,6.3) {E}; \node at (4.5,-0.3) {Q}; \node at (6.3,1.5) {K};
+\node at (-0.3,1.5) {W};
+\node at (5.5,6.3) {F}; \node at (5.5,-0.3) {R}; \node at (6.3,0.5) {L};
+\end{tikzpicture}\hfill
+\begin{tikzpicture}[scale=0.66,font=\sffamily\scriptsize]
+\draw[line width=1pt] (0,0) rectangle (6,6);
+\draw[gray!50] (1,0) -- (1,6); \draw[gray!50] (0,1) -- (6,1);
+\draw[gray!50] (2,0) -- (2,6); \draw[gray!50] (0,2) -- (6,2);
+\draw[gray!50] (3,0) -- (3,6); \draw[gray!50] (0,3) -- (6,3);
+\draw[gray!50] (4,0) -- (4,6); \draw[gray!50] (0,4) -- (6,4);
+\draw[gray!50] (5,0) -- (5,6); \draw[gray!50] (0,5) -- (6,5);
+\draw[line width=2.4pt,color=sky!80!black] (1.15,1.15) -- (1.85,1.85);
+\draw[line width=2.4pt,color=sky!80!black] (3.15,4.85) -- (3.85,4.15);
+\draw[line width=2.4pt,color=sky!80!black] (3.15,1.15) -- (3.85,1.85);
+\draw[line width=2.4pt,color=sky!80!black] (3.15,2.85) -- (3.85,2.15);
+\draw[line width=2.4pt,color=sky!80!black] (5.15,0.85) -- (5.85,0.15);
+\draw[line width=2.4pt,color=sky!80!black] (1.15,2.15) -- (1.85,2.85);
+\draw[-{Stealth},line width=1.6pt,color=tomato] (-1.3,1.5) -- (-0.05,1.5); \node[font=\sffamily\bfseries\scriptsize,anchor=east] at (-1.35,1.5) {light};
+\node at (0.5,6.3) {A}; \node at (0.5,-0.3) {M}; \node at (6.3,5.5) {G};
+\node at (-0.3,5.5) {S};
+\node at (1.5,6.3) {B}; \node at (1.5,-0.3) {N}; \node at (6.3,4.5) {H};
+\node at (-0.3,4.5) {T};
+\node at (2.5,6.3) {C}; \node at (2.5,-0.3) {O}; \node at (6.3,3.5) {I};
+\node at (-0.3,3.5) {U};
+\node at (3.5,6.3) {D}; \node at (3.5,-0.3) {P}; \node at (6.3,2.5) {J};
+\node at (-0.3,2.5) {V};
+\node at (4.5,6.3) {E}; \node at (4.5,-0.3) {Q}; \node at (6.3,1.5) {K};
+\node at (5.5,6.3) {F}; \node at (5.5,-0.3) {R}; \node at (6.3,0.5) {L};
+\node at (-0.3,0.5) {X};
+\end{tikzpicture}\\[8pt]
+\begin{tikzpicture}[scale=0.66,font=\sffamily\scriptsize]
+\draw[line width=1pt] (0,0) rectangle (6,6);
+\draw[gray!50] (1,0) -- (1,6); \draw[gray!50] (0,1) -- (6,1);
+\draw[gray!50] (2,0) -- (2,6); \draw[gray!50] (0,2) -- (6,2);
+\draw[gray!50] (3,0) -- (3,6); \draw[gray!50] (0,3) -- (6,3);
+\draw[gray!50] (4,0) -- (4,6); \draw[gray!50] (0,4) -- (6,4);
+\draw[gray!50] (5,0) -- (5,6); \draw[gray!50] (0,5) -- (6,5);
+\draw[line width=2.4pt,color=sky!80!black] (1.15,1.85) -- (1.85,1.15);
+\draw[line width=2.4pt,color=sky!80!black] (2.15,0.15) -- (2.85,0.85);
+\draw[line width=2.4pt,color=sky!80!black] (2.15,1.85) -- (2.85,1.15);
+\draw[line width=2.4pt,color=sky!80!black] (4.15,2.15) -- (4.85,2.85);
+\draw[line width=2.4pt,color=sky!80!black] (2.15,2.85) -- (2.85,2.15);
+\draw[line width=2.4pt,color=sky!80!black] (1.15,2.15) -- (1.85,2.85);
+\draw[line width=2.4pt,color=sky!80!black] (4.15,5.85) -- (4.85,5.15);
+\draw[line width=2.4pt,color=sky!80!black] (0.15,2.85) -- (0.85,2.15);
+\draw[-{Stealth},line width=1.6pt,color=tomato] (-1.3,0.5) -- (-0.05,0.5); \node[font=\sffamily\bfseries\scriptsize,anchor=east] at (-1.35,0.5) {light};
+\node at (0.5,6.3) {A}; \node at (0.5,-0.3) {M}; \node at (6.3,5.5) {G};
+\node at (-0.3,5.5) {S};
+\node at (1.5,6.3) {B}; \node at (1.5,-0.3) {N}; \node at (6.3,4.5) {H};
+\node at (-0.3,4.5) {T};
+\node at (2.5,6.3) {C}; \node at (2.5,-0.3) {O}; \node at (6.3,3.5) {I};
+\node at (-0.3,3.5) {U};
+\node at (3.5,6.3) {D}; \node at (3.5,-0.3) {P}; \node at (6.3,2.5) {J};
+\node at (-0.3,2.5) {V};
+\node at (4.5,6.3) {E}; \node at (4.5,-0.3) {Q}; \node at (6.3,1.5) {K};
+\node at (-0.3,1.5) {W};
+\node at (5.5,6.3) {F}; \node at (5.5,-0.3) {R}; \node at (6.3,0.5) {L};
+\end{tikzpicture}
+\end{center}
+
+\begin{puzzle}{Trace the beam}
+Light enters from the left at each arrow and travels east. Trace it with a coloured pencil. Which letter does it leave at?\\
+Maze 1: \wline[1cm] \quad Maze 2: \wline[1cm] \quad Maze 3: \wline[1cm]
+\end{puzzle}
+
+\begin{puzzle}{The bend}
+Light going \emph{north} hits a (/) mirror. Which way does it go? \wline[2cm]\\
+Light going \emph{west} hits a (\textbackslash) mirror. Which way does it go? \wline[2cm]
+\end{puzzle}
+
+\begin{puzzle}{Periscope}
+A periscope uses two mirrors to let you see over a wall. Light from a tree travels west, hits a mirror, turns up, hits a second mirror and turns west again. Draw the two mirrors and the beam.\\
+\rule{\linewidth}{0.5pt}
+\end{puzzle}
+
+\begin{puzzle}{Check the rule}
+A beam hits a mirror at 40$^\circ$ to the normal. At what angle does it leave? \wline[1.4cm]$^\circ$\\
+A student measures 36$^\circ$ going out. How far off is this? \wline[1.4cm]$^\circ$ Is that likely just measuring error? \wline[2cm]
+\end{puzzle}
+\clearpage
+
+\subhead{Mirror writing}
+Hold a mirror beside a word. The mirror swaps left and right but not up and down. Letters such as A, H, I, M, O, T, U, V, W, X and Y look the same in a mirror held to the side. Letters like B, D, F, G, R and S do not.
+
+\begin{tryit}{Mirror name}
+Write your name on paper. Hold a mirror upright at the right edge of the word. Does it still read the same? Which letters changed?\\
+Name: \wline[3cm] \quad Letters that changed: \wline[4cm]
+\end{tryit}
+
+\begin{puzzle}{Same in the mirror?}
+Which of these words look the same in a mirror held beside them? MOM \quad DAD \quad WOW \quad TOOT \quad HAT\\
+Answer: \wline[5cm]
+\end{puzzle}
+
+\begin{puzzle}{Mirror tricks}
+A mirror shows a clock reading 3:00 with the hour hand on the left. What does the real clock show? \wline[2cm]\\
+Write one sentence about what else looks different in a mirror, such as your right hand. \\
+\rule{\linewidth}{0.5pt}
+\end{puzzle}
+
+\begin{puzzle}{A better maze}
+Design a small mirror maze of your own on the grid. Put three mirrors in and trace the beam.
+\begin{center}
+\begin{tikzpicture}[scale=0.7]
+  \draw[line width=1pt] (0,0) rectangle (6,6);
+  \foreach \i in {1,...,5}{\draw[gray!50] (\i,0) -- (\i,6); \draw[gray!50] (0,\i) -- (6,\i);}
+  \draw[-{Stealth},line width=1.6pt,color=tomato] (-1.2,2.5) -- (-0.05,2.5);
+\end{tikzpicture}
+\end{center}
+Where does your beam leave? \wline[2cm]
+\end{puzzle}
+\clearpage
+
+\subhead{Mirror maze challenge}
+These mazes have more mirrors. Trace each beam with a coloured pencil, turning at every mirror.
+
+\begin{center}
+\begin{tikzpicture}[scale=0.66,font=\sffamily\scriptsize]
+\draw[line width=1pt] (0,0) rectangle (6,6);
+\draw[gray!50] (1,0) -- (1,6); \draw[gray!50] (0,1) -- (6,1);
+\draw[gray!50] (2,0) -- (2,6); \draw[gray!50] (0,2) -- (6,2);
+\draw[gray!50] (3,0) -- (3,6); \draw[gray!50] (0,3) -- (6,3);
+\draw[gray!50] (4,0) -- (4,6); \draw[gray!50] (0,4) -- (6,4);
+\draw[gray!50] (5,0) -- (5,6); \draw[gray!50] (0,5) -- (6,5);
+\draw[line width=2.4pt,color=sky!80!black] (2.15,4.15) -- (2.85,4.85);
+\draw[line width=2.4pt,color=sky!80!black] (2.15,1.15) -- (2.85,1.85);
+\draw[line width=2.4pt,color=sky!80!black] (2.15,0.15) -- (2.85,0.85);
+\draw[line width=2.4pt,color=sky!80!black] (0.15,5.15) -- (0.85,5.85);
+\draw[line width=2.4pt,color=sky!80!black] (3.15,2.15) -- (3.85,2.85);
+\draw[line width=2.4pt,color=sky!80!black] (3.15,1.15) -- (3.85,1.85);
+\draw[line width=2.4pt,color=sky!80!black] (5.15,2.85) -- (5.85,2.15);
+\draw[line width=2.4pt,color=sky!80!black] (5.15,4.15) -- (5.85,4.85);
+\draw[line width=2.4pt,color=sky!80!black] (0.15,1.85) -- (0.85,1.15);
+\draw[line width=2.4pt,color=sky!80!black] (0.15,2.85) -- (0.85,2.15);
+\draw[-{Stealth},line width=1.6pt,color=tomato] (-1.3,0.5) -- (-0.05,0.5); \node[font=\sffamily\bfseries\scriptsize,anchor=east] at (-1.35,0.5) {light};
+\node at (0.5,6.3) {A}; \node at (0.5,-0.3) {M}; \node at (6.3,5.5) {G};
+\node at (-0.3,5.5) {S};
+\node at (1.5,6.3) {B}; \node at (1.5,-0.3) {N}; \node at (6.3,4.5) {H};
+\node at (-0.3,4.5) {T};
+\node at (2.5,6.3) {C}; \node at (2.5,-0.3) {O}; \node at (6.3,3.5) {I};
+\node at (-0.3,3.5) {U};
+\node at (3.5,6.3) {D}; \node at (3.5,-0.3) {P}; \node at (6.3,2.5) {J};
+\node at (-0.3,2.5) {V};
+\node at (4.5,6.3) {E}; \node at (4.5,-0.3) {Q}; \node at (6.3,1.5) {K};
+\node at (-0.3,1.5) {W};
+\node at (5.5,6.3) {F}; \node at (5.5,-0.3) {R}; \node at (6.3,0.5) {L};
+\end{tikzpicture}\hfill
+\begin{tikzpicture}[scale=0.66,font=\sffamily\scriptsize]
+\draw[line width=1pt] (0,0) rectangle (6,6);
+\draw[gray!50] (1,0) -- (1,6); \draw[gray!50] (0,1) -- (6,1);
+\draw[gray!50] (2,0) -- (2,6); \draw[gray!50] (0,2) -- (6,2);
+\draw[gray!50] (3,0) -- (3,6); \draw[gray!50] (0,3) -- (6,3);
+\draw[gray!50] (4,0) -- (4,6); \draw[gray!50] (0,4) -- (6,4);
+\draw[gray!50] (5,0) -- (5,6); \draw[gray!50] (0,5) -- (6,5);
+\draw[line width=2.4pt,color=sky!80!black] (0.15,5.15) -- (0.85,5.85);
+\draw[line width=2.4pt,color=sky!80!black] (3.15,1.85) -- (3.85,1.15);
+\draw[line width=2.4pt,color=sky!80!black] (3.15,5.15) -- (3.85,5.85);
+\draw[line width=2.4pt,color=sky!80!black] (2.15,0.85) -- (2.85,0.15);
+\draw[line width=2.4pt,color=sky!80!black] (4.15,1.15) -- (4.85,1.85);
+\draw[line width=2.4pt,color=sky!80!black] (0.15,3.85) -- (0.85,3.15);
+\draw[line width=2.4pt,color=sky!80!black] (1.15,1.15) -- (1.85,1.85);
+\draw[line width=2.4pt,color=sky!80!black] (1.15,3.85) -- (1.85,3.15);
+\draw[-{Stealth},line width=1.6pt,color=tomato] (-1.3,1.5) -- (-0.05,1.5); \node[font=\sffamily\bfseries\scriptsize,anchor=east] at (-1.35,1.5) {light};
+\node at (0.5,6.3) {A}; \node at (0.5,-0.3) {M}; \node at (6.3,5.5) {G};
+\node at (-0.3,5.5) {S};
+\node at (1.5,6.3) {B}; \node at (1.5,-0.3) {N}; \node at (6.3,4.5) {H};
+\node at (-0.3,4.5) {T};
+\node at (2.5,6.3) {C}; \node at (2.5,-0.3) {O}; \node at (6.3,3.5) {I};
+\node at (-0.3,3.5) {U};
+\node at (3.5,6.3) {D}; \node at (3.5,-0.3) {P}; \node at (6.3,2.5) {J};
+\node at (-0.3,2.5) {V};
+\node at (4.5,6.3) {E}; \node at (4.5,-0.3) {Q}; \node at (6.3,1.5) {K};
+\node at (5.5,6.3) {F}; \node at (5.5,-0.3) {R}; \node at (6.3,0.5) {L};
+\node at (-0.3,0.5) {X};
+\end{tikzpicture}
+\end{center}
+
+\begin{puzzle}{Harder mazes}
+Maze A (left): the beam leaves at \wline[1cm]. Maze B (right): the beam leaves at \wline[1cm].\\
+How many mirrors did each beam bounce off? A: \wline[1cm] \quad B: \wline[1cm]
+\end{puzzle}
+
+\begin{puzzle}{Reverse the beam}
+If light is sent back in at the exit of a maze, will it follow the same path in reverse? \wline[2cm] Test it on Maze 1 of this chapter.\\
+\rule{\linewidth}{0.5pt}
+\end{puzzle}
+\clearpage

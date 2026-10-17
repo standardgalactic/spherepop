@@ -1,0 +1,132 @@
+\chapterhead{1}{Pushes, Pulls and Arrows}{Drawing what acts on a thing}\label{ch1}
+
+A push or a pull is called a \textbf{force}. You use forces all day. You push a door, pull a drawer, kick a ball, lift a bag. A force can make a thing start moving, speed up, slow down, stop, or change direction.
+
+Some forces are easy to see, because a hand does them. Others are harder. A book lying on a desk is not moving. Is nothing acting on it? In fact two forces act on it all the time.
+
+\begin{center}
+\begin{tikzpicture}
+  \draw[line width=1.4pt] (-3,0) -- (3,0);
+  \fill[sky!30,draw=ink,line width=1.2pt] (-1,0) rectangle (1,0.5);
+  \draw[-{Stealth},line width=2.4pt,color=tomato] (0,0.25) -- (0,-1.5);
+  \draw[-{Stealth},line width=2.4pt,color=leaf!70!black] (0,0.5) -- (0,2.0);
+  \node[font=\sffamily\scriptsize,anchor=west] at (0.2,-1.0) {gravity pulls down};
+  \node[font=\sffamily\scriptsize,anchor=west] at (0.2,1.6) {the table pushes up};
+\end{tikzpicture}
+\end{center}
+
+\textbf{Gravity} pulls the book down toward the Earth. The desk pushes the book up. The two arrows are the same length and point opposite ways. They \textbf{balance}, so the book stays still.
+
+\subhead{How to draw a force}
+A force has two things to tell us: which \textbf{direction} it points and how \textbf{big} it is. An arrow shows both. The arrow points the way the force acts. A longer arrow means a bigger force.
+
+\begin{center}
+\begin{tikzpicture}
+  \draw[-{Stealth},line width=2pt,color=sky!80!black] (0,0) -- (1,0); \node[font=\sffamily\scriptsize,anchor=west] at (1.2,0) {a small push};
+  \draw[-{Stealth},line width=2pt,color=sky!80!black] (0,-0.8) -- (3,-0.8); \node[font=\sffamily\scriptsize,anchor=west] at (3.2,-0.8) {a bigger push, three times as long};
+  \draw[-{Stealth},line width=2pt,color=tomato] (3,-1.6) -- (1,-1.6); \node[font=\sffamily\scriptsize,anchor=west] at (3.2,-1.6) {a pull the other way};
+\end{tikzpicture}
+\end{center}
+
+\begin{tryit}{Feel the arrows}
+\textbf{You need:} a book and a table.
+\begin{enumerate}[leftmargin=1.6em]
+\item Put the book on the table. Press down on it with your hand. Can you feel the table pushing back?
+\item Lift the book up a little. Which way is gravity pulling it? Which way is your hand pushing?
+\item Push the book along the table. Which way is the push? Is there a second force that pushes back against the slide?
+\end{enumerate}
+Write what you noticed: \wline[7cm]
+\end{tryit}
+
+\subhead{Popping the arrows}
+When more than one force acts on a thing, we want to know what is \emph{left over}. We pop the arrows into one. Arrows on the same line add if they point the same way and subtract if they point opposite ways.
+
+\begin{center}
+\begin{tikzpicture}[scale=0.9]
+  \fill[sky!30,draw=ink,line width=1.2pt] (-0.6,-0.4) rectangle (0.6,0.4);
+  \draw[-{Stealth},line width=2.4pt,color=sky!80!black] (0.6,0) -- (3.1,0); \node[font=\sffamily\scriptsize] at (1.85,0.4) {push 5};
+  \draw[-{Stealth},line width=2.4pt,color=tomato] (-0.6,0) -- (-2.0,0); \node[font=\sffamily\scriptsize] at (-1.3,0.4) {friction 3};
+  \node[bigcir,minimum size=2.2cm] (a) at (-0.2,-2.4) {}; \node[font=\sffamily\scriptsize] at (-0.2,-2.4) {5 right, 3 left};
+  \node[valcir] (b) at (4.8,-2.4) {2 right};
+  \draw[popA] (a) -- node[above,note] {pop} (b);
+  \node[note,anchor=west,text width=3.2cm,align=left] at (6.3,-2.4) {\textbf{kept:} direction and size of what is left\\\textbf{set aside:} how each arrow was made};
+\end{tikzpicture}
+\end{center}
+
+A leftover of 2 to the right means the box will speed up toward the right. A leftover of zero means no change: it stays still, or keeps moving at the same speed.
+
+\begin{multix}[hmm]\multixbot[hmm]\tcblower
+My box is not moving, so there are no forces acting on it. I will not draw any arrows. That sounds correct to me. Is it?
+\end{multix}
+
+\begin{keepbox}
+A force arrow is a simplification. \textbf{We kept} \wline[3.4cm] \textbf{and we set aside} \wline[3.4cm].
+\end{keepbox}
+
+\clearpage
+
+\begin{puzzle}{Name the arrows}
+A bag hangs from a string. Which two forces act on the bag? \wline[4cm]\\
+Are they balanced? \wline[1.6cm] How do you know? \wline[4cm]
+\end{puzzle}
+
+\begin{puzzle}{Pop them}
+Find the leftover for each. Use R for right and L for left.
+\begin{center}\sans\small\renewcommand{\arraystretch}{1.8}
+\begin{tabular}{@{}llc@{}}
+(a) push 6 right, friction 2 left & leftover: & \wline[2cm]\\
+(b) push 4 right, friction 4 left & leftover: & \wline[2cm]\\
+(c) push 3 right, wind 5 left & leftover: & \wline[2cm]
+\end{tabular}
+\end{center}
+\end{puzzle}
+
+\begin{puzzle}{Which way will it go?}
+For each, say whether the box speeds up, slows down, or does not change speed, and which way.
+\begin{description}[leftmargin=1.6em,itemsep=0.3em,style=sameline]
+\item[(a)] A box sliding right, friction 3 left, no push. \wline[4cm]
+\item[(b)] A box at rest, push 2 right, friction 2 left. \wline[4cm]
+\item[(c)] A box at rest, push 5 right, friction 2 left. \wline[4cm]
+\end{description}
+\end{puzzle}
+
+\begin{puzzle}{Draw the arrows}
+A ball sits on the floor. Draw the two forces that act on it, with arrows of equal length.
+\begin{center}
+\begin{tikzpicture}
+  \draw[line width=1.4pt] (-2.5,0) -- (2.5,0);
+  \draw[line width=1.2pt,fill=sun!50] (0,0.6) circle (0.6);
+\end{tikzpicture}
+\end{center}
+Label each arrow with what is pushing or pulling. \wline[4cm]
+\end{puzzle}
+
+\begin{puzzle}{Push or pull?}
+Write PU (push) or PL (pull).
+\begin{description}[leftmargin=1.6em,itemsep=0.3em,style=sameline]
+\item[(a)] Opening a drawer by the handle. \wline[1cm]
+\item[(b)] Closing a door by pressing on it. \wline[1cm]
+\item[(c)] A magnet drawing a paper clip toward it. \wline[1cm]
+\item[(d)] Kicking a football. \wline[1cm]
+\end{description}
+\end{puzzle}
+\clearpage
+
+\begin{puzzle}{Make the leftover}
+A push of size 3 goes right. You want a leftover of 5 to the right. What second arrow do you add, and which way? \wline[4cm]
+\end{puzzle}
+
+\begin{puzzle}{One more child}
+In a tug of war, four children pull left with size 2 each. Four children pull right with size 2 each. Nothing moves. One more child joins the right side with size 1. What is the leftover? \wline[3cm]
+\end{puzzle}
+
+\begin{puzzle}{Sailing}
+Wind pushes a toy boat right with size 7. The water pulls it left with size 4. What is the leftover, and which way does the boat go? \wline[4cm]
+\end{puzzle}
+
+\begin{puzzle}{Your day}
+Write three pushes and three pulls you did today.\\
+Pushes: \wline[10cm]\\[6pt]
+Pulls: \wline[10cm]
+\end{puzzle}
+\clearpage

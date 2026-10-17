@@ -1,0 +1,183 @@
+\chapterhead{3}{Guess First}{Estimating before you measure, then correcting}\label{ch3}
+
+Before you measure anything, you can guess. A guess is not a wild shot. It is a quick, rough answer that tells you what size of answer to expect.
+
+Why bother? Suppose you measure a pencil and your ruler says 1.7~m. If you had guessed first, you would know at once that something is off, because a pencil is not as long as a person's arm. A guess is a smoke alarm for silly slips.
+
+\begin{tryit}{Guess, then measure}
+Pick three things in the room. Write a guess for each length in centimetres. Then measure and see how far off you were.
+\par\medskip
+\renewcommand{\arraystretch}{1.8}
+\begin{tabularx}{\linewidth}{|>{\sffamily\small}p{2.2cm}|X|X|X|}
+\hline
+\textbf{Thing} & \textbf{My guess (cm)} & \textbf{Measured (cm)} & \textbf{Off by (guess $-$ measured)}\\ \hline
+ & & & \\ \hline
+ & & & \\ \hline
+ & & & \\ \hline
+\end{tabularx}
+\end{tryit}
+
+A negative ``off by'' means you guessed too small. A positive one means you guessed too big. Over time, most people's guesses get better, because they learn what 10~cm, 30~cm or 1~m looks like.
+
+\subhead{Benchmarks: rulers you carry in your head}
+A \textbf{benchmark} is a thing whose size you know well. When you have no ruler, you can compare an unknown length to a benchmark.
+
+\begin{center}
+\sffamily\small\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Benchmark} & \textbf{About how big}\\
+\midrule
+A bank card or bus pass card & 8.6~cm by 5.4~cm\\
+A sheet of letter paper & 21.6~cm by 27.9~cm (A4 paper: 21.0~cm by 29.7~cm)\\
+A new, unsharpened pencil & about 19~cm\\
+A room door & about 2~m high\\
+\bottomrule
+\end{tabular}
+\end{center}
+Real things vary a little, so check yours with a ruler once and remember the number.
+
+\begin{tryit}{Estimate with a sheet of paper}
+Lay sheets of paper end to end along a desk, long side along the desk. Count how many sheets and part-sheets it takes. Multiply by 27.9~cm if you use letter paper, or by 29.7~cm if you use A4. Write the estimate, then check with your ruler.\\[4pt]
+Sheets: \wline[1.6cm] \quad Estimate: \wline[1.6cm]~cm \quad Ruler: \wline[1.6cm]~cm
+\end{tryit}
+
+\subhead{Beans in a jar}
+Now for a bigger guess. How many beans are in a jar? You could count them all, but if the jar is big that takes ages. Instead we can \textbf{estimate}: count a small scoop, and use the scoop to work out the whole jar.
+
+\begin{tryit}{Estimate the beans}
+\textbf{You need:} a cup of dried beans, a small cup, a jar or tub, a spoon or ruler to level the cup.
+\begin{enumerate}[leftmargin=1.6em]
+\item Fill the small cup with beans and level the top. Tip them out and \textbf{count} them. That is one scoop.
+\item Pour beans from the small cup into the jar, one level cup at a time, until the jar is full. Count the cups.
+\item Multiply: beans in one scoop $\times$ number of cups $=$ \textbf{estimate}.
+\item Now take two more scoops and count each. Average the three scoops (add them, divide by 3).
+\item Multiply the \textbf{average} by the number of cups. This is your corrected estimate.
+\item Only now, count every bean in the jar and compare.
+\end{enumerate}
+\end{tryit}
+\adult{Beans can be a choking hazard for little children and pets. Count them at a table and put them away afterwards. Do not eat them.}
+
+\subhead{Practice numbers}
+\begin{worked}{Made-up numbers for practice, not from a real jar}
+\textbf{One scoop} had 24 beans. The jar took \textbf{9} level cups.\\
+First estimate: $24\times9=216$.\\
+Two more scoops: 28 and 23. Three scoops: 24, 28, 23. Total $24+28+23=75$. \textbf{Average:} $75\div3=25$.\\
+Corrected estimate: $25\times9=225$. The correction is $+9$ beans.\\
+Real count: 231. The corrected estimate was off by $231-225=6$.
+\end{worked}
+
+\begin{center}
+\begin{tikzpicture}[scale=0.92]
+  \node[cir] (s1) at (0,1.2) {24};
+  \node[cir] (s2) at (0,0) {28};
+  \node[cir] (s3) at (0,-1.2) {23};
+  \node[bigcir,minimum size=3.2cm] (big) at (0,0) {};
+  \node[cir] at (0,1.0) {24}; \node[cir] at (0,0) {28}; \node[cir] at (0,-1.0) {23};
+  \node[valcir] (avg) at (3.8,0) {25};
+  \node[note] at (3.8,-0.75) {average scoop};
+  \draw[popA] (big) -- node[above,note] {pop} (avg);
+  \node[note,anchor=east,align=right,text width=2.6cm] at (-1.9,0) {\textbf{kept:} the typical scoop\\\textbf{lost:} which scoop was which};
+  \node[cir] (old) at (7.0,0.9) {216};
+  \node[wrapcir,minimum size=2.35cm] (w) at (7.0,0.9) {};
+  \node[valcir] (new) at (7.0,-1.4) {225};
+  \draw[popA] (w) -- node[right,note] {$\times$ using the average} (new);
+  \node[note] at (7.0,2.35) {old estimate, wrapped};
+  \node[note,font=\sffamily\scriptsize] at (7.0,0.2) {$+9$};
+\end{tikzpicture}
+\end{center}
+
+\trust{We took three scoops instead of one, and we compared the corrected estimate, 225, with a full count, 231.}
+{The average of three scoops is steadier than one scoop, and the final answer was only 6 away from the real count, which is under 3 beans in every hundred.}
+{That a different jar, a different kind of bean or a heaped cup would give the same result. One careful jar shows that the method \emph{can} work, not that it always does.}
+
+\subhead{The ladder from seen to concluded}
+Scientists keep four kinds of statement apart. We will use this ladder in every science book.
+
+\begin{center}\ladder[0.8]\end{center}
+
+In the bean jar, ``there were 24 beans in my first scoop'' is a \textbf{count}. ``There are about 225 beans in the jar'' is an \textbf{estimate}, because we counted a few and reasoned about all. Notice the word ``about''. We do not say there are exactly 225.
+
+\begin{keepbox}
+We used three scoops to estimate the whole jar. \textbf{We kept} \wline[3cm], \textbf{and we set aside} \wline[3.5cm].
+\end{keepbox}
+
+\begin{multix}[wow]\multixbot[wow]\tcblower
+Three scoops gave 24, 28 and 23, and the jar holds 9 cups. So $24+28+23=75$ beans in the jar! That was easy. Why do you think the real count was so much bigger?
+\end{multix}
+
+\subhead{No peeking}
+Do not count the whole jar first and then ``estimate''. An estimate made after peeking at the answer proves nothing. Write the estimate down \emph{before} the full count, so the correction is honest.
+
+\subhead{Pacing it out}
+You do not need a tape measure to estimate a long distance. You can walk it. First find out how long \emph{your} walking step is, then count steps.
+
+\begin{tryit}{Pace a hallway}
+\textbf{You need:} a long tape measure or a long piece of string and a ruler, plus a hallway or a path.
+\begin{enumerate}[leftmargin=1.6em]
+\item Walk 10 normal steps in a straight line. Measure the distance. Divide by 10 to get the length of one pace.
+\item Do it three times and average the three distances. Your pace length is that average divided by 10.
+\item Walk the hallway and count your paces. Multiply the paces by your pace length.
+\item Measure the hallway with the tape and compare.
+\end{enumerate}
+\end{tryit}
+
+\begin{worked}{Practice numbers, not from a real hallway}
+\textbf{First try.} 10 paces measured 7.2~m, so one pace is $0.72$~m. The hallway took 31 paces. $31\times0.72=22.32$, so \textbf{about 22~m}.\\
+\textbf{Corrected.} Two more tries: 7.7~m and 7.4~m. Total $7.2+7.7+7.4=22.3$, and $22.3\div3\approx7.43$~m for 10 paces. One pace is $0.743$~m. $31\times0.743\approx23.0$, so \textbf{about 23~m}.\\
+\textbf{Tape measure.} 22.9~m. The first estimate was off by about 0.6~m. The corrected one was off by about 0.1~m.
+\end{worked}
+
+\begin{keepbox}
+When we walked a hallway to measure it, \textbf{we kept} \wline[3.2cm] \textbf{and we set aside} \wline[3.2cm].
+\end{keepbox}
+
+\clearpage
+
+\begin{puzzle}{Which guess was closer?}
+A jar really had 231 beans. Three people guessed.
+\begin{center}\sans
+Priya: 190 \qquad Sam: 260 \qquad Tomas: 225
+\end{center}
+For each, work out how far off the guess was.\\
+Priya \wline[1.5cm] \quad Sam \wline[1.5cm] \quad Tomas \wline[1.5cm]\\
+Whose guess was closest? \wline[3cm]
+\end{puzzle}
+
+\begin{puzzle}{Fill the jar}
+Four scoops of lentils had 18, 20, 19 and 19 lentils. The jar holds 12 scoops.\\
+(a) Total of the four scoops: \wline[1.8cm]\\
+(b) Average scoop: \wline[1.8cm]\\
+(c) Estimate for the jar: \wline[1.8cm]
+\end{puzzle}
+
+\begin{puzzle}{Scoop detective}
+Four scoops of beans were counted: \textbf{24, 28, 23 and 52}.\\
+One count looks strange. Which one? \wline[2cm]\\
+Write one way it might have happened, and what you would do about it.\\
+\rule{\linewidth}{0.5pt}
+\end{puzzle}
+
+\begin{puzzle}{Smoke alarm}
+Each measurement has a slip. Use a quick guess to spot it.
+\begin{center}\sans\small\renewcommand{\arraystretch}{1.7}
+\begin{tabular}{@{}ll@{}}
+(a) ``My pencil is 175 cm long.'' & Slip? \wline[3.5cm]\\
+(b) ``This classroom door is 2 mm tall.'' & Slip? \wline[3.5cm]\\
+(c) ``My shoe is 25 m long.'' & Slip? \wline[3.5cm]\\
+\end{tabular}
+\end{center}
+\end{puzzle}
+
+\clearpage
+
+\begin{puzzle}{Dots in a field}
+There are far too many dots to count one by one. The field is split into 8 equal squares, A to H. A to D are along the top and E to H along the bottom.
+
+\input{sections/dotfield}
+
+(a) Count the dots in squares \textbf{B}, \textbf{C} and \textbf{F}. B: \wline[1.1cm] \quad C: \wline[1.1cm] \quad F: \wline[1.1cm]\\
+(b) Average per square: \wline[1.8cm] \quad (c) Estimate for the whole field (average $\times$ 8): \wline[1.8cm]\\
+(d) Now count every dot if you dare. Was your estimate close? \wline[1.8cm]
+\end{puzzle}
+\clearpage

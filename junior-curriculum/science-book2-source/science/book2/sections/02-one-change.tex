@@ -1,0 +1,203 @@
+\chapterhead{2}{One Change at a Time}{Running a real fair test with paper planes}\label{ch2}
+
+Now it is your turn to run the test properly. The question: \textbf{does a paper clip on the nose make a paper plane fly farther?}
+
+First write the three kinds of things down. Writing them is half the work.
+
+\begin{center}
+\sffamily\small\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{@{}p{3.4cm}p{7.6cm}@{}}
+\toprule
+\textbf{I change} & a paper clip on the nose: none, or one clip\\
+\textbf{I measure} & how far the plane flies, from the launch line to where it first lands, to the nearest 0.1~m\\
+\textbf{I keep the same} & the paper, the folding, the launch line, the height and the push, the person throwing, the room\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{tryit}{The paper clip test}
+\textbf{You need:} six sheets of the same scrap paper, one paper clip, a tape measure, a sticky note or tape for the launch line.
+\begin{enumerate}[leftmargin=1.6em]
+\item Fold two planes from two sheets of the same paper. Use exactly the same folds. Hold them side by side to check they match.
+\item Put a paper clip on the nose of one plane. Leave the other plain.
+\item Stand behind the launch line. Throw each plane \textbf{gently, from shoulder height, with the same push}, three times each. Do the throws in a mixed order: plain, clip, plain, clip, plain, clip.
+\item After each throw, measure from the launch line to where the plane first touched the floor. Write the distance down at once.
+\item Find the average distance for each plane.
+\end{enumerate}
+\par\medskip
+\renewcommand{\arraystretch}{1.6}
+\begin{tabular}{|l|c|c|c|c|}
+\hline
+ & \textbf{Throw 1 (m)} & \textbf{Throw 2 (m)} & \textbf{Throw 3 (m)} & \textbf{Average (m)}\\ \hline
+\textbf{No clip} & & & & \\ \hline
+\textbf{Clip} & & & & \\ \hline
+\end{tabular}
+\end{tryit}
+\adult{Throw gently and never toward a person or pet. Pick a clear stretch of floor or a calm day outdoors, and put the clips away afterwards. Small clips are not for mouths.}
+
+\subhead{Why mixed order?}
+If you throw all the plain planes first and the clipped ones after, your arm may get warmer, tired or better at throwing as you go. That is another difference hiding in the test. Mixing the order spreads that difference across both planes.
+
+\subhead{Practice numbers}
+Here are results from a made-up run, so you can see how the numbers work. They are practice numbers, not from a real experiment.
+
+\begin{worked}{Practice numbers for the paper clip test}
+\textbf{No clip:} 4.1~m, 3.8~m, 4.4~m. Total $4.1+3.8+4.4=12.3$. Average $12.3\div3=4.1$~m. Spread $4.4-3.8=0.6$~m.\\
+\textbf{Clip:} 5.2~m, 5.6~m, 5.1~m. Total $5.2+5.6+5.1=15.9$. Average $15.9\div3=5.3$~m. Spread $5.6-5.1=0.5$~m.\\
+\textbf{Difference of the averages:} $5.3-4.1=1.2$~m.
+\end{worked}
+
+\begin{center}
+\begin{tikzpicture}[x=1.15cm,y=1cm]
+  \draw[line width=1.1pt] (3.3,0) -- (6.1,0);
+  \foreach \v in {3.5,4.0,4.5,5.0,5.5,6.0}{\draw (\v,-0.1) -- (\v,0.1); \node[font=\sffamily\scriptsize,below=2pt] at (\v,-0.1) {\v};}
+  \foreach \v in {3.8,4.1,4.4}{\fill[sky,draw=ink,line width=0.7pt] (\v,0.5) circle (2.4mm);}
+  \foreach \v in {5.1,5.2,5.6}{\fill[tomato,draw=ink,line width=0.7pt] (\v,1.1) circle (2.4mm);}
+  \node[font=\sffamily\bfseries\scriptsize,anchor=east] at (3.3,0.5) {no clip};
+  \node[font=\sffamily\bfseries\scriptsize,anchor=east] at (3.3,1.1) {clip};
+  \node[font=\sffamily\scriptsize,anchor=north] at (4.75,-0.7) {distance flown (m)};
+\end{tikzpicture}
+\end{center}
+
+All three clipped throws went farther than all three plain throws. The two groups do not overlap. That is a clue that the clip really did something.
+
+\subhead{Three throws become one circle}
+\begin{center}
+\begin{tikzpicture}
+  \node[bigcir,minimum size=2.7cm] (a) at (0,0) {};
+  \foreach \x/\y/\t in {-0.4/0.55/4.1,0.45/0.4/3.8,0/-0.45/4.4}{\node[cir,inner sep=0.8pt,font=\sffamily\bfseries\scriptsize] at (\x,\y) {\t};}
+  \node[valcir] (b) at (4.8,0) {4.1 m};
+  \draw[popA] (a) -- node[above,note,text width=2.4cm,align=center] {pop: the average} (b);
+  \node[note,align=left,anchor=west,text width=4.6cm] at (6.1,0) {\textbf{kept:} the typical distance, and the spread 0.6~m beside it\\\textbf{lost:} which throw was which};
+\end{tikzpicture}
+\end{center}
+
+\trust{We changed one thing, a clip on the nose, kept everything else the same, and threw each plane three times in a mixed order. The groups of throws did not overlap.}
+{If only the clip differed, then a difference in distance is unlikely to come from the paper, the thrower or the spot, so the clip is the likely reason for the gap. Mixing the order also spreads out any tiredness or warming up.}
+{That a clip helps every plane, on every day, or why it helps. It also does not show that three throws are enough. We tested one design of plane and one kind of clip.}
+
+\begin{keepbox}
+We wrote down what stayed the same. \textbf{We kept} \wline[3.6cm] \textbf{the same and we set aside} \wline[3.2cm].
+\end{keepbox}
+
+\begin{multix}[hmm]\multixbot[hmm]\tcblower
+My own test took 9 seconds. I threw a clip plane hard, 7.5~m, and a plain plane softly, 3.0~m. The clip adds 4.5~m. That is science!
+\end{multix}
+
+\clearpage
+
+\subhead{A second round: wing flaps}
+Now ask a different question with the same method: does \textbf{folding the back edge of the wings up} (a small flap) change how far the plane flies? Change nothing but the flaps. Keep the clip off both planes this time, because now the clip is one more thing to keep the same.
+
+\begin{tryit}{The flap test}
+Fold two matching planes. Bend the back edge of both wings up by about 1~cm on \textbf{one} plane only. Throw each three times in a mixed order from the same line and push. Fill in the table.\par\medskip
+\renewcommand{\arraystretch}{1.6}
+\begin{tabular}{|l|c|c|c|c|}
+\hline
+ & \textbf{Throw 1 (m)} & \textbf{Throw 2 (m)} & \textbf{Throw 3 (m)} & \textbf{Average (m)}\\ \hline
+\textbf{Flat wings} & & & & \\ \hline
+\textbf{Flaps up} & & & & \\ \hline
+\end{tabular}
+\end{tryit}
+
+\subhead{What stays the same, and what changes}
+Use the table to plan every new test. Fill in the blanks for the flap test.
+
+\begin{center}
+\sffamily\small\renewcommand{\arraystretch}{1.9}
+\begin{tabular}{|p{3.0cm}|p{7.8cm}|}
+\hline
+\textbf{I change} & \wline[7cm]\\ \hline
+\textbf{I measure} & \wline[7cm]\\ \hline
+\textbf{I keep the same} & \wline[7cm]\\ \hline
+\end{tabular}
+\end{center}
+
+\clearpage
+
+\begin{puzzle}{Averages}
+In a clip test, the plain plane flew 3.9~m, 4.2~m and 4.5~m. The clipped plane flew 5.1~m, 5.4~m and 5.7~m.\\
+(a) Plain: total \wline[1.3cm] average \wline[1.3cm] spread \wline[1.3cm]\\
+(b) Clip: total \wline[1.3cm] average \wline[1.3cm] spread \wline[1.3cm]\\
+(c) Difference of the averages: \wline[1.6cm]~m
+\end{puzzle}
+
+\begin{puzzle}{Plan the test}
+For each question, say what you would change, what you would measure, and one thing you would keep the same.
+\begin{center}\sans\small\renewcommand{\arraystretch}{1.9}
+\begin{tabular}{@{}p{4.2cm}p{2.4cm}p{2.4cm}p{2.4cm}@{}}
+& \textbf{Change} & \textbf{Measure} & \textbf{Keep same}\\
+(a) Does a longer ramp make a toy car go farther? & \wline[2.2cm] & \wline[2.2cm] & \wline[2.2cm]\\
+(b) Does warm water melt an ice cube faster? & \wline[2.2cm] & \wline[2.2cm] & \wline[2.2cm]
+\end{tabular}
+\end{center}
+\end{puzzle}
+
+\begin{puzzle}{Draw the fair circles}
+You want to test whether the \emph{colour of paper} changes how far a plane flies. Fill in the two circles so the test is fair.
+\begin{center}
+\begin{tikzpicture}
+  \node[bigcir,minimum size=3.3cm] at (0,0) {};
+  \node[cir,minimum width=2.3cm,font=\sffamily\scriptsize] at (0,0.7) {red paper};
+  \node[cir,minimum width=2.3cm,font=\sffamily\scriptsize,dashed] at (0,0) {};
+  \node[cir,minimum width=2.3cm,font=\sffamily\scriptsize,dashed] at (0,-0.7) {};
+  \node[bigcir,minimum size=3.3cm] at (5,0) {};
+  \node[cir,minimum width=2.3cm,font=\sffamily\scriptsize] at (5,0.7) {blue paper};
+  \node[cir,minimum width=2.3cm,font=\sffamily\scriptsize,dashed] at (5,0) {};
+  \node[cir,minimum width=2.3cm,font=\sffamily\scriptsize,dashed] at (5,-0.7) {};
+\end{tikzpicture}
+\end{center}
+Write in each dashed circle one thing that must be the same.
+\end{puzzle}
+
+\begin{puzzle}{Which result should you trust more?}
+Priya threw each plane once: the clip plane flew 5.0~m and the plain plane flew 4.2~m. Sam threw each plane three times: clip 5.2, 5.6, 5.1~m and plain 4.1, 3.8, 4.4~m.\\
+Whose result should you trust more? \wline[2cm]\\
+Write one reason.\\
+\rule{\linewidth}{0.5pt}
+\end{puzzle}
+\clearpage
+
+\subhead{A third test: a ramp}
+Try the method on a toy car. The question: \textbf{does a higher ramp send a toy car farther along the floor?} Make a ramp from a board or a thick piece of card. Raise one end with one book for the first version and two books for the second.
+
+\begin{center}
+\sffamily\small\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{@{}p{3.4cm}p{7.6cm}@{}}
+\toprule
+\textbf{I change} & the height of the top end: one book or two books\\
+\textbf{I measure} & how far the car rolls from the bottom of the ramp to its front wheel when it stops, nearest cm\\
+\textbf{I keep the same} & the board, the car, the floor, where the car starts on the ramp, letting go with no push\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{center}
+\begin{tikzpicture}
+  \draw[line width=1.2pt] (-1,0) -- (9,0);
+  \fill[sun!50,draw=ink] (0,0) -- (3.4,0.9) -- (3.4,1.0) -- (0,0.1) -- cycle;
+  \fill[sky!40,draw=ink] (3.4,0) rectangle (4.1,0.9);
+  \node[font=\sffamily\scriptsize] at (3.75,0.45) {1 book};
+  \node[draw=ink,fill=tomato!40,rounded corners=2pt,minimum width=0.8cm,minimum height=0.35cm] at (0.9,0.55) {};
+  \draw[dashed,color=ink!60] (0,-0.5) -- (0,0.1);
+  \draw[<->,line width=0.9pt] (0.2,-0.4) -- (7.0,-0.4) node[midway,below,font=\sffamily\scriptsize] {distance rolled};
+\end{tikzpicture}
+\end{center}
+
+\begin{worked}{Ramp test (practice numbers, not from a real test)}
+\textbf{One book:} 85, 92, 88~cm. Total $=265$. Average $265\div3\approx88$~cm. Spread $92-85=7$~cm.\\
+\textbf{Two books:} 130, 138, 127~cm. Total $=395$. Average $395\div3\approx132$~cm. Spread $138-127=11$~cm.\\
+\textbf{Gap:} $132-88=44$~cm, much bigger than either spread.
+\end{worked}
+
+\begin{tryit}{The ramp test}
+Run the test yourself with three rolls of each version in a mixed order.\par\medskip
+\renewcommand{\arraystretch}{1.6}
+\begin{tabular}{|l|c|c|c|c|}
+\hline
+ & \textbf{Roll 1 (cm)} & \textbf{Roll 2 (cm)} & \textbf{Roll 3 (cm)} & \textbf{Average (cm)}\\ \hline
+\textbf{One book} & & & & \\ \hline
+\textbf{Two books} & & & & \\ \hline
+\end{tabular}
+\end{tryit}
+\clearpage

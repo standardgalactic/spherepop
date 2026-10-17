@@ -1,0 +1,148 @@
+\chapterhead{4}{Balance}{Why a small weight far out can balance a big one close in}\label{ch4}
+
+Two children on a seesaw can balance even when one is much heavier. The heavier child just sits closer to the middle. A weight does not only matter because of how heavy it is. It also matters where it is.
+
+\begin{center}
+\begin{tikzpicture}
+  \draw[line width=3pt,color=ink] (-3.5,0.25) -- (3.5,0.25);
+  \fill[ink] (0,0) -- (-0.4,-0.7) -- (0.4,-0.7) -- cycle;
+  \fill[tangerine!70,draw=ink] (-2.7,0.25) circle (0.35); \node[font=\sffamily\scriptsize] at (-2.7,0.9) {light, far out};
+  \fill[sky!60,draw=ink] (1.0,0.25) rectangle (1.7,0.95); \node[font=\sffamily\scriptsize] at (1.35,1.3) {heavy, close in};
+  \draw[<->] (-2.7,-0.3) -- (0,-0.3) node[midway,below,font=\sffamily\scriptsize] {long distance};
+  \draw[<->] (0,-0.3) -- (1.35,-0.3) node[midway,below,font=\sffamily\scriptsize] {short};
+\end{tikzpicture}
+\end{center}
+
+\begin{tryit}{A ruler seesaw}
+\textbf{You need:} a 30~cm ruler, a pencil, ten identical coins, a bit of tape.
+\begin{enumerate}[leftmargin=1.6em]
+\item Lay the pencil flat on a table. Rest the ruler across it at the 15~cm mark. Adjust until the empty ruler balances.
+\item Put two coins on the ruler 6~cm to the left of the middle (the 9~cm mark).
+\item Put one coin on the right. Slide it until the ruler balances. Measure its distance from the middle.
+\item Try three coins at 4~cm on the left. Where does one coin balance them?
+\end{enumerate}
+\par\medskip
+\renewcommand{\arraystretch}{1.6}
+\begin{tabular}{|c|c|c|c|}
+\hline
+\textbf{Left: coins} & \textbf{Left: distance (cm)} & \textbf{Right: coins} & \textbf{Right: distance (cm)}\\ \hline
+2 & 6 & 1 & \\ \hline
+3 & 4 & 1 & \\ \hline
+\end{tabular}
+\end{tryit}
+
+\subhead{A rule for balancing}
+Multiply the number of coins by the distance from the middle on each side. If the two numbers match, the ruler balances. If they do not match, the bigger side goes down.
+
+\begin{center}
+\begin{tikzpicture}
+  \node[bigcir,minimum size=2.2cm] (a) at (0,0) {}; \node[font=\sffamily\scriptsize,text width=1.8cm,align=center] at (0,0) {left\\2 coins\\at 6~cm};
+  \node[bigcir,minimum size=2.2cm] (b) at (6,0) {}; \node[font=\sffamily\scriptsize,text width=1.8cm,align=center] at (6,0) {right\\1 coin\\at 12~cm};
+  \node[valcir] (c) at (2.2,-1.9) {$2\times6=12$}; \node[valcir] (d) at (3.8,-1.9) {$1\times12=12$};
+  \draw[popA] (a) -- (c); \draw[popA] (b) -- (d);
+  \node[note] at (3,-2.8) {same number, so balance};
+\end{tikzpicture}
+\end{center}
+
+\begin{worked}{Balancing coins (practice numbers, not from a real test)}
+Two coins at 6~cm give $2\times6=12$. One coin balanced them at 12~cm, because $1\times12=12$. When the single coin was moved to 10~cm and 14~cm the ruler tipped.\\
+Three coins at 4~cm give $3\times4=12$. Again one coin balanced them at 12~cm.\\
+Prediction check: the rule said 12~cm both times. The measured balance was within 1~cm of 12.
+\end{worked}
+
+\begin{multix}[hmm]\multixbot[hmm]\tcblower
+Three coins on the left at 4~cm, and one coin on the right at 4~cm. Both sides have the same distance, so it must balance. Right?
+\end{multix}
+
+\trust{We predicted the balance point with a rule, then slid the single coin along the ruler and found where the ruler balanced, for two different set-ups.}
+{The measured balance points matched the predictions to within 1~cm both times, so the rule, coins times distance, is working.}
+{That the rule works with big weights, with a bent ruler or with a heavy ruler that is not centred. We used identical coins and one ruler.}
+
+\begin{keepbox}
+We reduced a seesaw to coins times distance. \textbf{We kept} \wline[3.4cm] \textbf{and we set aside} \wline[3.4cm].
+\end{keepbox}
+
+\clearpage
+
+\subhead{Finding the balance point}
+Every object has a spot where it balances: its \textbf{balance point}. A pencil balances in the middle. A spoon balances closer to the bowl, because the bowl is heavier.
+
+\begin{tryit}{Find the balance point}
+Rest a pencil, a spoon and a ruler across your finger or the edge of a book. Slide until each balances. Mark the spot with a pencil dot and measure from one end.\par\medskip
+\renewcommand{\arraystretch}{1.6}
+\begin{tabular}{|l|c|c|}
+\hline
+\textbf{Object} & \textbf{Length (cm)} & \textbf{Balance point from one end (cm)} \\ \hline
+Pencil & & \\ \hline
+Spoon & & \\ \hline
+Ruler & & \\ \hline
+\end{tabular}
+\end{tryit}
+
+\begin{worked}{Practice numbers}
+A 19~cm pencil balanced at 9.5~cm, the middle. A 17~cm spoon balanced at 6~cm from the end of the bowl. A 30~cm ruler balanced at 15~cm.
+\end{worked}
+
+\begin{puzzle}{Predict the balance}
+Left: 2 coins at 9~cm. Right: 3 coins. Where must the right coins sit to balance? \wline[1.6cm]~cm
+\end{puzzle}
+
+\begin{puzzle}{Which way?}
+Left: 3 coins at 5~cm. Right: 2 coins at 8~cm. Which side goes down? \wline[2cm]\\
+Show the numbers: left \wline[1.4cm] right \wline[1.4cm]
+\end{puzzle}
+
+\begin{puzzle}{Mystery weight}
+A mystery bag sits 5~cm to the left of the middle. It is balanced by 2 coins 10~cm to the right. How many coins does the bag weigh? \wline[1.6cm]
+\end{puzzle}
+
+\begin{puzzle}{On the seesaw}
+A child of weight 30 sits 2~m from the middle. Where must a child of weight 40 sit to balance? \wline[1.6cm]~m
+\end{puzzle}
+
+\begin{puzzle}{Check the rule}
+A student says the rule is ``coins plus distance''. Test it: 2 coins at 6 and 1 coin at 12 balance. Does $2+6$ equal $1+12$? \wline[2cm] What does that tell you? \wline[3cm]
+\end{puzzle}
+\clearpage
+
+\subhead{Predict, then test}
+Before you test, work out where one coin should sit. Write your prediction, then test it, then write what happened.\par\medskip
+\renewcommand{\arraystretch}{1.8}
+\begin{tabular}{|c|c|c|c|}
+\hline
+\textbf{Left set-up} & \textbf{Predicted right distance (cm)} & \textbf{Measured (cm)} & \textbf{Off by (cm)}\\ \hline
+4 coins at 3~cm & & & \\ \hline
+2 coins at 6~cm & & & \\ \hline
+3 coins at 5~cm & & & \\ \hline
+\end{tabular}
+
+\begin{worked}{Practice numbers}
+Left 4 coins at 3 cm gives 12. One coin balances at 12~cm. Measured: 11.5~cm. Off by 0.5~cm.\\
+Left 2 coins at 6 cm gives 12. Same answer, 12~cm. Measured 12.5~cm. Off by 0.5~cm.\\
+Left 3 coins at 5 cm gives 15. One coin would need 15~cm, which is the end of the ruler. Move it to the end and it just balances.
+\end{worked}
+
+\subhead{Your balance diary}
+Look for balances at home: a door, a scale, a seesaw, a wheelbarrow, scissors. Draw one, and say which side is the long distance.\par\medskip
+\begin{tikzpicture}\draw[ink!70,line width=1pt,rounded corners=3pt] (0,0) rectangle (11.4,5);\end{tikzpicture}
+\clearpage
+
+\begin{puzzle}{Two on the left}
+Left: 3 coins at 10~cm. Right: 2 coins. Where do they go? \wline[1.6cm]~cm
+\end{puzzle}
+
+\begin{puzzle}{Too far}
+Left: 5 coins at 6~cm. You have one coin for the right. Where would it need to be? \wline[1.6cm]~cm\\
+Can that work on a 30~cm ruler with the pivot in the middle? \wline[2cm]\\
+What could you do instead? \wline[4cm]
+\end{puzzle}
+
+\begin{puzzle}{Equal pairs}
+Left: 4 coins at 3~cm. Right: 3 coins at 4~cm. Does it balance? \wline[2cm]\\
+Show the numbers: \wline[3cm]
+\end{puzzle}
+
+\begin{puzzle}{Mystery bag, again}
+A bag sits 6~cm left of the middle. Three coins sit 8~cm right of the middle, and the ruler balances. How many coins does the bag weigh? \wline[1.8cm]
+\end{puzzle}
+\clearpage

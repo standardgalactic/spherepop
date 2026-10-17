@@ -1,0 +1,153 @@
+\chapterhead{4}{A Cup With a Lid}{Keeping count of the water}\label{ch4}
+
+In Chapter~1 an open cup lost water and a covered cup did not. That suggests the water went into the air, not into nothing. Here is a way to check, by keeping a \textbf{ledger}. A ledger is a list of where the amounts are, written so the total can be added up.
+
+\begin{tryit}{A water ledger}
+\textbf{You need:} two jars that are the same, one with a lid, a spoon, water, a marker pen.
+\begin{enumerate}[leftmargin=1.6em]
+\item Put exactly 40 spoonfuls of water in each jar. Count each spoonful. Mark the level on the outside.
+\item Close one jar tightly with its lid. Leave the other open. Put them side by side for 5 days.
+\item At the end, use the same spoon to take the water out of each jar and count the spoonfuls.
+\item Look at the inside of the lid and the glass above the water. Note any drops. Write down the numbers.
+\end{enumerate}
+\par\medskip
+\renewcommand{\arraystretch}{1.6}
+\begin{tabular}{|l|c|c|c|}
+\hline
+ & \textbf{Start} & \textbf{End: in the jar} & \textbf{Drops on lid and sides}\\ \hline
+\textbf{Open jar} & 40 & & \\ \hline
+\textbf{Closed jar} & 40 & & \\ \hline
+\end{tabular}
+\end{tryit}
+\adult{Keep the jars on a steady shelf. Wipe up spills. The water is not for drinking afterwards.}
+
+\begin{worked}{Practice numbers, not from a real test}
+Open jar: 32 spoonfuls left. $40-32=8$ spoonfuls went into the air.\\
+Closed jar: 39 spoonfuls left, plus about 1 spoonful worth of drops on the lid and sides. $39+1=40$.\\
+The open jar's total only adds up if we count the air. The closed jar's total adds up without it.
+\end{worked}
+
+\begin{center}
+\begin{tikzpicture}
+  \node[font=\sffamily\bfseries\small] at (1.5,2.0) {Open jar};
+  \node[cir] (o1) at (0,0.6) {40}; \node[cir] (o2) at (3,0.6) {32}; \node[cir] (o3) at (3,-0.9) {8};
+  \draw[moveA] (o1) -- node[above,note] {5 days} (o2);
+  \draw[moveA] (o1) -- (o3);
+  \node[note,anchor=west] at (3.6,-0.9) {to the air};
+  \node[font=\sffamily\bfseries\small] at (9.5,2.0) {Closed jar};
+  \node[cir] (c1) at (8,0.6) {40}; \node[cir] (c2) at (11,0.6) {39}; \node[cir] (c3) at (11,-0.9) {1};
+  \draw[moveA] (c1) -- node[above,note] {5 days} (c2);
+  \draw[moveA] (c1) -- (c3);
+  \node[note,anchor=west] at (11.6,-0.9) {lid and sides};
+\end{tikzpicture}
+\end{center}
+
+\begin{multix}[hmm]\multixbot[hmm]\tcblower
+My closed jar had 39 spoonfuls in it at the end, and I started with 40. So one spoonful was destroyed. I always trust my arithmetic. Should I trust this answer?
+\end{multix}
+
+\trust{We counted every spoonful at the start and the end, in an open jar and a closed one, and looked for water outside the main pool.}
+{The closed jar's amounts added up to the start total, and the open jar's loss matched what the air could have gained.}
+{That nothing is ever lost. A spoon counts in whole steps, so a gap of one spoonful is about the size of the measuring error.}
+
+\begin{keepbox}
+We counted water in spoonfuls. \textbf{We kept} \wline[3.4cm] \textbf{and we set aside} \wline[3.4cm].
+\end{keepbox}
+
+\clearpage
+
+\subhead{A tiny garden in a jar}
+A sealed jar with damp soil and a small plant, or some moss, is called a \textbf{terrarium}. The water cannot escape, so it goes round inside. It evaporates from the soil, condenses on the cool lid, and runs back down. The plant also lets water out of its leaves as vapour.
+
+\begin{center}
+\begin{tikzpicture}
+  \draw[line width=1.6pt,color=ink,rounded corners=6pt] (0,0) -- (0,3.4) -- (3.6,3.4) -- (3.6,0) -- cycle;
+  \fill[brown!60!black!50] (0.05,0.05) rectangle (3.55,0.9);
+  \fill[leaf!70] (1.6,0.9) -- (1.7,1.8) -- (1.4,1.5) -- cycle; \fill[leaf!70] (1.7,0.9) -- (2.0,2.0) -- (1.85,1.4) -- cycle;
+  \draw[-{Stealth},line width=1.6pt,color=tangerine,decorate,decoration={snake,amplitude=1pt,segment length=6pt}] (0.8,1.0) -- (0.8,2.9);
+  \draw[-{Stealth},line width=1.6pt,color=tangerine,decorate,decoration={snake,amplitude=1pt,segment length=6pt}] (2.8,1.0) -- (2.8,2.9);
+  \foreach \x in {0.7,1.4,2.1,2.8}{\fill[sky!80!black] (\x,3.2) circle (0.07);}
+  \draw[-{Stealth},line width=1.4pt,color=sky!80!black] (3.35,3.1) -- (3.35,1.2);
+  \node[font=\sffamily\scriptsize,anchor=west] at (3.9,2.7) {vapour rises};
+  \node[font=\sffamily\scriptsize,anchor=west] at (3.9,3.2) {drops form on the lid};
+  \node[font=\sffamily\scriptsize,anchor=west] at (3.9,1.8) {drops run down the side};
+\end{tikzpicture}
+\end{center}
+
+\begin{tryit}{Make a terrarium}
+\textbf{You need:} a clear jar with a lid, a handful of soil, a small plant or some moss, a spoon, water.\\
+Put soil in the jar, add the plant, sprinkle in 4 spoonfuls of water and close the lid. Mark the soil level. Leave it in a bright place, but not in hot sun. Look each day and draw what you see.\par\medskip
+\renewcommand{\arraystretch}{1.6}
+\begin{tabular}{|l|c|c|c|c|c|}
+\hline
+\textbf{Day} & 1 & 2 & 3 & 4 & 5\\ \hline
+\textbf{Drops on the lid?} & & & & & \\ \hline
+\textbf{Soil looks (dry/damp)} & & & & & \\ \hline
+\end{tabular}
+\end{tryit}
+
+\subhead{Steps in order}
+Here are the steps in a closed jar, in order.
+\begin{enumerate}[leftmargin=1.6em,itemsep=0.2em]
+\item Water evaporates from the soil.
+\item The vapour touches the cooler lid.
+\item It condenses into drops.
+\item The drops run down and soak back into the soil.
+\end{enumerate}
+In a jar the loop is small. Chapter~5 follows the same steps on a much larger scale.
+
+\clearpage
+
+\begin{puzzle}{Do the ledger}
+An open jar started with 40 spoonfuls and ended with 31. How many went into the air? \wline[1.6cm]
+\end{puzzle}
+
+\begin{puzzle}{Closed jar}
+A closed jar started with 40 spoonfuls. At the end it held 38, and about 2 spoonfuls' worth of drops were on the lid. Add it up. \wline[1.6cm] Does it match the start? \wline[2cm]
+\end{puzzle}
+
+\begin{puzzle}{Find the gap}
+A closed jar started with 40. It ended with 36 in the pool and 3 on the lid. Total: \wline[1.6cm] What is the gap? \wline[1.6cm]\\
+Could a gap this size be a counting error? \wline[2cm] What would you do? \wline[4cm]
+\end{puzzle}
+
+\begin{puzzle}{Order the steps}
+Number these from 1 to 4. \\
+\wline[1cm] Drops run down and soak in. \quad \wline[1cm] Water evaporates from soil.\\
+\wline[1cm] Drops form on the lid. \quad \wline[1cm] Vapour reaches the cooler lid.
+\end{puzzle}
+
+\begin{puzzle}{Plant in a jar}
+A plant in a closed jar stayed alive for weeks without watering. Why could that happen? \wline[6cm]
+\end{puzzle}
+
+\clearpage
+
+\begin{puzzle}{Open or closed?}
+Jar A kept 40 spoonfuls for 5 days. Jar B dropped to 32. One was closed and one was open. Which was which? \wline[4cm]
+\end{puzzle}
+
+\begin{puzzle}{Missing from the ledger}
+An open jar started with 40 and ended with 32. A student says 8 spoonfuls disappeared forever. Write a better sentence. \wline[6cm]
+\end{puzzle}
+
+\begin{puzzle}{Draw the ledger}
+A cup holds 24 spoonfuls. After a week it holds 18. Fill in the ledger circles.
+\begin{center}
+\begin{tikzpicture}
+  \node[cir] (a) at (0,0) {24}; \node[cir,dashed] (b) at (4,0) {}; \node[cir,dashed] (c) at (8,0) {};
+  \draw[moveA] (a) -- node[above,note] {stays} (b);
+  \draw[moveA] (b) -- node[above,note] {leaves} (c);
+  \node[note] at (4,-0.8) {cup after}; \node[note] at (8,-0.8) {air gained};
+\end{tikzpicture}
+\end{center}
+\end{puzzle}
+
+\begin{puzzle}{Sealed or open}
+Give one good reason a scientist would use a sealed jar to study where water goes. \wline[6cm]
+\end{puzzle}
+
+\begin{puzzle}{Your terrarium}
+After five days, did drops form on the lid? Draw what you saw. \wline[6cm]
+\end{puzzle}
+\clearpage

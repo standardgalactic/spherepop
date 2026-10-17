@@ -1,0 +1,178 @@
+\chapterhead{5}{Reading the Instrument}{Rulers, scales and the places where mistakes like to hide}\label{ch5}
+
+A ruler, a scale and a stopwatch are called \textbf{instruments}. Instruments help your eyes and hands, but they bring their own ways of going wrong. This chapter is about three common ones.
+
+\subhead{1. Look straight on}
+Hold a ruler a little above a pencil and look at the end of the pencil from different places. The mark that seems to line up with the end changes, because the ruler is a little way above the pencil. This is called \textbf{parallax}.
+
+\begin{center}
+\begin{tikzpicture}[x=0.8cm,y=0.8cm]
+  % paper and pencil tip
+  \draw[line width=1pt] (-4,0) -- (4,0);
+  \fill[tangerine!70,draw=ink] (-3.5,0) rectangle (0,0.45);
+  \node[note,anchor=north] at (0,-0.1) {pencil end};
+  % ruler
+  \fill[sun!50,draw=ink,line width=0.9pt] (-3.7,1.2) rectangle (3.7,1.65);
+  \foreach \x in {-3,-2,-1,0,1,2,3}{\draw (\x,1.65) -- (\x,1.4);}
+  \node[note,anchor=south] at (0,1.7) {mark};
+  % eyes
+  \foreach \ex/\c in {-2.8/tomato,0/leaf,2.8/tomato}{
+     \node[draw=ink,fill=white,circle,inner sep=1.5pt] at (\ex,4.2) {\scriptsize\sffamily o};
+  }
+  \draw[leaf,line width=1pt] (0,3.95) -- (0,0);
+  \draw[tomato,line width=1pt] (-2.8,3.95) -- (0,1.45);
+  \draw[tomato,dashed,line width=1pt] (0,1.45) -- ({0+(2.8*1.45/2.5)},0);
+  \draw[tomato,line width=1pt] (2.8,3.95) -- (0,1.45);
+  \draw[tomato,dashed,line width=1pt] (0,1.45) -- ({0-(2.8*1.45/2.5)},0);
+  \node[note,text width=2.6cm] at (-3.2,-0.9) {from the right it seems to line up here};
+  \node[note,text width=2.6cm] at (3.2,-0.9) {from the left it seems to line up here};
+  \node[note,text=leaf!70!black] at (0,4.8) {straight above: reads true};
+\end{tikzpicture}
+\end{center}
+
+The fix is easy: put your eye straight above the mark you are reading, and keep the ruler as close to the object as you can.
+
+\begin{tryit}{Try three viewpoints}
+Lay a pencil flat. Hold a ruler a little above it so the zero mark lines up with the pencil's left end. Read the right end three times: from straight above, from a little to the left, and from a little to the right. Write down the three readings. Do they match?\\[4pt]
+Straight above \wline[1.8cm]~cm \quad Left \wline[1.8cm]~cm \quad Right \wline[1.8cm]~cm
+\end{tryit}
+
+\subhead{2. Where does zero start?}
+Many rulers start at zero right at the edge. But some have a gap before the zero, and old rulers get worn at the end. If the zero is missing, you can start from a different mark, say the 2~cm mark, and \textbf{subtract} what you skipped.
+
+\begin{center}
+\begin{tikzpicture}[x=0.95cm]
+  \fill[tangerine!60,draw=ink,line width=0.9pt] (2,0.2) rectangle (14.5,0.65);
+  \node[font=\sffamily\scriptsize,anchor=south] at (2,0.7) {starts at 2.0};
+  \node[font=\sffamily\scriptsize,anchor=south] at (14.5,0.7) {ends at 14.5};
+  \ruler{2}{15}
+\end{tikzpicture}
+\end{center}
+
+The pencil starts at 2.0 and ends at 14.5. Its length is $14.5-2.0=12.5$~cm. The reading 14.5 on its own would be wrong, and we wrap it in a correction.
+
+\begin{center}
+\begin{tikzpicture}
+  \node[wrapcir,minimum size=2.8cm] (w) at (0,0) {};
+  \node[valcir] at (0,0.45) {14.5};
+  \node[note] at (0,-0.35) {$-\,2.0$};
+  \node[valcir] (r) at (5,0) {12.5 cm};
+  \draw[popA] (w) -- node[above,note] {correct} (r);
+  \node[note,anchor=west,align=left,text width=3.5cm] at (6.5,0) {The old reading, 14.5, stays visible inside the wrap.};
+\end{tikzpicture}
+\end{center}
+
+\begin{tryit}{Find your ruler's zero}
+Look closely at the left end of your ruler. Is there a gap before the zero mark? How wide is it? Now measure a pencil twice: once with its end at zero, and once with its end at the 2~cm mark. Subtract 2. Do you get the same length?\\[4pt]
+Gap before zero: \wline[1.8cm]~mm \qquad From zero: \wline[1.6cm]~cm \qquad From 2 cm (after subtracting): \wline[1.6cm]~cm
+\end{tryit}
+
+\subhead{3. A scale that is not at zero}
+Some instruments are off from the start. A kitchen scale might show 3~g when nothing is on it. That is called a \textbf{zero error}. If an apple makes it read 152~g, the apple is not 152~g. It is $152-3=149$~g.
+
+\begin{multix}[hmm]\multixbot[hmm]\tcblower
+My scale showed 3~g with nothing on it. That is fine. Zero is just a feeling. I will ignore it and write 152~g for the apple. Is the apple 152~g?
+\end{multix}
+
+\adult{A kitchen scale is a good place to try this. An adult should help with the scale and with any food items.}
+
+\subhead{4. Reading a jug and a thermometer}
+Not every instrument is a ruler. A measuring jug and a thermometer have marks too, and the same rule applies: read the nearest mark, and say which unit you are using. For a jug, put it on a flat table and read the level at eye height. The liquid curves up at the edges, so read the flat middle.
+
+\begin{center}
+\begin{tikzpicture}[y=0.012cm]
+  % jug
+  \draw[line width=1.2pt] (0,0) -- (0,450) (1.6,0) -- (1.6,450);
+  \draw[line width=1.2pt] (0,0) -- (1.6,0);
+  \fill[sky!50] (0.03,2) rectangle (1.57,275);
+  \draw[line width=1pt,color=sky!80!black] (0.03,275) -- (1.57,275);
+  \foreach \m in {0,50,...,450}{\draw (1.6,\m) -- (1.95,\m);}
+  \foreach \m in {100,200,300,400}{\node[font=\sffamily\scriptsize,anchor=west] at (2.0,\m) {\m};}
+  \node[font=\sffamily\scriptsize,anchor=north] at (0.8,-15) {mL};
+  % thermometer
+  \draw[line width=1.2pt,fill=white,rounded corners=2pt] (6,0) rectangle (6.4,450);
+  \fill[tomato] (6.05,5) rectangle (6.35,270);
+  \foreach \t/\y in {0/0,10/90,20/180,30/270,40/360}{\draw (6.4,\y) -- (6.8,\y); \node[font=\sffamily\scriptsize,anchor=west] at (6.85,\y) {\t};}
+  \foreach \y in {45,135,225,315,405}{\draw (6.4,\y) -- (6.6,\y);}
+  \node[font=\sffamily\scriptsize,anchor=north] at (6.2,-15) {$^\circ$C};
+  \node[note,anchor=west] at (8.1,275) {What do you read?};
+\end{tikzpicture}
+\end{center}
+The jug has a mark every 50~mL, with the numbers on the 100s. The water sits halfway between the 250 and 300 marks, so it is 275~mL. When a level is between marks, say ``about halfway between 250 and 300'' or pick the nearer mark. On the thermometer, each small step is 5 degrees, and the red line is at 30. The thermometer says 30~$^\circ$C.
+
+\begin{tryit}{Read the jug}
+Pour water into a measuring jug on a flat table. Put your eyes level with the water. Read the number. Pour a little more and read again. Write each reading with its unit.\\[4pt]
+First reading \wline[2cm]~mL \quad Second reading \wline[2cm]~mL \quad Added \wline[2cm]~mL
+\end{tryit}
+
+\subhead{Steady is not the same as right}
+Three archers each shot three arrows at a target. The middle is the true value.
+
+\begin{center}
+\begin{tikzpicture}[scale=0.9]
+  \foreach \cx/\title/\pts in {0/{steady and right}/{0.1/0.15,-0.2/-0.1,0.15/-0.2},
+                              5/{steady but wrong}/{1.4/1.2,1.2/0.9,1.55/0.95},
+                              10/{scattered but near}/{-1.2/0.8,0.9/-1.1,0.2/1.4}}{
+    \foreach \r/\c in {1.8/white,1.3/sky!20,0.8/sun!35,0.3/tomato!55}{\filldraw[fill=\c,draw=ink!70] (\cx,0) circle (\r);}
+    \foreach \x/\y in \pts {\fill[ink] (\cx+\x,\y) circle (1.6mm);}
+    \node[font=\sffamily\bfseries\scriptsize,anchor=north] at (\cx,-1.95) {\title};
+  }
+\end{tikzpicture}
+\end{center}
+Steady readings that are near each other do not have to be near the truth. A scale with a zero error gives steady but wrong answers, and the readings can look perfect while all being too big. Repeating tells you about steadiness. Only checking against a better tool, or correcting a known fault, tells you about being right.
+
+\subhead{5. Two rulers are better than one}
+If you have two different rulers, measure the same pencil with each. If both rulers agree, that is good news. If they disagree, one of them is off, or you misread one.
+
+\begin{worked}{Practice numbers, not from a real pencil}
+Ruler A: 12.5~cm. Ruler B: 12.4~cm. The difference is 0.1~cm, which is 1~mm. That is about the size of the smallest mark, so the rulers agree well.
+\end{worked}
+
+\trust{We measured the same pencil with two different rulers and compared. They differed by 1~mm.}
+{Two different rulers, read separately, agreeing to within a millimetre makes it unlikely that either one has a big fault or that we misread both in the same way.}
+{Whether both rulers share the same fault, for example if they came from the same maker, or whether the pencil is the length we think it is. Agreement between two tools is a good sign, not a guarantee.}
+
+\begin{keepbox}
+When we corrected a reading by subtracting a zero error, \textbf{we kept} \wline[3.5cm] \textbf{and we set aside} \wline[3.5cm].
+\end{keepbox}
+
+\clearpage
+
+\begin{puzzle}{Read the shifted pencils}
+Each pencil starts at a mark that is \emph{not} zero. Read the start and the end, then subtract to find the length.
+\begin{center}
+\begin{tikzpicture}[x=0.97cm]
+  \fill[tangerine!60,draw=ink] (2,0.25) rectangle (9.4,0.65);
+  \fill[leaf!50,draw=ink] (1,0.75) rectangle (12.3,1.15);
+  \fill[sky!50,draw=ink] (5.5,1.25) rectangle (11.5,1.65);
+  \node[note,anchor=east] at (-0.3,0.45) {A};\node[note,anchor=east] at (-0.3,0.95) {B};\node[note,anchor=east] at (-0.3,1.45) {C};
+  \ruler{0}{13}
+\end{tikzpicture}
+\end{center}
+A: start \wline[1.1cm] end \wline[1.1cm] length \wline[1.1cm] \quad B: start \wline[1.1cm] end \wline[1.1cm] length \wline[1.1cm]\\[4pt]
+C: start \wline[1.1cm] end \wline[1.1cm] length \wline[1.1cm]
+\end{puzzle}
+
+\begin{puzzle}{Zero error hunt}
+(a) A scale shows 5~g when it is empty. A potato makes it show 205~g. How heavy is the potato? \wline[2cm]\\[3pt]
+(b) A ruler's end is snapped off, so it starts at the 1.5~cm mark. One edge of a book lines up with 1.5 and the other edge with 22.0. How long is the book? \wline[2cm]~cm
+\end{puzzle}
+
+\begin{puzzle}{Spot the bad habit}
+Four students gave advice about reading a ruler. Only one tip is bad. Which one?
+\begin{description}[leftmargin=1.6em,itemsep=0.2em,style=sameline]
+\item[A] Put your eye straight above the mark.
+\item[B] Line up the object with a clear mark, not with the ruler's edge.
+\item[C] Read the mark from the side, at an angle, so you can see it better.
+\item[D] Write down the unit.
+\end{description}
+The bad tip is \wline[1.5cm] because \wline[5cm].
+\end{puzzle}
+
+\begin{puzzle}{Jugs and thermometers}
+(a) Three jug levels are marked at 150, 275 and 400~mL. How much water must you add to go from the first to the last? \wline[2cm]~mL\\[3pt]
+(b) Three thermometers read 18, 27 and 35~$^\circ$C. How many degrees warmer is the warmest than the coolest? \wline[2cm]~$^\circ$C\\[3pt]
+(c) A jug reads 275~mL, but a better jug says 250~mL. Is the first jug steady, right, or neither? Say what you know and do not know.\\
+\rule{\linewidth}{0.5pt}
+\end{puzzle}
+\clearpage

@@ -1,0 +1,230 @@
+% junior-template.sty
+% Shared look and shared features for the five junior series (ages 9 to 11).
+% Recurring features: what did we keep, three-line trust box, circle moves (pop, move, wrap),
+% Multix, slop check, puzzles, adult-help flag, evidence and observation ladders.
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{junior-template}[2026/10/17 junior series template]
+
+\RequirePackage[T1]{fontenc}
+\RequirePackage[utf8]{inputenc}
+\RequirePackage{mathpazo}
+\RequirePackage[scaled=.92]{helvet}
+\renewcommand{\familydefault}{\rmdefault}
+\RequirePackage[paperwidth=7in,paperheight=10in,inner=0.72in,outer=0.62in,
+  top=0.9in,bottom=0.9in,headheight=14pt,headsep=12pt,footskip=0.42in]{geometry}
+\RequirePackage{xcolor}
+\RequirePackage{tikz}
+\RequirePackage{etoolbox}
+\RequirePackage{tcolorbox}
+\RequirePackage{fancyhdr}
+\RequirePackage{enumitem}
+\RequirePackage{booktabs}
+\RequirePackage{array}
+\RequirePackage{microtype}
+\RequirePackage{eso-pic}
+\RequirePackage{pifont}
+\RequirePackage{multicol}
+\RequirePackage{tabularx}
+\RequirePackage{amssymb}
+\RequirePackage{graphicx}
+\usetikzlibrary{calc,shapes.geometric,shapes.misc,positioning,arrows.meta,patterns,decorations.pathmorphing,decorations.markings,fit}
+\tcbuselibrary{skins,breakable}
+
+% ---------------------------------------------------------------- colours
+\definecolor{ink}{HTML}{1B2A49}
+\definecolor{sun}{HTML}{FFC83D}
+\definecolor{tangerine}{HTML}{F77F1E}
+\definecolor{tomato}{HTML}{D8433F}
+\definecolor{sky}{HTML}{2B8FD6}
+\definecolor{leaf}{HTML}{2E9E5B}
+\definecolor{grape}{HTML}{7C4DBA}
+\definecolor{paper}{HTML}{FFFBEF}
+
+\newcommand{\sans}{\sffamily}
+\newcommand{\hand}[1]{{\sffamily\bfseries #1}}
+
+% ---------------------------------------------------------------- paragraph
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.55em plus 0.1em minus 0.05em}
+\linespread{1.09}
+\setlist{nosep,leftmargin=1.4em,itemsep=0.2em}
+\raggedbottom
+\widowpenalty=10000
+\clubpenalty=10000
+
+% ---------------------------------------------------------------- page decoration
+\newcommand{\booktitlehead}{}
+\newcommand{\chapterhead@running}{}
+\AddToShipoutPictureBG{%
+  \begin{tikzpicture}[remember picture,overlay]
+    \draw[line width=2.2pt,color=sky,rounded corners=6pt]
+      ($(current page.south west)+(0.26in,0.26in)$) rectangle ($(current page.north east)-(0.26in,0.26in)$);
+    \draw[line width=0.7pt,color=sun,rounded corners=4pt]
+      ($(current page.south west)+(0.32in,0.32in)$) rectangle ($(current page.north east)-(0.32in,0.32in)$);
+    \fill[tangerine] ($(current page.south west)+(0.26in,0.26in)$) circle (3pt);
+    \fill[tangerine] ($(current page.south east)+(-0.26in,0.26in)$) circle (3pt);
+    \fill[tangerine] ($(current page.north west)+(0.26in,-0.26in)$) circle (3pt);
+    \fill[tangerine] ($(current page.north east)+(-0.26in,-0.26in)$) circle (3pt);
+  \end{tikzpicture}%
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\fancyhead[LE]{\sans\scriptsize\bfseries\color{sky}\MakeUppercase{\booktitlehead}}
+\fancyhead[RO]{\sans\scriptsize\bfseries\color{sky}\MakeUppercase{\chapterhead@running}}
+\fancyfoot[C]{\begin{tikzpicture}[baseline=(n.base)]
+  \node[circle,draw=ink,line width=1pt,fill=sun!60,inner sep=2.2pt,minimum width=18pt,font=\sffamily\bfseries\footnotesize,text=ink](n){\thepage};
+  \end{tikzpicture}}
+\fancypagestyle{plain}{\fancyhf{}\renewcommand{\headrulewidth}{0pt}%
+  \fancyfoot[C]{\begin{tikzpicture}[baseline=(n.base)]
+  \node[circle,draw=ink,line width=1pt,fill=sun!60,inner sep=2.2pt,minimum width=18pt,font=\sffamily\bfseries\footnotesize,text=ink](n){\thepage};
+  \end{tikzpicture}}}
+\fancypagestyle{blank}{\fancyhf{}\renewcommand{\headrulewidth}{0pt}}
+
+% ---------------------------------------------------------------- tikz styles (circle notation)
+\tikzset{
+  cir/.style={circle,draw=ink,line width=1.2pt,fill=white,inner sep=3pt,align=center,font=\sffamily\bfseries\small,text=ink},
+  bigcir/.style={circle,draw=ink,line width=1.3pt,fill=sky!12,align=center,font=\sffamily\small,text=ink},
+  valcir/.style={circle,draw=leaf!80!black,line width=1.6pt,fill=leaf!15,inner sep=3pt,align=center,font=\sffamily\bfseries\small,text=ink},
+  wrapcir/.style={circle,draw=tangerine,line width=1.5pt,dashed,align=center,font=\sffamily\small,text=ink},
+  popA/.style={-{Stealth[length=3.2mm]},line width=1.6pt,color=tomato},
+  moveA/.style={-{Stealth[length=3.2mm]},line width=1.6pt,color=sky},
+  note/.style={font=\sffamily\scriptsize,text=ink,align=center},
+}
+
+% ---------------------------------------------------------------- headings
+\newcounter{chap}
+\newcommand{\chapterhead}[3]{%
+  \clearpage
+  \refstepcounter{chap}\setcounter{puz}{0}%
+  \renewcommand{\chapterhead@running}{#2}%
+  \par\noindent
+  \begin{tikzpicture}
+    \node[anchor=north west,inner sep=0] at (0,0)
+      {\begin{minipage}{\textwidth}\hspace*{2.1cm}\begin{minipage}{\dimexpr\textwidth-2.1cm\relax}
+        {\sans\bfseries\LARGE\color{ink}\raggedright #2\par}
+        \vspace{2pt}
+        {\sans\itshape\small\color{ink!70}\raggedright #3\par}
+      \end{minipage}\end{minipage}};
+    \node[star,star points=14,star point ratio=0.84,fill=sun,draw=ink,line width=1.2pt,
+          minimum size=1.7cm,inner sep=0,font=\sffamily\bfseries\huge,text=ink] at (0.85,-0.82) {#1};
+    \draw[line width=2.4pt,color=tangerine,line cap=round] (0,-1.8) -- (\textwidth,-1.8);
+    \draw[line width=1pt,color=sky,line cap=round,dash pattern=on 1pt off 4pt] (0,-1.92) -- (\textwidth,-1.92);
+  \end{tikzpicture}\par\vspace{0.2cm}}
+
+\newcommand{\subhead}[1]{\par\vspace{0.35em}{\sans\bfseries\large\color{sky!70!black}#1}\nopagebreak\par\vspace{-0.1em}}
+
+% ---------------------------------------------------------------- Multix
+\newcommand{\multixbot}[1][ok]{%
+  \begin{tikzpicture}[scale=0.62,baseline=(current bounding box.center),line join=round]
+    \draw[line width=1.1pt,fill=sun!70,rounded corners=2pt] (-0.55,-1.5) rectangle (0.55,-0.45);
+    \draw[line width=1.1pt,fill=white] (-0.25,-1.2) circle (0.12);
+    \draw[line width=1.1pt] (0.05,-0.85) -- (0.35,-0.85);
+    \draw[line width=1.1pt] (0.05,-1.1) -- (0.35,-1.1);
+    \draw[line width=1.1pt] (-0.55,-0.7) -- (-0.95,-1.1);
+    \draw[line width=1.1pt] (0.55,-0.7) -- (0.95,-0.4);
+    \draw[line width=1.1pt,fill=sky!35,rounded corners=4pt] (-0.8,-0.35) rectangle (0.8,0.85);
+    \draw[line width=1.1pt] (0,0.85) -- (0,1.25);
+    \fill[tomato,draw=ink,line width=1pt] (0,1.35) circle (0.12);
+    \draw[line width=1.1pt,fill=white] (-0.35,0.35) circle (0.2);
+    \draw[line width=1.1pt,fill=white] (0.35,0.35) circle (0.2);
+    \fill[ink] (-0.33,0.35) circle (0.07);
+    \fill[ink] (0.37,0.35) circle (0.07);
+    \ifstrequal{#1}{wow}{\draw[line width=1.1pt,fill=white] (0,-0.05) circle (0.12);}{%
+    \ifstrequal{#1}{hmm}{\draw[line width=1.1pt] (-0.25,-0.05) -- (0.25,-0.1);}{%
+    \draw[line width=1.1pt] (-0.25,-0.02) .. controls (-0.1,-0.17) and (0.1,-0.17) .. (0.25,-0.02);}}
+  \end{tikzpicture}}
+
+\newtcolorbox{multix}[1][ok]{enhanced,breakable,colback=sky!8,colframe=sky!80!black,
+  boxrule=1.1pt,arc=3mm,left=3pt,right=4pt,top=3pt,bottom=3pt,
+  sidebyside,sidebyside align=top,lefthand width=1.25cm,sidebyside gap=1.5mm,
+  before skip=7pt,after skip=7pt,
+  lower separated=false,
+  fontlower=\sffamily\small}
+% usage: \begin{multix}[mood] \multixbot[mood] \tcblower text \end{multix}
+\newcommand{\multixsays}[2][ok]{%
+  \begin{multix}[#1]\multixbot[#1]\tcblower \textbf{Multix:} #2\end{multix}}
+
+% ---------------------------------------------------------------- recurring boxes
+\newtcolorbox{keepbox}{enhanced,breakable,colback=sun!16,colframe=sun!85!black,
+  boxrule=1.3pt,arc=3mm,left=5pt,right=5pt,top=4pt,bottom=4pt,before skip=8pt,after skip=8pt,
+  title={\sans\bfseries\small What did we keep?},coltitle=ink,colbacktitle=sun,
+  fonttitle=\sans\bfseries,attach boxed title to top left={xshift=8pt,yshift*=-2.5mm},
+  boxed title style={colback=sun,colframe=sun!85!black,arc=2mm,boxrule=1pt,sharp corners=downhill},
+  before upper={\small}}
+
+% three-line trust box: \trust{checked}{reason}{notshow}
+\newcommand{\trust}[3]{%
+  \begin{tcolorbox}[enhanced,breakable,colback=tangerine!8,colframe=tangerine,boxrule=1.3pt,arc=3mm,
+    left=5pt,right=5pt,top=4pt,bottom=4pt,before skip=8pt,after skip=8pt,
+    title={\sans\bfseries\small What makes this correction trustworthy?},coltitle=white,colbacktitle=tangerine,
+    fonttitle=\sans\bfseries,attach boxed title to top left={xshift=8pt,yshift*=-2.5mm},
+    boxed title style={colback=tangerine,colframe=tangerine,arc=2mm},
+    before upper={\small}]
+    {\sans\bfseries\color{tangerine!80!black}What we checked.} #1\par\vspace{2pt}
+    {\sans\bfseries\color{leaf!80!black}What this check gives us reason to trust.} #2\par\vspace{2pt}
+    {\sans\bfseries\color{tomato}What it does not show.} #3
+  \end{tcolorbox}}
+
+\newtcolorbox{tryit}[2][]{enhanced,breakable,colback=leaf!8,colframe=leaf,boxrule=1.3pt,arc=3mm,
+  left=6pt,right=6pt,top=5pt,bottom=5pt,before skip=9pt,after skip=9pt,
+  title={\sans\bfseries\small Try it: #2},coltitle=white,colbacktitle=leaf,fonttitle=\sans\bfseries,
+  attach boxed title to top left={xshift=8pt,yshift*=-2.5mm},
+  boxed title style={colback=leaf,colframe=leaf,arc=2mm},before upper={\small},#1}
+
+\newcommand{\adult}[1]{%
+  \begin{tcolorbox}[enhanced,colback=tomato!7,colframe=tomato,boxrule=1pt,arc=2mm,left=4pt,right=4pt,
+    top=2pt,bottom=2pt,before skip=5pt,after skip=5pt,before upper={\sans\scriptsize}]
+    \textbf{\color{tomato}\ding{110} Adult help:} #1
+  \end{tcolorbox}}
+
+\newcounter{puz}
+\newtcolorbox{puzzle}[1]{enhanced,breakable,colback=grape!6,colframe=grape,boxrule=1.4pt,arc=3mm,
+  left=6pt,right=6pt,top=6pt,bottom=5pt,before skip=9pt,after skip=9pt,
+  title={\sans\bfseries\small Puzzle \thechap.\stepcounter{puz}\thepuz: #1},coltitle=white,colbacktitle=grape,
+  fonttitle=\sans\bfseries,attach boxed title to top left={xshift=8pt,yshift*=-2.5mm},
+  boxed title style={colback=grape,colframe=grape,arc=2mm},before upper={\small}}
+
+\newtcolorbox{worked}[1]{enhanced,breakable,colback=white,colframe=ink!55,boxrule=0.9pt,arc=2mm,
+  left=5pt,right=5pt,top=4pt,bottom=4pt,before skip=7pt,after skip=7pt,
+  title={\sans\bfseries\footnotesize #1},coltitle=ink,colbacktitle=ink!10,fonttitle=\sans\bfseries,
+  before upper={\small}}
+
+\newtcolorbox{slopbox}{enhanced,breakable,colback=tomato!5,colframe=tomato!85!black,boxrule=1.3pt,arc=3mm,
+  left=6pt,right=6pt,top=5pt,bottom=5pt,before skip=9pt,after skip=9pt,
+  title={\sans\bfseries\small Slop check},coltitle=white,colbacktitle=tomato!85!black,fonttitle=\sans\bfseries,
+  attach boxed title to top left={xshift=8pt,yshift*=-2.5mm},
+  boxed title style={colback=tomato!85!black,colframe=tomato!85!black,arc=2mm},before upper={\small}}
+
+% write-on line
+\newcommand{\wline}[1][3cm]{\rule[-2pt]{#1}{0.5pt}}
+
+% ---------------------------------------------------------------- the observation ladder
+\newcommand{\ladder}[1][1]{%
+  \begin{tikzpicture}[scale=#1,font=\sffamily\scriptsize]
+    \foreach \i/\t/\c/\d in {0/observed/sky/{what was seen},1/counted/leaf/{a number, with the method used},2/estimated/tangerine/{a number about more than was counted},3/concluded/grape/{a claim about why}}{
+      \node[anchor=south west,draw=ink,line width=0.9pt,fill=\c!35,minimum height=0.6cm,
+            minimum width=2.2cm,inner sep=2pt] at (\i*2.2,\i*0.62) {\bfseries\t};
+      \draw[dotted,line width=0.8pt,color=ink!50] (\i*2.2+2.2,\i*0.62+0.3) -- (9.2,\i*0.62+0.3);
+      \node[anchor=west,align=left,text width=5.2cm] at (9.3,\i*0.62+0.3) {\d};
+    }
+  \end{tikzpicture}}
+
+% ---------------------------------------------------------------- ruler drawing
+% \ruler{from}{to}  draws a ruler face from whole cm "from" to whole cm "to", 1 cm = 1 cm
+\newcommand{\ruler}[2]{%
+  \pgfmathtruncatemacro{\rA}{#1*10}\pgfmathtruncatemacro{\rB}{#2*10}%
+  \draw[line width=0.9pt,fill=sun!35] (#1-0.15,-0.9) rectangle (#2+0.15,0);
+  \foreach \m in {\rA,...,\rB}{%
+    \pgfmathsetmacro{\xx}{\m/10}%
+    \pgfmathtruncatemacro{\kind}{ifthenelse(mod(\m,10)==0,1,ifthenelse(mod(\m,5)==0,2,3))}%
+    \ifnum\kind=1\draw[line width=0.9pt] (\xx,0) -- (\xx,-0.46);\node[font=\sffamily\scriptsize,anchor=north] at (\xx,-0.46) {\pgfmathprintnumber{\xx}};\fi
+    \ifnum\kind=2\draw[line width=0.7pt] (\xx,0) -- (\xx,-0.34);\fi
+    \ifnum\kind=3\draw[line width=0.4pt] (\xx,0) -- (\xx,-0.2);\fi
+  }}
+
+% ---------------------------------------------------------------- word list helper
+\newcommand{\word}[2]{\par\noindent{\sans\bfseries #1} \enspace #2\par\vspace{-0.15em}}
+
+\endinput

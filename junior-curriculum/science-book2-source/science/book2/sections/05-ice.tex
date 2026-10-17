@@ -1,0 +1,200 @@
+\chapterhead{5}{Ice in Wrappings}{A new question, tested with the same method}\label{ch5}
+
+Everything so far was about paper planes. But the method is not about planes. It works for any question where you can change one thing and measure a result.
+
+Here is a new question. A cold drink at a picnic stays cold if you wrap it. Which wrapping keeps ice from melting longest: \textbf{nothing, aluminium foil, a paper towel or a wool sock}?
+
+\subhead{Plan before you start}
+Write the three kinds of things before touching any ice. Then think about what could secretly differ.
+
+\begin{center}
+\sffamily\small\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{@{}p{3.4cm}p{7.6cm}@{}}
+\toprule
+\textbf{I change} & the wrapping: none, foil, paper towel or wool sock\\
+\textbf{I measure} & how many minutes until the ice cube has melted into water, checked every 5 minutes\\
+\textbf{I keep the same} & ice cube size and shape, starting temperature, saucer, spot in the room, start time, how many layers\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{tryit}{Ice in four wrappings}
+\textbf{You need:} four ice cubes from one tray, four saucers, foil, a paper towel, a wool sock, a timer, a notebook.
+\begin{enumerate}[leftmargin=1.6em]
+\item Put the four ice cubes on four saucers. Wrap three of them: one in foil, one in a paper towel, one in a sock. Leave one bare.
+\item Put all four saucers on a table, away from the sun, side by side. Start the timer when you start the last wrap.
+\item Every 5 minutes, peek. Write down when each ice cube has \textbf{fully} melted into water.
+\item Repeat the whole test a second time with new ice cubes. Compare the two runs.
+\end{enumerate}
+\par\medskip
+\renewcommand{\arraystretch}{1.6}
+\begin{tabular}{|l|c|c|c|}
+\hline
+\textbf{Wrapping} & \textbf{Run 1 (min)} & \textbf{Run 2 (min)} & \textbf{Average (min)}\\ \hline
+Bare & & & \\ \hline
+Foil & & & \\ \hline
+Paper towel & & & \\ \hline
+Wool sock & & & \\ \hline
+\end{tabular}
+\end{tryit}
+\adult{Ice cubes are cold and wet. Let an adult handle the freezer and clean up spills. Do not taste the water or ice.}
+
+\subhead{Practice numbers}
+\begin{worked}{Ice in four wrappings (practice numbers, not from a real test)}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{@{}lcccc@{}}
+\textbf{Wrapping} & \textbf{Run 1} & \textbf{Run 2} & \textbf{Total} & \textbf{Average (min)}\\
+Bare & 30 & 34 & 64 & 32\\
+Foil & 40 & 44 & 84 & 42\\
+Paper towel & 55 & 59 & 114 & 57\\
+Wool sock & 90 & 86 & 176 & 88
+\end{tabular}\\[4pt]
+Spread in each pair is 4 minutes. The gaps between neighbours are 10, 15 and 31 minutes.
+\end{worked}
+
+\begin{center}
+\begin{tikzpicture}[x=1.2cm,y=0.04cm]
+  \draw[line width=1.1pt] (0.4,0) -- (0.4,100) (0.4,0) -- (6,0);
+  \foreach \y in {0,20,40,60,80,100}{\draw (0.3,\y) -- (0.5,\y); \node[font=\sffamily\scriptsize,anchor=east] at (0.25,\y) {\y};}
+  \node[font=\sffamily\scriptsize,rotate=90] at (-0.4,50) {minutes until melted};
+  \foreach \x/\h/\c/\l in {1.2/32/sky/bare,2.5/42/sun/foil,3.8/57/leaf/paper towel,5.1/88/tangerine/wool sock}{
+    \fill[\c!70,draw=ink,line width=0.8pt] (\x-0.4,0) rectangle (\x+0.4,\h);
+    \node[font=\sffamily\bfseries\scriptsize,anchor=south] at (\x,\h) {\h};
+    \node[font=\sffamily\scriptsize,anchor=north] at (\x,-2) {\l};
+  }
+\end{tikzpicture}
+\end{center}
+
+\trust{We changed only the wrapping, kept the ice, the saucers, the spot and the start time the same, and ran the whole test twice. The two runs agreed to within 4 minutes for each wrapping.}
+{Repeating the test and getting the same order of wrappings makes a fluke unlikely. The gaps between wrappings (10, 15 and 31 minutes) are much bigger than the 4-minute difference between runs.}
+{Why the sock wins, or whether it would win with warmer air, bigger ice or a thinner sock. We tested one sock, one foil and one paper towel.}
+
+\begin{multix}[hmm]\multixbot[hmm]\tcblower
+The sock lasted 88 minutes and the foil 42. So wool is twice as good as metal at keeping ice cold. Is that a fair thing to say?
+\end{multix}
+
+\subhead{A second change hiding in the test}
+Look at the wrappings. The wool sock is much \textbf{thicker} than the foil. Foil is a thin sheet. So there are really two differences between the sock and the foil: the \emph{material} and the \emph{thickness}. Our test changed both at once. We cannot say whether wool is better than metal, only that this thick sock beat this thin foil.
+
+\begin{center}
+\begin{tikzpicture}
+  \node[bigcir,minimum size=3.6cm] at (0,0) {};
+  \node[cir,minimum width=2.4cm,font=\sffamily\scriptsize] at (0,0.8) {foil};
+  \node[cir,minimum width=2.4cm,font=\sffamily\scriptsize,fill=tomato!25] at (0,0.1) {thin};
+  \node[cir,minimum width=2.4cm,font=\sffamily\scriptsize] at (0,-0.65) {same ice};
+  \node[bigcir,minimum size=3.6cm] at (5,0) {};
+  \node[cir,minimum width=2.4cm,font=\sffamily\scriptsize] at (5,0.8) {wool sock};
+  \node[cir,minimum width=2.4cm,font=\sffamily\scriptsize,fill=tomato!25] at (5,0.1) {thick};
+  \node[cir,minimum width=2.4cm,font=\sffamily\scriptsize] at (5,-0.65) {same ice};
+  \node[note,text width=2.2cm,align=center] at (2.5,0) {two circles differ in two places};
+\end{tikzpicture}
+\end{center}
+
+To find out about the material alone, wrap the foil in several layers until it is as thick as the sock, or compare materials that are the same thickness. That would be a new, better test.
+
+\begin{keepbox}
+Our ice test changed the wrapping. \textbf{We kept} \wline[3.4cm] \textbf{the same, but we also let} \wline[3.2cm] \textbf{change by accident}.
+\end{keepbox}
+
+\clearpage
+
+\begin{puzzle}{Ice averages}
+Ice in a foil wrap melted in 44 and 48~min across two runs. Ice in a paper towel melted in 60 and 62~min.\\
+(a) Foil average: \wline[1.4cm]~min \quad Paper towel average: \wline[1.4cm]~min\\
+(b) Gap between the averages: \wline[1.4cm]~min\\
+(c) Spreads: foil \wline[1.2cm] paper towel \wline[1.2cm]\\
+(d) Is the gap bigger than both spreads? \wline[2cm]
+\end{puzzle}
+
+\begin{puzzle}{Sponge test}
+Two sponges were soaked in water and weighed. Sponge A is large and held 52~g of water. Sponge B is small and held 38~g of water. A student says: ``Sponge A is a better sponge.''\\
+(a) What difference is hiding in this test? \wline[4cm]\\
+(b) How could you make the test fair? \wline[4.5cm]\\
+(c) A dry sponge weighs 10~g and wet weighs 62~g. How much water did it hold? \wline[2cm]~g
+\end{puzzle}
+
+\begin{puzzle}{Spot the second change}
+Which of these ice tests has a hidden second change? Tick every one that does.
+\begin{description}[leftmargin=1.6em,itemsep=0.3em,style=sameline]
+\item[A] Four ice cubes from one tray, four wrappings, same table, same start.
+\item[B] A big ice cube bare and a small ice cube in foil, same table, same start.
+\item[C] One ice cube in the sun in foil, another in the shade bare.
+\end{description}
+Tests with a hidden change: \wline[3cm]
+\end{puzzle}
+
+\begin{puzzle}{Plan your own ice test}
+Plan a fair test to find out whether \textbf{salted ice} melts faster than plain ice. (Do not taste it.) Fill in the card.
+\begin{center}\sans\small\renewcommand{\arraystretch}{1.9}
+\begin{tabular}{@{}p{2.8cm}p{7.8cm}@{}}
+I change & \wline[7.6cm]\\
+I measure & \wline[7.6cm]\\
+I keep the same & \wline[7.6cm]\\
+ & \wline[7.6cm]\\
+\end{tabular}
+\end{center}
+\end{puzzle}
+\clearpage
+
+\subhead{Fixing the hidden change}
+Earlier we saw that the sock is thicker than the foil. Here is a better test: wrap the foil in \textbf{four layers} so it is about as thick as the sock. If thickness is what mattered, the foil should now do much better. Practice numbers, not from a real test:
+
+\begin{worked}{Thickness test (practice numbers)}
+\textbf{Foil, one layer:} 42~min. \textbf{Foil, four layers:} 61~min. \textbf{Wool sock:} 88~min.\\
+Thickness helped: four layers lasted 19~min longer than one layer. But the sock still lasted 27~min longer than the four-layer foil. So in this made-up result, thickness mattered, and the material may matter too.
+\end{worked}
+
+\begin{center}
+\begin{tikzpicture}[x=1.2cm,y=0.04cm]
+  \draw[line width=1.1pt] (0.4,0) -- (0.4,100) (0.4,0) -- (5,0);
+  \foreach \y in {0,20,40,60,80,100}{\draw (0.3,\y) -- (0.5,\y); \node[font=\sffamily\scriptsize,anchor=east] at (0.25,\y) {\y};}
+  \node[font=\sffamily\scriptsize,rotate=90] at (-0.4,50) {minutes until melted};
+  \foreach \x/\h/\c in {1.2/42/sun,2.6/61/leaf,4.0/88/tangerine}{
+    \fill[\c!70,draw=ink,line width=0.8pt] (\x-0.4,0) rectangle (\x+0.4,\h);
+    \node[font=\sffamily\bfseries\scriptsize,anchor=south] at (\x,\h) {\h};
+  }
+  \node[font=\sffamily\scriptsize,anchor=north,text width=1.6cm,align=center] at (1.2,-2) {foil, one layer};
+  \node[font=\sffamily\scriptsize,anchor=north,text width=1.6cm,align=center] at (2.6,-2) {foil, four layers};
+  \node[font=\sffamily\scriptsize,anchor=north,text width=1.6cm,align=center] at (4.0,-2) {wool sock};
+\end{tikzpicture}
+\end{center}
+
+\begin{tryit}{Which sponge holds the most?}
+Cut two different sponges into pieces of the \emph{same size}, say 5~cm by 5~cm. Weigh each dry. Soak each for 10 seconds, let them drip for 10 seconds, weigh again. The water held is wet mass minus dry mass. (No scale? Squeeze each into a cup and compare the water level.)\par\medskip
+\renewcommand{\arraystretch}{1.6}
+\begin{tabular}{|l|c|c|c|}
+\hline
+ & \textbf{Dry (g)} & \textbf{Wet (g)} & \textbf{Water held (g)}\\ \hline
+\textbf{Sponge A} & & & \\ \hline
+\textbf{Sponge B} & & & \\ \hline
+\end{tabular}
+\end{tryit}
+
+\begin{worked}{Sponge test, fair version (practice numbers)}
+Sponge A: dry 8~g, wet 46~g. Water held $46-8=38$~g.\\
+Sponge B: dry 10~g, wet 41~g. Water held $41-10=31$~g.\\
+Same size, same soak, same drip time. A held 7~g more.
+\end{worked}
+\clearpage
+\thispagestyle{fancy}
+\subhead{Write your own trust box}
+Pick any test from this book that you have run: the paper clip test, the ramp test, the ice test or your own. Fill in the three lines about it, in your own words.
+
+\trust{\par\vspace{4pt}\rule{\linewidth}{0.4pt}\par\vspace{10pt}\rule{\linewidth}{0.4pt}\par\vspace{6pt}}
+{\par\vspace{4pt}\rule{\linewidth}{0.4pt}\par\vspace{10pt}\rule{\linewidth}{0.4pt}\par\vspace{6pt}}
+{\par\vspace{4pt}\rule{\linewidth}{0.4pt}\par\vspace{10pt}\rule{\linewidth}{0.4pt}\par\vspace{6pt}}
+
+\begin{multix}[ok]\multixbot[ok]\tcblower
+A good ``what it does not show'' line is hard to write, and it is the most useful one. Try finishing this sentence: ``This test does not show whether\ldots''
+\end{multix}
+
+\begin{puzzle}{Which trust line is honest?}
+Three students finished the same sentence for the ice test: ``The test does not show\ldots''
+\begin{description}[leftmargin=1.6em,itemsep=0.3em,style=sameline]
+\item[A] \ldots anything, because ice is cold.
+\item[B] \ldots whether wool beats foil, because the sock was thicker.
+\item[C] \ldots that the test was perfect.
+\end{description}
+Which one is honest and specific? \wline[1.5cm]
+\end{puzzle}
+\clearpage

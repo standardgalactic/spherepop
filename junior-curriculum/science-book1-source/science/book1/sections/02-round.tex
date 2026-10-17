@@ -1,0 +1,198 @@
+\chapterhead{2}{Round on Purpose}{Choosing a number that says no more than you know}\label{ch2}
+
+Mia's pencil ends exactly halfway between the 17 and 18 marks on her ruler. The ruler has no mark there. She has to choose.
+
+Choosing the nearest mark is called \textbf{rounding}. It is not cheating, and it is not sloppy. It is a way of saying: \emph{this is as close as my ruler lets me get.}
+
+\subhead{Which mark is nearest?}
+Every reading sits somewhere between two marks. Rounding picks the nearer one. Look at a number line for lengths between 61 and 62~cm.
+
+\begin{center}
+\begin{tikzpicture}[x=9cm]
+  \draw[line width=1.2pt] (0,0) -- (1,0);
+  \foreach \x/\l in {0/61,0.5/61.5,1/62}{
+    \draw[line width=1.2pt] (\x,-0.15) -- (\x,0.15);
+    \node[font=\sffamily\bfseries\small,below=4pt] at (\x,-0.15) {\l};
+  }
+  \foreach \x in {0.1,0.2,0.3,0.4,0.6,0.7,0.8,0.9}{\draw (\x,-0.07) -- (\x,0.07);}
+  \fill[sky] (0.2,0) circle (3pt) node[above=6pt,font=\sffamily\small\bfseries] {61.2};
+  \fill[tangerine] (0.5,0) circle (3pt) node[above=6pt,font=\sffamily\small\bfseries] {61.5};
+  \fill[leaf] (0.8,0) circle (3pt) node[above=6pt,font=\sffamily\small\bfseries] {61.8};
+  \draw[-{Stealth},line width=1.1pt,color=sky] (0.2,0.9) -- (0.02,0.9) node[midway,above,font=\sffamily\scriptsize] {rounds to 61};
+  \draw[-{Stealth},line width=1.1pt,color=leaf] (0.8,0.9) -- (0.98,0.9) node[midway,above,font=\sffamily\scriptsize] {rounds to 62};
+\end{tikzpicture}
+\end{center}
+
+61.2 is closer to 61, so it rounds \emph{down} to 61. 61.8 is closer to 62, so it rounds \emph{up}. Exactly halfway, at 61.5, we have to agree on a rule. In this book, \textbf{halves round up}, so 61.5 becomes 62.
+
+\begin{tcolorbox}[colback=sun!14,colframe=sun!85!black,boxrule=1.2pt,arc=2mm,left=6pt,right=6pt,top=4pt,bottom=4pt,before skip=8pt,after skip=8pt]
+\sans\bfseries\color{ink} The rounding rule\par
+\normalfont\sffamily\small Look at the digit just after the place you want to keep.\\
+\textbf{0, 1, 2, 3, 4:} the number stays. \qquad \textbf{5, 6, 7, 8, 9:} the number goes up by one.\\
+Example: 38.4 to the nearest whole number is 38. 38.5 is 39. 38.6 is 39.
+\end{tcolorbox}
+
+\subhead{Rounding is a pop}
+When we round 17.4~cm to 17~cm, we squash a number into a simpler one. That is a pop, so we must say what we kept and what we lost.
+
+\begin{center}
+\begin{tikzpicture}
+  \node[bigcir,minimum size=2.9cm] (a) at (0,0) {};
+  \node[cir] at (0,0.35) {17.4 cm};
+  \node[note,text width=2.2cm] at (0,-0.6) {pencil, read with an mm ruler};
+  \node[valcir] (b) at (5.2,0) {17 cm};
+  \draw[popA] (a) -- node[above,note,text width=2.2cm] {round to the nearest cm} (b);
+  \node[note,align=left,anchor=west,text width=3.4cm] at (6.4,0) {\textbf{kept:} about how long\\\textbf{lost:} the 0.4 cm};
+\end{tikzpicture}
+\end{center}
+
+\trust{We compared 17.4 with the rounded 17.}
+{A number rounded to the nearest whole is never more than half a unit away from the original. The gap here is 0.4~cm, which is less than 0.5.}
+{Whether the 17.4 reading itself was right, and whether adding up many rounded numbers stays close to the true total. It may not. You will see why in a moment.}
+
+\subhead{Rounding to the nearest ten}
+You can round to bigger steps too. To round to the nearest ten, look at the ones digit: 34 becomes 30, and 35 becomes 40. People round a distance of 487~m to ``about 490~m'' or ``about 500~m'', depending on how much detail the listener needs.
+
+\subhead{Rounding in the news}
+Suppose a town has exactly 12\,482 people on counting day. Here is what different people might write. Each one is honest, as long as it says ``about''.
+
+\begin{center}
+\sffamily\small\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{@{}lr@{\qquad}l@{}}
+\toprule
+\textbf{Rounded to the nearest} & \textbf{Number} & \textbf{Who might use it}\\
+\midrule
+ten & 12\,480 & the town hall\\
+hundred & 12\,500 & the local paper\\
+thousand & 12\,000 & a national newspaper\\
+ten thousand & 10\,000 & a map of a whole country\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Every step up throws away more detail, but each one keeps the answer to ``about how big?'' for a different audience.
+
+\begin{multix}[hmm]\multixbot[hmm]\tcblower
+The newspaper said 12\,000 people live in the town. So the real number is exactly 12\,000. I am an expert reader of newspapers. Or am I?
+\end{multix}
+
+\begin{tryit}{Round and add}
+\textbf{You need:} a ruler marked in mm, and five small things such as a pencil, an eraser, a paper clip, a key and a crayon.
+\begin{enumerate}[leftmargin=1.6em]
+\item Measure each thing to the nearest millimetre, in centimetres (for example 17.4~cm). Write each in the first column.
+\item Round each length to the nearest centimetre. Write it in the second column.
+\item Add the first column. Then add the second column.
+\item Compare the two totals.
+\end{enumerate}
+\par\medskip
+\renewcommand{\arraystretch}{1.7}
+\begin{tabularx}{\linewidth}{|>{\sffamily\small}p{2.6cm}|X|X|}
+\hline
+\textbf{Thing} & \textbf{To the nearest mm (cm)} & \textbf{Rounded to the nearest cm}\\ \hline
+ & & \\ \hline
+ & & \\ \hline
+ & & \\ \hline
+ & & \\ \hline
+ & & \\ \hline
+\textbf{Total} & & \\ \hline
+\end{tabularx}
+\end{tryit}
+
+\begin{worked}{Practice numbers (made up for practice, not from a real measurement)}
+Pencil 17.4, eraser 5.2, paper clip 3.4, key 5.7, crayon 9.1.\\
+Exact total: $17.4+5.2+3.4+5.7+9.1=40.8$~cm. \textbf{Rounded to the nearest cm:} 41.\\
+Round each first: $17+5+3+6+9=40$. The total of the rounded numbers is \emph{off by 1} from the rounded total of the exact ones.
+\end{worked}
+
+Each rounding threw away a little bit, and the little bits added up. That is why careful people round \emph{at the end}, not at every step.
+
+\begin{keepbox}
+When we rounded each of the five lengths, \textbf{we kept} \wline[4cm] \textbf{and we set aside} \wline[4cm].
+\end{keepbox}
+
+\subhead{How many digits are worth writing?}
+Here is a puzzle that fools many grown-ups. You cut a 17~cm piece of string into 3 equal pieces. How long is each piece?
+
+Your calculator says $17\div3=5.6666667$.
+
+But your ruler only has marks every millimetre. The very last digit of 5.6666667 is about a millionth of a millimetre! No ruler can show that, so writing it pretends you know something you cannot know. The honest answer is \textbf{5.7~cm}.
+
+\begin{multix}[hmm]\multixbot[hmm]\tcblower
+The calculator gave me 5.6666667, so my string piece is 5.6666667~cm. More digits means more exact. Right? I think that is wrong. Can you say why?
+\end{multix}
+
+\begin{center}
+\sans\bfseries\large\color{ink}
+Do not write more digits than your tool can honestly give.
+\end{center}
+
+\clearpage
+
+\begin{puzzle}{Round the number}
+Round each number. Remember: halves round up.\medskip
+
+\renewcommand{\arraystretch}{1.8}
+\begin{tabular}{@{}l>{\sffamily\bfseries}cl>{\sffamily\bfseries}c@{}}
+\multicolumn{2}{@{}l}{\textbf{To the nearest whole number}} & \multicolumn{2}{l}{\textbf{To the nearest ten}}\\
+(a) 23.4 & \wline[1.8cm] & (f) 45.2 & \wline[1.8cm]\\
+(b) 23.5 & \wline[1.8cm] & (g) 81 & \wline[1.8cm]\\
+(c) 7.49 & \wline[1.8cm] & (h) 135 & \wline[1.8cm]\\
+(d) 99.6 & \wline[1.8cm] & & \\
+(e) 12.51 & \wline[1.8cm] & & \\
+\end{tabular}
+\end{puzzle}
+
+\begin{puzzle}{Sensible digits}
+Your calculator shows a long answer. Your ruler is marked in millimetres. Write each answer in centimetres, to the nearest millimetre.
+\begin{center}\sans\small\renewcommand{\arraystretch}{1.8}
+\begin{tabular}{@{}lll@{}}
+(a) $17\div3=5.6666667$ & write: & \wline[2cm]~cm\\
+(b) $33\div7=4.7142857$ & write: & \wline[2cm]~cm\\
+(c) $50\div8=6.25$ & write: & \wline[2cm]~cm\\
+\end{tabular}
+\end{center}
+\end{puzzle}
+
+\begin{puzzle}{Which rounding is wrong?}
+Four people rounded these lengths to the nearest centimetre. Only one rounding is wrong.
+\begin{center}\sans
+17.4 $\to$ 17 \qquad 8.5 $\to$ 8 \qquad 26.7 $\to$ 27 \qquad 3.2 $\to$ 3
+\end{center}
+Which one is wrong? \wline[2.5cm] What should it be? \wline[2cm]
+\end{puzzle}
+
+\begin{puzzle}{Ribbons}
+Three pieces of ribbon are each 1.4~cm long.\\
+(a) What is their total length, exactly? \wline[2cm]~cm\\
+(b) Round each piece to the nearest centimetre first, then add. What do you get? \wline[2cm]~cm\\
+(c) The two answers are different. Which total is closer to the truth, and why?\\
+\rule{\linewidth}{0.5pt}
+\end{puzzle}
+
+\begin{puzzle}{Draw the pop}
+Fill in the empty circle for each pop. Then write what was kept and what was lost.
+\begin{center}
+\begin{tikzpicture}[font=\sffamily\small]
+  \foreach \y/\from/\rl in {0/8.7 cm/nearest cm,-2.1/46/nearest ten,-4.2/2.35 m/nearest 0.1 m}{
+    \node[bigcir,minimum size=1.5cm] (a) at (0,\y) {\bfseries\from};
+    \node[valcir,dashed,minimum size=1.5cm] (b) at (5,\y) {};
+    \draw[popA] (a) -- node[above,note,text width=2.6cm] {round to the \rl} (b);
+    \node[anchor=west,align=left,text width=5.2cm,font=\sffamily\scriptsize] at (6.2,\y) {kept: \wline[3.4cm]\\[5pt]lost: \wline[3.4cm]};
+  }
+\end{tikzpicture}
+\end{center}
+\end{puzzle}
+
+\begin{puzzle}{Rounding maze}
+Start at the top left. Move only \textbf{right} or \textbf{down}, one square at a time. You may step only on a number that rounds to \textbf{50} when rounded to the nearest ten. Reach the bottom right.
+\begin{center}
+\begin{tikzpicture}[font=\sffamily\bfseries\large]
+  \foreach \r/\c/\n in {0/0/47,0/1/61,0/2/38,1/0/52,1/1/54,1/2/29,2/0/33,2/1/49,2/2/45}{
+    \node[draw=ink,line width=1pt,fill=white,minimum size=1.35cm] at (\c*1.35,-\r*1.35) {\n};
+  }
+  \node[font=\sffamily\bfseries\scriptsize,text=leaf!70!black] at (-1.2,0) {START};
+  \node[font=\sffamily\bfseries\scriptsize,text=tomato] at (3.9,-2.7) {END};
+\end{tikzpicture}
+\end{center}
+\end{puzzle}
+\clearpage

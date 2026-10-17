@@ -1,0 +1,131 @@
+\chapterhead{3}{A Yes-or-No Key}{Splitting a group with one question at a time}\label{ch3}
+
+A \textbf{key} is a list of yes-or-no questions that sorts a thing into a group. You answer the first question. The answer tells you which question to ask next. When there are no more questions, you have an answer.
+
+Every yes-or-no question splits one group into two smaller groups. Here is a key that sorts all eight bugs, one question at a time.
+
+\begin{center}
+\begin{tikzpicture}[font=\sffamily\scriptsize,yes/.style={font=\sffamily\tiny,text=leaf!70!black},no/.style={font=\sffamily\tiny,text=tomato}]
+  \node[draw=ink,rounded corners=3pt,fill=sun!25,inner sep=3pt] (q1) at (5.7,4.2) {wings?};
+  \node[draw=ink,rounded corners=3pt,fill=sun!25,inner sep=3pt] (q2a) at (2.85,2.8) {spots?};
+  \node[draw=ink,rounded corners=3pt,fill=sun!25,inner sep=3pt] (q2b) at (8.55,2.8) {spots?};
+  \foreach \i/\x in {a/1.4,b/4.3,c/7.1,d/10.0}{\node[draw=ink,rounded corners=3pt,fill=sky!20,inner sep=3pt] (q3\i) at (\x,1.4) {long antennae?};}
+  \foreach \i/\x/\l in {1/0.7/A,2/2.1/E,3/3.6/B,4/5.0/F,5/6.4/G,6/7.8/C,7/9.3/H,8/10.7/D}{\node[draw=ink,circle,fill=white,inner sep=2pt,font=\sffamily\bfseries\small] (l\i) at (\x,0) {\l};}
+  \draw (q1) -- node[yes,above left] {yes} (q2a); \draw (q1) -- node[no,above right] {no} (q2b);
+  \draw (q2a) -- node[yes,above left] {yes} (q3a); \draw (q2a) -- node[no,above right] {no} (q3b);
+  \draw (q2b) -- node[yes,above left] {yes} (q3c); \draw (q2b) -- node[no,above right] {no} (q3d);
+  \draw (q3a) -- node[yes,left] {y} (l1); \draw (q3a) -- node[no,right] {n} (l2);
+  \draw (q3b) -- node[yes,left] {y} (l3); \draw (q3b) -- node[no,right] {n} (l4);
+  \draw (q3c) -- node[yes,left] {y} (l5); \draw (q3c) -- node[no,right] {n} (l6);
+  \draw (q3d) -- node[yes,left] {y} (l7); \draw (q3d) -- node[no,right] {n} (l8);
+\end{tikzpicture}
+\end{center}
+
+\begin{tryit}{Follow the key}
+Pick a bug from the tray on page~\pageref{ch2} and follow the key from the top. Write the answers.\par\medskip
+Bug \wline[1cm] \quad Wings? \wline[1.4cm] \quad Spots? \wline[1.4cm] \quad Long antennae? \wline[1.4cm] \quad Ends at: \wline[1cm]\\[8pt]
+Bug \wline[1cm] \quad Wings? \wline[1.4cm] \quad Spots? \wline[1.4cm] \quad Long antennae? \wline[1.4cm] \quad Ends at: \wline[1cm]
+\end{tryit}
+
+\begin{worked}{An example}
+Bug G has no wings, has spots and has long antennae. Wings? no. Spots? yes. Long antennae? yes. It ends at G. Each bug follows its own path, and no two bugs share one.
+\end{worked}
+
+\subhead{How many questions?}
+\begin{center}
+\sffamily\small\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{@{}cc@{}}
+\toprule
+\textbf{Questions in a row} & \textbf{Most groups you can make}\\
+\midrule
+1 & 2\\
+2 & 4\\
+3 & 8\\
+\bottomrule
+\end{tabular}
+\end{center}
+Each question doubles the number of groups, as long as each question really splits every group.
+
+\begin{center}
+\begin{tikzpicture}
+  \node[bigcir,minimum size=2.0cm] (a) at (0,0) {8};
+  \node[cir] (b) at (3.4,1.2) {4}; \node[cir] (c) at (3.4,-1.2) {4};
+  \node[cir] (d) at (6.4,1.9) {2}; \node[cir] (e) at (6.4,0.5) {2};
+  \node[cir] (f) at (6.4,-0.5) {2}; \node[cir] (g) at (6.4,-1.9) {2};
+  \draw[popA] (a) -- (b); \draw[popA] (a) -- (c);
+  \draw[popA] (b) -- (d); \draw[popA] (b) -- (e); \draw[popA] (c) -- (f); \draw[popA] (c) -- (g);
+  \node[note] at (1.7,2.1) {wings?}; \node[note] at (4.9,2.9) {spots?};
+\end{tikzpicture}
+\end{center}
+
+\begin{multix}[hmm]\multixbot[hmm]\tcblower
+My key has three questions, and every bug I tried landed in the right place. So every key with three questions must sort every pile correctly. I tried it on eight bugs. Is that enough?
+\end{multix}
+
+\trust{We tried the key on every bug and checked that each ended in a different place.}
+{Eight bugs ended in eight different groups.}
+{That the key works for bugs that are not in the tray. A new bug may have a feature the questions do not cover.}
+
+\begin{keepbox}
+We turned a pile of bugs into a tree of questions. \textbf{We kept} \wline[3.4cm] \textbf{and we set aside} \wline[3.4cm].
+\end{keepbox}
+
+\clearpage
+
+\begin{puzzle}{Follow the key}
+A bug has no wings, has spots and has short antennae. Where does the key end? \wline[1.6cm]
+\end{puzzle}
+
+\begin{puzzle}{How many groups?}
+Two questions in a row can make at most how many groups? \wline[1.6cm]\\
+Three questions? \wline[1.6cm]
+\end{puzzle}
+
+\begin{puzzle}{Sixteen bugs}
+How many questions in a row do you need to sort 16 different bugs, one to a group? \wline[1.6cm]
+\end{puzzle}
+
+\begin{puzzle}{Fill the gap}
+A key splits four things A, B, C and D. Question 1: has legs? yes (A, B), no (C, D). Question 2 for the \emph{yes} group must separate A from B. Write a question that would. \wline[6cm]
+\end{puzzle}
+
+\begin{puzzle}{A wasted question}
+A key has the question ``Does it have six legs?'' for the bug tray. Why is that a wasted question? \wline[6cm]
+\end{puzzle}
+
+\clearpage
+
+\begin{puzzle}{Order of the questions}
+If the key asks ``long antennae?'' first, then ``spots?'', then ``wings?'', does it still sort all eight bugs? \wline[2cm]
+\end{puzzle}
+
+\begin{puzzle}{Draw the circles}
+A group of 8 is split by spots into two groups. Fill in the empty circles.
+\begin{center}
+\begin{tikzpicture}
+  \node[cir] (a) at (0,0) {8}; \node[cir,dashed] (b) at (4,0.9) {}; \node[cir,dashed] (c) at (4,-0.9) {};
+  \draw[popA] (a) -- (b); \draw[popA] (a) -- (c);
+\end{tikzpicture}
+\end{center}
+\end{puzzle}
+
+\begin{puzzle}{Four things}
+You have four toys. How many questions might you need in a row? \wline[1.6cm]
+\end{puzzle}
+
+\begin{puzzle}{Make a key}
+Pick four small things from home. Write a two-question key that sorts them, one to a group. \wline[7cm]
+\end{puzzle}
+
+\begin{puzzle}{Checking the end}
+When your key ends, how many things should be in each last group if you want to tell every one apart? \wline[2cm]
+\end{puzzle}
+\clearpage
+
+\thispagestyle{fancy}
+\subhead{My own key}
+Draw a key for six or eight things of your own. Put the questions in boxes, the answers on the lines, and the things at the bottom.\par\medskip
+\begin{center}\begin{tikzpicture}\draw[ink!70,line width=1pt,rounded corners=3pt] (0,0) rectangle (11.4,9);\end{tikzpicture}\end{center}
+Number of questions in a row: \wline[1.6cm] \quad Number of groups at the bottom: \wline[1.6cm]\\[10pt]
+Does every group have one thing in it? \wline[2cm]
+\clearpage

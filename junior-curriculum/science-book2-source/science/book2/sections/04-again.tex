@@ -1,0 +1,186 @@
+\chapterhead{4}{Again and Again}{How many throws before you can tell two things apart?}\label{ch4}
+
+Fair is not the same as finished. Even a fair test can fool you if you throw each plane only once. Every throw is a little different. A gust of air, a different wrist angle or a bad landing can add or take away half a metre.
+
+In Book~1 you learned that repeating a measurement and taking the average makes the answer steadier. A fair test needs the same idea. Throw each plane several times. Then compare the \textbf{averages}, and compare the \textbf{spread}.
+
+\subhead{Five throws each}
+Earlier you saw the first three throws of the clip test. Here are all five throws from the same practice run.
+
+\begin{worked}{Paper clip test, five throws each (practice numbers)}
+\textbf{No clip:} 4.1, 3.8, 4.4, 4.0, 4.2~m. Total $=20.5$. Average $20.5\div5=4.1$~m. Spread $4.4-3.8=0.6$~m.\\
+\textbf{Clip:} 5.2, 5.6, 5.1, 5.4, 5.2~m. Total $=26.5$. Average $26.5\div5=5.3$~m. Spread $5.6-5.1=0.5$~m.\\
+\textbf{Gap between the averages:} $5.3-4.1=1.2$~m, which is \emph{bigger} than either spread (0.6 and 0.5).
+\end{worked}
+
+\begin{center}
+\begin{tikzpicture}[x=1.15cm,y=1cm]
+  \draw[line width=1.1pt] (3.3,0) -- (6.1,0);
+  \foreach \v in {3.5,4.0,4.5,5.0,5.5,6.0}{\draw (\v,-0.1) -- (\v,0.1); \node[font=\sffamily\scriptsize,below=2pt] at (\v,-0.1) {\v};}
+  \foreach \v/\y in {3.8/0.5,4.0/0.5,4.1/0.5,4.2/0.5,4.4/0.5}{\fill[sky,draw=ink,line width=0.7pt] (\v,\y) circle (2.2mm);}
+  \foreach \v/\y in {5.1/1.1,5.2/1.1,5.2/1.5,5.4/1.1,5.6/1.1}{\fill[tomato,draw=ink,line width=0.7pt] (\v,\y) circle (2.2mm);}
+  \draw[<->,line width=1pt,color=ink!70] (4.1,2.1) -- (5.3,2.1) node[midway,above,font=\sffamily\scriptsize] {gap 1.2};
+  \node[font=\sffamily\bfseries\scriptsize,anchor=east] at (3.3,0.5) {no clip};
+  \node[font=\sffamily\bfseries\scriptsize,anchor=east] at (3.3,1.2) {clip};
+\end{tikzpicture}
+\end{center}
+
+\subhead{A rule of thumb}
+When two groups of repeated results are compared, ask: is the gap between their averages bigger than the spread in each group?
+
+\begin{itemize}[leftmargin=1.6em,itemsep=0.2em]
+\item If the gap is \textbf{much bigger} than both spreads, the difference is probably real.
+\item If the gap is \textbf{smaller} than the spread, you cannot tell yet. Throw more.
+\end{itemize}
+
+This is only a rule of thumb. It is not a proof, and real scientists use more careful methods. But it stops you from calling a lucky throw a discovery.
+
+\subhead{When you cannot tell}
+Now compare the flap test. Practice numbers again, five throws each:
+
+\begin{worked}{Flap test, five throws each (practice numbers)}
+\textbf{Flat wings:} 4.0, 4.8, 3.9, 4.4, 4.1~m. Total $=21.2$. Average $21.2\div5=4.24$, about 4.2~m. Spread $4.8-3.9=0.9$~m.\\
+\textbf{Flaps up:} 4.5, 3.8, 4.9, 4.2, 4.3~m. Total $=21.7$. Average $21.7\div5=4.34$, about 4.3~m. Spread $4.9-3.8=1.1$~m.\\
+\textbf{Gap between the averages:} $4.3-4.2=0.1$~m. The spreads are 0.9 and 1.1.
+\end{worked}
+
+\begin{center}
+\begin{tikzpicture}[x=1.4cm,y=1cm]
+  \draw[line width=1.1pt] (3.6,0) -- (5.1,0);
+  \foreach \v in {3.8,4.0,4.2,4.4,4.6,4.8}{\draw (\v,-0.1) -- (\v,0.1); \node[font=\sffamily\scriptsize,below=2pt] at (\v,-0.1) {\v};}
+  \foreach \v in {3.9,4.0,4.1,4.4,4.8}{\fill[sky,draw=ink,line width=0.7pt] (\v,0.5) circle (2.2mm);}
+  \foreach \v in {3.8,4.2,4.3,4.5,4.9}{\fill[tomato,draw=ink,line width=0.7pt] (\v,1.1) circle (2.2mm);}
+  \node[font=\sffamily\bfseries\scriptsize,anchor=east] at (3.6,0.5) {flat};
+  \node[font=\sffamily\bfseries\scriptsize,anchor=east] at (3.6,1.1) {flaps};
+\end{tikzpicture}
+\end{center}
+
+The dots for the two groups lie all over each other. The gap, 0.1~m, is much smaller than the spread. The test does not show that flaps change the distance. It does not show that they \emph{do not} change it either. It only says that these ten throws are too few and too wobbly to tell. A fair test can end in ``we cannot tell yet'', and that is an honest result.
+
+\begin{multix}[hmm]\multixbot[hmm]\tcblower
+The flaps averaged 4.3 and the flat wings 4.2. So flaps win! I will announce it at lunch.
+\end{multix}
+
+\trust{We threw each plane five times in a mixed order, found each average and spread, and compared the gap between the averages with the spreads.}
+{Comparing a gap to the spread stops one lucky or unlucky throw from deciding the answer. A gap much bigger than both spreads is hard to blame on chance alone.}
+{That a bigger gap is always real, or that a gap smaller than the spread means there is no effect. A tiny effect needs many more throws to find. The rule of thumb is a guide, not a proof.}
+
+\begin{keepbox}
+We pop five throws into one average and a spread. \textbf{We kept} \wline[3.4cm] \textbf{and we set aside} \wline[3.4cm].
+\end{keepbox}
+
+\clearpage
+
+\subhead{More throws, steadier answers}
+In the clip test, how does the average change as you add throws? Watch the running average of the \emph{gap}. It starts rough and settles down.
+
+\begin{center}
+\begin{tikzpicture}[x=1.4cm,y=3.2cm]
+  \draw[line width=1pt] (0.5,0.6) -- (0.5,1.5) (0.5,0.6) -- (5.6,0.6);
+  \foreach \y in {0.8,1.0,1.2,1.4}{\draw (0.4,\y) -- (0.6,\y); \node[font=\sffamily\scriptsize,anchor=east] at (0.35,\y) {\y};}
+  \foreach \x in {1,...,5}{\node[font=\sffamily\scriptsize,anchor=north] at (\x,0.59) {\x};}
+  \node[font=\sffamily\scriptsize,anchor=north] at (3,0.5) {throws of each plane so far};
+  \node[font=\sffamily\scriptsize,rotate=90] at (-0.4,1.05) {gap between averages (m)};
+  \draw[dashed,color=sky!80!black] (0.5,1.2) -- (5.6,1.2);
+  \draw[line width=1.3pt,color=tangerine] (1,1.1) -- (2,1.45) -- (3,1.2) -- (4,1.25) -- (5,1.2);
+  \foreach \x/\y in {1/1.1,2/1.45,3/1.2,4/1.25,5/1.2}{\fill[tomato,draw=ink] (\x,\y) circle (1.6mm);}
+\end{tikzpicture}
+\end{center}
+
+After one throw each, the gap was $5.2-4.1=1.1$~m. After two throws each, it was $5.4-3.95=1.45$~m. After three, it was 1.2~m. After four, it was $5.325-4.075=1.25$~m, and after five it was back to 1.2~m. The wiggles get smaller as throws are added, so one strange throw matters less and less.
+
+\begin{tryit}{Throw until it settles}
+Repeat the paper clip test, or the flap test, for \textbf{five} throws each. After every pair of throws, write the running gap in the table. Does the gap settle down?\par\medskip
+\renewcommand{\arraystretch}{1.7}
+\begin{tabular}{|l|c|c|c|c|c|}
+\hline
+\textbf{Throws so far} & 1 & 2 & 3 & 4 & 5\\ \hline
+\textbf{Average, plain or flat} & & & & & \\ \hline
+\textbf{Average, clip or flaps} & & & & & \\ \hline
+\textbf{Gap} & & & & & \\ \hline
+\end{tabular}
+\end{tryit}
+
+\subhead{The lucky throw}
+What if one throw is far from the rest? Suppose the plain plane flew 4.0, 4.2, 4.1, 4.3 and, once, 7.2~m, because a gust of wind caught it. The average of all five is $23.8\div5\approx4.8$~m, but four of five throws were close to 4.2. Do not delete the 7.2. Write it down, say why you think it happened, and then also report the average of the other four (4.15, about 4.2). Both numbers tell the reader something.
+
+\clearpage
+
+\begin{puzzle}{Means and spreads}
+Two groups of five throws are listed. Find each total, average and spread, and the gap.
+\begin{center}\sans\small\renewcommand{\arraystretch}{1.8}
+\begin{tabular}{@{}lccc@{}}
+ & \textbf{Throws (m)} & \textbf{Total} & \textbf{Average}\\
+Group X & 3.0, 3.3, 3.1, 3.4, 3.2 & \wline[1.3cm] & \wline[1.3cm]\\
+Group Y & 3.9, 4.1, 4.0, 4.2, 3.8 & \wline[1.3cm] & \wline[1.3cm]
+\end{tabular}
+\end{center}
+Spread of X: \wline[1.3cm] \quad Spread of Y: \wline[1.3cm] \quad Gap: \wline[1.3cm]\\
+Is the gap bigger than both spreads? \wline[2cm]
+\end{puzzle}
+
+\begin{puzzle}{Can you tell?}
+Class A: 5.0, 5.9, 4.4, 5.6, 5.1~m (average 5.2, spread 1.5). Class B: 5.3, 4.5, 5.9, 5.0, 5.4~m (average 5.2, spread 1.4).\\
+The averages are the same. Does this prove the two planes fly equally far? \wline[2cm]\\
+Write one sentence about what you would do next.\\
+\rule{\linewidth}{0.5pt}
+\end{puzzle}
+
+\begin{puzzle}{How many more?}
+A test gave: plain 4.0, 4.5, 4.3 and clip 4.4, 4.0, 4.7 (metres).\\
+(a) Averages: plain \wline[1.3cm] clip \wline[1.3cm]\\
+(b) Spreads: plain \wline[1.3cm] clip \wline[1.3cm]\\
+(c) What should the next step be: celebrate, give up or throw more? \wline[2.6cm]
+\end{puzzle}
+
+\begin{puzzle}{Hidden difference}
+A student threw the plain plane five times first, then the clip plane five times. The clip plane flew farther. Name a second thing that could have changed between the two groups, and how a mixed order would help.\\
+\rule{\linewidth}{0.5pt}\\[4pt]\rule{\linewidth}{0.5pt}
+\end{puzzle}
+\clearpage
+
+\subhead{Plot your own throws}
+Put the results of your own clip test or ramp test on the axes below. Use blue for one version and red for the other, with one dot per throw. Write the numbers under the marks that suit your results.
+
+\begin{center}
+\begin{tikzpicture}[x=0.92cm]
+  \foreach \y/\l in {0.9/Version A,2.4/Version B}{
+    \draw[line width=1.1pt] (0,\y) -- (12,\y);
+    \foreach \x in {0,...,12}{\draw (\x,\y-0.1) -- (\x,\y+0.1); \node[draw=ink!60,minimum width=0.7cm,minimum height=0.45cm,anchor=north] at (\x,\y-0.15) {};}
+    \node[font=\sffamily\bfseries\scriptsize,anchor=south west] at (0,\y+1.0) {\l};
+    \foreach \x in {0,...,12}{\draw[gray!40] (\x,\y+0.1) -- (\x,\y+1.0);}
+  }
+\end{tikzpicture}
+\end{center}
+
+Average of A: \wline[1.6cm] \quad Spread of A: \wline[1.6cm]\\[8pt]
+Average of B: \wline[1.6cm] \quad Spread of B: \wline[1.6cm]\\[8pt]
+Gap: \wline[1.6cm] \quad Is the gap bigger than both spreads? \wline[1.6cm]
+
+\begin{puzzle}{Read the dot plot}
+Dots show how far two paper cups rolled, in cm. Cup A: 40, 42, 41, 43, 44. Cup B: 52, 55, 53, 51, 54.\\
+(a) Average of A \wline[1.3cm] average of B \wline[1.3cm]\\
+(b) Spread of A \wline[1.3cm] spread of B \wline[1.3cm]\\
+(c) Gap \wline[1.3cm]. Is it bigger than both spreads? \wline[1.6cm]
+\end{puzzle}
+\clearpage
+
+\thispagestyle{fancy}
+\subhead{My test diary}
+Use this page for any test you run for fun. Write what you changed, what you measured, and how it turned out.
+\renewcommand{\arraystretch}{2.4}
+\begin{center}\sffamily\scriptsize
+\begin{tabularx}{\textwidth}{|p{1.3cm}|X|X|X|X|}
+\hline
+\textbf{Day} & \textbf{Question} & \textbf{What I changed} & \textbf{My averages} & \textbf{Could I tell?}\\ \hline
+ & & & & \\ \hline
+ & & & & \\ \hline
+ & & & & \\ \hline
+ & & & & \\ \hline
+ & & & & \\ \hline
+ & & & & \\ \hline
+ & & & & \\ \hline
+ & & & & \\ \hline
+\end{tabularx}
+\end{center}
+\clearpage

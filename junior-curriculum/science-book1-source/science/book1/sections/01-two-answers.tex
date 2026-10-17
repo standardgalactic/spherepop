@@ -1,0 +1,221 @@
+\chapterhead{1}{Two Careful People, Two Answers}{Why the same desk can have two different lengths}\label{ch1}
+
+Mia and Omar share a desk at school. On Monday their teacher gives each of them the same 30~cm ruler and asks them to measure the desk, edge to edge.
+
+Mia writes \textbf{62~cm}. Omar writes \textbf{61~cm}.
+
+Both of them went slowly. Both of them have good eyes. Neither one is careless. So who is right?
+
+The surprising answer is that it may be \emph{both}, and that the desk has no single, perfect length for anyone to find. Here are four reasons the numbers can differ, and not one of them is a mistake.
+
+\begin{enumerate}[leftmargin=1.8em,itemsep=0.35em]
+\item \textbf{The ruler has to be moved.} A 30~cm ruler cannot reach across a desk in one go. Each time it is slid along, there can be a gap or an overlap about as thin as a pencil line.
+\item \textbf{The edges are not sharp.} A desk corner is a little rounded. Where does the desk ``start''? That is a judgement.
+\item \textbf{Between two marks, you guess.} A ruler's smallest marks are 1~mm apart. If the desk ends between two marks, the reader must choose one.
+\item \textbf{The ruler itself may start oddly.} Some rulers have a small gap before the zero mark, or a worn end.
+\end{enumerate}
+
+\begin{multix}[hmm]\multixbot[hmm]\tcblower
+My hand span is 11~cm. This desk is 6 of my hand spans. So it is 66~cm, and it is also 6 of \emph{your} hand spans. Oh, that cannot be right. Can you see why?
+\end{multix}
+
+\subhead{A measurement is more than a number}
+Look at Mia's and Omar's answers as circles. Each circle holds the number and a note on how it was taken.
+
+\begin{center}
+\begin{tikzpicture}
+  \node[bigcir,minimum size=3.1cm] at (0,0) {};
+  \node[cir] at (0,0.5) {62 cm};
+  \node[note,text width=2.5cm] at (0,-0.6) {Mia: ruler moved 3 times, read to the nearest cm};
+  \node[bigcir,minimum size=3.1cm] at (4.4,0) {};
+  \node[cir] at (4.4,0.5) {61 cm};
+  \node[note,text width=2.5cm] at (4.4,-0.6) {Omar: ruler moved 3 times, started at the table edge};
+  \node[note,anchor=west,text width=3.3cm,align=left] at (6.3,0) {Two circles, two notes. With the notes, we can start to see \emph{why} they differ.};
+\end{tikzpicture}
+\end{center}
+
+When we write a measurement without its note, we throw away the part that lets someone else check it. A scientist always keeps the note.
+
+\begin{keepbox}
+Mia and Omar each wrote a length in centimetres. \textbf{We kept:} the number and the unit. \textbf{We set aside:} the tiny gaps, overlaps and judgements made along the way. That is why we write a \emph{note on how it was taken}.
+\end{keepbox}
+
+\subhead{A closer look at a ruler}
+Before we go on, look hard at your ruler. Here is a piece of one, much bigger than life.
+
+\begin{center}
+\begin{tikzpicture}[x=3.9cm,y=1cm]
+  \fill[sun!35,draw=ink,line width=0.9pt] (-0.04,-1.5) rectangle (3.04,0.5);
+  \foreach \m in {0,...,30}{
+    \pgfmathsetmacro{\xx}{\m/10}
+    \pgfmathtruncatemacro{\kind}{ifthenelse(mod(\m,10)==0,1,ifthenelse(mod(\m,5)==0,2,3))}
+    \ifnum\kind=1\draw[line width=1pt] (\xx,0.5) -- (\xx,-0.55);\node[font=\sffamily\bfseries\small,anchor=north] at (\xx,-0.58) {\pgfmathprintnumber{\xx}};\fi
+    \ifnum\kind=2\draw[line width=0.8pt] (\xx,0.5) -- (\xx,-0.38);\fi
+    \ifnum\kind=3\draw[line width=0.5pt] (\xx,0.5) -- (\xx,-0.22);\fi
+  }
+  \draw[-{Stealth},line width=1pt,tomato] (0.2,1.45) -- (0.2,0.55);
+  \node[font=\sffamily\scriptsize,text=tomato,anchor=south] at (0.2,1.45) {smallest mark: 1 mm};
+  \draw[-{Stealth},line width=1pt,sky] (1.5,1.45) -- (1.5,0.55);
+  \node[font=\sffamily\scriptsize,text=sky!70!black,anchor=south] at (1.5,1.45) {longer mark: 5 mm};
+  \fill[tangerine!70,draw=ink,line width=0.8pt] (0,-1.35) rectangle (2.7,-1.1);
+  \draw[dashed,line width=0.9pt,leaf!70!black] (2.7,-1.1) -- (2.7,0.5);
+  \node[font=\sffamily\scriptsize,text=leaf!70!black,anchor=north] at (2.7,-1.4) {pencil end: 2.7 cm};
+\end{tikzpicture}
+\end{center}
+
+Between the 0 and the 1 there are ten small spaces, and each one is 1 millimetre. So 1~cm is 10~mm. The pencil end above lines up with the seventh small mark after the 2, so it is 2~cm and 7~mm long, which we write as \textbf{2.7~cm}.
+
+\begin{tryit}{Ruler detective}
+Look closely at your own ruler and fill in the lines.\\[4pt]
+(a) How many small spaces are there between the 0 and the 1? \wline[1.5cm]\\[3pt]
+(b) Is there a gap before the 0, or does the ruler start right at its edge? \wline[2.5cm]\\[3pt]
+(c) How many millimetres are there from the 2 to the 3? \wline[1.5cm]~mm\\[3pt]
+(d) Which units are written on the ruler? \wline[3cm]
+\end{tryit}
+
+\subhead{Why we agreed on units}
+Long ago, people measured with their own bodies. A \emph{hand} was a hand, a \emph{foot} was a foot, a \emph{cubit} was the length of a forearm. That was handy, but a big person's foot is not a small person's foot. Two shopkeepers using ``one foot'' could mean different amounts.
+
+So people agreed on shared units. Today the \textbf{metre} is defined using the speed of light, which means a metre means the same thing in every country. A \textbf{centimetre} is one hundredth of a metre, and a \textbf{millimetre} is one tenth of a centimetre.
+
+Your hand span is still useful. It tells you roughly how big something is when you have no ruler. It is just not a unit a shop could use.
+
+\begin{tryit}{Measure one desk three ways}
+\textbf{You need:} a ruler, a piece of string, a pencil, and a friend. Use a table or desk about 1 metre long.
+\begin{enumerate}[leftmargin=1.6em]
+\item \textbf{Guess first.} Write your guess for the length in the table below, before you measure.
+\item \textbf{Ruler.} Put a pencil dot at the end of the ruler each time you slide it along. Add up the pieces. Write down how many times you moved the ruler.
+\item \textbf{Hand span.} Spread your hand wide and walk it along the desk, thumb tip to little-finger tip. Count your spans.
+\item \textbf{String.} Lay the string along the desk and pinch where the desk ends. Straighten the string and measure it against the ruler.
+\item \textbf{Swap.} Ask a friend to measure the same desk. Write their numbers in the second column.
+\end{enumerate}
+\par\medskip
+\renewcommand{\arraystretch}{1.9}
+\begin{tabularx}{\linewidth}{|>{\sffamily\bfseries\small}p{2.3cm}|X|X|X|}
+\hline
+ & \textbf{My result} & \textbf{My friend's} & \textbf{Note on how it was taken}\\ \hline
+Guess & & & \\ \hline
+Ruler (cm) & & & \\ \hline
+Hand spans & & & \\ \hline
+String (cm) & & & \\ \hline
+\end{tabularx}
+\end{tryit}
+
+\subhead{What to notice}
+Did your ruler and your string agree? Did your friend get the same number? If you were within 2 or 3~cm of each other, you did well. If you were far apart, look at the notes. A gap in the ruler path or a stretched string is usually the reason.
+
+\begin{multix}[ok]\multixbot[ok]\tcblower
+Hand spans are great for guessing but poor for deals. If you trade a desk to a friend and say ``6 spans'', ask whose spans!
+\end{multix}
+
+\subhead{Measure yourself}
+Your body gave people their first units. Now you can find out how big yours are.
+
+\begin{tryit}{Body measures}
+Measure each of these on yourself, in centimetres. Then ask a grown-up to measure theirs.
+\par\medskip
+\renewcommand{\arraystretch}{1.9}
+\begin{tabularx}{\linewidth}{|>{\sffamily\bfseries\small}p{4.6cm}|X|X|}
+\hline
+ & \textbf{Me (cm)} & \textbf{A grown-up (cm)}\\ \hline
+Hand span, thumb tip to little finger tip & & \\ \hline
+Foot, heel to longest toe & & \\ \hline
+Forearm, elbow to the tip of the middle finger (a \emph{cubit}) & & \\ \hline
+One big step, heel to heel & & \\ \hline
+\end{tabularx}
+\par\medskip
+If you and the grown-up each measured the same desk in hand spans, who would get the bigger number? Explain.\\[2pt]\rule{\linewidth}{0.5pt}
+\end{tryit}
+
+\subhead{When the ruler lies a little}
+Mia's 62~cm and Omar's 61~cm might both be fair readings of the same desk. A 1~cm difference over about 60~cm is small. What matters is that the note is written down and that anyone who cares can try again.
+
+Here is a simple habit that scientists use all the time:
+\begin{center}
+\sans\bfseries\large\color{ink}
+Write the number. Write the unit. Write how you took it.
+\end{center}
+
+If a friend tells you a length is ``21'' and nothing else, you cannot tell whether that is 21~cm, 21~mm, or 21 hand spans. A number alone is a half-finished answer.
+
+\begin{multix}[wow]\multixbot[wow]\tcblower
+Remember my foot, from page 2? I wrote ``25''. I should have written ``25~cm, ruler, heel to toe, read to the nearest cm.'' A number without its unit is like a robot without its antenna.
+\end{multix}
+
+\clearpage
+
+\begin{puzzle}{Whose report is clearest?}
+Three students measured the same book. Read their reports.
+\begin{description}[leftmargin=1.6em,itemsep=0.25em,style=sameline]
+\item[A] ``The book is 21.''
+\item[B] ``The book is 21.2~cm long. I used a 30~cm ruler marked in mm, edge to edge, and read to the nearest mm.''
+\item[C] ``The book is about 20~cm long.''
+\end{description}
+\textbf{(a)} Which report hides how the book was measured? \wline[2cm]\\
+\textbf{(b)} Which report tells you the most? \wline[2cm]\\
+\textbf{(c)} What is missing from report A besides the note? \wline[4cm]
+\end{puzzle}
+
+\begin{puzzle}{Read the pencils}
+Each pencil starts at the zero mark. Read the length where each pencil ends, to the nearest millimetre.
+\begin{center}
+\begin{tikzpicture}[x=0.97cm]
+  \fill[tangerine!60,draw=ink] (0,0.25) rectangle (5.3,0.65);
+  \fill[leaf!50,draw=ink] (0,0.75) rectangle (8.8,1.15);
+  \fill[sky!50,draw=ink] (0,1.25) rectangle (11.6,1.65);
+  \node[note,anchor=east] at (-0.2,0.45) {A};\node[note,anchor=east] at (-0.2,0.95) {B};\node[note,anchor=east] at (-0.2,1.45) {C};
+  \begin{scope}[shift={(0,-0.05)}]
+    \ruler{0}{12}
+  \end{scope}
+\end{tikzpicture}
+\end{center}
+A \wline[1.5cm] cm \quad B \wline[1.5cm] cm \quad C \wline[1.5cm] cm
+\end{puzzle}
+
+\begin{puzzle}{Odd one out}
+Four friends measured the same pencil. Each used a ruler marked in mm.
+\begin{center}\sans
+Ana: 17.4~cm \quad Ben: 17.5~cm \quad Cleo: 17.4~cm \quad Dev: 18.4~cm
+\end{center}
+Dev's number is not like the others. Write one way Dev may have measured that gives 18.4~cm. How could Dev check?\\
+\rule{\linewidth}{0.5pt}
+\end{puzzle}
+
+\begin{puzzle}{Match the tool}
+Choose the best tool for each job. Tools: \textbf{mm ruler}, \textbf{30~cm ruler for a desk}, \textbf{long tape measure}.
+\begin{center}\sans\small
+\begin{tabular}{@{}lc@{}}
+(a) the width of a dried bean & \wline[3cm]\\[3pt]
+(b) the length of a classroom & \wline[3cm]\\[3pt]
+(c) the height of a door & \wline[3cm]\\
+\end{tabular}
+\end{center}
+\end{puzzle}
+
+\begin{puzzle}{Treasure routes}
+Two routes lead from the start S to the treasure T. The lengths are in centimetres. The map is \emph{not} drawn to scale, so trust the numbers.
+\begin{center}
+\begin{tikzpicture}[scale=0.95,font=\sffamily\small]
+  \node[circle,fill=leaf!40,draw=ink,minimum size=0.7cm] (S) at (0,0) {S};
+  \node[circle,fill=sun,draw=ink,minimum size=0.7cm] (T) at (10,0) {T};
+  \coordinate (a1) at (2.2,1.8); \coordinate (a2) at (5,2.4); \coordinate (a3) at (8,1.5);
+  \draw[line width=1.5pt,sky] (S) -- node[above left] {3.5} (a1) -- node[above] {2.0} (a2) -- node[above] {4.5} (a3) -- node[above right] {1.5} (T);
+  \coordinate (b1) at (2.5,-1.4); \coordinate (b2) at (5.5,-1.9); \coordinate (b3) at (8,-1.2);
+  \draw[line width=1.5pt,tomato] (S) -- node[below left] {2.5} (b1) -- node[below] {3.5} (b2) -- node[below] {2.0} (b3) -- node[below right] {3.0} (T);
+  \node[text=sky!70!black,font=\sffamily\bfseries\small] at (5,3.1) {Route 1};
+  \node[text=tomato,font=\sffamily\bfseries\small] at (5,-2.7) {Route 2};
+\end{tikzpicture}
+\end{center}
+(a) Length of Route 1: \wline[1.5cm]~cm \quad (b) Length of Route 2: \wline[1.5cm]~cm\\
+(c) Which is shorter, and by how many millimetres? \wline[3cm]
+\end{puzzle}
+
+\begin{puzzle}{Same length, different units}
+Circle the longer one in each pair.
+\begin{center}\sans
+(a) 25~mm \quad or \quad 2.4~cm\\[4pt]
+(b) 0.8~m \quad or \quad 75~cm\\[4pt]
+(c) 3~cm \quad or \quad 28~mm
+\end{center}
+\end{puzzle}
+\clearpage

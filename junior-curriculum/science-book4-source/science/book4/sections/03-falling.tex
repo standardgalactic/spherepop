@@ -1,0 +1,141 @@
+\chapterhead{3}{Falling and Floating}{Gravity, air and water push on everything}\label{ch3}
+
+Let go of a book and it falls. Let go of a sheet of paper and it drifts down slowly, wobbling. Both are pulled down by gravity. So why is the paper so slow?
+
+The answer is that something else acts on the paper. As a thing falls through air, the air pushes up against it. The more surface the thing spreads out, the bigger that upward push. Flat paper spreads a lot of surface, so the air pushes up on it almost as hard as gravity pulls down.
+
+\begin{center}
+\begin{tikzpicture}
+  \fill[sky!30,draw=ink,line width=1pt] (-1.0,0) rectangle (1.0,0.12);
+  \draw[-{Stealth},line width=2.4pt,color=tomato] (0,0.06) -- (0,-1.8); \node[font=\sffamily\scriptsize,anchor=west] at (0.15,-1.6) {gravity, 5};
+  \draw[-{Stealth},line width=2.4pt,color=leaf!70!black] (0,0.06) -- (0,1.7); \node[font=\sffamily\scriptsize,anchor=west] at (0.15,1.5) {air, 4};
+  \node[font=\sffamily\scriptsize] at (0,-2.4) {flat paper: leftover 1 down};
+  \fill[tangerine!70,draw=ink] (5.0,0.4) circle (0.35);
+  \draw[-{Stealth},line width=2.4pt,color=tomato] (5.0,0.4) -- (5.0,-1.4); \node[font=\sffamily\scriptsize,anchor=west] at (5.15,-1.2) {gravity, 5};
+  \draw[-{Stealth},line width=2.4pt,color=leaf!70!black] (5.0,0.4) -- (5.0,0.9); \node[font=\sffamily\scriptsize,anchor=west] at (5.15,1.0) {air, 1};
+  \node[font=\sffamily\scriptsize] at (5.0,-2.4) {crumpled paper: leftover 4 down};
+\end{tikzpicture}
+\end{center}
+
+When the leftover is small, the paper speeds up only a little and falls slowly. When the leftover is big, the thing speeds up quickly. Squash the paper into a ball and the air pushes up much less.
+
+\begin{tryit}{Flat or crumpled?}
+\textbf{You need:} two sheets of the same scrap paper, a timer showing tenths of a second, a helper if you can.
+\begin{enumerate}[leftmargin=1.6em]
+\item Hold one flat sheet as high as you safely reach and let it go. Time the fall to the floor.
+\item Crumple the other sheet into a tight ball. Drop it from the same height and time it.
+\item Do five drops of each, in a mixed order. Find the average time and spread for each.
+\end{enumerate}
+\par\medskip
+\renewcommand{\arraystretch}{1.6}
+\begin{tabular}{|l|c|c|c|c|c|c|}
+\hline
+ & \textbf{1} & \textbf{2} & \textbf{3} & \textbf{4} & \textbf{5} & \textbf{Average (s)}\\ \hline
+\textbf{Flat} & & & & & & \\ \hline
+\textbf{Crumpled} & & & & & & \\ \hline
+\end{tabular}
+\end{tryit}
+\adult{Do the drops on the floor, not from furniture, with nobody underneath.}
+
+\begin{worked}{Paper drops (practice numbers)}
+\textbf{Flat:} the ten drops from Book~1 averaged 2.0~s, with a spread of 0.6~s.\\
+\textbf{Crumpled:} 0.7, 0.6, 0.7, 0.7, 0.6~s. Total $=3.3$. Average $3.3\div5=0.66$, about 0.7~s. Spread $0.1$~s.\\
+The gap between averages is $2.0-0.7=1.3$~s, much bigger than either spread.
+\end{worked}
+
+\begin{multix}[hmm]\multixbot[hmm]\tcblower
+Gravity pulls heavy things harder, so heavy things must always fall faster. I will drop a book and a ball of paper and write that the book wins. Is the book guaranteed to win?
+\end{multix}
+
+\subhead{Do heavy things fall faster?}
+Drop a book and a crumpled ball of paper together from the same height, side by side. Listen. Do you hear one thump or two?
+
+\begin{worked}{Book and paper ball (practice description)}
+Dropped together from shoulder height, the book and the ball of paper landed so close together that we heard one thump. With a flat sheet instead of the ball, the book landed long before the paper. Spread-out paper catches the air, and the ball does not.
+\end{worked}
+
+The upward push of the air is small for the ball and the book, so gravity does almost all the work, and gravity pulls both down with the same speeding-up. The test cannot show gravity is exactly equal, only that any difference is too small to hear.
+
+\trust{We dropped flat and crumpled paper from the same height, five times each, and compared the average fall times and the spread.}
+{The gap, 1.3~s, was much bigger than either spread, so the shape of the paper made a real difference to the fall. Changing only the shape (same sheet of paper) points to the air as the cause.}
+{That air is the only reason, or that other shapes follow the same pattern. A stopwatch read to a tenth of a second cannot show tiny differences. The one-thump test is not a measurement of gravity.}
+
+\begin{keepbox}
+Each arrow keeps the direction and size of a force. \textbf{We kept} \wline[3.4cm] \textbf{and we set aside} \wline[3.4cm].
+\end{keepbox}
+
+\clearpage
+
+\subhead{Floating}
+Water pushes up, too. A piece of clay in a ball sinks. Shape the same clay into a boat and it floats. The clay has not changed. What changed is the shape, which makes the water push up harder.
+
+\begin{center}
+\begin{tikzpicture}
+  \fill[sky!25] (-1.6,-1.6) rectangle (4.6,0);
+  \draw[line width=1.2pt] (-1.6,-1.6) rectangle (4.6,0.4);
+  \fill[ink!60,draw=ink] (0,-1.2) circle (0.3);
+  \draw[-{Stealth},line width=2.2pt,color=tomato] (0,-1.2) -- (0,-1.9); \draw[-{Stealth},line width=2.2pt,color=leaf!70!black] (0,-1.2) -- (0,-1.5);
+  \node[font=\sffamily\scriptsize,anchor=north] at (0,-2.0) {ball: gravity bigger, sinks};
+  \fill[ink!60,draw=ink] (3.0,-0.2) -- (2.4,0.1) -- (3.6,0.1) -- cycle;
+  \draw[-{Stealth},line width=2.2pt,color=tomato] (3.0,-0.15) -- (3.0,-0.9); \draw[-{Stealth},line width=2.2pt,color=leaf!70!black] (3.0,-0.15) -- (3.0,0.6);
+  \node[font=\sffamily\scriptsize,anchor=north] at (3.0,-2.0) {boat: water push equals gravity, floats};
+\end{tikzpicture}
+\end{center}
+
+\begin{tryit}{Clay boats}
+Make two clay boats from the same amount of clay: one wide and shallow, one narrow and deep. Float each on water. Add coins one at a time until it sinks. How many coins did each hold?\par\medskip
+Wide boat: \wline[1.6cm] coins \qquad Narrow boat: \wline[1.6cm] coins
+\end{tryit}
+\adult{Clean up spilled water straight away, and keep coins and clay away from small children.}
+
+\begin{worked}{Clay boat results (practice numbers)}
+Same lump of clay for both. Wide, shallow boat: held 12 coins before sinking. Narrow, deep boat: held 6 coins. The wide boat pushed away more water, so the water pushed up on it harder.
+\end{worked}
+
+\begin{puzzle}{Time the drops}
+A crumpled ball took 0.6, 0.7, 0.6, 0.8, 0.6~s to fall. A flat sheet took 1.9, 2.2, 2.0, 2.1, 1.8~s.\\
+(a) Crumpled: total \wline[1.3cm] average \wline[1.3cm] \quad (b) Flat: total \wline[1.3cm] average \wline[1.3cm]\\
+(c) Gap: \wline[1.3cm]~s \quad (d) Is the gap bigger than both spreads? \wline[1.6cm]
+\end{puzzle}
+
+\begin{puzzle}{Draw the arrows}
+A leaf floats down. Draw gravity and the air push, with the air arrow a bit shorter than gravity.
+\begin{center}
+\begin{tikzpicture}
+  \fill[leaf!60,draw=ink] (0,0) ellipse (0.6 and 0.15);
+\end{tikzpicture}
+\end{center}
+Is the leaf speeding up or slowing down? \wline[3cm]
+\end{puzzle}
+
+\begin{puzzle}{Sink or float?}
+For each, say what the pushes are and whether it sinks or floats: (a) a big wooden plank; (b) a coin; (c) a steel ship. Write a short reason for each.\\
+\rule{\linewidth}{0.5pt}\\[4pt]\rule{\linewidth}{0.5pt}
+\end{puzzle}
+
+\begin{puzzle}{A fair test}
+Marco tests whether paper shape changes fall time. He uses a big flat sheet and a small crumpled sheet from different drops. What else is different? \wline[4cm]\\
+How would you fix it? \wline[4cm]
+\end{puzzle}
+\clearpage
+
+\begin{puzzle}{How much longer?}
+Flat paper took about 2.0~s to fall. Crumpled paper took about 0.7~s. How many seconds longer did the flat paper take? \wline[2cm]~s\\
+About how many times as long? \wline[2cm]
+\end{puzzle}
+
+\begin{puzzle}{A parachute}
+A toy parachute has a bigger canopy than a toy without one. The air pushes up on it with a bigger arrow. What will happen to the fall time? \wline[3cm]\\
+Why? \wline[4cm]
+\end{puzzle}
+
+\begin{puzzle}{Wide and narrow boats}
+The wide clay boat held 12 coins. The narrow boat held 6. How many times as many coins did the wide boat hold? \wline[2cm]\\
+Why might a wider boat hold more? \wline[4cm]
+\end{puzzle}
+
+\begin{puzzle}{A speeding ball}
+A ball is let go. At first gravity pulls down with size 5 and the air pushes up with size 1. What is the leftover? \wline[3cm]\\
+Later, the ball falls at a steady speed. How big is the air's push now? \wline[2cm]
+\end{puzzle}
+\clearpage

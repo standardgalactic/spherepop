@@ -1,0 +1,146 @@
+\chapterhead{1}{A Cup That Seems to Lose Water}{Marking a level and finding out where the water went}\label{ch1}
+
+A puddle on a sunny path is gone by afternoon. A cup of water on a shelf has a little less water each day. Where did the water go?
+
+There are three ideas. The water might have \textbf{soaked away} into something. It might have \textbf{stopped existing}. Or it might have \textbf{moved} somewhere we cannot easily see. A good test does not just pick the idea we like. It sets one idea against another and sees what happens.
+
+\begin{center}
+\begin{tikzpicture}
+  \foreach \x/\lab in {0/open cup,5/covered cup}{
+    \draw[line width=1.4pt,color=ink] (\x,0) -- (\x,2.2) (\x+1.5,0) -- (\x+1.5,2.2) (\x,0) -- (\x+1.5,0);
+    \fill[sky!50] (\x+0.03,0.03) rectangle (\x+1.47,1.4);
+    \draw[color=tomato,line width=1.2pt] (\x-0.2,1.4) -- (\x+1.7,1.4);
+    \node[font=\sffamily\scriptsize] at (\x+0.75,-0.35) {\lab};
+  }
+  \draw[line width=1.6pt,color=ink!70] (4.9,2.28) -- (6.6,2.28);
+  \node[font=\sffamily\scriptsize,anchor=west] at (7.0,1.4) {the red line marks the starting level};
+\end{tikzpicture}
+\end{center}
+
+\begin{tryit}{Mark the level}
+\textbf{You need:} two clear cups that are the same, water, a marker pen, a ruler, cling film, tape.
+\begin{enumerate}[leftmargin=1.6em]
+\item Pour the same amount of water into both cups, about 6~cm deep. Use the ruler and pour until each is exactly the same.
+\item Draw a line on the outside at the water level of each cup.
+\item Cover \textbf{one} cup tightly with cling film and tape. Leave the other open.
+\item Stand both on the same shelf, side by side, out of direct sun. Measure the water depth in millimetres at the same time each day for five days.
+\end{enumerate}
+\par\medskip
+\renewcommand{\arraystretch}{1.6}
+\begin{tabular}{|l|c|c|c|c|c|c|}
+\hline
+\textbf{Day} & 0 & 1 & 2 & 3 & 4 & 5\\ \hline
+\textbf{Open cup (mm)} & & & & & & \\ \hline
+\textbf{Covered cup (mm)} & & & & & & \\ \hline
+\end{tabular}
+\end{tryit}
+\adult{Use cold tap water. Put the cups where they will not be knocked over. Do not drink the water afterwards.}
+
+\subhead{Reading a level honestly}
+Water curves a little where it touches the glass. Read the flat middle of the surface, with your eye level with it, and round to the nearest millimetre. A one-millimetre wobble in a reading is not a change in the water. We saw why in Book~1.
+
+\begin{worked}{Practice numbers, not from a real test}
+Open cup, in mm: 60, 58, 56, 53, 51, 49. Covered cup: 60, 60, 60, 59, 60, 60.\\
+The open cup dropped $60-49=11$~mm in 5 days. That is $11\div5=2.2$~mm a day, or about 2~mm.\\
+The covered cup read 59 once and 60 at the next reading, so the 59 is a wobble, not a loss.
+\end{worked}
+
+\begin{center}
+\begin{tikzpicture}
+  \node[bigcir,minimum size=2.2cm] (a) at (0,0) {}; \node[font=\sffamily\scriptsize,align=center] at (0,0) {open cup\\60 mm};
+  \node[valcir] (b) at (4.6,0) {49 mm};
+  \draw[popA] (a) -- node[above,note] {5 days} (b);
+  \node[wrapcir,minimum size=2.6cm] (w) at (8.2,0) {}; \node[valcir] at (8.2,0.35) {$-\,11$}; \node[note] at (8.2,-0.4) {mm left the cup};
+  \node[note,anchor=west,text width=3cm] at (9.7,0) {\textbf{kept:} the drop\\\textbf{set aside:} the path the water took};
+\end{tikzpicture}
+\end{center}
+
+\begin{multix}[hmm]\multixbot[hmm]\tcblower
+The open cup dropped 11 mm and the covered cup did not, so the extra water just stopped existing. I will write that in my notebook. Should I?
+\end{multix}
+
+\trust{We changed one thing, the cling film, and kept the cups, the water, the shelf and the start level the same, then measured both cups every day.}
+{The covered cup held its level and the open one dropped steadily, so the lid made the difference.}
+{Where the missing water went, or whether the same drop would happen in a cold room or in the sun. We tested one shelf.}
+
+\begin{keepbox}
+We turned a cup of water into a number of millimetres. \textbf{We kept} \wline[3.4cm] \textbf{and we set aside} \wline[3.4cm].
+\end{keepbox}
+
+\clearpage
+
+\begin{puzzle}{Which cup lost water?}
+Open cup: 40, 38, 37, 35~mm. Covered cup: 40, 40, 40, 40~mm.\\
+How much did the open cup drop? \wline[1.6cm]~mm \quad The covered cup? \wline[1.6cm]~mm
+\end{puzzle}
+
+\begin{puzzle}{Water a day}
+An open cup read 50, 47, 45, 42, 40~mm over four days after the first reading.\\
+Total drop: \wline[1.6cm]~mm \quad Average per day: \wline[1.6cm]~mm
+\end{puzzle}
+
+\begin{puzzle}{Predict the level}
+At 2~mm a day, a cup that starts at 50~mm will read what after 10 days? \wline[1.8cm]~mm\\
+Why is that only a guess? \wline[5cm]
+\end{puzzle}
+
+\begin{puzzle}{Wobble or loss?}
+A covered cup read 60, 60, 59, 60, 60~mm. Did it lose water? \wline[2cm]\\
+What makes you think so? \wline[5cm]
+\end{puzzle}
+
+\begin{puzzle}{Spot the unfair test}
+Ana put her open cup on a sunny window sill and her covered cup in a dark cupboard. The open cup lost water. She says the lid saved it. What is wrong? \wline[6cm]
+\end{puzzle}
+
+\clearpage
+
+\begin{puzzle}{Three ideas}
+The water might have \emph{soaked away}, \emph{stopped existing} or \emph{moved}. The covered cup kept all its water. Which idea does that make less likely for the open cup, and why? \wline[6cm]
+\end{puzzle}
+
+\begin{puzzle}{Draw the move}
+The open cup started at 60~mm and ended at 49~mm. Fill in the empty circles.
+\begin{center}
+\begin{tikzpicture}
+  \node[cir] (a) at (0,0) {60}; \node[cir,dashed] (b) at (5,0) {}; 
+  \draw[moveA] (a) -- node[above,note] {11 mm} (b);
+  \node[note] at (0,-0.8) {cup before}; \node[note] at (5,-0.8) {air gained?};
+  \node[cir,dashed] (c) at (9,0) {}; \node[note] at (9,-0.8) {cup after};
+\end{tikzpicture}
+\end{center}
+\end{puzzle}
+
+\begin{puzzle}{A puddle}
+One puddle in the sun is gone by noon. A puddle in the shade of a wall is still there at night. What is different about the two puddles? \wline[5cm]
+\end{puzzle}
+
+\begin{puzzle}{Around you}
+Name two places at home where water seems to go away by itself.\\
+\wline[5cm]\\[8pt]\wline[5cm]
+\end{puzzle}
+
+\begin{puzzle}{Missing water}
+A student says ``the water in the open cup went through the glass''. If that were true, what would happen to the covered cup? \wline[6cm]
+\end{puzzle}
+
+\clearpage
+\thispagestyle{fancy}
+\subhead{Cup diary}
+Keep your own record. Fill in what you see each day, and draw the level on the cups.\par\medskip
+\renewcommand{\arraystretch}{3.0}
+\begin{tabularx}{\linewidth}{|>{\sffamily\small\bfseries}p{1.4cm}|X|X|X|}
+\hline
+Day & Open cup (mm) & Covered cup (mm) & What I saw on the cling film \\ \hline
+0 & & & \\ \hline
+1 & & & \\ \hline
+2 & & & \\ \hline
+3 & & & \\ \hline
+4 & & & \\ \hline
+5 & & & \\ \hline
+\end{tabularx}
+
+\vspace{6pt}
+Do you see anything on the inside of the cling film? Draw it and write about it. You will see why it matters in Chapter~3.\par\medskip
+\begin{tikzpicture}\draw[ink!70,line width=1pt,rounded corners=3pt] (0,0) rectangle (11.4,5);\end{tikzpicture}
+\clearpage

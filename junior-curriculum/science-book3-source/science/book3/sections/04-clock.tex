@@ -1,0 +1,132 @@
+\chapterhead{4}{Building a Shadow Clock}{Turning a stick and a sunny day into a way to tell the time}\label{ch4}
+
+People used shadows to tell the time long before there were watches. Archaeologists have found shadow clocks from ancient Egypt that are thousands of years old, and sundials were used across the ancient world. The idea is simple. If the shadow of a fixed stick moves in the same way every day, then \emph{where the shadow is} tells you \emph{what time it is}.
+
+In the last chapter you traced one day of shadow tips. That tracing is already most of a clock. You only need to keep it still and use it again.
+
+\begin{tryit}{Mark your clock}
+\textbf{You need:} the stick and the paper from Chapter~3, tape, and a pencil. A cardboard base makes it easier to keep everything in place.
+\begin{enumerate}[leftmargin=1.6em]
+\item On a sunny day, tape your paper to a flat board and put the board on a flat spot. Mark the board's position on the ground with chalk or tape.
+\item Stand the stick upright in clay in the same spot on the paper. Trace round the base.
+\item Each hour, mark the tip of the shadow with a dot and write the time. Write the \emph{hour on the clock}, such as ``10:00''.
+\item Later, join your dots with a gentle curve. That curve is your clock face.
+\end{enumerate}
+\end{tryit}
+\adult{The paper and board should be held flat with tape and the stick must be steady. Put the clay stick where no one will trip over it.}
+
+\subhead{Reading the clock}
+On a later day, put the board back in exactly the same place, with the stick at the traced base. Wait for the shadow tip to reach the curve. The nearest dot tells the time. A tip between two dots means between those two hours.
+
+\begin{center}
+\begin{tikzpicture}
+  \fill[ink] (0,0) circle (1.3mm); \node[font=\sffamily\scriptsize,anchor=north] at (0,-0.1) {stick};
+  \foreach \x/\y/\t in {-2.0/1.4/9:00,-0.9/1.6/10:00,0.4/1.55/11:00,1.7/1.3/12:00}{
+    \fill[tomato,draw=ink] (\x,\y) circle (1.3mm);
+    \node[font=\sffamily\scriptsize,anchor=south] at (\x,\y+0.15) {\t};
+  }
+  \draw[line width=1pt,color=sky!80!black,dashed] (-2.0,1.4) to[out=25,in=170] (-0.9,1.6) to[out=-10,in=175] (0.4,1.55) to[out=-5,in=150] (1.7,1.3);
+  \fill[sky,draw=ink] (-0.3,1.62) circle (1.5mm);
+  \draw[ink!40,line width=1pt] (0,0) -- (-0.3,1.62);
+  \node[font=\sffamily\scriptsize,anchor=north,text width=4cm,align=center] at (-0.3,0.8) {shadow tip now};
+\end{tikzpicture}
+\end{center}
+The sky-blue dot is the tip today. It is about two thirds of the way from 10:00 to 11:00, so you would say \textbf{about 10:40}.
+
+\begin{multix}[hmm]\multixbot[hmm]\tcblower
+I have a plan. I will draw my clock face in the evening, in the dark, using my torch. The hours will be exactly where I want them. Does that make my clock accurate?
+\end{multix}
+
+\subhead{Checking against a real clock}
+A clock is only worth anything if it agrees with a real one. Check yours. On a later day, look at the shadow and a watch together. Write what the shadow clock says, what the watch says, and how far apart they are.
+
+\begin{tryit}{Check your clock on more than one day}
+Pick three times when the shadow is on or near a dot. Compare with a watch. Repeat a few days later.\par\medskip
+\renewcommand{\arraystretch}{1.6}
+\begin{tabular}{|l|c|c|c|}
+\hline
+\textbf{Shadow clock says} & \textbf{Watch says} & \textbf{Off by (min)} & \textbf{Day}\\ \hline
+ & & & \\ \hline
+ & & & \\ \hline
+ & & & \\ \hline
+\end{tabular}
+\end{tryit}
+
+\begin{worked}{Checking a shadow clock (practice numbers)}
+\textbf{Day 3 after marking.} The shadow said 10:00 when the watch said 10:04, 12:00 when it said 12:05, 14:00 when it said 14:03. Off by 4, 5 and 3~min. Average error $(4+5+3)\div3=4$~min, spread 2~min.\\
+\textbf{Day 14.} The shadow said 10:00 when the watch said 10:12, 12:00 when it said 12:14, 14:00 when it said 14:11. Off by 12, 14 and 11~min. Average error $(12+14+11)\div3\approx12$~min, spread 3~min.
+\end{worked}
+
+The clock is within about 4 minutes just after it was made, and about 12 minutes after two weeks. The gap between the two errors, 8~minutes, is bigger than either spread (2 and 3). That fits what we expect: the sun's path through the sky changes slowly through the year, so a clock marked on one day slowly drifts. Real sundials are built to avoid this by tilting the stick, which is called the \textbf{gnomon}, to point at the pole star.
+
+\trust{We marked the clock on one day and compared it with a real watch on a later day and again two weeks later.}
+{Each comparison is against something independent, a watch, so errors cannot hide. The errors were small just after marking and larger later, which fits what we know about the sun's changing path.}
+{Whether the clock works in another season, on a cloudy day, or at another place. Two checking days and three times each are a small test.}
+
+\begin{keepbox}
+A shadow clock reduces the day to marked dots. \textbf{We kept} \wline[3.4cm] \textbf{and we set aside} \wline[3.4cm].
+\end{keepbox}
+
+\clearpage
+
+\subhead{Why a clock marked once drifts}
+In summer the sun climbs higher than in winter, so the tip of the shadow for a given hour lands in a different place on a different week. A clock marked on one day matches that day best. A real sundial gets around this with a tilted stick, the gnomon, which points at the pole star so that the shadow's direction depends only on the hour.
+
+\begin{tryit}{Mark it twice}
+Mark your clock's hour dots in pencil on one day. A week or two later, mark the tips again for the same hours in a different colour. Do the two sets of dots match? How far apart are they for 10:00, 12:00 and 2:00?\\[4pt]
+10:00 \wline[1.6cm]~cm \quad 12:00 \wline[1.6cm]~cm \quad 2:00 \wline[1.6cm]~cm
+\end{tryit}
+
+\begin{puzzle}{Read the clock}
+The dots are 9:00, 10:00, 11:00 and 12:00. The shadow tip is halfway between 11:00 and 12:00. What time is it? \wline[2cm]\\
+A friend says it is 10:00 because the shadow is long. Is the friend right? Explain.\\
+\rule{\linewidth}{0.5pt}
+\end{puzzle}
+
+\begin{puzzle}{How far off?}
+A shadow clock said 11:00, 1:00 and 3:00 when the watch said 11:06, 1:09 and 3:03.\\
+(a) Errors: \wline[1.4cm]~\wline[1.4cm]~\wline[1.4cm]~min\\
+(b) Average error: \wline[1.6cm]~min \quad (c) Spread: \wline[1.4cm]~min
+\end{puzzle}
+
+\begin{puzzle}{Drift}
+Day 3 errors: 4, 5, 3 min. Day 14 errors: 12, 14, 11 min.\\
+(a) Gap between averages: \wline[1.6cm] min.\\
+(b) Is the gap bigger than both spreads? \wline[1.6cm]\\
+(c) What does this suggest about the clock? \wline[4cm]
+\end{puzzle}
+
+\begin{puzzle}{Plan a check}
+Fill in a card for checking a shadow clock fairly.
+\begin{center}\sans\small\renewcommand{\arraystretch}{1.9}
+\begin{tabular}{@{}p{2.8cm}p{7.8cm}@{}}
+Question & \wline[7.6cm]\\
+I change & \wline[7.6cm]\\
+I measure & \wline[7.6cm]\\
+I keep the same & \wline[7.6cm]
+\end{tabular}
+\end{center}
+\end{puzzle}
+
+\begin{puzzle}{Cloudy day}
+On a cloudy day the shadow clock stops working. Why? \wline[5cm]\\
+Name one way people could still tell the time then. \wline[5cm]
+\end{puzzle}
+\clearpage
+
+\thispagestyle{fancy}
+\subhead{My shadow clock record}
+Use this page to draw your own clock face from a real sunny day. Put a dot at the stick's base, then at each hour mark the tip of the shadow. Write the hour next to the dot.
+\begin{center}
+\begin{tikzpicture}
+  \draw[ink!70,line width=1pt,rounded corners=4pt] (0,0) rectangle (11,8);
+  \fill[ink] (5.5,1.2) circle (1.5mm); \node[font=\sffamily\scriptsize,anchor=north] at (5.5,1.1) {stick};
+  \draw[gray!40] (5.5,1.2) -- (5.5,7.5) (0.2,1.2) -- (10.8,1.2);
+  \node[font=\sffamily\scriptsize,anchor=south] at (5.5,7.5) {north};
+  \node[font=\sffamily\scriptsize,anchor=north west] at (0.2,1.1) {west};
+  \node[font=\sffamily\scriptsize,anchor=north east] at (10.8,1.1) {east};
+\end{tikzpicture}
+\end{center}
+Date: \wline[3cm] \quad Place: \wline[4cm] \quad Stick height: \wline[2cm]~cm\\[6pt]
+Shortest shadow at: \wline[2cm]~o'clock \quad Length: \wline[2cm]~cm
+\clearpage

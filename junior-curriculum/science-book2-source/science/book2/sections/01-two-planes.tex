@@ -1,0 +1,157 @@
+\chapterhead{1}{Two Planes, Two Stories}{Why a result is only as good as the test behind it}\label{ch1}
+
+Mia and Omar each folded a paper plane. Mia is sure that \textbf{big wings} fly farther. Omar is not so sure. They decide to test it.
+
+Mia folds a plane from a large sheet and throws it from the top of the stairs. It flies 6.0~m. Omar folds a plane from a small sheet and throws it from the floor of the hall. It flies 3.5~m.
+
+\begin{center}
+\begin{tikzpicture}[x=1cm,y=1cm]
+  \draw[line width=1.2pt] (0,0) -- (11,0);
+  \fill[sun!40,draw=ink] (0,0) -- (0,2) -- (1.2,2) -- (1.2,1.4) -- (1.8,1.4) -- (1.8,0.8) -- (2.4,0.8) -- (2.4,0.4) -- (3,0.4) -- (3,0) -- cycle;
+  \node[font=\sffamily\scriptsize] at (0.6,2.35) {Mia};
+  \node[scale=1.1] at (1.6,2.15) {\plane};
+  \draw[dashed,color=sky!80!black,line width=1pt] (1.4,2.0) to[out=-20,in=160] (6.8,0.2);
+  \draw[<->,line width=1pt] (3.0,-0.45) -- (6.8,-0.45) node[midway,below,font=\sffamily\scriptsize] {6.0 m};
+  \node[font=\sffamily\scriptsize] at (7.8,0.75) {Omar};
+  \node[scale=0.8] at (8.4,0.4) {\plane};
+  \draw[dashed,color=tomato,line width=1pt] (8.3,0.5) to[out=-5,in=170] (10.9,0.05);
+  \draw[<->,line width=1pt] (7.8,-0.45) -- (10.9,-0.45) node[midway,below,font=\sffamily\scriptsize] {3.5 m};
+\end{tikzpicture}
+\end{center}
+
+Mia says: ``See? Big wings win.'' Do you believe her?
+
+\subhead{Count what was different}
+Look closely at the two throws. Wing size was one difference. What else was different?
+
+\begin{enumerate}[leftmargin=1.6em,itemsep=0.15em]
+\item The \textbf{paper} was a different size, so the plane was also heavier or lighter.
+\item The planes were thrown from \textbf{different heights}: the stairs and the floor.
+\item The planes were \textbf{thrown by different people}, and one may throw harder.
+\item Each plane was \textbf{folded differently}, because two people folded them.
+\end{enumerate}
+
+That makes at least five things that changed (counting wing size). If five things changed, the 2.5~m gap could have been caused by any of them. The test cannot say which. We call a test like this an \textbf{unfair test}. It is not wrong to run one, but it is wrong to trust it.
+
+\begin{multix}[hmm]\multixbot[hmm]\tcblower
+I have a plan. I will test whether a clip makes a plane fly farther. I will give a clip to my plane and throw it hard. I will throw the other plane softly, to be kind to it. That sounds like a proper test to me.
+\end{multix}
+
+\subhead{Three kinds of things in every test}
+A test is a question you ask with your hands. To ask it well, sort everything into three groups.
+
+\begin{center}
+\begin{tikzpicture}[font=\sffamily\small]
+  \node[draw=tomato,line width=1.4pt,rounded corners=4pt,fill=tomato!10,text width=3.4cm,align=center,inner sep=6pt] (a) at (0,0) {\textbf{What I change}\\[2pt] one thing only};
+  \node[draw=sky,line width=1.4pt,rounded corners=4pt,fill=sky!12,text width=3.4cm,align=center,inner sep=6pt] (b) at (4.4,0) {\textbf{What I measure}\\[2pt] the result I watch};
+  \node[draw=leaf,line width=1.4pt,rounded corners=4pt,fill=leaf!12,text width=3.4cm,align=center,inner sep=6pt] (c) at (8.8,0) {\textbf{What I keep the same}\\[2pt] everything else};
+  \node[note,text width=3.2cm,align=center] at (0,-1.4) {example: clip or no clip};
+  \node[note,text width=3.2cm,align=center] at (4.4,-1.4) {example: how far it flies};
+  \node[note,text width=3.2cm,align=center] at (8.8,-1.4) {example: paper, spot, thrower};
+\end{tikzpicture}
+\end{center}
+
+A test is \textbf{fair} when you change one thing, measure one result, and keep everything else the same. Scientists call each thing that can change in a test a \textbf{variable}, but the three plain names above will do for now.
+
+\begin{tryit}{Spot the changes}
+Think of a plant test. Dev wants to find out whether plant food helps beans grow. He gives Plant A plant food and puts it on a sunny windowsill. Plant B gets no plant food and sits in a dark cupboard. After two weeks Plant A is taller.\par\medskip
+(a) What did Dev mean to change? \wline[5cm]\\[6pt]
+(b) What else is different between the two plants? \wline[4.5cm]\\[6pt]
+(c) Is Dev's test fair? Why or why not?\\
+\rule{\linewidth}{0.5pt}
+\end{tryit}
+
+\subhead{Make the unfair test fair}
+A repair is easy to describe. Pick the \textbf{one} thing you want to learn about. Make it the only difference. Everything else gets copied exactly.
+
+\begin{center}
+\begin{tikzpicture}
+  \node[bigcir,minimum size=3.4cm] (a) at (0,0) {};
+  \node[cir,minimum width=2.2cm,font=\sffamily\scriptsize] at (0,0.8) {big paper};
+  \node[cir,minimum width=2.2cm,font=\sffamily\scriptsize] at (0,0.1) {stairs};
+  \node[cir,minimum width=2.2cm,font=\sffamily\scriptsize] at (0,-0.6) {Mia};
+  \node[bigcir,minimum size=3.4cm] (b) at (5.2,0) {};
+  \node[cir,minimum width=2.2cm,font=\sffamily\scriptsize] at (5.2,0.8) {small paper};
+  \node[cir,minimum width=2.2cm,font=\sffamily\scriptsize] at (5.2,0.1) {floor};
+  \node[cir,minimum width=2.2cm,font=\sffamily\scriptsize] at (5.2,-0.6) {Omar};
+  \node[note] at (2.6,0) {3 differences};
+  \node[note] at (2.6,-0.45) {unfair};
+  \node[bigcir,minimum size=3.4cm] (c) at (0,-4) {};
+  \node[cir,minimum width=2.2cm,font=\sffamily\scriptsize] at (0,-3.2) {same paper size};
+  \node[cir,minimum width=2.2cm,font=\sffamily\scriptsize,fill=tomato!25] at (0,-3.9) {big wings};
+  \node[cir,minimum width=2.2cm,font=\sffamily\scriptsize] at (0,-4.6) {same spot, same person};
+  \node[bigcir,minimum size=3.4cm] (d) at (5.2,-4) {};
+  \node[cir,minimum width=2.2cm,font=\sffamily\scriptsize] at (5.2,-3.2) {same paper size};
+  \node[cir,minimum width=2.2cm,font=\sffamily\scriptsize,fill=tomato!25] at (5.2,-3.9) {small wings};
+  \node[cir,minimum width=2.2cm,font=\sffamily\scriptsize] at (5.2,-4.6) {same spot, same person};
+  \node[note] at (2.6,-4) {1 difference};
+  \node[note] at (2.6,-4.45) {fair};
+\end{tikzpicture}
+\end{center}
+
+In the fair version both planes use the same size of paper. The wings are different because of how the paper is folded, and that is the one thing being tested. The same person throws both from the same spot at the same height.
+
+\begin{keepbox}
+A fair test keeps lots of things the same. \textbf{We kept} \wline[3.4cm] \textbf{the same, and we changed only} \wline[3cm].
+\end{keepbox}
+
+\clearpage
+
+\begin{puzzle}{Count the changes}
+Three tests are described. For each one, say what is being tested and list any \emph{other} difference.
+\begin{description}[leftmargin=1.6em,itemsep=0.35em,style=sameline]
+\item[A] ``Do heavy balls roll farther? I rolled a tennis ball down a smooth board and a marble down a bumpy board.''
+\item[B] ``Does warm water dissolve sugar faster? I put a spoonful of sugar in a cup of warm water and the same spoonful in a cup of cold water, then stirred both for the same time.''
+\item[C] ``Does music help plants grow? One plant listened to music in the kitchen. The other had no music and sat in the hall.''
+\end{description}
+Which test is fair? \wline[2cm] \quad Which has the most hidden differences? \wline[2cm]
+\end{puzzle}
+
+\begin{puzzle}{Sort the sentence}
+Write C (what I change), M (what I measure) or K (what I keep the same) next to each part of this test: ``Ana drops a ball from the same height onto sand, grass and a rug. She measures how deep it dents each one with the same ruler.''
+\begin{center}\sans\small\renewcommand{\arraystretch}{1.6}
+\begin{tabular}{@{}lc@{\qquad}lc@{}}
+(a) the surface it lands on & \wline[1cm] & (c) the ball and the drop height & \wline[1cm]\\
+(b) the depth of the dent & \wline[1cm] & (d) the ruler & \wline[1cm]
+\end{tabular}
+\end{center}
+\end{puzzle}
+
+\begin{puzzle}{Who is more careful?}
+Eli and Nia plan the warm-water sugar test from puzzle~1.1. Eli says: ``Both cups must hold the same amount of water, or we will not know whether the temperature or the amount of water made the difference.'' Nia says: ``The cups can hold different amounts of water. We only care about temperature.''\\
+Who is more careful? \wline[2cm]\\
+Write one reason, in your own words.\\
+\rule{\linewidth}{0.5pt}
+\end{puzzle}
+\clearpage
+
+\begin{puzzle}{Fair or unfair?}
+Mark each test F (fair) or U (unfair). If it is unfair, name one difference.
+\begin{description}[leftmargin=1.6em,itemsep=0.35em,style=sameline]
+\item[(a)] Two cups of lemon water, one with a spoon of sugar, same lemons, same cups, same stirring. \wline[1cm]
+\item[(b)] Fast shoes against slow shoes: run one pair early in the morning and the other late at night. \wline[1cm]
+\item[(c)] Seeds in sand against seeds in soil, same number of seeds, same windowsill, same water. \wline[1cm]
+\item[(d)] Which battery lasts longer? Brand A runs a small torch. Brand B runs a bigger toy. \wline[1cm]
+\item[(e)] The same ball dropped from the same height onto sand, grass and a rug, measured with the same ruler. \wline[1cm]
+\end{description}
+\end{puzzle}
+
+\begin{puzzle}{Multix and the paper towels}
+Multix wants to know which brand of paper towel soaks up more water. Brand A: a quarter of a sheet in a big bowl. Brand B: a whole sheet in a small cup.\\
+(a) What does Multix mean to change? \wline[4cm]\\
+(b) Name two other differences. \wline[5cm]\\
+(c) How would you fix the test? \wline[5cm]\\
+\rule{\linewidth}{0.5pt}
+\end{puzzle}
+
+\begin{puzzle}{Pick the one change}
+For each question, write the \emph{one} thing you would change.
+\begin{center}\sans\small\renewcommand{\arraystretch}{1.9}
+\begin{tabular}{@{}p{6.4cm}p{4.2cm}@{}}
+(a) Do bigger paper planes fly farther? & \wline[4cm]\\
+(b) Do ice cubes melt faster in warm water? & \wline[4cm]\\
+(c) Does a taller tower of blocks fall over sooner? & \wline[4cm]
+\end{tabular}
+\end{center}
+\end{puzzle}
+\clearpage

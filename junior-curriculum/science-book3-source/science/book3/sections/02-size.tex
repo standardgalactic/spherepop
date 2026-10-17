@@ -1,0 +1,170 @@
+\chapterhead{2}{Big Shadow, Small Shadow}{What decides how large a shadow is}\label{ch2}
+
+Hold your hand close to a torch and the shadow on the wall is enormous. Pull your hand away and it shrinks. Your hand did not grow or shrink. The \emph{shadow} did.
+
+Light travels in straight lines, so you can predict the size of a shadow by drawing the lines. Draw a line from the light past the top of the object. Where it hits the wall is the top of the shadow.
+
+\begin{center}
+\begin{tikzpicture}[x=0.1cm,y=0.1cm]
+  % wall at x=60, torch at x=0, object height 10
+  \draw[line width=1.2pt] (60,-4) -- (60,36);
+  \fill[sun!80,draw=ink] (0,0) circle (3);
+  \node[font=\sffamily\scriptsize] at (0,-7) {light};
+  \draw[line width=1pt,dashed,color=ink!40] (0,0) -- (60,0);
+  % object at 20 (height 10)
+  \draw[line width=3pt,color=ink] (20,0) -- (20,10);
+  \draw[line width=1pt,color=tomato] (0,0) -- (60,30);
+  \draw[<->,line width=0.9pt] (63,0) -- (63,30) node[midway,right,font=\sffamily\scriptsize] {30};
+  % object at 40
+  \draw[line width=3pt,color=sky!80!black] (40,0) -- (40,10);
+  \draw[line width=1pt,color=sky!80!black] (0,0) -- (60,15);
+  \draw[<->,line width=0.9pt] (56,0) -- (56,15) node[midway,left,font=\sffamily\scriptsize] {15};
+  \node[font=\sffamily\scriptsize] at (20,-7) {object at 20};
+  \node[font=\sffamily\scriptsize] at (40,-7) {object at 40};
+  \node[font=\sffamily\scriptsize,anchor=north] at (60,-6) {wall at 60};
+\end{tikzpicture}
+\end{center}
+
+The red line passes the top of the object at 20~cm from the light. It reaches the wall at 30~cm up. The blue line passes the top of the same object at 40~cm from the light. It reaches the wall at only 15~cm. The closer the object is to the light, the bigger its shadow.
+
+\begin{tryit}{Shadow puppet test}
+Question: \textbf{does moving a puppet closer to the torch make its shadow taller?} Use the fair-test habits from Book~2.
+\begin{enumerate}[leftmargin=1.6em]
+\item Cut a card puppet 10~cm tall. Tape it to a stick so it stands up.
+\item Put a torch on a stack of books so it sits at the puppet's height. Tape a white sheet to the wall, 60~cm from the torch.
+\item Hold the puppet 20~cm from the torch, then 30, 40 and 50~cm. Keep the torch and the wall where they are.
+\item At each distance, measure the shadow's height on the wall, to the nearest cm. Do each distance twice.
+\end{enumerate}
+\par\medskip
+\renewcommand{\arraystretch}{1.6}
+\begin{tabular}{|c|c|c|c|}
+\hline
+\textbf{Distance from light (cm)} & \textbf{Shadow, try 1 (cm)} & \textbf{Shadow, try 2 (cm)} & \textbf{Average (cm)}\\ \hline
+20 & & & \\ \hline
+30 & & & \\ \hline
+40 & & & \\ \hline
+50 & & & \\ \hline
+\end{tabular}
+\end{tryit}
+\adult{Use a torch or phone light. Do not use a hot bulb that someone could touch.}
+
+\subhead{What stays the same, and what changes}
+\begin{center}
+\sffamily\small\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{@{}p{3.4cm}p{7.6cm}@{}}
+\toprule
+\textbf{I change} & how far the puppet is from the light: 20, 30, 40 or 50~cm\\
+\textbf{I measure} & the height of the shadow on the wall, nearest cm\\
+\textbf{I keep the same} & the puppet (10~cm tall), the torch, the wall's distance (60~cm), the torch height\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{multix}[hmm]\multixbot[hmm]\tcblower
+I have a plan. I will move the puppet closer to the light \emph{and} move the wall further away, to get an even bigger shadow. Then I will say the puppet position made it bigger. Is that a fair test?
+\end{multix}
+
+\subhead{Drawing predicts, measuring checks}
+Before you measure, you can predict by drawing. The drawing above says the shadow should be 30, 20, 15 and 12~cm at distances 20, 30, 40 and 50~cm. Here are practice numbers from a made-up run.
+
+\begin{worked}{Shadow puppet results (practice numbers, not from a real test)}
+\begin{center}\sffamily\small\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{@{}cccc@{}}
+\textbf{Distance (cm)} & \textbf{Drawing says (cm)} & \textbf{Measured (cm)} & \textbf{Off by (cm)}\\
+20 & 30 & 29 & 1\\
+30 & 20 & 20 & 0\\
+40 & 15 & 16 & 1\\
+50 & 12 & 12 & 0
+\end{tabular}
+\end{center}
+\end{worked}
+
+The drawing was within 1~cm each time. That is a good sign for the drawing.
+
+\clearpage
+
+\begin{center}
+\begin{tikzpicture}[x=0.065cm,y=0.1cm]
+  \draw[line width=1pt] (0,0) -- (0,36) (0,0) -- (62,0);
+  \foreach \x in {20,30,40,50}{\draw (\x,-1) -- (\x,1); \node[font=\sffamily\scriptsize,below=2pt] at (\x,-1) {\x};}
+  \foreach \y in {10,20,30}{\draw (-1,\y) -- (1,\y); \node[font=\sffamily\scriptsize,left=2pt] at (-1,\y) {\y};}
+  \node[font=\sffamily\scriptsize] at (36,-8) {distance from light (cm)};
+  \node[font=\sffamily\scriptsize,rotate=90] at (-10,18) {shadow height (cm)};
+  \draw[line width=1.2pt,color=sky,dashed] (20,30) -- (30,20) -- (40,15) -- (50,12);
+  \foreach \x/\y in {20/29,30/20,40/16,50/12}{\fill[tomato,draw=ink] (\x,\y) circle (1.2);}
+\end{tikzpicture}
+\end{center}
+The dashed line is the drawing's prediction and the dots are the measurements. They sit almost on top of each other.
+
+\trust{We drew a prediction first, then measured the shadow heights, changing only the puppet's distance from the light and doing each distance twice.}
+{When a drawing made from straight lines predicts the measured heights to within 1~cm at four distances, the straight-line idea is working. Changing only the distance means the distance, not the torch or wall, is the likely reason for the change.}
+{That the drawing works for fuzzy lights, curved objects or very big shadows. It also does not show \emph{why} light goes straight. Four distances and one puppet are a small test.}
+
+\subhead{A pattern in the numbers}
+Look at the last column of the table in the worked box: the shadow gets smaller as the puppet moves away, but not by the same amount each time. From 20 to 30~cm it drops by 10~cm, from 30 to 40 it drops by 5, and from 40 to 50 it drops by 3. Equal steps in distance do not give equal steps in shadow height.
+
+\begin{keepbox}
+We predicted shadows with straight-line drawings. \textbf{We kept} \wline[3.4cm] \textbf{and we set aside} \wline[3.4cm].
+\end{keepbox}
+
+\begin{puzzle}{Predict the shadow}
+Use the drawing method: the object is 10~cm tall and the wall is 60~cm from the light.\\
+(a) The object is 15~cm from the light. How tall is the shadow? \wline[2cm]~cm\\
+(b) The object is 60~cm from the light, right against the wall. How tall is the shadow? \wline[2cm]~cm\\
+Hint: shadow height $=10\times60\div$ distance.
+\end{puzzle}
+
+\begin{puzzle}{Spot the unfair test}
+Mara tests how the distance from the light changes a shadow. She moves the puppet closer to the torch, and she also moves the torch to a lower shelf. The shadow gets taller.\\
+(a) What did Mara mean to change? \wline[4cm]\\
+(b) What else changed? \wline[4cm]\\
+(c) How would you fix the test? \wline[4cm]
+\end{puzzle}
+
+\begin{puzzle}{Check the numbers}
+A student measured these shadows for a 10~cm puppet at 20, 30, 40, 50~cm: 30, 20, 15, 11~cm.\\
+(a) What does the drawing predict for 50~cm? \wline[1.5cm]\\
+(b) How far off was the 11~cm reading? \wline[1.5cm]\\
+(c) Does this change your trust in the drawing? Why or why not?\\
+\rule{\linewidth}{0.5pt}
+\end{puzzle}
+
+\begin{puzzle}{Bigger or smaller?}
+Write B (bigger) or S (smaller) for the shadow:
+\begin{description}[leftmargin=1.6em,itemsep=0.3em,style=sameline]
+\item[(a)] You move your hand toward the torch. \wline[1cm]
+\item[(b)] You move the wall closer to the torch and the hand stays still. \wline[1cm]
+\item[(c)] You use a taller puppet at the same distance. \wline[1cm]
+\end{description}
+\end{puzzle}
+\clearpage
+
+\subhead{More shadow sums}
+Use the same rule: shadow height $=$ object height $\times$ wall distance $\div$ object distance.
+
+\begin{puzzle}{Your hand}
+Your hand is 18~cm tall. The wall is 60~cm from the torch.\\
+(a) The hand is 20~cm from the torch. Shadow: \wline[1.6cm]~cm\\
+(b) The hand is 40~cm from the torch. Shadow: \wline[1.6cm]~cm
+\end{puzzle}
+
+\begin{puzzle}{Two puppets}
+A 10~cm puppet and a 20~cm puppet are both 30~cm from the torch, wall at 60~cm.\\
+Shadows: \wline[1.6cm]~cm and \wline[1.6cm]~cm. How many times taller is the second shadow? \wline[1.6cm]
+\end{puzzle}
+
+\begin{puzzle}{Move the wall}
+A 10~cm puppet is 20~cm from the torch. The wall is moved from 60~cm away to 80~cm away.\\
+New shadow height: \wline[1.6cm]~cm. Did it grow or shrink? \wline[2cm]
+\end{puzzle}
+
+\begin{puzzle}{Read the graph}
+From the graph earlier in this chapter, about how tall was the shadow at 30~cm? \wline[1.6cm]~cm\\
+At what distance was it about 15~cm? \wline[1.6cm]~cm
+\end{puzzle}
+
+\begin{puzzle}{Explain to a friend}
+In one or two sentences, explain why the shadow of your hand grows when you bring it closer to the torch.\\
+\rule{\linewidth}{0.5pt}\\[4pt]\rule{\linewidth}{0.5pt}
+\end{puzzle}
+\clearpage

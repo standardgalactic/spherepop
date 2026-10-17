@@ -1,0 +1,150 @@
+\chapterhead{1}{Light Goes Straight}{Why shadows have the shapes they have}\label{ch1}
+
+Stand in front of a lamp and hold up your hand. A dark patch appears on the wall behind it. That patch is a \textbf{shadow}. It is not a thing. It is a place where something blocked the light.
+
+Shadows work because of one simple fact: \textbf{light travels in straight lines}. When a straight line of light meets an object, the object stops it. Behind the object, that line never arrives, so the wall stays dark there.
+
+\begin{center}
+\begin{tikzpicture}
+  \fill[sun!80,draw=ink,line width=1pt] (0,0) circle (0.45);
+  \node[font=\sffamily\scriptsize] at (0,-0.85) {light};
+  \fill[ink!70,draw=ink] (3.2,-0.6) rectangle (3.5,0.6);
+  \node[font=\sffamily\scriptsize] at (3.35,-1.05) {object};
+  \draw[line width=1pt,color=sun!90!black] (0.45,0.2) -- (3.2,0.6) (0.45,0) -- (3.2,0.05) (0.45,-0.2) -- (3.2,-0.6);
+  \draw[line width=1pt,color=sun!90!black] (3.5,0.6) -- (8,1.9);
+  \draw[line width=1pt,color=sun!90!black] (3.5,-0.6) -- (8,-1.9);
+  \draw[line width=1pt,color=sun!90!black] (0.4,0.45) -- (8,2.6) (0.4,-0.45) -- (8,-2.6);
+  \fill[ink!80,opacity=0.55] (8,-1.9) rectangle (8.25,1.9);
+  \fill[sun!35] (8,1.9) rectangle (8.25,2.6) (8,-2.6) rectangle (8.25,-1.9);
+  \draw[line width=1.2pt] (8,-2.7) -- (8,2.7);
+  \node[font=\sffamily\scriptsize,anchor=west] at (8.4,0) {shadow};
+  \node[font=\sffamily\scriptsize,anchor=west] at (8.4,2.3) {lit};
+\end{tikzpicture}
+\end{center}
+
+\begin{tryit}{Is light really straight? Three cards and a torch}
+\textbf{You need:} three pieces of card, a pencil to make a hole in each, a torch, and some putty or books to stand the cards up.
+\begin{enumerate}[leftmargin=1.6em]
+\item Make one small hole in the middle of each card, all at the same height from the bottom edge.
+\item Stand the cards in a row on a table, about 20~cm apart, with the holes lined up. Shine a torch through the first hole from a few centimetres away.
+\item Look at the third card. Is there a bright dot on it?
+\item Slide the middle card a few centimetres sideways. What happens to the dot?
+\end{enumerate}
+Write what you saw: \wline[6.5cm]
+\end{tryit}
+\adult{Use a torch, not the sun, and never look into a bright beam. Pencils make holes in card best with something soft underneath.}
+
+\subhead{What the cards show}
+When the three holes lined up on a straight line, light got through. When you moved one card, the dot disappeared. If light could bend around corners, it would have gone around the moved card. It did not. That is evidence that light travels in straight lines, at least through the air in a room.
+
+\begin{multix}[hmm]\multixbot[hmm]\tcblower
+I have a plan. I will look around a corner by staring really hard. If light goes straight, then my eyes are very strong, so the corner should not matter. Is that a good plan?
+\end{multix}
+
+\subhead{Your eye needs light to arrive}
+You see an object when light from it reaches your eye. A shadow is a place where light did not reach. So when you look at your own shadow on the ground, you are looking at the ground where your body stopped the sun.
+
+\subhead{Three things in every shadow}
+Every shadow has three parts. You can draw each one as a circle, and an arrow shows what the light does next.
+
+\begin{center}
+\begin{tikzpicture}
+  \node[bigcir,minimum size=2.3cm] (a) at (0,0) {};\node[cir,minimum width=1.7cm,font=\sffamily\scriptsize] at (0,0) {light};
+  \node[bigcir,minimum size=2.3cm] (b) at (3.4,0) {};\node[cir,minimum width=1.7cm,font=\sffamily\scriptsize] at (3.4,0) {object};
+  \node[bigcir,minimum size=2.3cm] (c) at (6.8,0) {};\node[cir,minimum width=1.7cm,font=\sffamily\scriptsize] at (6.8,0) {shadow};
+  \draw[moveA] (a) -- node[above,note] {goes straight} (b);
+  \draw[moveA] (b) -- node[above,note] {blocks some} (c);
+  \node[note,text width=3.2cm,align=left,anchor=west] at (8.3,0) {\textbf{kept:} where the light is and where the object is\\\textbf{set aside:} colour and brightness};
+\end{tikzpicture}
+\end{center}
+
+When you change the light (move it, raise it, lower it), the shadow circle changes with it. Next chapters use that idea to predict shadows before you see them.
+
+\begin{keepbox}
+Drawing light as a straight line is a simplification. \textbf{We kept} \wline[3.4cm] \textbf{and we set aside} \wline[3.4cm].
+\end{keepbox}
+
+\clearpage
+
+\subhead{Shadows have edges}
+A shadow's edge is where a straight line of light just misses the object. If the light is a tiny point, such as a small torch bulb far away, the edge is sharp. If the light is wide, such as a big window, light comes at the object from many places, and the edge looks blurry. We will draw the sharp kind in this book.
+
+\begin{tryit}{Sharp or blurry?}
+In a dim room, hold a pencil 5~cm in front of a white wall. Shine a small torch from far away, then a bigger lamp from close. Which makes the sharper shadow edge? \wline[3cm]\\
+Which light was closer to being a single point? \wline[3cm]
+\end{tryit}
+
+\begin{puzzle}{Straight lines}
+Three pencils stand in a row on a table, all the same height. A torch on the table shines along the row from the left. A shadow falls on the wall behind.\\
+(a) How many separate shadows would you see if the torch is in line with the pencils? \wline[1.2cm]\\
+(b) Why? \wline[5cm]
+\end{puzzle}
+
+\begin{puzzle}{Is it a shadow?}
+Write S if it is a shadow (light blocked) and N if it is not.
+\begin{description}[leftmargin=1.6em,itemsep=0.3em,style=sameline]
+\item[(a)] The dark patch under a tree on a sunny day. \wline[1cm]
+\item[(b)] The reflection of a tree in a pond. \wline[1cm]
+\item[(c)] The dark shape of your head on a wall in front of a lamp. \wline[1cm]
+\item[(d)] A painting of a night sky. \wline[1cm]
+\end{description}
+\end{puzzle}
+
+\begin{puzzle}{Trace the line}
+A torch, a card with a small hole and a wall are in a line. The torch is 40~cm from the card and the card is 40~cm from the wall.\\
+(a) Draw the straight line of light from the torch through the hole to the wall. \\
+(b) If you move the card 5~cm up, does the dot on the wall move up, down or stay? \wline[2cm]
+\begin{center}
+\begin{tikzpicture}
+  \draw[line width=1pt] (0,0) rectangle (10,3);
+  \fill[sun!70,draw=ink] (0.8,1.5) circle (0.3);
+  \draw[line width=2pt] (5,0.1) -- (5,1.3) (5,1.7) -- (5,2.9);
+  \draw[line width=2pt] (9.3,0.2) -- (9.3,2.8);
+  \node[font=\sffamily\scriptsize] at (0.8,0.9) {torch}; \node[font=\sffamily\scriptsize] at (5,-0.3) {card with hole}; \node[font=\sffamily\scriptsize] at (9.3,-0.3) {wall};
+\end{tikzpicture}
+\end{center}
+\end{puzzle}
+
+\begin{puzzle}{Corner}
+A ball sits behind a wall. You stand where you cannot see it. Draw (or say) why you cannot see it, using lines of light.\\
+\rule{\linewidth}{0.5pt}\\[4pt]\rule{\linewidth}{0.5pt}
+\end{puzzle}
+\clearpage
+
+\subhead{A pinhole picture}
+Straight lines of light can make a picture. Poke a tiny hole in a card and hold it between a bright lamp and a white wall, in a dim room. A faint, upside-down picture of the lamp appears on the wall. Light from the top of the lamp travels in a straight line through the hole and lands on the lower part of the wall. Light from the bottom of the lamp lands on the upper part. The lines cross at the hole, so the picture is flipped.
+
+\begin{center}
+\begin{tikzpicture}[scale=0.9]
+  \draw[line width=3pt,color=ink] (4,-0.2) -- (4,0.15) (4,0.3) -- (4,2.4);
+  \draw[line width=3pt,color=ink] (4,-0.2) -- (4,-2.4);
+  \draw[line width=3pt,color=tomato] (0,-1) -- (0,1);
+  \node[font=\sffamily\scriptsize] at (0,-1.5) {object};
+  \draw[line width=1pt,color=sun!90!black] (0,1) -- (4,0.15) -- (7.2,-1.6);
+  \draw[line width=1pt,color=sun!90!black] (0,-1) -- (4,0.15) -- (7.2,1.6);
+  \draw[line width=3pt,color=tomato] (7.2,-1.6) -- (7.2,1.6);
+  \node[font=\sffamily\scriptsize] at (7.2,-2.0) {screen: picture upside down};
+  \node[font=\sffamily\scriptsize] at (4,2.8) {pinhole};
+\end{tikzpicture}
+\end{center}
+
+\begin{tryit}{Make a pinhole picture}
+\textbf{You need:} a shoebox or a card tube, scrap of baking paper, tape, a pin, a bright lamp (not the sun).
+\begin{enumerate}[leftmargin=1.6em]
+\item Cut a small square window in one end of the box and tape baking paper over it as a screen.
+\item Poke one pin hole in the middle of the opposite end.
+\item Point the hole at a lamp in a dim room. Look at the baking paper from behind the box. Describe the picture. Is it upside down?
+\end{enumerate}
+\wline[7cm]
+\end{tryit}
+\adult{Never point a pinhole box at the sun and look through it. Use a lamp.}
+
+\begin{worked}{Predicting the picture (practice numbers)}
+A candle-sized lamp 10~cm tall is 40~cm in front of the pinhole and the screen is 10~cm behind it. The picture's height is $10\times10\div40=2.5$~cm. A practice measurement gave 2.6~cm. That is 0.1~cm from the prediction.
+\end{worked}
+
+\begin{puzzle}{Upside down}
+(a) A flame is 8~cm tall, 40~cm in front of a pinhole, and the screen is 10~cm behind. How tall is its picture? \wline[1.6cm]~cm\\
+(b) If you move the flame to 20~cm from the hole, is the picture bigger or smaller? \wline[2cm]
+\end{puzzle}
+\clearpage

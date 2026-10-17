@@ -1,0 +1,138 @@
+\chapterhead{5}{Groups Inside Groups}{Sorting real animals into smaller and smaller circles}\label{ch5}
+
+Real animals are sorted the same way as bugs, with groups inside groups. All the animals with six legs form a group. Inside that group are smaller groups, such as ones with big colourful wings. Here is a key for eight animals.
+
+\begin{center}
+\sffamily\small\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{@{}p{0.6cm}p{6.6cm}p{2.9cm}@{}}
+\toprule
+\textbf{No.} & \textbf{Question} & \textbf{Yes, then / No, then}\\
+\midrule
+1 & Does it have six legs? & go to 2 / go to 3\\
+2 & Does it have large, colourful wings? & butterfly / ant\\
+3 & Does it have eight legs? & spider / go to 4\\
+4 & Does it have feathers or fur? & go to 5 / go to 6\\
+5 & Does it have feathers? & sparrow / cat\\
+6 & Does it have a hard shell on its back? & snail / go to 7\\
+7 & Does it have fins? & goldfish / frog\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{center}
+\begin{tikzpicture}
+  \node[bigcir,minimum size=4.2cm] (a) at (0,0) {};
+  \node[font=\sffamily\scriptsize] at (0,1.7) {8 animals};
+  \node[cir,minimum size=1.6cm,font=\sffamily\tiny,align=center] at (-1.0,0.3) {six legs\\butterfly, ant};
+  \node[cir,minimum size=1.5cm,font=\sffamily\tiny,align=center] at (1.0,0.7) {eight legs\\spider};
+  \node[cir,minimum size=1.7cm,font=\sffamily\tiny,align=center] at (1.0,-0.8) {fur or feathers\\sparrow, cat};
+  \node[cir,minimum size=1.5cm,font=\sffamily\tiny,align=center] at (-1.0,-1.1) {shell, fins\\snail, fish, frog};
+  \node[note,anchor=west,text width=4.6cm,align=left] at (3.0,0) {Each smaller circle sits inside the big one. A good key makes circles that do not overlap.};
+\end{tikzpicture}
+\end{center}
+
+\begin{tryit}{Try the key on a walk}
+\textbf{You need:} paper and a pencil, or a camera, and a safe place to look.
+\begin{enumerate}[leftmargin=1.6em]
+\item Look for three or more animals outside, from a safe distance. Draw or photograph each. Do not touch or pick up any animal.
+\item For each, follow the key from question 1. Write where it ends.
+\item If an animal does not fit, write down what question it broke.
+\end{enumerate}
+\par\medskip
+\renewcommand{\arraystretch}{1.8}
+\begin{tabular}{|l|c|c|}
+\hline
+\textbf{Animal I saw} & \textbf{Where the key ended} & \textbf{Did it fit?}\\ \hline
+ & & \\ \hline
+ & & \\ \hline
+ & & \\ \hline
+\end{tabular}
+\end{tryit}
+\adult{Look from a safe distance. Do not touch plants or animals you cannot name, and wash hands afterwards.}
+
+\begin{worked}{Practice example}
+A sparrow: Q1 six legs? no. Q3 eight legs? no. Q4 feathers or fur? yes. Q5 feathers? yes. It ends at sparrow, after 4 questions.\\
+A frog: Q1 no, Q3 no, Q4 no, Q6 no, Q7 no. It ends at frog, after 5 questions.
+\end{worked}
+
+\begin{multix}[hmm]\multixbot[hmm]\tcblower
+A dog has fur and no feathers, so the key puts it in the cat group. That means the key calls a dog a cat. I think the key is broken. Is it?
+\end{multix}
+
+\trust{We followed the key for two animals, counted the questions and checked each ended in a group of its own.}
+{The sparrow ended in 4 questions and the frog in 5, and each ended in a different place.}
+{That a dog or a worm would end somewhere sensible. The key only knows the eight animals it was built for.}
+
+\begin{keepbox}
+We used a key for eight animals. \textbf{We kept} \wline[3.4cm] \textbf{and we set aside} \wline[3.4cm].
+\end{keepbox}
+
+\clearpage
+
+\begin{puzzle}{An ant}
+Follow the key for an ant. Write the question numbers you visit. \wline[5cm]
+\end{puzzle}
+
+\begin{puzzle}{A frog}
+How many questions does the frog need? \wline[1.6cm]
+\end{puzzle}
+
+\begin{puzzle}{A goldfish}
+Write the question numbers for a goldfish. \wline[5cm]
+\end{puzzle}
+
+\begin{puzzle}{The fewest}
+Which animal needs the fewest questions? \wline[3cm] How many? \wline[1.6cm]
+\end{puzzle}
+
+\begin{puzzle}{Counting a group}
+How many of the eight animals have six legs? \wline[1.6cm] How many do not? \wline[1.6cm]
+\end{puzzle}
+
+\clearpage
+
+\begin{puzzle}{A dog}
+Where does the key end for a dog? \wline[3cm] What does that tell you about the ``cat'' group? \wline[5cm]
+\end{puzzle}
+
+\begin{puzzle}{Spiders and insects}
+Insects have six legs. Use the key to say whether a spider is an insect. \wline[3cm] Why? \wline[4cm]
+\end{puzzle}
+
+\begin{puzzle}{Another way to sort}
+Sort the eight animals by where they live instead: water, land or air. Which feature did you use? \wline[3cm] Is it the same as the key's groups? \wline[3cm]
+\end{puzzle}
+
+\begin{puzzle}{Your walk}
+List three animals from your walk and where the key put each. \wline[6cm]
+\end{puzzle}
+
+\begin{puzzle}{Draw the circles}
+Eight animals are split by six legs into 2 and 6. Fill in the circles.
+\begin{center}
+\begin{tikzpicture}
+  \node[cir] (a) at (0,0) {8}; \node[cir,dashed] (b) at (4,0.9) {}; \node[cir,dashed] (c) at (4,-0.9) {};
+  \draw[popA] (a) -- (b); \draw[popA] (a) -- (c);
+\end{tikzpicture}
+\end{center}
+\end{puzzle}
+\clearpage
+\thispagestyle{fancy}
+\subhead{Animal log}
+Record the animals you see, and follow the key for each.\par\medskip
+\renewcommand{\arraystretch}{3.0}
+\begin{tabularx}{\linewidth}{|>{\sffamily\small\bfseries}p{2.4cm}|X|X|X|}
+\hline
+Animal & Where I saw it & Where the key ended & Did it fit? \\ \hline
+ & & & \\ \hline
+ & & & \\ \hline
+ & & & \\ \hline
+ & & & \\ \hline
+ & & & \\ \hline
+\end{tabularx}
+
+\vspace{8pt}
+Which animal broke the key, if any? \wline[6cm]\\[10pt]
+Draw one animal you saw.\par\medskip
+\begin{tikzpicture}\draw[ink!70,line width=1pt,rounded corners=3pt] (0,0) rectangle (11.4,4.2);\end{tikzpicture}
+\clearpage

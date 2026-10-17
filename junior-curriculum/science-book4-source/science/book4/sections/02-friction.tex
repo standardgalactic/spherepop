@@ -1,0 +1,176 @@
+\chapterhead{2}{Why Things Stop Sliding}{Friction, and how to measure a pull with a rubber band}\label{ch2}
+
+Push a box across a floor and let go. It slides a little way and stops. Nothing visible stopped it. Something pushed back all along: \textbf{friction}.
+
+Friction is a force that acts where two surfaces rub. It always points against the sliding. A box sliding to the right feels friction pointing to the left, so it slows down. Rough surfaces have more friction, and smooth surfaces have less.
+
+\begin{center}
+\begin{tikzpicture}
+  \draw[line width=1.4pt] (-3,0) -- (4,0);
+  \fill[tangerine!70,draw=ink,line width=1.2pt] (-0.6,0) rectangle (0.8,0.8);
+  \draw[-{Stealth},line width=2.4pt,color=sky!80!black] (0.8,0.4) -- (2.8,0.4); \node[font=\sffamily\scriptsize] at (1.8,0.8) {moving};
+  \draw[-{Stealth},line width=2.4pt,color=tomato] (-0.6,0.15) -- (-2.4,0.15); \node[font=\sffamily\scriptsize] at (-1.5,0.55) {friction};
+\end{tikzpicture}
+\end{center}
+
+\subhead{A fair test of surfaces}
+Which surface has the most friction? Use the fair-test habits from Book~2. A good plan changes only the surface.
+
+\begin{center}
+\sffamily\small\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{@{}p{3.4cm}p{7.6cm}@{}}
+\toprule
+\textbf{I change} & the surface: a scrap of carpet, smooth card, or a plastic tray\\
+\textbf{I measure} & how far the block slides after it leaves the ramp, nearest cm\\
+\textbf{I keep the same} & the block, the ramp, the point it is let go from, letting go with no push\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{tryit}{Which surface stops the block soonest?}
+\textbf{You need:} a small block, a smooth board for a ramp, one book to raise it, three surfaces (carpet scrap, smooth card, plastic tray), a ruler or tape measure.
+\begin{enumerate}[leftmargin=1.6em]
+\item Rest the board on one book. Lay a surface flat at the bottom so the block slides onto it.
+\item Mark a line on the ramp. Let the block go from that line, with no push.
+\item Measure from the bottom of the ramp to the front of the block where it stops.
+\item Do three slides for each surface, in a mixed order. Find each average and spread.
+\end{enumerate}
+\par\medskip
+\renewcommand{\arraystretch}{1.6}
+\begin{tabular}{|l|c|c|c|c|}
+\hline
+ & \textbf{Slide 1 (cm)} & \textbf{Slide 2 (cm)} & \textbf{Slide 3 (cm)} & \textbf{Average (cm)}\\ \hline
+\textbf{Carpet} & & & & \\ \hline
+\textbf{Smooth card} & & & & \\ \hline
+\textbf{Plastic tray} & & & & \\ \hline
+\end{tabular}
+\end{tryit}
+
+\begin{worked}{Surface test (practice numbers, not from a real test)}
+\textbf{Carpet:} 18, 20, 19~cm. Total $=57$. Average $57\div3=19$~cm. Spread $20-18=2$~cm.\\
+\textbf{Smooth card:} 46, 44, 48~cm. Total $=138$. Average $138\div3=46$~cm. Spread $4$~cm.\\
+\textbf{Plastic tray:} 75, 80, 79~cm. Total $=234$. Average $234\div3=78$~cm. Spread $5$~cm.\\
+The gaps between averages, 27~cm and 32~cm, are bigger than any spread.
+\end{worked}
+
+\begin{center}
+\begin{tikzpicture}[x=1.3cm,y=0.04cm]
+  \draw[line width=1.1pt] (0.3,0) -- (0.3,95) (0.3,0) -- (4.8,0);
+  \foreach \y in {0,20,40,60,80}{\draw (0.2,\y) -- (0.4,\y); \node[font=\sffamily\scriptsize,anchor=east] at (0.15,\y) {\y};}
+  \node[font=\sffamily\scriptsize,rotate=90] at (-0.5,45) {distance slid (cm)};
+  \foreach \x/\h/\c/\l in {1.2/19/tangerine/carpet,2.6/46/sun/smooth card,4.0/78/sky/plastic tray}{
+    \fill[\c!70,draw=ink,line width=0.8pt] (\x-0.4,0) rectangle (\x+0.4,\h);
+    \node[font=\sffamily\bfseries\scriptsize,anchor=south] at (\x,\h) {\h};
+    \node[font=\sffamily\scriptsize,anchor=north] at (\x,-2) {\l};
+  }
+\end{tikzpicture}
+\end{center}
+
+\trust{We changed only the surface, kept the block, ramp and release point the same, and slid the block three times on each surface in a mixed order.}
+{The gaps between surfaces (27 and 32~cm) were far bigger than the wobble within each surface (2 to 5~cm), so the order, carpet then card then tray, is likely real. Changing only the surface means friction from the surface is the likely reason.}
+{That any carpet, card or plastic behaves like ours. It also does not show how friction works at the tiny scale, and it does not measure the friction itself, only how far the block went.}
+
+\begin{keepbox}
+We reduced the surface to a distance slid. \textbf{We kept} \wline[3.4cm] \textbf{and we set aside} \wline[3.4cm].
+\end{keepbox}
+
+\clearpage
+
+\subhead{Measuring a pull with a rubber band}
+Distance slid is an indirect measure of friction. To measure friction more directly, pull the block with a rubber band at a steady slow speed. While it moves steadily, your pull and the friction are equal and opposite, so how far the rubber band stretches tells you how big the friction is. A bigger stretch means a bigger pull.
+
+\begin{center}
+\begin{tikzpicture}
+  \draw[line width=1.4pt] (-1,0) -- (7,0);
+  \fill[tangerine!70,draw=ink,line width=1.2pt] (0,0) rectangle (1.2,0.8);
+  \draw[decorate,decoration={zigzag,segment length=4pt,amplitude=2pt},line width=1.2pt,color=sky!80!black] (1.2,0.4) -- (3.4,0.4);
+  \draw[line width=1pt,color=sky!80!black] (3.4,0.4) -- (4.0,0.4);
+  \node[font=\sffamily\scriptsize] at (2.3,0.9) {rubber band};
+  \draw[-{Stealth},line width=2.4pt,color=sky!80!black] (4.0,0.4) -- (5.6,0.4);
+  \draw[-{Stealth},line width=2.4pt,color=tomato] (0,0.2) -- (-1.0,0.2);
+  \node[font=\sffamily\scriptsize] at (-0.55,0.6) {friction};
+\end{tikzpicture}
+\end{center}
+
+\begin{tryit}{Measure friction with a rubber band}
+Loop a rubber band over the block. Measure the band's resting length. Pull the block slowly and steadily along each surface. Measure the stretched length while the block is moving. Stretch $=$ stretched length $-$ resting length. Do three pulls on each surface.\par\medskip
+\renewcommand{\arraystretch}{1.6}
+\begin{tabular}{|l|c|c|c|c|}
+\hline
+ & \textbf{Stretch 1 (cm)} & \textbf{Stretch 2 (cm)} & \textbf{Stretch 3 (cm)} & \textbf{Average (cm)}\\ \hline
+\textbf{Carpet} & & & & \\ \hline
+\textbf{Smooth card} & & & & \\ \hline
+\textbf{Plastic tray} & & & & \\ \hline
+\end{tabular}
+\end{tryit}
+\adult{Rubber bands can snap. Keep the stretch small, point the band away from faces and replace bands that look worn.}
+
+\begin{worked}{Rubber band pulls (practice numbers)}
+\textbf{Carpet:} 4.6, 5.0, 4.8~cm, average $14.4\div3=4.8$~cm.\\
+\textbf{Smooth card:} 3.0, 3.3, 3.0~cm, average $9.3\div3=3.1$~cm.\\
+\textbf{Plastic tray:} 1.8, 2.0, 1.9~cm, average $5.7\div3=1.9$~cm.\\
+The order matches the slide test: the more it stretches the band, the less far the block slides.
+\end{worked}
+
+\begin{multix}[hmm]\multixbot[hmm]\tcblower
+My rubber band stretched 3~cm when I pulled. So the friction is exactly 3~cm. Is 3~cm a force?
+\end{multix}
+
+\subhead{More weight, more friction}
+Stack a second identical block on the first and pull again. Heavier things press harder on the surface, and the friction is bigger.
+
+\begin{worked}{Stacks of blocks on smooth card (practice numbers)}
+1 block: 3.1~cm. 2 blocks: 6.0~cm. 3 blocks: 9.2~cm.\\
+Each extra block adds about 3~cm of stretch. Double the blocks gives about double the pull.
+\end{worked}
+
+\clearpage
+
+\begin{puzzle}{Average the slides}
+A block slid 22, 25, 23~cm on rug and 62, 58, 60~cm on a wooden floor.\\
+(a) Rug: total \wline[1.4cm] average \wline[1.4cm] spread \wline[1.4cm]\\
+(b) Floor: total \wline[1.4cm] average \wline[1.4cm] spread \wline[1.4cm]\\
+(c) Which surface has more friction? \wline[2cm]
+\end{puzzle}
+
+\begin{puzzle}{Choose the surface}
+A sledge has to stop soonest at the bottom of a hill. Rank the surfaces from most friction (1) to least: ice \wline[1cm] grass \wline[1cm] snow \wline[1cm] gravel \wline[1cm]
+\end{puzzle}
+
+\begin{puzzle}{Spot the unfair test}
+Lena tests carpet and a tray. She lets the block go from higher up the ramp for the tray. The block slides farther on the tray.\\
+(a) What else changed besides the surface? \wline[4cm]\\
+(b) Can she say the tray has less friction? \wline[2cm]
+\end{puzzle}
+
+\begin{puzzle}{Friction helps}
+Name two things that work only because of friction. Hint: shoes, brakes, matches. \wline[5cm]
+\end{puzzle}
+
+\begin{puzzle}{Steady pull}
+A box is pulled at steady speed with a pull of 4. How big is friction, and which way does it point? \wline[4cm]\\
+If the pull rises to 6, what is the leftover and what happens? \wline[4cm]
+\end{puzzle}
+\clearpage
+
+\begin{puzzle}{More friction}
+Pulling the block on card took a 3.1~cm stretch. On the plastic tray it took 1.9~cm. Which surface has more friction? \wline[2cm]\\
+By how much did the stretch differ? \wline[2cm]~cm
+\end{puzzle}
+
+\begin{puzzle}{Predict the stack}
+One block on card needed a 3.1~cm stretch, two blocks 6.0~cm and three blocks 9.2~cm. Guess the stretch for four blocks. \wline[2cm]~cm\\
+Why is it only a guess? \wline[4cm]
+\end{puzzle}
+
+\begin{puzzle}{Which way?}
+A block slides to the right across a table. Which way does friction point? \wline[2cm]\\
+Now the block slides to the left. Which way does friction point? \wline[2cm]
+\end{puzzle}
+
+\begin{puzzle}{Useful or a nuisance}
+Write two times friction is useful and two times it is a nuisance.\\
+Useful: \wline[9cm]\\[6pt]
+Nuisance: \wline[9cm]
+\end{puzzle}
+\clearpage

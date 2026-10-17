@@ -1,0 +1,154 @@
+% ------------------------------------------------------------------ cover (page 1)
+\thispagestyle{blank}
+\begin{tikzpicture}[remember picture,overlay]
+  \fill[sun!35] ($(current page.south west)+(0.4in,0.4in)$) rectangle ($(current page.north east)-(0.4in,0.4in)$);
+  % rays
+  \begin{scope}
+  \clip ($(current page.south west)+(0.4in,0.4in)$) rectangle ($(current page.north east)-(0.4in,0.4in)$);
+  \foreach \a in {0,15,...,345}{
+    \fill[sun!70,opacity=0.5] ($(current page.center)+(0,0.8in)$) -- ++(\a:9in) -- ++(\a+7.5:9in) -- cycle;
+  }
+  \end{scope}
+  \fill[sun!35,opacity=0.9] ($(current page.south west)+(0.4in,0.4in)$) rectangle ($(current page.south east)+(-0.4in,2.4in)$);
+  \node[star,star points=18,star point ratio=0.88,fill=tangerine,draw=ink,line width=1.6pt,minimum size=2.7cm,
+        font=\sffamily\bfseries,text=white,align=center,inner sep=0]
+     at ($(current page.north west)+(1.55in,-1.7in)$) {\Large SCIENCE\\[-1pt]\large Book 4};
+  \node[anchor=north,align=center,font=\sffamily\bfseries,text=ink,text width=5.7in]
+     at ($(current page.north)+(0.4in,-1.45in)$) {\fontsize{36}{46}\selectfont Things\\[8pt] That\hspace{0.3em}Push\\[8pt] Back};
+  % big ruler across the middle
+  \draw[line width=1.4pt] ($(current page.center)+(-2.8in,-1.0in)$) -- ($(current page.center)+(2.8in,-1.0in)$);
+  \fill[tangerine,draw=ink,line width=1.4pt] ($(current page.center)+(-0.9in,-1.0in)$) rectangle ($(current page.center)+(0.2in,-0.3in)$);
+  \draw[-{Stealth},line width=3pt,color=sky!80!black] ($(current page.center)+(0.2in,-0.65in)$) -- ($(current page.center)+(1.5in,-0.65in)$);
+  \draw[-{Stealth},line width=3pt,color=tomato] ($(current page.center)+(-0.9in,-0.8in)$) -- ($(current page.center)+(-1.8in,-0.8in)$);
+  \draw[-{Stealth},line width=3pt,color=leaf!70!black] ($(current page.center)+(-0.35in,-0.3in)$) -- ($(current page.center)+(-0.35in,0.5in)$);
+  \draw[-{Stealth},line width=3pt,color=grape] ($(current page.center)+(-0.35in,-1.0in)$) -- ($(current page.center)+(-0.35in,-1.6in)$);
+  \node at ($(current page.center)+(1.6in,-2.35in)$) {\scalebox{3.1}{\multixbot[wow]}};
+  \node[anchor=center,fill=white,draw=ink,line width=1.2pt,rounded corners=6pt,font=\sffamily\bfseries\small,
+        text width=2.2in,align=center,inner sep=6pt]
+    at ($(current page.center)+(-1.15in,-2.55in)$) {Push it. Pull it. Balance it. Draw the arrows.\\[2pt]
+    \footnotesize Puzzles, projects and Multix the guide robot};
+  \node[font=\sffamily\bfseries\large,text=ink] at ($(current page.south)+(0,0.8in)$) {Ages 9 to 11};
+\end{tikzpicture}
+\clearpage
+
+% ------------------------------------------------------------------ inside front (page 2)
+\thispagestyle{plain}
+\begin{center}
+{\sans\bfseries\large This book belongs to}\quad\wline[6cm]
+\end{center}
+\vspace{0.1cm}
+
+{\sans\bfseries\LARGE\color{ink} Hello. I am Multix.}\par
+\begin{multix}[wow]\multixbot[wow]\tcblower
+I am a guide robot. I read every instruction very carefully, which is why I sometimes get things wrong.
+When I make a mistake, see whether you can catch it. I never give away a puzzle answer.
+\end{multix}
+
+\subhead{How this book works}
+Every book in this series asks the same few questions, so once you have read this page you will know your way around.
+
+\begin{itemize}[leftmargin=1.6em,itemsep=0.45em]
+\item[\textcolor{leaf}{\ding{108}}] \textbf{Try it} boxes tell you what to do with a ruler, a cup, some string or a clock. You need nothing from a shop. Everything is at home or at school.
+\item[\textcolor{sun!80!black}{\ding{108}}] \textbf{What did we keep?} After you simplify something, such as keeping the same conditions in a test or averaging several throws, you say what stayed and what was set aside. Simplifying is fine. Forgetting what you set aside is not.
+\item[\textcolor{tangerine}{\ding{108}}] \textbf{What makes this correction trustworthy?} When you fix or improve an answer, a box says what you checked, what the check gives you reason to trust, and what it does \emph{not} show.
+\item[\textcolor{sky}{\ding{108}}] \textbf{Circles} show how a number was made. Page~\pageref{circlecard} explains how to read them, and Book~1 introduced them.
+\item[\textcolor{grape}{\ding{108}}] \textbf{Puzzles} come at the end of each chapter. Try them before you look at the answers on page~\pageref{answers}.
+\item[\textcolor{tomato}{\ding{108}}] \textbf{Slop check} is a page near the end. Slop is hasty, gaudy work that forgot to take care. You will learn to spot it and to fix it.
+\end{itemize}
+
+\begin{multix}[hmm]\multixbot[hmm]\tcblower
+Here is a fact about me. I pushed a box across the floor and it stopped. I decided the floor must be broken. Chapter~2 will explain why I should be embarrassed.
+\end{multix}
+\clearpage
+
+% ------------------------------------------------------------------ contents and kit (page 3)
+\thispagestyle{plain}
+{\sans\bfseries\LARGE\color{ink} In this book}\par\vspace{0.2cm}
+{\sans\large
+\begin{tabular}{@{}p{0.9cm}p{7.6cm}r@{}}
+\textcolor{tangerine}{\bfseries 1} & Pushes, Pulls and Arrows & \pageref{ch1}\\[3pt]
+\textcolor{tangerine}{\bfseries 2} & Why Things Stop Sliding & \pageref{ch2}\\[3pt]
+\textcolor{tangerine}{\bfseries 3} & Falling and Floating & \pageref{ch3}\\[3pt]
+\textcolor{tangerine}{\bfseries 4} & Balance & \pageref{ch4}\\[3pt]
+\textcolor{tangerine}{\bfseries 5} & Ramps and Effort & \pageref{ch5}\\[3pt]
+\textcolor{tangerine}{\bfseries 6} & Finding the Missing Arrow & \pageref{ch6}\\[3pt]
+\textcolor{sky}{\bfseries $\star$} & Slop check & \pageref{slop}\\[3pt]
+\textcolor{sky}{\bfseries $\star$} & Answers & \pageref{answers}\\[3pt]
+\textcolor{sky}{\bfseries $\star$} & Words, and notes for grown-ups & \pageref{notes}\\
+\end{tabular}}
+
+\begin{tryit}{Gather your kit}
+You will use these things across the six chapters. Everything is found at home or at school. Measuring comes from Book~1 and fair testing from Book~2, which you will use again here.
+\begin{multicols}{2}
+\begin{itemize}[leftmargin=1.2em]
+\item a small box or block
+\item rubber bands, all alike
+\item a ruler marked in mm
+\item ten identical coins
+\item a pencil and a notebook
+\item a board or thick card
+\item some books
+\item a toy car
+\item scrap paper
+\item a small bag and string
+\end{itemize}
+\end{multicols}
+\end{tryit}
+\adult{Rubber bands can snap, so keep them pointed away from faces and do not stretch them far. Ramps and boards should rest on something steady. Nothing here needs a flame or mains electricity.}
+
+{\sans\bfseries\large\color{sky!70!black} Units in this book}\par
+We use the metric system: centimetres (cm), metres (m) and seconds (s). For pushes and pulls we use arrows, and we measure a pull by how far a rubber band stretches.
+There are 10~mm in 1~cm and 100~cm in 1~m. If you are used to inches, one inch is about 2.5~cm. We will use that only in side notes.
+\clearpage
+
+% ------------------------------------------------------------------ circle card (page 4)
+\thispagestyle{plain}\label{circlecard}
+{\sans\bfseries\LARGE\color{ink} Reading the circles}\par\vspace{0.1cm}
+A circle holds a group of things together. There are three things you can do with circles in this series.
+
+\begin{center}
+\begin{tikzpicture}[scale=1.22]
+  % POP
+  \node[font=\sffamily\bfseries,text=tomato] at (0,2.6) {1. POP};
+  \node[bigcir,minimum size=2.2cm] (p) at (0,0.8) {};
+  \foreach \x/\y/\t in {-0.35/1.15/2.1,0.4/1.2/1.9,-0.45/0.5/2.0,0.4/0.45/2.2}{\node[cir,inner sep=1pt,font=\sffamily\bfseries\scriptsize] at (\x,\y) {\t};}
+  \node[valcir] (pv) at (0,-1.5) {2.05};
+  \draw[popA] (p) -- node[right,note] {pop} (pv);
+  % MOVE
+  \node[font=\sffamily\bfseries,text=sky!70!black] at (4.0,2.6) {2. MOVE};
+  \node[cir] (m1) at (3.0,0.8) {12}; \node[cir] (m2) at (5.0,0.8) {7};
+  \draw[moveA] (m1) -- node[above,note] {5 beans} (m2);
+  \node[note,anchor=east] at (2.35,0.8) {before};
+  \node[cir] at (3.0,-1.5) {7}; \node[cir] at (5.0,-1.5) {12};
+  \node[note,anchor=east] at (2.35,-1.5) {after};
+  % WRAP
+  \node[font=\sffamily\bfseries,text=tangerine!80!black] at (8.0,2.6) {3. WRAP};
+  \node[wrapcir,minimum size=2.5cm] (w) at (8.0,0.5) {};
+  \node[valcir,font=\sffamily\bfseries\scriptsize] at (8.0,0.9) {14.5};
+  \node[note] at (8.0,0.05) {$-\,2.0$};
+  \node[valcir] at (8.0,-1.5) {12.5};
+\end{tikzpicture}
+\end{center}
+
+\begin{description}[leftmargin=0pt,itemsep=0.4em,style=unboxed]
+\item[\textcolor{tomato}{\sans\bfseries Pop}] Squash a group down to one value that sums it up, such as an average. A pop is a \emph{summary}, so it always loses something. Every time we pop, we say what the summary keeps and what it loses.
+\item[\textcolor{sky!70!black}{\sans\bfseries Move}] An arrow that carries something from one circle to another, such as beans or water. Nothing is summarized. You will see more of moves in later books.
+\item[\textcolor{tangerine!80!black}{\sans\bfseries Wrap}] When you correct something, draw a new dashed circle around the old one and show what changed. The old work stays visible, so anyone can check it.
+\end{description}
+
+\subhead{A force is a circle with an arrow}
+\begin{center}
+\begin{tikzpicture}
+  \node[bigcir,minimum size=2.2cm] (a) at (0,0.9) {}; \draw[-{Stealth},line width=2pt,color=sky!80!black] (-0.7,0.9) -- (0.7,0.9);
+  \node[font=\sffamily\scriptsize] at (0,0.4) {push 4};
+  \node[bigcir,minimum size=2.2cm] (b) at (0,-1.5) {}; \draw[-{Stealth},line width=2pt,color=tomato] (0.7,-1.5) -- (-0.7,-1.5);
+  \node[font=\sffamily\scriptsize] at (0,-2.0) {friction 4};
+  \node[valcir] (c) at (4.8,-0.3) {0 left over};
+  \draw[popA] (2.0,0.1) -- node[above,note] {pop} (c);
+  \node[note,anchor=west,text width=3cm,align=left] at (6.4,-0.3) {Two equal arrows pointing opposite ways pop into nothing left over. Nothing speeds up or slows down.};
+\end{tikzpicture}
+\end{center}
+\vfill
+\begin{multix}[ok]\multixbot[ok]\tcblower
+A pop is not a lie, but it is a shortcut. Any time I tell you a pop, I will tell you what it threw away.
+\end{multix}

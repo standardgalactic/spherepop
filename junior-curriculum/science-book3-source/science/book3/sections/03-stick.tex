@@ -1,0 +1,232 @@
+\chapterhead{3}{A Stick in the Sun}{Following the sun by what it leaves on the ground}\label{ch3}
+
+The sun is a light, a very big one that is very far away. Because it is so far away, its light arrives almost in parallel lines, and everything on the ground gets the same direction of light. A shadow from the sun is long or short, and points one way or another, depending on where the sun is in the sky.
+
+\begin{center}
+\begin{tikzpicture}
+  \draw[line width=1.2pt] (-1,0) -- (11,0);
+  \draw[line width=3pt,color=ink] (5,0) -- (5,1.6);
+  % morning
+  \fill[sun!80,draw=ink] (0.4,1.3) circle (0.3);
+  \draw[sun!90!black,line width=1pt] (0.7,1.28) -- (5,1.6) (0.6,1.15) -- (8.5,0);
+  \draw[line width=3pt,color=ink!50] (5,0) -- (8.5,0);
+  \node[font=\sffamily\scriptsize] at (7.2,-0.45) {morning: long shadow};
+  \node[font=\sffamily\scriptsize] at (2,0.7) {low sun};
+\end{tikzpicture}
+\hspace{0.5cm}
+\begin{tikzpicture}
+  \draw[line width=1.2pt] (-1,0) -- (11,0);
+  \draw[line width=3pt,color=ink] (5,0) -- (5,1.6);
+  \fill[sun!80,draw=ink] (5.9,4.0) circle (0.3);
+  \draw[sun!90!black,line width=1pt] (5.8,3.7) -- (5,1.6) (5.85,3.7) -- (6.0,0);
+  \draw[line width=3pt,color=ink!50] (5,0) -- (5.6,0);
+  \node[font=\sffamily\scriptsize] at (7.2,-0.45) {midday: short shadow};
+  \node[font=\sffamily\scriptsize] at (3.8,3) {high sun};
+\end{tikzpicture}
+\end{center}
+
+When the sun is low, light comes in at a shallow angle and the shadow stretches out. When the sun is high, the light comes steeply down and the shadow is short. A shadow also always points \textbf{away} from the sun. If the sun is in the east, the shadow points west.
+
+\adult{\textbf{Never look at the sun.} You will study the sun only by looking at the shadows on the ground. Do the tracing outdoors on a flat, safe spot, and take a hat and water.}
+
+\begin{tryit}{Trace a stick's shadow all day}
+\textbf{You need:} a stick or ruler about 30~cm tall, modelling clay to hold it up, a large sheet of paper taped to a flat spot in the sun, a pencil and a clock.
+\begin{enumerate}[leftmargin=1.6em]
+\item Tape the paper down so it cannot move. Stand the stick upright in clay on the paper and trace round the base. Do not move the stick or the paper again.
+\item On the hour, mark the tip of the shadow with a dot and write the time next to it.
+\item Do this at least five times through the day, for example 9, 11, 1, 3 and 5.
+\item Afterwards, draw a line from the base to each dot and measure each line.
+\end{enumerate}
+\par\medskip
+\renewcommand{\arraystretch}{1.6}
+\begin{tabular}{|l|c|c|c|c|c|c|}
+\hline
+\textbf{Time} & & & & & & \\ \hline
+\textbf{Shadow length (cm)} & & & & & & \\ \hline
+\end{tabular}
+\end{tryit}
+
+\subhead{Fair test, again}
+Your paper and stick stay in one place. The only thing that changes is the \textbf{time}. Everything else, such as the stick's height and where the shadow falls, is kept the same, so any change in the shadow comes from the sun's movement.
+
+\clearpage
+
+\subhead{Practice numbers}
+Here is a made-up day for a stick 30~cm tall, in a place in the northern half of the world. The numbers are practice numbers, not from a real day.
+
+\begin{worked}{One practice day, a 30~cm stick}
+\begin{center}\sffamily\small\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{@{}l*{9}{c}@{}}
+\textbf{Time} & 8:00 & 9:00 & 10:00 & 11:00 & 12:00 & 13:00 & 14:00 & 15:00 & 16:00\\
+\textbf{Length (cm)} & 62 & 45 & 34 & 28 & 26 & 28 & 35 & 46 & 64
+\end{tabular}
+\end{center}
+The shortest shadow is 26~cm at 12:00. The shadow is longest early and late: 62~cm at 8:00 and 64~cm at 16:00.
+\end{worked}
+
+Plot the shadow tips, looking down from above. The stick stands at the dot at the bottom, north is up.
+
+\begin{center}
+\begin{tikzpicture}
+  \draw[ink!30,line width=0.5pt] (-3.2,0) -- (3.2,0) (0,-0.1) -- (0,2.2);
+  \fill[ink] (0,0) circle (1.3mm);
+  \node[font=\sffamily\scriptsize,anchor=north] at (0,-0.15) {stick};
+  \node[font=\sffamily\scriptsize,anchor=south] at (0,2.2) {north};
+  \node[font=\sffamily\scriptsize,anchor=east] at (-3.2,0.15) {west};
+  \node[font=\sffamily\scriptsize,anchor=west] at (3.2,0.15) {east};
+  \draw[ink!40,line width=1pt] (0,0) -- (-2.53,1.18); \fill[tomato,draw=ink] (-2.53,1.18) circle (1.3mm);
+  \node[font=\sffamily\scriptsize,anchor=south] at (-2.53,1.3599999999999999) {8:00};
+  \draw[ink!40,line width=1pt] (0,0) -- (-1.3,1.55); \fill[tomato,draw=ink] (-1.3,1.55) circle (1.3mm);
+  \draw[ink!40,line width=1pt] (0,0) -- (-0.52,1.44); \fill[tomato,draw=ink] (-0.52,1.44) circle (1.3mm);
+  \node[font=\sffamily\scriptsize,anchor=south] at (-0.52,1.6199999999999999) {10:00};
+  \draw[ink!40,line width=1pt] (0,0) -- (-0.15,1.25); \fill[tomato,draw=ink] (-0.15,1.25) circle (1.3mm);
+  \draw[ink!40,line width=1pt] (0,0) -- (0.0,1.17); \fill[tomato,draw=ink] (0.0,1.17) circle (1.3mm);
+  \node[font=\sffamily\scriptsize,anchor=south] at (0.0,1.3499999999999999) {12:00};
+  \draw[ink!40,line width=1pt] (0,0) -- (0.18,1.25); \fill[tomato,draw=ink] (0.18,1.25) circle (1.3mm);
+  \draw[ink!40,line width=1pt] (0,0) -- (0.54,1.48); \fill[tomato,draw=ink] (0.54,1.48) circle (1.3mm);
+  \node[font=\sffamily\scriptsize,anchor=south] at (0.54,1.66) {14:00};
+  \draw[ink!40,line width=1pt] (0,0) -- (1.33,1.59); \fill[tomato,draw=ink] (1.33,1.59) circle (1.3mm);
+  \draw[ink!40,line width=1pt] (0,0) -- (2.61,1.22); \fill[tomato,draw=ink] (2.61,1.22) circle (1.3mm);
+  \node[font=\sffamily\scriptsize,anchor=south] at (2.61,1.4) {16:00};
+\end{tikzpicture}
+\end{center}
+
+In the morning the shadow points west. At midday it points north, because in the northern half of the world the midday sun is in the south. By afternoon it points east. (South of the equator the midday shadow points south instead.) The tips draw a gentle curve.
+
+\begin{multix}[hmm]\multixbot[hmm]\tcblower
+The shadow is shortest at 12:00. So the sun must be highest at exactly 12:00 for everybody in the world. Is that right?
+\end{multix}
+
+\subhead{Shortest shadow is not always at 12:00}
+The sun is highest in the sky at a time called \textbf{solar noon}. Solar noon depends on where you live, and on whether your clocks have been moved for summer. In many places in summer it is closer to 1:00 on the clock. The practice day above happens to have its shortest shadow at 12:00. Your day may be different. The shortest shadow is the best sign of solar noon, not the clock.
+
+\begin{tryit}{Two sticks, one ratio}
+At the same time, measure the shadows of two sticks of different heights, standing on the same flat ground.\par\medskip
+\renewcommand{\arraystretch}{1.6}
+\begin{tabular}{|l|c|c|c|}
+\hline
+ & \textbf{Stick height (cm)} & \textbf{Shadow (cm)} & \textbf{Shadow $\div$ height}\\ \hline
+\textbf{Short stick} & & & \\ \hline
+\textbf{Tall stick} & & & \\ \hline
+\end{tabular}
+\end{tryit}
+
+\begin{worked}{Two sticks (practice numbers)}
+At 10:00, a 15~cm stick had a 17~cm shadow, a 30~cm stick had 34~cm and a 45~cm stick had 51~cm. $17\div15=1.13$, $34\div30=1.13$, $51\div45=1.13$. The ratio is the same for all three, about 1.1.
+\end{worked}
+
+At a given time, every upright thing makes a shadow that is the same number of times as long as the thing is tall. Taller things make longer shadows, in the same proportion.
+
+\trust{We traced the shadow tips of one stick through a day on paper that did not move, and we checked with two more sticks at one time.}
+{Keeping the stick and paper fixed means any change in the shadow comes from the sun's changing position. Three sticks giving the same ratio shows the idea of straight, parallel sunlight is working.}
+{Why the sun moves, or what the shadows would look like on another day of the year. One day, one place and a few sticks are a small test.}
+
+\begin{keepbox}
+The sun is reduced to a direction and a height. \textbf{We kept} \wline[3.4cm] \textbf{and we set aside} \wline[3.4cm].
+\end{keepbox}
+
+\clearpage
+
+\begin{puzzle}{Read the table}
+Use the practice day: 8:00 62, 9:00 45, 10:00 34, 11:00 28, 12:00 26, 13:00 28, 14:00 35, 15:00 46, 16:00 64 (cm).\\
+(a) When is the shadow shortest? \wline[1.8cm]\\
+(b) How much longer is the 9:00 shadow than the 12:00 shadow? \wline[1.8cm]~cm\\
+(c) Which is longer, the 10:00 or the 14:00 shadow? \wline[1.8cm]
+\end{puzzle}
+
+\begin{puzzle}{Which way?}
+The sun is in the east. Which way does a shadow point? \wline[2cm]\\
+At 3:00 in the afternoon in Canada, does the shadow point west, north or east? \wline[2cm]
+\end{puzzle}
+
+\begin{puzzle}{Match the shadow}
+Write M (morning), N (midday) or A (afternoon) for each stick.
+\begin{center}
+\begin{tikzpicture}[scale=0.9]
+  \foreach \x/\sx/\l in {0/-2.0/a,4/0.2/b,8/2.0/c}{
+    \draw[line width=1pt] (\x-1.7,0) -- (\x+1.7,0);
+    \draw[line width=3pt,color=ink] (\x,0) -- (\x,1.2);
+    \draw[line width=3pt,color=ink!50] (\x,0) -- (\x+\sx,0);
+    \node[font=\sffamily\bfseries\small] at (\x,-0.7) {(\l)};
+  }
+  \node[font=\sffamily\scriptsize] at (0,1.7) {shadow points west, long};
+  \node[font=\sffamily\scriptsize] at (4,1.7) {shortest};
+  \node[font=\sffamily\scriptsize] at (8,1.7) {shadow points east, long};
+\end{tikzpicture}
+\end{center}
+(a) \wline[1cm] \quad (b) \wline[1cm] \quad (c) \wline[1cm]
+\end{puzzle}
+
+\begin{puzzle}{Where is the sun?}
+A shadow points toward the top of the page (north). Where is the sun, north, south, east or west? \wline[2cm]\\
+Is the shadow long or short if the sun is high? \wline[2cm]
+\end{puzzle}
+
+\begin{puzzle}{Check the ratio}
+At noon a 20~cm stick has a 22~cm shadow. How long should the shadow of a 40~cm stick be at the same time? \wline[2cm]~cm\\
+How long should a 10~cm stick's shadow be? \wline[2cm]~cm
+\end{puzzle}
+\clearpage
+
+\subhead{Finding north with a stick}
+Your traced tips give you a way to find north. In the morning and afternoon, there is a time when the shadow has the \emph{same length} as it did earlier. The line that splits the two shadows in half points north (in the northern half of the world).
+
+\begin{tryit}{Find north}
+Use your traced page. Pick a morning tip and an afternoon tip with the same shadow length. Draw the two lines from the stick to those tips. Draw a line that splits the angle between them in half. That line points north. Check it with a map or a phone compass.\\[4pt]
+Morning tip length \wline[1.6cm]~cm \quad Afternoon tip length \wline[1.6cm]~cm
+\end{tryit}
+
+\begin{center}
+\begin{tikzpicture}
+  \fill[ink] (0,0) circle (1.3mm);
+  \draw[ink!50,line width=1pt] (0,0) -- (-1.15,1.2) (0,0) -- (1.15,1.2);
+  \fill[tomato,draw=ink] (-1.15,1.2) circle (1.3mm);\fill[tomato,draw=ink] (1.15,1.2) circle (1.3mm);
+  \draw[dashed,line width=1.1pt,color=leaf!70!black] (0,0) -- (0,2.4);
+  \node[font=\sffamily\scriptsize,anchor=south] at (0,2.4) {north};
+  \node[font=\sffamily\scriptsize,anchor=east] at (-1.25,1.2) {morning tip};
+  \node[font=\sffamily\scriptsize,anchor=west] at (1.25,1.2) {afternoon tip};
+\end{tikzpicture}
+\end{center}
+
+\begin{worked}{Practice numbers}
+On the practice day the 10:00 shadow is 34~cm and the 14:00 shadow is 35~cm. They are almost the same, so the line halfway between them points north. A difference of 1~cm is within what you would expect from measuring.
+\end{worked}
+
+\begin{puzzle}{Almost the same}
+The 9:00 shadow is 45~cm and the 15:00 shadow is 46~cm. Can you use these two to find north? \wline[1.6cm] Why? \wline[5cm]
+\end{puzzle}
+
+\begin{puzzle}{A lopsided day}
+A stick has a 50~cm shadow at 9:00 and a 30~cm shadow at 3:00. Can you use these two to find north? \wline[1.6cm] Why or why not?\\
+\rule{\linewidth}{0.5pt}
+\end{puzzle}
+\clearpage
+\subhead{Noon shadows through the year}
+Your stick makes a different shortest shadow in different seasons. In summer the sun climbs high, so the noon shadow is short. In winter the sun stays low, so the noon shadow is long. The numbers below are calculated, not measured, for a 30~cm stick at a place 45~degrees north of the equator, such as the Ottawa area, on three days.
+
+\begin{center}
+\begin{tikzpicture}[x=1.4cm,y=0.05cm]
+  \draw[line width=1.1pt] (0.3,0) -- (0.3,85) (0.3,0) -- (5,0);
+  \foreach \y in {0,20,40,60,80}{\draw (0.2,\y) -- (0.4,\y); \node[font=\sffamily\scriptsize,anchor=east] at (0.15,\y) {\y};}
+  \node[font=\sffamily\scriptsize,rotate=90] at (-0.5,42) {noon shadow (cm)};
+  \foreach \x/\h/\c/\l in {1.2/12/sun/June,2.6/30/leaf/March or September,4.0/76/sky/December}{
+    \fill[\c!70,draw=ink,line width=0.8pt] (\x-0.4,0) rectangle (\x+0.4,\h);
+    \node[font=\sffamily\bfseries\scriptsize,anchor=south] at (\x,\h) {\h};
+  }
+  \node[font=\sffamily\scriptsize,anchor=north] at (1.2,-2) {June};
+  \node[font=\sffamily\scriptsize,anchor=north,text width=2cm,align=center] at (2.6,-2) {March or September};
+  \node[font=\sffamily\scriptsize,anchor=north] at (4.0,-2) {December};
+\end{tikzpicture}
+\end{center}
+
+The Earth's axis is tilted, so in June our half of the world leans toward the sun and in December away from it. That is why a shadow clock marked in one season drifts in another. The practice day, with a noon shadow of 26~cm, was between March and June.
+
+\begin{puzzle}{Which season?}
+A 30~cm stick has a 70~cm shadow at noon. Is it more likely June, September or December? \wline[2cm]\\
+Why? \wline[5cm]
+\end{puzzle}
+
+\begin{puzzle}{Shadow ratios}
+In December the noon shadow is 76~cm and the stick is 30~cm. How many times as long as the stick is the shadow? \wline[1.6cm] Round to the nearest whole number.
+\end{puzzle}
+\clearpage

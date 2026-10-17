@@ -1,0 +1,195 @@
+\chapterhead{4}{Ten Readings, One Answer}{Why careful scientists measure again and again}\label{ch4}
+
+Try this: hold a sheet of paper flat, let it go, and time how long it takes to reach the floor. Do it again. Did you get the same time?
+
+Almost nobody does. Your thumb is sometimes quick on the stopwatch and sometimes slow. The paper wobbles a different way each time. Every reading is a little different, even though you did everything carefully.
+
+Scientists do not get upset about this. They plan for it. If one reading wanders a little, many readings tend to wander in different directions and cancel out. So they measure again and again, and they report the \textbf{average} (also called the \textbf{mean}) together with the \textbf{spread}.
+
+\begin{tryit}{Time ten falls}
+\textbf{You need:} a clock or timer that shows seconds, a sheet of scrap paper, and a pencil. A helper makes it easier.
+\begin{enumerate}[leftmargin=1.6em]
+\item Stand on the floor and hold the sheet flat, as high as you can reach safely. Do not stand on a chair.
+\item Let go and time the fall, to the nearest tenth of a second.
+\item Write each time in the table. Do this ten times, keeping the sheet and your starting height the same.
+\item Find the \textbf{total} of the ten times. Divide by 10. That is the \textbf{average}.
+\item Find the \textbf{spread}: the biggest time minus the smallest time.
+\end{enumerate}
+\medskip
+\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}
+\hline
+\textbf{1}&\textbf{2}&\textbf{3}&\textbf{4}&\textbf{5}&\textbf{6}&\textbf{7}&\textbf{8}&\textbf{9}&\textbf{10}\\ \hline
+\rule{0pt}{0.9cm}&&&&&&&&&\\ \hline
+\end{tabular}
+\medskip
+
+Average: \wline[1.8cm]~s \qquad Spread: \wline[1.8cm]~s
+\end{tryit}
+\adult{Stand on the floor, not on furniture. Do this where no one can trip over a falling sheet.}
+
+\subhead{Practice numbers}
+Here are ten fall times from a made-up practice run. Each is in seconds.
+
+\begin{worked}{Practice numbers, not from a real experiment}
+\begin{center}\sans\small
+1.8 \quad 2.1 \quad 1.9 \quad 2.0 \quad 2.4 \quad 1.9 \quad 2.0 \quad 2.1 \quad 1.8 \quad 2.0
+\end{center}
+\textbf{Total:} $1.8+2.1+1.9+2.0+2.4+1.9+2.0+2.1+1.8+2.0=20.0$.\\
+\textbf{Average:} $20.0\div10=2.0$ seconds.\\
+\textbf{Spread:} biggest minus smallest $=2.4-1.8=0.6$ seconds.
+\end{worked}
+
+A \textbf{dot plot} shows the readings at a glance. Each dot is one reading. Tall stacks are common times.
+
+\begin{center}
+\begin{tikzpicture}[x=12cm,y=1cm]
+  \draw[line width=1.1pt] (1.72,0) -- (2.48,0);
+  \foreach \v in {1.8,1.9,2.0,2.1,2.2,2.3,2.4}{
+    \draw[line width=0.9pt] (\v,-0.1) -- (\v,0.1);
+    \node[font=\sffamily\scriptsize,below=2pt] at (\v,-0.1) {\v};
+  }
+  \node[font=\sffamily\scriptsize,anchor=north] at (2.1,-0.7) {seconds};
+  \foreach \v/\n in {1.8/2,1.9/2,2.0/3,2.1/2,2.4/1}{
+    \foreach \k in {1,...,\n}{ \fill[tangerine,draw=ink,line width=0.7pt] (\v,\k*0.58-0.1) circle (2.6mm); }
+  }
+  \draw[<->,line width=1pt,color=sky] (1.8,2.15) -- (2.4,2.15) node[midway,above,font=\sffamily\scriptsize] {spread 0.6};
+\end{tikzpicture}
+\end{center}
+
+\subhead{Ten circles become one}
+\begin{center}
+\begin{tikzpicture}
+  \node[bigcir,minimum size=3.2cm] (a) at (0,0) {};
+  \foreach \i/\t in {0/1.8,1/2.1,2/1.9,3/2.0,4/2.4,5/1.9,6/2.0,7/2.1,8/1.8,9/2.0}{
+    \node[cir,inner sep=0.8pt,font=\sffamily\bfseries\scriptsize] at ({1.05*cos(36*\i)},{1.05*sin(36*\i)}) {\t};
+  }
+  \node[valcir] (b) at (5.2,0) {2.0 s};
+  \node[note] at (5.2,-0.75) {readings from 1.8 s to 2.4 s};
+  \draw[popA] (a) -- node[above,note] {pop: the average} (b);
+\end{tikzpicture}
+\end{center}
+
+\begin{keepbox}
+The average and the spread tell us a lot. \textbf{We kept} \wline[3.5cm] \textbf{and we set aside} \wline[3.5cm].
+\end{keepbox}
+
+\clearpage
+
+\subhead{The odd one out}
+In the practice run, one reading, 2.4, stands apart from the others. Do not delete it just because it is awkward! Ask why it happened. Maybe you started the clock late. If there is a good reason, write the reason down.
+
+Here is what happens if you leave 2.4 out. The other nine readings total $20.0-2.4=17.6$, and $17.6\div9=1.96$, which rounds to 2.0. Leaving it out hardly changed the answer. Whenever you set a reading aside, say so in your notes.
+
+\begin{multix}[hmm]\multixbot[hmm]\tcblower
+I have a plan. I will delete every reading that I do not like, and then my results will be very tidy. A scientist would not do that, would they?
+\end{multix}
+
+\subhead{Same average, different spread}
+Two teams each timed a rolling ball three times. Both teams found the same average. Do their results look equally good?
+
+\begin{center}
+\begin{tikzpicture}[x=7cm,y=1cm]
+  \draw[line width=1.1pt] (2.3,0) -- (3.9,0);
+  \foreach \v in {2.5,3.0,3.5}{ \draw (\v,-0.1) -- (\v,0.1); \node[font=\sffamily\scriptsize,below=2pt] at (\v,-0.1) {\v}; }
+  \foreach \v in {3.0,3.1,3.2}{ \fill[sky,draw=ink] (\v,0.6) circle (2.4mm); }
+  \foreach \v in {2.5,3.1,3.7}{ \fill[tomato,draw=ink] (\v,1.4) circle (2.4mm); }
+  \node[font=\sffamily\bfseries\scriptsize,anchor=east] at (2.3,0.6) {Team A};
+  \node[font=\sffamily\bfseries\scriptsize,anchor=east] at (2.3,1.4) {Team B};
+\end{tikzpicture}
+\end{center}
+
+Team A: 3.1, 3.0, 3.2 (average 3.1, spread 0.2). Team B: 2.5, 3.1, 3.7 (average 3.1, spread 1.2). Same average, but Team B's readings are all over the place. The spread tells you how \emph{steady} the readings are. A small spread means the readings agree, and a big spread means they do not.
+
+\trust{We measured ten times and took the average. The result was 2.0 seconds with readings from 1.8 to 2.4.}
+{Random slips, such as pressing the button a little early or a little late, tend to cancel when you take many readings, so the average is steadier than any single one. If someone else repeats the experiment and gets a similar average, the result can be repeated.}
+{Whether the timer itself is right, or whether something pushes every reading the same way. A clock that runs fast makes every time too long, and averaging cannot fix that. Agreement between repeats shows that a result is \emph{repeatable}, not that it is \emph{true}.}
+
+\subhead{Another way to take the middle}
+You can also find the \textbf{middle value}. Put the readings in order and pick the one in the middle. For our ten readings sorted, 1.8, 1.8, 1.9, 1.9, 2.0, 2.0, 2.0, 2.1, 2.1, 2.4, the middle two are both 2.0, so the middle value is 2.0. Here the average and the middle agree. They do not always.
+
+\clearpage
+
+\subhead{Does the average settle down?}
+Watch the average as the readings come in. After each new reading, work out the average of all the readings so far.
+
+\begin{center}
+\begin{tikzpicture}[x=1.05cm,y=7cm]
+  \draw[line width=1pt] (0.5,1.7) -- (0.5,2.5) (0.5,1.7) -- (10.6,1.7);
+  \foreach \y in {1.8,2.0,2.2,2.4}{\draw (0.4,\y) -- (0.6,\y); \node[font=\sffamily\scriptsize,anchor=east] at (0.35,\y) {\y};}
+  \foreach \x in {1,...,10}{\node[font=\sffamily\scriptsize,anchor=north] at (\x,1.69) {\x};}
+  \node[font=\sffamily\scriptsize,anchor=north] at (5.5,1.6) {number of readings so far};
+  \node[font=\sffamily\scriptsize,rotate=90] at (-0.5,2.1) {average (s)};
+  \draw[line width=0.9pt,color=sky,dashed] (0.5,2.0) -- (10.6,2.0);
+  \draw[line width=1.3pt,color=tangerine] (1,1.8) -- (2,1.95) -- (3,1.933) -- (4,1.95) -- (5,2.04) -- (6,2.017) -- (7,2.014) -- (8,2.025) -- (9,2.0) -- (10,2.0);
+  \foreach \x/\y in {1/1.8,2/1.95,3/1.933,4/1.95,5/2.04,6/2.017,7/2.014,8/2.025,9/2.0,10/2.0}{\fill[tomato,draw=ink] (\x,\y) circle (1.7mm);}
+\end{tikzpicture}
+\end{center}
+The first average is just the first reading, 1.8. The wiggles get smaller as more readings are added. After about six readings the average stays within 0.03~s of 2.0. One reading can be far from the truth. An average of many is steadier.
+
+\begin{tryit}{Catch the ruler}
+How fast do you react? One person holds a 30~cm ruler at the top, with zero at the bottom. Another holds a thumb and finger open at the zero mark, ready to pinch. The holder lets go without warning. The catcher pinches as fast as they can. Read the mark where the ruler was caught, to the nearest centimetre. That is how far it fell.
+\begin{enumerate}[leftmargin=1.6em]
+\item Do ten catches. Write each distance in centimetres.
+\item Find the total, the average and the spread.
+\end{enumerate}
+\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}
+\hline
+\textbf{1}&\textbf{2}&\textbf{3}&\textbf{4}&\textbf{5}&\textbf{6}&\textbf{7}&\textbf{8}&\textbf{9}&\textbf{10}\\ \hline
+\rule{0pt}{0.8cm}&&&&&&&&&\\ \hline
+\end{tabular}
+\par\medskip
+Total: \wline[1.6cm]~cm \quad Average: \wline[1.6cm]~cm \quad Spread: \wline[1.6cm]~cm
+\end{tryit}
+
+\begin{worked}{Practice numbers, not from real catches}
+12, 15, 11, 14, 13, 16, 12, 13, 14, 10 (cm).\\
+Total $=130$. Average $=130\div10=13.0$~cm. Spread $=16-10=6$~cm.\\
+A ruler that falls 13~cm takes about one sixth of a second. So this catcher reacts in about \textbf{one sixth of a second}. Notice that single catches range from 10 to 16~cm, so one catch alone would be a poor guide.
+\end{worked}
+
+\subhead{Make your own dot plot}
+Put your ten catches on this axis. Write the numbers under the marks that suit your readings, then draw one dot for each reading. Stack dots that land on the same mark.
+\begin{center}
+\begin{tikzpicture}[x=0.9cm]
+  \draw[line width=1.1pt] (0,0) -- (12,0);
+  \foreach \x in {0,...,12}{\draw (\x,-0.1) -- (\x,0.1); \draw[gray!50] (\x,0.1) -- (\x,2.6);}
+  \foreach \x in {0,...,12}{\node[draw=ink!60,minimum width=0.7cm,minimum height=0.5cm,anchor=north] at (\x,-0.2) {};}
+  \node[font=\sffamily\scriptsize,anchor=north] at (6,-0.9) {write the numbers in the boxes};
+\end{tikzpicture}
+\end{center}
+
+\clearpage
+
+\begin{puzzle}{Find the average}
+Five students timed a toy car. Their times in seconds were 12, 14, 13, 15 and 11.\\
+Total: \wline[1.8cm] \quad Average: \wline[1.8cm] \quad Spread: \wline[1.8cm]
+\end{puzzle}
+
+\begin{puzzle}{Slip or real?}
+Five readings of a length in centimetres: 4.1, 4.0, 4.2, 4.1, 41.\\
+(a) Which reading looks like a slip? \wline[2cm]\\
+(b) What do you think went wrong?\\\rule{\linewidth}{0.5pt}\\[2pt]
+(c) If the slip is corrected, what is the average of the five readings? \wline[2cm]
+\end{puzzle}
+
+\begin{puzzle}{Who is steadier?}
+Two classes each timed a pendulum swing three times. Class P: 2.9, 3.0, 3.1. Class Q: 2.2, 3.0, 3.8.\\
+(a) Average of P: \wline[1.5cm] \quad Average of Q: \wline[1.5cm]\\
+(b) Spread of P: \wline[1.5cm] \quad Spread of Q: \wline[1.5cm]\\
+(c) Which class's readings agree better? \wline[2.5cm]
+\end{puzzle}
+
+\begin{puzzle}{The runaway clock}
+Mina's kitchen clock gains 3 seconds every 100 seconds. She times a 100-second event ten times with it and gets a very steady average.\\
+Does her steady average prove her clock is right? Explain in one sentence.\\
+\rule{\linewidth}{0.5pt}
+\end{puzzle}
+
+\begin{puzzle}{Rounded average}
+A student read a length eight times, in centimetres: 3.1, 3.2, 3.1, 3.3, 3.1, 3.0, 3.2, 3.1.\\
+(a) Total: \wline[1.6cm] \quad (b) Average: \wline[1.6cm] \quad (c) Average rounded to the nearest tenth: \wline[1.6cm]\\
+(d) Spread: \wline[1.6cm]
+\end{puzzle}
+\clearpage
