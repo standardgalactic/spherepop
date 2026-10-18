@@ -115,6 +115,7 @@ void boundlist_free(BoundList *l) {
     l->items = NULL; l->len = l->cap = 0;
 }
 void boundlist_add(BoundList *l, ObjectId a, ObjectId b, const char *tag) {
+    if (boundlist_contains(l, a, b, tag)) return;
     if (l->len >= l->cap) { l->cap = l->cap ? l->cap * 2 : 4; l->items = realloc(l->items, l->cap * sizeof(BoundFact)); }
     l->items[l->len].a = a;
     l->items[l->len].b = b;
@@ -167,6 +168,7 @@ void state_init(State *s, const ObjectSet *omega0) {
     boundlist_init(&s->bound);
     refusedlist_init(&s->refused);
     observedlist_init(&s->observed);
+    s->event_pos = 0;
 }
 
 void state_free(State *s) {
@@ -185,6 +187,7 @@ void state_apply(State *s, const Event *e) {
             break;
         case EV_REFUSE:
             refusedlist_add(&s->refused, e->a, e->reason);
+            s->refused.items[s->refused.len - 1].pos = s->event_pos;
             /* Omega untouched: refusal documents, it does not foreclose. */
             break;
         case EV_BIND:
@@ -192,8 +195,10 @@ void state_apply(State *s, const Event *e) {
             break;
         case EV_COLLAPSE:
             observedlist_add(&s->observed, e->rule);
+            s->observed.items[s->observed.len - 1].pos = s->event_pos;
             break;
     }
+    s->event_pos++;
 }
 
 bool state_equals(const State *a, const State *b) {
@@ -203,9 +208,15 @@ bool state_equals(const State *a, const State *b) {
     for (size_t i = 0; i < a->bound.len; i++)
         if (!boundlist_contains(&b->bound, a->bound.items[i].a, a->bound.items[i].b, a->bound.items[i].tag)) return false;
     if (a->refused.len != b->refused.len) return false;
+    for (size_t i = 0; i < a->refused.len; i++) {
+        if (a->refused.items[i].pos != b->refused.items[i].pos ||
+            a->refused.items[i].a != b->refused.items[i].a ||
+            strcmp(a->refused.items[i].reason, b->refused.items[i].reason) != 0) return false;
+    }
     if (a->observed.len != b->observed.len) return false;
     for (size_t i = 0; i < a->observed.len; i++)
-        if (strcmp(a->observed.items[i].rule, b->observed.items[i].rule) != 0) return false;
+        if (a->observed.items[i].pos != b->observed.items[i].pos ||
+            strcmp(a->observed.items[i].rule, b->observed.items[i].rule) != 0) return false;
     return true;
 }
 
