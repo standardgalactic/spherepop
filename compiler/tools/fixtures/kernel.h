@@ -88,7 +88,12 @@ typedef struct State {
     BoundList    bound;
     RefusedList  refused;
     ObservedList observed;
-    size_t event_pos; /* replay cursor, not a new observable state component */
+    /* Replay cursor. The cursor itself is not compared by state_equals, but the
+     * position it stamps onto each refused and observed fact is, so two
+     * histories that differ only in where a Refuse or Collapse falls relative
+     * to other events are distinct states. The Go Refusal and Observation
+     * records carry the same position. */
+    size_t event_pos;
 } State;
 
 void state_init(State *s, const ObjectSet *omega0);

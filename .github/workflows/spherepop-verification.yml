@@ -54,6 +54,10 @@ jobs:
         working-directory: spherepop-go
         run: go test -race ./... -run '^TestWire' -count=1
 
+      - name: Go unit tests, immutability guards and wire fuzz seeds (race detector)
+        working-directory: spherepop-go
+        run: go test -race ./... -count=1
+
       - name: Set up Rust
         uses: dtolnay/rust-toolchain@stable
 

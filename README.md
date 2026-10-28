@@ -38,6 +38,10 @@ A beginner curriculum in five subjects: forty-five short illustrated books with 
 
 [Implementation in C](compiler/README.md)
 
+[spherepop-kernel](https://github.com/standardgalactic/spherepop-kernel)
+
+An executable reduction language in Go for the circle calculus, with independently checkable traces. It is a separate repository from the `spherepop-kernel/` directory here; see [Implementations](#implementations).
+
 ---
 
 [History as Identity](https://standardgalactic.github.io/spherepop/History%20as%20Identity.pdf)
@@ -142,6 +146,14 @@ By making commitment, exclusion, coupling, and observation explicit, Spherepop p
 - and a foundation aligned with how real systems evolve.
 
 ---
+
+## Implementations
+
+The four-primitive event model of [SPEC.md](SPEC.md) has four implementations in this repository that are held to the same fixtures: a Rust reference kernel in [`spherepop-kernel/`](spherepop-kernel/), an independent Go module in [`spherepop-go/`](spherepop-go/), a C port under [`compiler/`](compiler/README.md), and a Python runner in [`experiments/flat/`](experiments/flat/). They exchange replayable worlds in the canonical SPHIST/1 wire format ([`experiments/flat/HISTORY-WIRE-V1.md`](experiments/flat/HISTORY-WIRE-V1.md)), and each one decodes the envelope, replays it from a fresh state and checks the same digest.
+
+The repository [standardgalactic/spherepop-kernel](https://github.com/standardgalactic/spherepop-kernel) is a separate project, and it should not be confused with the `spherepop-kernel/` directory here, which is the Rust implementation above. It is an executable reduction language in Go for the circle calculus: SK-style combinators extended with brackets and a scope constructor, where the permission to contract a term depends on the chain of brackets around it. It keeps three things apart. A term is an immutable, hash-consed structural object. A reduction step is the application of an explicit rule that a checker can verify without running the reducer. A host, such as a game entity, is only one place a reduction can run. Every run can emit a trace with a SHA-256 hash chain, and traces, scheduler logs and effect logs are replayed by an independent Python verifier that shares no code with the Go packages, against a shared conformance corpus of valid, malformed, truncated and deliberately mutated records. The command line needs no engine, graphics or network, and its host boundary, made of typed effect requests, a schema, an authorizer and an append-only disposition log, lets a game propose effects without the language depending on the game.
+
+That repository is explicit about what is proved. Confluence is proved for every permission structure under the settled absorption and scope modes, in which both boundary rules fire only on arguments that contain no steps, and a bounded search of tens of millions of parallel-reduction pairs agrees with the proof. The `safe` scope mode, the default `u` absorption mode and the unrestricted scope rule used in the essays are outside that theorem, and its `notes/claim-status.md` lists every claim with the evidence behind it and every open obligation.
 
 ## Learn More
 

@@ -52,8 +52,14 @@ func (s State) Clone() State {
 		out.Bound[b] = struct{}{}
 	}
 	for _, refused := range s.Refused {
-		if refused.Target != nil { v := *refused.Target; refused.Target = &v }
-		if refused.Other != nil { v := *refused.Other; refused.Other = &v }
+		if refused.Target != nil {
+			v := *refused.Target
+			refused.Target = &v
+		}
+		if refused.Other != nil {
+			v := *refused.Other
+			refused.Other = &v
+		}
 		out.Refused = append(out.Refused, refused)
 	}
 	out.Observed = append([]Observation(nil), s.Observed...)
@@ -91,16 +97,33 @@ func (h History) Len() int { return len(h.events) }
 
 func (h History) Events() []Event {
 	out := make([]Event, len(h.events))
-	for i, e := range h.events { out[i] = cloneEvent(e) }
+	for i, e := range h.events {
+		out[i] = cloneEvent(e)
+	}
 	return out
 }
 
 func cloneEvent(e Event) Event {
-	if e.A != nil { a := *e.A; e.A = &a }
-	if e.B != nil { b := *e.B; e.B = &b }
-	if e.Tag != nil { tag := *e.Tag; e.Tag = &tag }
-	if e.Reason != nil { reason := *e.Reason; e.Reason = &reason }
-	if e.Rule != nil { rule := *e.Rule; e.Rule = &rule }
+	if e.A != nil {
+		a := *e.A
+		e.A = &a
+	}
+	if e.B != nil {
+		b := *e.B
+		e.B = &b
+	}
+	if e.Tag != nil {
+		tag := *e.Tag
+		e.Tag = &tag
+	}
+	if e.Reason != nil {
+		reason := *e.Reason
+		e.Reason = &reason
+	}
+	if e.Rule != nil {
+		rule := *e.Rule
+		e.Rule = &rule
+	}
 	return e
 }
 
