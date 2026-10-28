@@ -12,7 +12,7 @@ func NewOverlayManager(a *Arbiter) *OverlayManager {
 }
 
 func (m *OverlayManager) Create(p Proposal) Overlay {
-	return Overlay{baseLen: m.Arbiter.Len(), pending: p}
+	return Overlay{baseLen: m.Arbiter.Len(), pending: NewProposal(p.Events...)}
 }
 
 // Preview is non-authoritative and does not validate or mutate history.
